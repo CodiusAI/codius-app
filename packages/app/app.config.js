@@ -3,7 +3,8 @@ const path = require("node:path");
 const pkg = require("./package.json");
 const withFdroidAutolinking = require("./plugins/with-fdroid-autolinking");
 const appVariant = process.env.APP_VARIANT ?? "production";
-const isFdroidBuild = process.env.PASEO_FDROID_BUILD === "1";
+const isFdroidBuild =
+  process.env.CODIUS_FDROID_BUILD === "1" || process.env.PASEO_FDROID_BUILD === "1";
 
 const buildProfile = isFdroidBuild
   ? {
@@ -40,11 +41,13 @@ const buildProfile = isFdroidBuild
           "expo-notifications",
           {
             icon: "./assets/images/notification-icon.png",
-            color: "#20744A",
+            color: "#000000",
           },
         ],
       ],
-      updates: {},
+      // The upstream Expo update project is intentionally not reused. Enable
+      // updates only after a Codius-owned EAS project has been provisioned.
+      updates: { enabled: false },
     };
 
 function getNativeBuildVersionCode(version) {
@@ -87,8 +90,8 @@ function resolveSecretFile(params) {
 
 const variants = {
   production: {
-    name: "Paseo",
-    packageId: "sh.paseo",
+    name: "Codius",
+    packageId: "ai.codius",
     googleServicesFile: resolveSecretFile({
       envKey: "GOOGLE_SERVICES_FILE_PROD",
       fallbackRelativePath: "./.secrets/google-services.prod.json",
@@ -99,8 +102,8 @@ const variants = {
     }),
   },
   development: {
-    name: "Paseo Debug",
-    packageId: "sh.paseo.debug",
+    name: "Codius Debug",
+    packageId: "ai.codius.debug",
     googleServicesFile: resolveSecretFile({
       envKey: "GOOGLE_SERVICES_FILE_DEBUG",
       fallbackRelativePath: "./.secrets/google-services.debug.json",
@@ -118,24 +121,21 @@ const nativeBuildVersionCode = getNativeBuildVersionCode(pkg.version);
 export default {
   expo: {
     name: variant.name,
-    slug: "voice-mobile",
+    slug: "codius",
     version: pkg.version,
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: "paseo",
+    scheme: "codius",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     runtimeVersion: {
       policy: "appVersion",
     },
-    updates: {
-      url: "https://u.expo.dev/0e7f65ce-0367-46c8-a238-2b65963d235a",
-      ...buildProfile.updates,
-    },
+    updates: buildProfile.updates,
     ios: {
       supportsTablet: true,
       infoPlist: {
-        NSMicrophoneUsageDescription: "This app needs access to the microphone for voice commands.",
+        NSMicrophoneUsageDescription: "Codius needs microphone access for voice commands.",
         ITSAppUsesNonExemptEncryption: false,
       },
       bundleIdentifier: variant.packageId,
@@ -211,10 +211,6 @@ export default {
     extra: {
       fdroidBuild: isFdroidBuild,
       router: {},
-      eas: {
-        projectId: "0e7f65ce-0367-46c8-a238-2b65963d235a",
-      },
     },
-    owner: "getpaseo",
   },
 };
