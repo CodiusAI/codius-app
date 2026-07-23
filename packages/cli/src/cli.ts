@@ -49,8 +49,8 @@ export function createCli(): Command {
   const program = new Command();
 
   program
-    .name("paseo")
-    .description("Paseo CLI - control your AI coding agents from the command line")
+    .name("codiusctl")
+    .description("Codius Desktop CLI - control local coding agents and the Codius daemon")
     .version(VERSION, "-v, --version", "output the version number")
     // Global output options
     .option("-o, --format <format>", "output format: table, json, yaml", "table")
@@ -73,7 +73,7 @@ export function createCli(): Command {
   addJsonAndDaemonHostOptions(
     program
       .command("clone")
-      .description("Clone a GitHub repo and register it as a Paseo workspace")
+      .description("Clone a GitHub repo and register it as a Codius workspace")
       .argument("<repo>", "GitHub repo in owner/repo format or a full git remote URL")
       .requiredOption("--dir <path>", "Parent directory to clone into (for example: ~/workspace)"),
   )
@@ -120,17 +120,17 @@ export function createCli(): Command {
   addJsonOption(
     program
       .command("status")
-      .description('Show local daemon status (alias for "paseo daemon status")'),
+      .description('Show local daemon status (alias for "codiusctl daemon status")'),
   )
-    .option("--home <path>", "Paseo home directory (default: ~/.paseo)")
+    .option("--home <path>", "Codius home directory (default: ~/.codius)")
     .action(withOutput(runDaemonStatusCommand));
 
   addJsonOption(
     program
       .command("restart")
-      .description('Restart local daemon (alias for "paseo daemon restart")'),
+      .description('Restart local daemon (alias for "codiusctl daemon restart")'),
   )
-    .option("--home <path>", "Paseo home directory (default: ~/.paseo)")
+    .option("--home <path>", "Codius home directory (default: ~/.codius)")
     .option("--timeout <seconds>", "Wait timeout before force step (default: 15)")
     .option("--force", "Send SIGKILL if graceful stop times out")
     .option(
