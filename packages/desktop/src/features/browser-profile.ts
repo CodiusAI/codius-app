@@ -1,4 +1,5 @@
-export const PASEO_BROWSER_PROFILE_PARTITION = "persist:paseo-browser";
+export const PASEO_BROWSER_PROFILE_PARTITION = "persist:codius-browser";
+const LEGACY_PASEO_BROWSER_PROFILE_PARTITION = "persist:paseo-browser";
 const LEGACY_BROWSER_ID_PATTERN =
   /^(?:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|\d{13,}-[0-9a-f]+)$/i;
 const MAX_LEGACY_BROWSER_PROFILES = 1000;
@@ -73,9 +74,11 @@ export function getPaseoBrowserProfileSessions(
 ): [BrowserProfileSession, ...BrowserProfileSession[]] {
   return [
     getPaseoBrowserProfileSession(sessions),
-    // COMPAT(browserProfile): added in v0.1.108; remove after 2027-01-15.
+    // Keep the old shared Paseo partition reachable for explicit profile cleanup.
+    sessions.fromPartition(LEGACY_PASEO_BROWSER_PROFILE_PARTITION),
+    // COMPAT(browserProfile): inherited per-tab partitions; remove after 2027-01-15.
     ...legacyBrowserIds.map((browserId) =>
-      sessions.fromPartition(`${PASEO_BROWSER_PROFILE_PARTITION}-${browserId}`),
+      sessions.fromPartition(`${LEGACY_PASEO_BROWSER_PROFILE_PARTITION}-${browserId}`),
     ),
   ];
 }
@@ -86,7 +89,7 @@ export function getLegacyPaseoBrowserProfileSession(
 ): BrowserProfileSession | null {
   const [legacyBrowserId] = readLegacyPaseoBrowserIds([browserId]);
   return legacyBrowserId
-    ? sessions.fromPartition(`${PASEO_BROWSER_PROFILE_PARTITION}-${legacyBrowserId}`)
+    ? sessions.fromPartition(`${LEGACY_PASEO_BROWSER_PROFILE_PARTITION}-${legacyBrowserId}`)
     : null;
 }
 
