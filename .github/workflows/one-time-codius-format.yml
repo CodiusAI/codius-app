@@ -1,0 +1,46 @@
+name: One-time Codius formatting
+
+on:
+  push:
+    branches: [feat/codius-productization]
+    paths:
+      - ".github/workflows/one-time-codius-format.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    env:
+      ONNXRUNTIME_NODE_INSTALL: skip
+      ELECTRON_SKIP_BINARY_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/codius-productization
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci --include=dev
+      - run: npm run format
+
+      - name: Commit formatted sources and remove this workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/one-time-codius-format.yml
+          git config user.name "Codius CI"
+          git config user.email "actions@codius.ai"
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "style: format Codius Desktop productization"
+          git push origin HEAD:feat/codius-productization
