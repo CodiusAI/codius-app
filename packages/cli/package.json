@@ -1,9 +1,15 @@
 {
   "name": "@getpaseo/cli",
   "version": "0.2.0-beta.3",
-  "description": "Paseo CLI - control your AI coding agents from the command line",
+  "description": "Codius Desktop CLI - control local coding agents and the Codius daemon",
+  "homepage": "https://codius.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prismosoft/codius-desktop.git"
+  },
+  "license": "AGPL-3.0-or-later",
   "bin": {
-    "paseo": "bin/paseo"
+    "codiusctl": "bin/paseo"
   },
   "files": [
     "bin",
