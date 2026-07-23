@@ -6,7 +6,7 @@ $AppDir = (Resolve-Path "$DesktopDir\..\app").Path
 $RootDir = (Resolve-Path "$DesktopDir\..\..").Path
 $env:PATH = "$RootDir\node_modules\.bin;$env:PATH"
 
-# Build the Electron main process
+# Build the Electron main process and apply the Codius runtime identity.
 npm run build:main
 
 # Prefer Metro's stable default port so dev browser storage keeps the same
@@ -30,10 +30,12 @@ try {
     }
 }
 
-# Set EXPO_DEV_URL in the environment so Electron inherits it
+# Set EXPO_DEV_URL in the environment so Electron inherits it.
 $env:EXPO_DEV_URL = "http://localhost:$($env:EXPO_PORT)"
 
-$RemoteDebuggingPort = if ($env:PASEO_ELECTRON_REMOTE_DEBUGGING_PORT) {
+$RemoteDebuggingPort = if ($env:CODIUS_ELECTRON_REMOTE_DEBUGGING_PORT) {
+    $env:CODIUS_ELECTRON_REMOTE_DEBUGGING_PORT
+} elseif ($env:PASEO_ELECTRON_REMOTE_DEBUGGING_PORT) {
     $env:PASEO_ELECTRON_REMOTE_DEBUGGING_PORT
 } else {
     "9223"
@@ -50,36 +52,46 @@ $env:PASEO_ELECTRON_FLAGS = "$($ExistingElectronFlags)--remote-debugging-port=$R
 # the daemon binds to localhost and this script is never used for production.
 $env:PASEO_CORS_ORIGINS = "*"
 
-# Fully isolate the dev instance from a production Paseo install so `npm run dev`
-# works while the installed app is open. Without this the dev build loses the
-# Electron single-instance lock to the installed app and quits, and ends up
-# pointed at the production daemon, whose CORS allowlist rejects the Metro origin.
-# PASEO_HOME defaults to a script-managed dev home. If you override it (to point
-# dev at real data), we DON'T touch your config.json — only the managed home gets
-# its daemon config seeded below, so we never rewrite a production config.
+# Fully isolate the dev instance from a production Codius install so `npm run dev`
+# works while the installed app is open. PASEO_HOME remains an internal
+# compatibility variable, but CODIUS_HOME is the public source of truth.
 $DevStateDir = "$DesktopDir\.dev"
-if (-not $env:PASEO_HOME) {
-    $env:PASEO_HOME = "$DevStateDir\paseo-home"
-    $PaseoHomeManaged = $true
+if (-not $env:CODIUS_HOME) {
+    if ($env:PASEO_HOME) {
+        $env:CODIUS_HOME = $env:PASEO_HOME
+        $CodiusHomeManaged = $false
+    } else {
+        $env:CODIUS_HOME = "$DevStateDir\codius-home"
+        $CodiusHomeManaged = $true
+    }
 } else {
-    $PaseoHomeManaged = $false
+    $CodiusHomeManaged = $false
 }
-if (-not $env:PASEO_ELECTRON_USER_DATA_DIR) { $env:PASEO_ELECTRON_USER_DATA_DIR = "$DevStateDir\user-data" }
-New-Item -ItemType Directory -Force -Path $env:PASEO_HOME, $env:PASEO_ELECTRON_USER_DATA_DIR | Out-Null
+$env:PASEO_HOME = $env:CODIUS_HOME
 
-$DevDaemonPort = if ($env:PASEO_DEV_DAEMON_PORT) { $env:PASEO_DEV_DAEMON_PORT } else { "6788" }
+if (-not $env:CODIUS_ELECTRON_USER_DATA_DIR) {
+    if ($env:PASEO_ELECTRON_USER_DATA_DIR) {
+        $env:CODIUS_ELECTRON_USER_DATA_DIR = $env:PASEO_ELECTRON_USER_DATA_DIR
+    } else {
+        $env:CODIUS_ELECTRON_USER_DATA_DIR = "$DevStateDir\user-data"
+    }
+}
+$env:PASEO_ELECTRON_USER_DATA_DIR = $env:CODIUS_ELECTRON_USER_DATA_DIR
+New-Item -ItemType Directory -Force -Path $env:CODIUS_HOME, $env:CODIUS_ELECTRON_USER_DATA_DIR | Out-Null
+
+$DevDaemonPort = if ($env:CODIUS_DEV_DAEMON_PORT) {
+    $env:CODIUS_DEV_DAEMON_PORT
+} elseif ($env:PASEO_DEV_DAEMON_PORT) {
+    $env:PASEO_DEV_DAEMON_PORT
+} else {
+    "6788"
+}
 if (-not $env:PASEO_LISTEN) { $env:PASEO_LISTEN = "127.0.0.1:$DevDaemonPort" }
 
-# Seed the isolated daemon config. The desktop daemon-manager decides whether a
-# daemon is already running by reading `daemon.listen` from this config.json
-# (it does NOT honor the PASEO_LISTEN env var) and probing that address. Without
-# this it reads the default 6767, finds a production daemon there, and connects
-# the dev app to prod — whose CORS allowlist then rejects the Metro origin. Pin
-# the dev port + wildcard CORS in the file so the dev app starts its OWN daemon.
-# ONLY seed the script-managed home: never rewrite a user-supplied PASEO_HOME
-# (that could clobber a production config.json with the dev port + wildcard CORS).
-if ($PaseoHomeManaged) {
-    $env:TMP_CFG_PATH = "$($env:PASEO_HOME)/config.json"
+# Seed only the script-managed home. The daemon manager reads daemon.listen from
+# config.json, so the dev port and wildcard CORS must be recorded there.
+if ($CodiusHomeManaged) {
+    $env:TMP_CFG_PATH = "$($env:CODIUS_HOME)/config.json"
     $env:TMP_CFG_PORT = $DevDaemonPort
     $TmpScript = [System.IO.Path]::GetTempFileName() + ".js"
     $ScriptContent = @"
@@ -101,22 +113,22 @@ fs.writeFileSync(path, JSON.stringify(cfg, null, 2));
     Remove-Item Env:\TMP_CFG_PATH -ErrorAction SilentlyContinue
     Remove-Item Env:\TMP_CFG_PORT -ErrorAction SilentlyContinue
 } else {
-    Write-Host "  (custom PASEO_HOME - leaving its config.json untouched)"
+    Write-Host "  (custom CODIUS_HOME - leaving its config.json untouched)"
 }
 
 Write-Host @"
 ======================================================
-  Paseo Desktop Dev (Windows)
+  Codius Desktop Dev (Windows)
 ======================================================
-  Metro:      http://localhost:$($env:EXPO_PORT)
-  CDP:        http://127.0.0.1:$RemoteDebuggingPort
-  Daemon:     $($env:PASEO_LISTEN) (isolated)
-  PASEO_HOME: $($env:PASEO_HOME)
-  userData:   $($env:PASEO_ELECTRON_USER_DATA_DIR)
+  Metro:       http://localhost:$($env:EXPO_PORT)
+  CDP:         http://127.0.0.1:$RemoteDebuggingPort
+  Daemon:      $($env:PASEO_LISTEN) (isolated)
+  CODIUS_HOME: $($env:CODIUS_HOME)
+  userData:    $($env:CODIUS_ELECTRON_USER_DATA_DIR)
 ======================================================
 "@
 
-# Launch Metro + Electron together, kill both on exit
+# Launch Metro + Electron together, kill both on exit.
 concurrently `
     --kill-others `
     --names "metro,electron" `
