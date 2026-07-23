@@ -1,0 +1,498 @@
+name: Finalize Codius Desktop productization
+
+"on":
+  push:
+    branches:
+      - feat/codius-productization
+
+permissions:
+  contents: write
+
+concurrency:
+  group: codius-desktop-finalize
+  cancel-in-progress: false
+
+jobs:
+  finalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/codius-productization
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Fetch official Codius artwork
+        shell: bash
+        run: |
+          mkdir -p assets
+          curl -fsSL \
+            https://raw.githubusercontent.com/prismosoft/codius-cli/feat/codius-productization/assets/codius-logo.svg \
+            -o assets/codius-logo.svg
+
+      - name: Apply Codius Desktop product layer
+        shell: bash
+        run: |
+          python <<'PY'
+          from __future__ import annotations
+
+          import json
+          import re
+          from pathlib import Path
+
+          ROOT = Path.cwd()
+
+          def read(path: str) -> str:
+              return (ROOT / path).read_text(encoding="utf-8")
+
+          def write(path: str, value: str) -> None:
+              target = ROOT / path
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_text(value, encoding="utf-8")
+
+          def replace(path: str, old: str, new: str, *, required: bool = False) -> bool:
+              value = read(path)
+              if old not in value:
+                  if required:
+                      raise RuntimeError(f"Expected text not found in {path}: {old[:120]!r}")
+                  return False
+              write(path, value.replace(old, new))
+              return True
+
+          def update_json(path: str, mutator) -> None:
+              value = json.loads(read(path))
+              mutator(value)
+              write(path, json.dumps(value, indent=2, ensure_ascii=False) + "\n")
+
+          def root_package(pkg: dict) -> None:
+              pkg["name"] = "codius-desktop"
+              pkg["description"] = "Codius Desktop — an open-source command center for parallel coding agents"
+              pkg["homepage"] = "https://codius.ai"
+              pkg["repository"] = {
+                  "type": "git",
+                  "url": "https://github.com/prismosoft/codius-desktop.git",
+              }
+              pkg["bugs"] = {"url": "https://github.com/prismosoft/codius-desktop/issues"}
+
+          update_json("package.json", root_package)
+
+          readme = r'''<p align="center">
+  <img src="assets/codius-logo.svg" alt="Codius" width="420" />
+</p>
+
+<h1 align="center">Codius Desktop</h1>
+
+<p align="center">
+  An open-source desktop command center for parallel coding agents, with Codius built in as the default provider.
+</p>
+
+> **Development status:** active productization branch. Codius Desktop is derived from
+> [Paseo](https://github.com/getpaseo/paseo) and preserves its AGPL-3.0 license and notices.
+
+## What Codius Desktop is
+
+Codius Desktop combines agent conversations, isolated Git worktrees, terminals, diffs,
+Git operations, schedules, and a visible inline browser in one workspace. The default
+agent is **Codius CLI**, launched through Agent Client Protocol (ACP):
+
+```text
+Codius Desktop
+      │
+      │ ACP over local stdio
+      ▼
+  codius acp
+      │
+      │ OpenAI-compatible HTTPS
+      ▼
+Codius API
+```
+
+Codius is the initial provider for a fresh installation, but the application continues
+to support Codex, Claude Code, GitHub Copilot, OpenCode, Pi, Oh My Pi, and custom ACP
+providers. A provider chosen by the user remains their preference.
+
+## Codius environments
+
+| Environment | Website | OpenAI-compatible API |
+|---|---|---|
+| Development | `https://dev.codius.dev` | `https://devapi.codius.dev/v1` |
+| Production | `https://codius.ai` | `https://api.codius.ai/v1` |
+
+The API key and model routing are owned by Codius. Infrastructure provider credentials
+are never embedded in the desktop application.
+
+## Codius provider requirements
+
+Install Codius CLI and authenticate it before starting a Codius agent:
+
+```bash
+codius --version
+codius providers login --provider codius
+codius acp
+```
+
+Codius Desktop starts the provider with:
+
+```bash
+codius acp
+```
+
+The ACP session reports models and modes dynamically. MCP tools supplied by Codius
+Desktop—including the visible browser tools—are passed to the local Codius agent.
+
+## Inline browser and browser automation
+
+Codius Desktop includes a real browser view inside the workspace. Agents can navigate,
+inspect, click, type, upload files, capture screenshots, and read console/network state
+in the same tab the user can see and take over manually. Browser control remains a
+permissioned local capability.
+
+## Local development
+
+Requirements:
+
+- Node.js 22
+- npm
+- Git
+- a local `codius` executable for Codius provider testing
+
+```bash
+git clone https://github.com/prismosoft/codius-desktop.git
+cd codius-desktop
+npm ci
+npm run typecheck
+npm run dev
+```
+
+During development, make sure the CLI is configured for the Codius development API:
+
+```bash
+export CODIUS_ENV=development
+codius providers login --provider codius
+```
+
+## Product boundaries
+
+- `codius` is the coding-agent CLI.
+- `codiusctl` is the optional Desktop daemon-management CLI, avoiding a command-name collision.
+- Codius Desktop stores new application data under `~/.codius`.
+- Existing `PASEO_HOME` and legacy Paseo browser-profile data remain readable for migration.
+- The upstream Paseo relay is not used as a Codius-branded service. Remote relay features
+  must point to Codius-operated infrastructure before production enablement.
+
+## Upstream and license
+
+Codius Desktop is a modified version of Paseo. The covered desktop source remains
+licensed under **AGPL-3.0**. Keep the upstream copyright, license text, source offer,
+and modification notices with distributed builds.
+
+Codius branding, service plans, hosted API, and trademarks are separate from the
+AGPL-licensed desktop source.
+
+## Repositories
+
+- Codius service and API: `prismosoft/codius`
+- Codius CLI: `prismosoft/codius-cli`
+- Codius Desktop: `prismosoft/codius-desktop`
+'''
+          write("README.md", readme)
+
+          manifest_path = "packages/protocol/src/provider-manifest.ts"
+          manifest = read(manifest_path)
+          if 'id: "codius"' not in manifest:
+              marker = "export const AGENT_PROVIDER_DEFINITIONS: AgentProviderDefinition[] = [\n"
+              provider = '''  {
+    id: "codius",
+    label: "Codius",
+    description: "Codius coding agent with subscription models, ACP tools, and dynamic model discovery",
+    enabledByDefault: true,
+    defaultModeId: null,
+    modes: OPENCODE_MODES,
+    voice: {
+      enabled: true,
+      defaultModeId: "build",
+    },
+  },
+'''
+              if marker not in manifest:
+                  raise RuntimeError("Could not locate AGENT_PROVIDER_DEFINITIONS")
+              manifest = manifest.replace(marker, marker + provider, 1)
+          write(manifest_path, manifest)
+
+          registry_path = "packages/server/src/server/agent/provider-registry.ts"
+          registry = read(registry_path)
+          if "codius:" not in registry:
+              marker = "const PROVIDER_CLIENT_FACTORIES: Record<string, ProviderClientFactory> = {\n"
+              factory = '''  codius: (logger, runtimeSettings) =>
+    new GenericACPAgentClient({
+      logger,
+      command: getCodiusACPCommand(runtimeSettings),
+      env: runtimeSettings?.env,
+      providerId: "codius",
+      label: "Codius",
+      providerParams: { supportsMcpServers: true },
+    }),
+'''
+              if marker not in registry:
+                  raise RuntimeError("Could not locate PROVIDER_CLIENT_FACTORIES")
+              registry = registry.replace(marker, marker + factory, 1)
+          if "function getCodiusACPCommand" not in registry:
+              marker = "function getCursorACPCommand(\n"
+              helper = '''function getCodiusACPCommand(
+  runtimeSettings: ProviderRuntimeSettings | undefined,
+): [string, ...string[]] {
+  if (
+    runtimeSettings?.command?.mode === "replace" &&
+    isNonEmptyStringArray(runtimeSettings.command.argv)
+  ) {
+    return runtimeSettings.command.argv;
+  }
+
+  return ["codius", "acp"];
+}
+
+'''
+              if marker not in registry:
+                  raise RuntimeError("Could not locate cursor ACP helper")
+              registry = registry.replace(marker, helper + marker, 1)
+          write(registry_path, registry)
+
+          icon_names_path = "packages/protocol/src/provider-icon-names.ts"
+          icon_names = read(icon_names_path)
+          if '"codius"' not in icon_names:
+              icon_names = icon_names.replace(
+                  "export const BUILTIN_PROVIDER_ICON_NAMES = [\n",
+                  'export const BUILTIN_PROVIDER_ICON_NAMES = [\n  "codius",\n',
+                  1,
+              )
+          write(icon_names_path, icon_names)
+
+          logo_svg = read("assets/codius-logo.svg")
+          for asset_path in [
+              "packages/app/src/assets/provider-icons/codius.svg",
+              "packages/website/public/codius-logo.svg",
+              "packages/desktop/resources/codius-logo.svg",
+          ]:
+              write(asset_path, logo_svg)
+
+          home_path = "packages/server/src/server/paseo-home.ts"
+          home = read(home_path)
+          home = home.replace(
+              'const raw = env.PASEO_HOME ?? "~/.paseo";',
+              'const raw = env.CODIUS_HOME ?? env.PASEO_HOME ?? "~/.codius";',
+          )
+          write(home_path, home)
+
+          browser_candidates = list((ROOT / "packages/desktop/src").rglob("*.ts")) + list(
+              (ROOT / "packages/desktop/src").rglob("*.tsx")
+          )
+          for path in browser_candidates:
+              value = path.read_text(encoding="utf-8")
+              if 'persist:paseo-browser' not in value:
+                  continue
+              value = value.replace(
+                  'export const PASEO_BROWSER_PROFILE_PARTITION = "persist:paseo-browser";',
+                  'export const PASEO_BROWSER_PROFILE_PARTITION = "persist:codius-browser";\nexport const LEGACY_PASEO_BROWSER_PROFILE_PARTITION = "persist:paseo-browser";',
+              )
+              path.write_text(value, encoding="utf-8")
+
+          cli_package_path = "packages/cli/package.json"
+          def cli_package(pkg: dict) -> None:
+              pkg["description"] = "Codius Desktop CLI — control local coding-agent workspaces and the daemon"
+              pkg["bin"] = {"codiusctl": "bin/codiusctl"}
+          update_json(cli_package_path, cli_package)
+
+          old_shim = ROOT / "packages/cli/bin/paseo"
+          new_shim = ROOT / "packages/cli/bin/codiusctl"
+          if old_shim.exists() and not new_shim.exists():
+              new_shim.write_text(old_shim.read_text(encoding="utf-8"), encoding="utf-8")
+
+          cli_index_path = "packages/cli/src/index.ts"
+          cli_index = read(cli_index_path)
+          cli_index = cli_index.replace('.name("paseo")', '.name("codiusctl")')
+          cli_index = cli_index.replace("Paseo CLI", "Codius Desktop CLI")
+          cli_index = cli_index.replace('alias for "paseo daemon', 'alias for "codiusctl daemon')
+          cli_index = cli_index.replace("Paseo home directory (default: ~/.paseo)", "Codius home directory (default: ~/.codius)")
+          cli_index = cli_index.replace("register it as a Paseo workspace", "register it as a Codius workspace")
+          write(cli_index_path, cli_index)
+
+          cli_run_path = "packages/cli/src/run.ts"
+          if (ROOT / cli_run_path).exists():
+              cli_run = read(cli_run_path)
+              cli_run = cli_run.replace('process.argv[1] ?? "paseo"', 'process.argv[1] ?? "codiusctl"')
+              write(cli_run_path, cli_run)
+
+          cli_paths_path = "packages/desktop/src/integrations/cli-install/paths.ts"
+          if (ROOT / cli_paths_path).exists():
+              cli_paths = read(cli_paths_path)
+              cli_paths = cli_paths.replace('"paseo.cmd" : "paseo"', '"codiusctl.cmd" : "codiusctl"')
+              cli_paths = cli_paths.replace('"paseo.cmd"', '"codiusctl.cmd"')
+              cli_paths = cli_paths.replace('"paseo"', '"codiusctl"')
+              write(cli_paths_path, cli_paths)
+
+          cli_install_path = "packages/desktop/src/integrations/cli-install/index.ts"
+          if (ROOT / cli_install_path).exists():
+              cli_install = read(cli_install_path)
+              cli_install = cli_install.replace("Paseo CLI", "Codius Desktop CLI")
+              cli_install = cli_install.replace("is Paseo installed?", "is Codius Desktop installed?")
+              write(cli_install_path, cli_install)
+
+          # Product-facing string and URL replacements. Internal @getpaseo package
+          # names and TypeScript identifiers are intentionally preserved for easier
+          # upstream merges.
+          text_extensions = {".ts", ".tsx", ".js", ".mjs", ".cjs", ".json", ".yml", ".yaml", ".toml", ".html", ".md", ".nix", ".plist", ".desktop"}
+          roots = [ROOT / "packages/desktop", ROOT / "packages/app", ROOT / "packages/cli"]
+          for base in roots:
+              if not base.exists():
+                  continue
+              for path in base.rglob("*"):
+                  if not path.is_file() or path.suffix.lower() not in text_extensions:
+                      continue
+                  value = path.read_text(encoding="utf-8")
+                  next_value = value
+                  next_value = next_value.replace('"Paseo"', '"Codius"')
+                  next_value = next_value.replace("'Paseo'", "'Codius'")
+                  next_value = next_value.replace("Paseo Desktop", "Codius Desktop")
+                  next_value = next_value.replace("https://paseo.sh", "https://codius.ai")
+                  next_value = next_value.replace("https://github.com/getpaseo/paseo", "https://github.com/prismosoft/codius-desktop")
+                  next_value = next_value.replace("getpaseo/paseo", "prismosoft/codius-desktop")
+                  next_value = next_value.replace("com.getpaseo.paseo", "ai.codius.desktop")
+                  next_value = next_value.replace("com.paseo.app", "ai.codius.desktop")
+                  if next_value != value:
+                      path.write_text(next_value, encoding="utf-8")
+
+          # Packaging metadata is allowed a broader product-name replacement.
+          packaging_patterns = [
+              "packages/desktop/package.json",
+              "packages/desktop/electron-builder.yml",
+              "packages/desktop/electron-builder.yaml",
+              "packages/desktop/forge.config.ts",
+              "packages/desktop/src/main.ts",
+          ]
+          for rel in packaging_patterns:
+              path = ROOT / rel
+              if not path.exists():
+                  continue
+              value = path.read_text(encoding="utf-8")
+              value = value.replace("Paseo", "Codius")
+              value = value.replace("paseo-desktop", "codius-desktop")
+              value = value.replace("paseo://", "codius://")
+              value = value.replace('"paseo"', '"codius"')
+              value = value.replace("'paseo'", "'codius'")
+              value = value.replace("paseo.sh", "codius.ai")
+              path.write_text(value, encoding="utf-8")
+
+          # Make Codius the fresh-install fallback without overriding an explicit or
+          # saved provider. Apply only to provider-selection modules that already
+          # resolve optional initial/current preference values.
+          default_patch_count = 0
+          for path in (ROOT / "packages/app/src").rglob("*.ts*"):
+              value = path.read_text(encoding="utf-8")
+              if "initialProvider" not in value and "initialProviderId" not in value:
+                  continue
+              if "provider" not in value.lower():
+                  continue
+              next_value = value
+              patterns = [
+                  (r"(return\s+currentProviderId)(\s*;)", r'\1 ?? "codius"\2'),
+                  (r"(return\s+currentProvider)(\s*;)", r'\1 ?? "codius"\2'),
+                  (r"(return\s+selectedProviderId)(\s*;)", r'\1 ?? "codius"\2'),
+                  (r"(return\s+selectedProvider)(\s*;)", r'\1 ?? "codius"\2'),
+              ]
+              for pattern, replacement in patterns:
+                  next_value, changed = re.subn(pattern, replacement, next_value, count=1)
+                  if changed:
+                      default_patch_count += changed
+                      break
+              if next_value != value:
+                  path.write_text(next_value, encoding="utf-8")
+
+          test = '''import { describe, expect, it } from "vitest";
+import { AGENT_PROVIDER_DEFINITIONS } from "./provider-manifest";
+
+describe("Codius provider", () => {
+  it("is the first built-in provider", () => {
+    expect(AGENT_PROVIDER_DEFINITIONS[0]?.id).toBe("codius");
+  });
+
+  it("keeps the other built-in providers available", () => {
+    const ids = AGENT_PROVIDER_DEFINITIONS.map((provider) => provider.id);
+    expect(ids).toContain("codex");
+    expect(ids).toContain("claude");
+    expect(ids).toContain("opencode");
+  });
+});
+'''
+          write("packages/protocol/src/codius-provider.test.ts", test)
+
+          integration_doc = '''# Codius provider integration
+
+Codius Desktop launches Codius CLI through Agent Client Protocol:
+
+```text
+codius acp
+```
+
+The provider ID is `codius`. Models and modes are discovered from the ACP session at
+runtime. The CLI owns Codius API authentication and chooses the development or
+production API endpoint. Desktop never stores an upstream infrastructure credential.
+
+A custom command override remains available for development builds and tests. Other
+Paseo-derived providers remain enabled and selectable.
+'''
+          write("docs/codius-provider.md", integration_doc)
+
+          for stale in [
+              ".github/workflows/codius-productization.yml",
+              ".github/workflows/codius-desktop-productization.yml",
+              ".github/workflows/codius-finalize.yml",
+              ".github/workflows/codius-desktop-finalize.yml",
+          ]:
+              target = ROOT / stale
+              if target.exists():
+                  target.unlink()
+
+          required = {
+              "packages/protocol/src/provider-manifest.ts": ['id: "codius"', 'label: "Codius"'],
+              "packages/server/src/server/agent/provider-registry.ts": ['codius:', 'return ["codius", "acp"]'],
+              "packages/server/src/server/paseo-home.ts": ["CODIUS_HOME", '"~/.codius"'],
+              "packages/cli/package.json": ['"codiusctl"'],
+              "README.md": ["Codius Desktop", "codius acp", "devapi.codius.dev/v1"],
+          }
+          for path, needles in required.items():
+              value = read(path)
+              for needle in needles:
+                  if needle not in value:
+                      raise RuntimeError(f"Missing {needle!r} in {path}")
+          PY
+
+          chmod +x packages/cli/bin/codiusctl || true
+          git diff --check
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck workspace
+        run: npm run typecheck
+
+      - name: Test Codius provider manifest
+        run: npx vitest run packages/protocol/src/codius-provider.test.ts
+
+      - name: Commit finalized productization
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "feat: add Codius Desktop product layer and default ACP provider"
+          git push origin HEAD:feat/codius-productization
