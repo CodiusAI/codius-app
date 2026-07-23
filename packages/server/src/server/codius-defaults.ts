@@ -42,6 +42,17 @@ const CODIUS_DEFAULT_CONFIG = {
   },
 } as const;
 
+export function shouldSeedCodiusHomeDefaults(env: NodeJS.ProcessEnv): boolean {
+  const explicit = env.CODIUS_SEED_DEFAULTS?.trim().toLowerCase();
+  if (explicit === "1" || explicit === "true") return true;
+  if (explicit === "0" || explicit === "false") return false;
+
+  // Most server tests create isolated PASEO_HOME directories and expect an
+  // empty filesystem. Avoid introducing a product config into those unrelated
+  // fixtures; the dedicated Codius test opts in explicitly.
+  return env.NODE_ENV !== "test" && env.VITEST !== "true";
+}
+
 /**
  * Creates the first-run Codius configuration without overwriting an existing
  * user configuration. The normal persisted-config parser remains the source of
