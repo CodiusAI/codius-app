@@ -90,7 +90,7 @@ describe("listPaseoBrowserProfileGuests", () => {
 });
 
 describe("legacy browser profiles", () => {
-  test("accepts only unique saved browser ids and resolves their old partitions", () => {
+  test("uses the Codius profile and resolves old Paseo partitions for cleanup", () => {
     const uuid = "123e4567-e89b-42d3-a456-426614174000";
     const fallbackId = "1700000000000-abcd";
     const browserIds = readLegacyPaseoBrowserIds([uuid, fallbackId, uuid, "not-a-browser-id", 123]);
@@ -106,11 +106,12 @@ describe("legacy browser profiles", () => {
     );
 
     expect(partitions).toEqual([
+      "persist:codius-browser",
       "persist:paseo-browser",
       `persist:paseo-browser-${uuid}`,
       `persist:paseo-browser-${fallbackId}`,
     ]);
-    expect(sessions).toHaveLength(3);
+    expect(sessions).toHaveLength(4);
   });
 
   test("resolves one valid legacy profile for tab-close cleanup", () => {
