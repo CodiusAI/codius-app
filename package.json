@@ -1,24 +1,29 @@
 {
-  "name": "paseo",
+  "name": "codius-desktop",
   "version": "0.2.0-beta.3",
   "private": true,
-  "description": "Paseo: voice-controlled development environment for local AI coding agents",
+  "description": "Codius Desktop: a visual workspace for Codius CLI and local AI coding agents",
   "keywords": [
+    "codius",
+    "coding-agent",
+    "acp",
     "development",
     "mcp",
-    "openai",
-    "voice",
-    "voice-assistant"
+    "browser-automation",
+    "worktrees"
   ],
-  "homepage": "https://paseo.sh",
+  "homepage": "https://codius.ai",
   "license": "AGPL-3.0-or-later",
   "author": {
-    "name": "Mohamed Boudra",
-    "email": "hello@moboudra.com"
+    "name": "Prismosoft",
+    "email": "prismosoft@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/getpaseo/paseo.git"
+    "url": "https://github.com/prismosoft/codius-desktop.git"
+  },
+  "bugs": {
+    "url": "https://github.com/prismosoft/codius-desktop/issues"
   },
   "workspaces": [
     "packages/expo-two-way-audio",
