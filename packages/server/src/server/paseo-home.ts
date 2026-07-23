@@ -1,5 +1,6 @@
 import os from "node:os";
 import path from "node:path";
+import { ensureCodiusHomeDefaults } from "./codius-defaults.js";
 import { ensurePrivateDirectory } from "./private-files.js";
 
 function expandHomeDir(input: string): string {
@@ -13,8 +14,9 @@ function expandHomeDir(input: string): string {
 }
 
 export function resolvePaseoHome(env: NodeJS.ProcessEnv = process.env): string {
-  const raw = env.PASEO_HOME ?? "~/.paseo";
+  const raw = env.CODIUS_HOME ?? env.PASEO_HOME ?? "~/.codius";
   const resolved = path.resolve(expandHomeDir(raw));
   ensurePrivateDirectory(resolved);
+  ensureCodiusHomeDefaults(resolved);
   return resolved;
 }
