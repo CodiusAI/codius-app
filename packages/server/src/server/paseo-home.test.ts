@@ -17,7 +17,9 @@ describe.skipIf(process.platform === "win32")("Codius home permissions and defau
     const parent = mkdtempSync(path.join(tmpdir(), "codius-home-parent-"));
     const codiusHome = path.join(parent, "home");
     try {
-      expect(resolvePaseoHome({ CODIUS_HOME: codiusHome })).toBe(codiusHome);
+      expect(
+        resolvePaseoHome({ CODIUS_HOME: codiusHome, CODIUS_SEED_DEFAULTS: "1" }),
+      ).toBe(codiusHome);
       expect(modeOf(codiusHome)).toBe(PRIVATE_DIRECTORY_MODE);
 
       const configPath = path.join(codiusHome, "config.json");
