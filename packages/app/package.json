@@ -2,6 +2,13 @@
   "name": "@getpaseo/app",
   "version": "0.2.0-beta.3",
   "private": true,
+  "description": "Codius cross-platform client for local coding agents",
+  "homepage": "https://codius.ai",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prismosoft/codius-desktop.git"
+  },
   "main": "index.ts",
   "scripts": {
     "start": "npm run start:expo",
@@ -23,12 +30,12 @@
     "test:browser": "vitest run --project browser",
     "test:e2e": "playwright test --project='Desktop Chrome'",
     "test:e2e:desktop": "cross-env E2E_DESKTOP_RUNTIME=1 playwright test --project='Desktop Chrome' e2e/project-picker-desktop.spec.ts",
-    "test:e2e:real": "cross-env E2E_FORK_PASEO_HOME_FROM=../../.dev/paseo-home playwright test --project=real-provider",
+    "test:e2e:real": "cross-env E2E_FORK_PASEO_HOME_FROM=../../.dev/codius-home playwright test --project=real-provider",
     "test:e2e:ui": "playwright test --ui",
     "build": "npm run build:web",
     "build:web": "npm --prefix ../.. run build:app-deps && expo export --platform web",
     "profile:workspace-tabs": "node ./scripts/profile-workspace-tabs.mjs",
-    "deploy:web": "npm run build:web && wrangler pages deploy dist --project-name paseo-app --branch main",
+    "deploy:web": "npm run build:web && wrangler pages deploy dist --project-name codius-app --branch main",
     "build:terminal-webview": "node ./scripts/build-terminal-webview-html.mjs"
   },
   "dependencies": {
