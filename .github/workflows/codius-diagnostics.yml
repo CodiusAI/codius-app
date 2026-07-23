@@ -1,0 +1,122 @@
+name: Codius productization diagnostics
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/codius-productization
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: codius-productization-diagnostics
+  cancel-in-progress: true
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    env:
+      ONNXRUNTIME_NODE_INSTALL: skip
+      ELECTRON_SKIP_BINARY_DOWNLOAD: 1
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --include=dev
+
+      - name: Collect formatting and test diagnostics
+        id: diagnose
+        shell: bash
+        run: |
+          set +e
+          mkdir -p .diagnostics
+
+          npm run format > .diagnostics/format.log 2>&1
+          FORMAT_STATUS=$?
+          git diff --stat > .diagnostics/format-stat.txt
+          git diff --name-only > .diagnostics/format-files.txt
+
+          npm test --workspace=@getpaseo/desktop -- --reporter=verbose > .diagnostics/desktop-tests.log 2>&1
+          DESKTOP_STATUS=$?
+
+          npm test --workspace=@getpaseo/app -- --reporter=verbose > .diagnostics/app-tests.log 2>&1
+          APP_STATUS=$?
+
+          npm run test:local --workspace=@getpaseo/cli > .diagnostics/cli-tests.log 2>&1
+          CLI_STATUS=$?
+
+          {
+            echo "format_status=$FORMAT_STATUS"
+            echo "desktop_status=$DESKTOP_STATUS"
+            echo "app_status=$APP_STATUS"
+            echo "cli_status=$CLI_STATUS"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post concise diagnostics to PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORMAT_STATUS: ${{ steps.diagnose.outputs.format_status }}
+          DESKTOP_STATUS: ${{ steps.diagnose.outputs.desktop_status }}
+          APP_STATUS: ${{ steps.diagnose.outputs.app_status }}
+          CLI_STATUS: ${{ steps.diagnose.outputs.cli_status }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BODY=.diagnostics/comment.md
+          {
+            echo "<!-- codius-productization-diagnostics -->"
+            echo "## Codius productization diagnostics"
+            echo
+            echo "Commit: \`$GITHUB_SHA\`"
+            echo
+            echo "| Check | Exit status |"
+            echo "|---|---:|"
+            echo "| Formatter | $FORMAT_STATUS |"
+            echo "| Desktop tests | $DESKTOP_STATUS |"
+            echo "| App tests | $APP_STATUS |"
+            echo "| CLI tests | $CLI_STATUS |"
+            echo
+            echo "### Files changed by the formatter"
+            echo '```text'
+            sed -n '1,120p' .diagnostics/format-files.txt
+            echo '```'
+            echo
+            echo "### Formatter diff summary"
+            echo '```text'
+            sed -n '1,120p' .diagnostics/format-stat.txt
+            echo '```'
+            echo
+            echo "### Desktop test tail"
+            echo '```text'
+            tail -n 180 .diagnostics/desktop-tests.log
+            echo '```'
+            echo
+            echo "### App test tail"
+            echo '```text'
+            tail -n 180 .diagnostics/app-tests.log
+            echo '```'
+            echo
+            echo "### CLI test tail"
+            echo '```text'
+            tail -n 180 .diagnostics/cli-tests.log
+            echo '```'
+          } > "$BODY"
+
+          EXISTING_ID=$(gh api "repos/$GITHUB_REPOSITORY/issues/1/comments" --paginate --jq '.[] | select(.body | contains("<!-- codius-productization-diagnostics -->")) | .id' | tail -n 1)
+          if [[ -n "$EXISTING_ID" ]]; then
+            jq -n --rawfile body "$BODY" '{body: $body}' | gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$EXISTING_ID" --input -
+          else
+            gh pr comment 1 --body-file "$BODY"
+          fi
+
+      - name: Fail when diagnostics found issues
+        if: ${{ steps.diagnose.outputs.format_status != '0' || steps.diagnose.outputs.desktop_status != '0' || steps.diagnose.outputs.app_status != '0' || steps.diagnose.outputs.cli_status != '0' }}
+        run: exit 1
