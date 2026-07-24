@@ -1,0 +1,75 @@
+name: Assert Codius Desktop Release Readiness
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/codius-release-assert.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  assert-ready:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      CI: "1"
+      ONNXRUNTIME_NODE_INSTALL: skip
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main, fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Validate Codius Desktop release surface
+        id: validate
+        shell: bash
+        run: |
+          npm run format:check
+          npm run typecheck
+          npm run test --workspace=@getpaseo/protocol
+          npm run test --workspace=@getpaseo/server -- src/server/paseo-home.test.ts src/server/agent/provider-registry.test.ts
+          npm run test --workspace=@getpaseo/desktop
+          npm run test --workspace=@getpaseo/app
+          npm run test --workspace=@getpaseo/cli
+          npm run build:server
+          npm run build:main --workspace=@getpaseo/desktop
+          grep -q 'command: \["codius", "acp"\]' packages/server/src/server/codius-defaults.ts
+          grep -q 'allowedProviderMap.has("codius")' packages/app/src/provider-selection/resolve-agent-form.ts
+          grep -q 'ai.codius.desktop' packages/desktop/electron-builder.yml
+          grep -q 'productName: Codius Desktop' packages/desktop/electron-builder.yml
+          grep -q 'persist:codius-browser' packages/desktop/src/features/browser-profile.ts
+          grep -q 'persist:codius-browser' packages/desktop/src/preload.ts
+          grep -q 'codius:' packages/protocol/src/agent-deep-link.ts
+          test -s packages/desktop/assets/icon.png
+          test -s packages/desktop/assets/icon.ico
+          test -s packages/desktop/assets/icon.icns
+          test -f .github/workflows/codius-ci.yml
+          test -f .github/workflows/codius-release.yml
+          test -f docs/releasing-codius.md
+          ! find .github/workflows -maxdepth 1 -type f \( -name 'codius-productization*' -o -name 'codius-release-gate.yml' -o -name 'codius-release-finalize.yml' -o -name 'codius-release-rescue.yml' -o -name 'codius-compatibility-repair.yml' -o -name 'codius-final-check.yml' -o -name 'codius-readiness-v*.yml' \) | grep -q .
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Write readiness manifest and self-remove
+        shell: bash
+        run: |
+          mkdir -p docs
+          cat > docs/release-ready.json <<EOF
+          {
+            "product": "Codius Desktop",
+            "status": "release-ready",
+            "validated_source_sha": "${{ steps.validate.outputs.sha }}",
+            "validation_run": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            "default_provider": "Codius",
+            "provider_command": ["codius", "acp"],
+            "desktop_controller": "codiusctl",
+            "application_id": "ai.codius.desktop",
+            "production_api": "https://api.codius.ai/v1",
+            "development_api": "https://devapi.codius.dev/v1"
+          }
+          EOF
+          rm -f .github/workflows/codius-release-assert.yml
+          git config user.name "Codius CI"; git config user.email "actions@codius.ai"
+          git add -A; git commit -m "chore: publish Codius Desktop release-readiness manifest"; git push origin HEAD:main
