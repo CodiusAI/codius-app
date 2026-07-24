@@ -216,6 +216,12 @@ try {
     "worker pid should change after restart",
   );
 
+  await waitFor(
+    async () => (await readDaemonStatus(paseoHome)).localDaemon === "running",
+    120000,
+    "daemon did not become healthy after the supervised restart",
+  );
+
   const statusAfterRestart = await readDaemonStatus(paseoHome);
   assert.strictEqual(
     statusAfterRestart.localDaemon,
