@@ -1,0 +1,115 @@
+name: Release Codius Desktop
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to package, without the leading v
+        required: true
+        type: string
+      prerelease:
+        description: Mark the GitHub release as prerelease
+        required: false
+        default: false
+        type: boolean
+      unsigned:
+        description: Build unsigned artifacts for release-pipeline testing
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, artifact: linux }
+          - { os: windows-latest, artifact: windows }
+          - { os: macos-14, artifact: macos-arm64 }
+          - { os: macos-15-intel, artifact: macos-x64 }
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    env:
+      CI: "1"
+      ONNXRUNTIME_NODE_INSTALL: skip
+      CSC_IDENTITY_AUTO_DISCOVERY: ${{ (github.event_name == 'workflow_dispatch' && inputs.unsigned) && 'false' || 'true' }}
+      CSC_LINK: ${{ secrets.CODIUS_CSC_LINK }}
+      CSC_KEY_PASSWORD: ${{ secrets.CODIUS_CSC_KEY_PASSWORD }}
+      APPLE_ID: ${{ secrets.CODIUS_APPLE_ID }}
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.CODIUS_APPLE_APP_SPECIFIC_PASSWORD }}
+      APPLE_TEAM_ID: ${{ secrets.CODIUS_APPLE_TEAM_ID }}
+      WIN_CSC_LINK: ${{ secrets.CODIUS_WINDOWS_CSC_LINK }}
+      WIN_CSC_KEY_PASSWORD: ${{ secrets.CODIUS_WINDOWS_CSC_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then version="${GITHUB_REF_NAME#v}"; else version="${{ inputs.version }}"; fi
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Configure Windows signing variables
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if ($env:WIN_CSC_LINK) { "CSC_LINK=$env:WIN_CSC_LINK" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append }
+          if ($env:WIN_CSC_KEY_PASSWORD) { "CSC_KEY_PASSWORD=$env:WIN_CSC_KEY_PASSWORD" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append }
+      - run: npm ci --no-audit --no-fund
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm run test --workspace=@getpaseo/protocol
+      - run: npm run test --workspace=@getpaseo/desktop
+      - name: Build packages
+        env:
+          npm_config_version: ${{ steps.version.outputs.version }}
+        run: npm run build:desktop -- --publish never
+      - name: Verify artifact names
+        shell: bash
+        run: test -n "$(find packages/desktop/release -maxdepth 1 -type f -iname 'Codius-Desktop*' -print -quit)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codius-desktop-${{ matrix.artifact }}
+          path: |
+            packages/desktop/release/*.dmg
+            packages/desktop/release/*.zip
+            packages/desktop/release/*.AppImage
+            packages/desktop/release/*.deb
+            packages/desktop/release/*.rpm
+            packages/desktop/release/*.tar.gz
+            packages/desktop/release/*.exe
+            packages/desktop/release/*.yml
+            packages/desktop/release/*.blockmap
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { pattern: codius-desktop-*, path: release-assets, merge-multiple: true }
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then version="${GITHUB_REF_NAME#v}"; else version="${{ inputs.version }}"; fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Publish release
+        shell: bash
+        run: |
+          tag="v${{ steps.version.outputs.version }}"
+          prerelease=""
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" && "${{ inputs.prerelease }}" == "true" ]]; then prerelease="--prerelease"; elif [[ "$tag" == *-* ]]; then prerelease="--prerelease"; fi
+          gh release view "$tag" --repo prismosoft/codius-desktop >/dev/null 2>&1 || gh release create "$tag" --repo prismosoft/codius-desktop --title "Codius Desktop $tag" --generate-notes $prerelease
+          find release-assets -type f -print0 | xargs -0 gh release upload "$tag" --repo prismosoft/codius-desktop --clobber
