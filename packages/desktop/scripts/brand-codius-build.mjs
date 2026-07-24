@@ -25,14 +25,26 @@ const replacements = [
 ];
 
 let source = await readFile(mainFile, "utf8");
+let changed = false;
 for (const replacement of replacements) {
-  if (!source.includes(replacement.from)) {
+  if (source.includes(replacement.from)) {
+    source = source.replace(replacement.from, replacement.to);
+    changed = true;
+  } else if (source.includes(replacement.to)) {
+    // Already branded. `tsc` builds incrementally, so a repeated `build:main`
+    // can leave a previously branded dist/main.js in place without re-emitting
+    // the upstream source. Re-running must therefore be a no-op, not a failure.
+    continue;
+  } else {
     throw new Error(
-      `Unable to apply Codius branding for ${replacement.name}; expected emitted source was not found in ${mainFile}`,
+      `Unable to apply Codius branding for ${replacement.name}; neither the upstream nor the branded form was found in ${mainFile}`,
     );
   }
-  source = source.replace(replacement.from, replacement.to);
 }
 
-await writeFile(mainFile, source, "utf8");
-console.log("Applied Codius Electron runtime identity");
+if (changed) {
+  await writeFile(mainFile, source, "utf8");
+  console.log("Applied Codius Electron runtime identity");
+} else {
+  console.log("Codius Electron runtime identity already applied; nothing to do");
+}

@@ -30,6 +30,14 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - run: npm run format:check
+      # Workspace type declarations and app assets must be built before
+      # typecheck and the workspace test suites can resolve cross-package
+      # imports (e.g. @getpaseo/protocol/*, @getpaseo/client/internal/*).
+      - name: Build workspace dependencies
+        run: |
+          npm run build:server
+          npm run build:app-deps
+          npm run build:main --workspace=@getpaseo/desktop
       - run: npm run typecheck
       - name: Protocol tests
         run: npm run test --workspace=@getpaseo/protocol
@@ -41,10 +49,6 @@ jobs:
         run: npm run test --workspace=@getpaseo/app
       - name: Daemon CLI tests
         run: npm run test --workspace=@getpaseo/cli
-      - name: Build server and Electron main
-        run: |
-          npm run build:server
-          npm run build:main --workspace=@getpaseo/desktop
       - name: Audit Codius product contract
         shell: bash
         run: |
