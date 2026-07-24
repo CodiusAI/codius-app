@@ -1,0 +1,77 @@
+name: Codius asset diagnostics
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/codius-asset-diagnostics.yml"
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  scan-pngs:
+    runs-on: ubuntu-24.04
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+      ONNXRUNTIME_NODE_INSTALL: skip
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/codius-productization
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: node scripts/npm-retry.mjs ci
+      - id: scan
+        shell: bash
+        run: |
+          set +e
+          node - <<'NODE' > /tmp/assets.log 2>&1
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const Jimp = require('jimp-compact');
+
+          function walk(dir) {
+            return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+              const file = path.join(dir, entry.name);
+              return entry.isDirectory() ? walk(file) : [file];
+            });
+          }
+
+          (async () => {
+            let failed = 0;
+            for (const file of walk('packages/app/assets').filter((file) => file.toLowerCase().endsWith('.png'))) {
+              try {
+                const image = await Jimp.read(file);
+                console.log(`OK ${file} ${image.bitmap.width}x${image.bitmap.height}`);
+              } catch (error) {
+                failed += 1;
+                console.log(`FAIL ${file}: ${error instanceof Error ? error.stack ?? error.message : String(error)}`);
+              }
+            }
+            process.exitCode = failed === 0 ? 0 : 1;
+          })();
+          NODE
+          status=$?
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Publish asset diagnostic
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS: ${{ steps.scan.outputs.status }}
+        shell: bash
+        run: |
+          marker='<!-- codius-asset-diagnostic -->'
+          { echo "$marker"; echo '## Codius PNG scan'; echo; echo "Status: \`$STATUS\`"; echo; echo '```text'; grep -E '^(FAIL|OK)' /tmp/assets.log; echo '```'; } > /tmp/comment.md
+          existing=$(gh api "repos/$GITHUB_REPOSITORY/issues/1/comments" --paginate --jq ".[] | select(.body | contains(\"$marker\")) | .id" | tail -n 1)
+          if [[ -n "$existing" ]]; then
+            jq -n --rawfile body /tmp/comment.md '{body:$body}' | gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" --input -
+          else
+            gh pr comment 1 --body-file /tmp/comment.md
+          fi
+      - if: steps.scan.outputs.status != '0'
+        run: exit 1
