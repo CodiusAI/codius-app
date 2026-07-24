@@ -27,7 +27,7 @@
     "prepack": "npm run build:clean",
     "typecheck": "tsgo --noEmit",
     "test": "npm run test:local",
-    "test:local": "tsx tests/run-all.ts",
+    "test:local": "node tests/run-all.mjs",
     "test:e2e": "npm run test:local",
     "test:e2e:lifecycle": "npx tsx tests/e2e/agent-lifecycle.test.ts"
   },
