@@ -23,6 +23,7 @@
     "test:e2e:browser-tab-bridge": "npm run build:main && node ./scripts/browser-tab-bridge.e2e.mjs",
     "verify:electron-cdp": "node ./scripts/verify-electron-cdp.mjs",
     "test": "vitest run",
+    "test:codius-acp": "node ./scripts/codius-acp-integration.mjs",
     "typecheck": "tsgo --noEmit -p tsconfig.json"
   },
   "dependencies": {
