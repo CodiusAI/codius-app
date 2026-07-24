@@ -1,0 +1,36 @@
+name: Fix Codius Desktop Browser Test Setup
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/codius-playwright-fix.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main, fetch-depth: 0 }
+      - name: Add Playwright browser installation to permanent CI
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/codius-ci.yml')
+          if not p.exists(): raise SystemExit('codius-ci.yml is missing')
+          text=p.read_text()
+          needle='      - run: npm ci --no-audit --no-fund\n'
+          insert='      - run: npm ci --no-audit --no-fund\n      - name: Install Chromium for Vitest browser tests\n        run: npx playwright install --with-deps chromium\n'
+          if needle in text and 'Install Chromium for Vitest browser tests' not in text:
+              text=text.replace(needle,insert,1)
+          p.write_text(text)
+          PY
+      - name: Commit correction
+        shell: bash
+        run: |
+          rm -f .github/workflows/codius-playwright-fix.yml
+          git config user.name "Codius CI"; git config user.email "actions@codius.ai"
+          git add -A; git commit -m "ci: install Chromium for Desktop application tests"; git push origin HEAD:main
