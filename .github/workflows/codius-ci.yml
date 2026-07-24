@@ -1,0 +1,61 @@
+name: Codius Desktop CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codius-desktop-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      CI: "1"
+      ONNXRUNTIME_NODE_INSTALL: skip
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run format:check
+      - run: npm run typecheck
+      - name: Protocol tests
+        run: npm run test --workspace=@getpaseo/protocol
+      - name: Server provider tests
+        run: npm run test --workspace=@getpaseo/server -- src/server/paseo-home.test.ts src/server/agent/provider-registry.test.ts
+      - name: Desktop tests
+        run: npm run test --workspace=@getpaseo/desktop
+      - name: App tests
+        run: npm run test --workspace=@getpaseo/app
+      - name: Daemon CLI tests
+        run: npm run test --workspace=@getpaseo/cli
+      - name: Build server and Electron main
+        run: |
+          npm run build:server
+          npm run build:main --workspace=@getpaseo/desktop
+      - name: Audit Codius product contract
+        shell: bash
+        run: |
+          grep -q 'command: \["codius", "acp"\]' packages/server/src/server/codius-defaults.ts
+          grep -q 'allowedProviderMap.has("codius")' packages/app/src/provider-selection/resolve-agent-form.ts
+          grep -q 'ai.codius.desktop' packages/desktop/electron-builder.yml
+          grep -q 'productName: Codius Desktop' packages/desktop/electron-builder.yml
+          grep -q 'persist:codius-browser' packages/desktop/src/features/browser-profile.ts
+          grep -q 'persist:codius-browser' packages/desktop/src/preload.ts
+          grep -q 'codius:' packages/protocol/src/agent-deep-link.ts
+          test -s packages/desktop/assets/icon.png
+          test -s packages/desktop/assets/icon.ico
+          test -s packages/desktop/assets/icon.icns
+          ! grep -R --line-number --exclude-dir=node_modules --exclude='*.md' 'RUNWARE_API_KEY\|api\.runware' packages/server packages/app packages/desktop
