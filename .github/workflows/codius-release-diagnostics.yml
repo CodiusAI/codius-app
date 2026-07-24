@@ -1,25 +1,31 @@
 name: Codius release diagnostics
 
 on:
-  pull_request:
-    branches: [main]
+  push:
+    branches:
+      - feat/codius-productization
     paths:
-      - ".github/workflows/codius-release-diagnostics.yml"
+      - .github/workflows/codius-release-diagnostics.yml
 
 permissions:
   contents: read
-  issues: write
-  pull-requests: write
 
 env:
   ONNXRUNTIME_NODE_INSTALL: skip
+  ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+  PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD: "0"
+  PASEO_DICTATION_ENABLED: "0"
+  PASEO_VOICE_MODE_ENABLED: "0"
+  CODIUS_SEED_DEFAULTS: "0"
 
 jobs:
-  playwright-shard-2:
+  cli-shard:
+    name: cli shard ${{ matrix.shard }}/3
     runs-on: ubuntu-24.04
-    env:
-      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
-      PASEO_LOG_LEVEL: error
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,101 +35,27 @@ jobs:
           node-version: "22"
           cache: npm
       - run: node scripts/npm-retry.mjs ci
-      - run: npx playwright install chromium
-      - run: npm run build:app-deps
-      - run: npm run build:server
       - run: node scripts/npm-retry.mjs install -g @anthropic-ai/claude-code @openai/codex@0.105.0 opencode-ai
-      - id: diagnose
+      - id: test
         shell: bash
-        run: |
-          set +e
-          npm run test:e2e --workspace=@getpaseo/app -- --shard=2/4 --reporter=line > /tmp/diagnostic.log 2>&1
-          status=$?
-          echo "status=$status" >> "$GITHUB_OUTPUT"
-          {
-            echo "=== failure lines ==="
-            grep -nEi 'error:|assertion|timeout|failed|expected|received|\.spec\.(ts|tsx)|✘|×' /tmp/diagnostic.log | tail -n 120 || true
-            echo "=== result contexts ==="
-            find packages/app/test-results -type f \( -name 'error-context.md' -o -name '*.txt' \) -print -exec sh -c 'sed -n "1,120p" "$1"' _ {} \; 2>/dev/null || true
-            echo "=== final output ==="
-            tail -n 40 /tmp/diagnostic.log
-          } > /tmp/summary.log
-          exit 0
-      - name: Publish focused Playwright diagnostic
         env:
-          GH_TOKEN: ${{ github.token }}
-          STATUS: ${{ steps.diagnose.outputs.status }}
-        shell: bash
+          PASEO_CLI_TEST_SHARD: ${{ matrix.shard }}
+          PASEO_CLI_TEST_SHARD_TOTAL: "3"
         run: |
-          marker='<!-- codius-diagnostic-playwright-2 -->'
-          { echo "$marker"; echo '## Playwright shard 2 diagnostic'; echo; echo "Exit status: \`$STATUS\`"; echo; echo '```text'; tail -c 18000 /tmp/summary.log; echo; echo '```'; } > /tmp/comment.md
-          existing=$(gh api "repos/$GITHUB_REPOSITORY/issues/1/comments" --paginate --jq ".[] | select(.body | contains(\"$marker\")) | .id" | tail -n 1)
-          jq -n --rawfile body /tmp/comment.md '{body:$body}' | gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" --input -
-      - if: steps.diagnose.outputs.status != '0'
-        run: exit 1
-
-  nix-build:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: feat/codius-productization
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: npm
-      - uses: cachix/install-nix-action@v31
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
-      - run: ./scripts/update-nix.sh
-      - id: diagnose
-        shell: bash
-        run: |
+          mkdir -p diagnostics
           set +e
-          nix build .#default -o result --print-build-logs > /tmp/diagnostic.log 2>&1
+          npm run test --workspace=@getpaseo/cli > "diagnostics/cli-shard-${PASEO_CLI_TEST_SHARD}.log" 2>&1
           status=$?
-          echo "status=$status" >> "$GITHUB_OUTPUT"
-          { grep -nEi 'error:|failed|killed|signal|out of memory|enomem|fatal|exit code' /tmp/diagnostic.log | tail -n 120 || true; echo '=== final output ==='; tail -n 50 /tmp/diagnostic.log; } > /tmp/summary.log
+          echo "$status" > "diagnostics/cli-shard-${PASEO_CLI_TEST_SHARD}.exit"
           exit 0
-      - name: Publish focused Nix diagnostic
-        env:
-          GH_TOKEN: ${{ github.token }}
-          STATUS: ${{ steps.diagnose.outputs.status }}
-        shell: bash
-        run: |
-          marker='<!-- codius-diagnostic-nix -->'
-          { echo "$marker"; echo '## Nix build diagnostic'; echo; echo "Exit status: \`$STATUS\`"; echo; echo '```text'; tail -c 14000 /tmp/summary.log; echo; echo '```'; } > /tmp/comment.md
-          existing=$(gh api "repos/$GITHUB_REPOSITORY/issues/1/comments" --paginate --jq ".[] | select(.body | contains(\"$marker\")) | .id" | tail -n 1)
-          jq -n --rawfile body /tmp/comment.md '{body:$body}' | gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" --input -
-      - if: steps.diagnose.outputs.status != '0'
-        run: exit 1
-
-  docker-build:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          ref: feat/codius-productization
-      - uses: docker/setup-buildx-action@v4
-      - id: diagnose
+          name: codius-desktop-cli-shard-${{ matrix.shard }}
+          retention-days: 3
+          path: diagnostics
+      - name: Preserve failing status
         shell: bash
         run: |
-          set +e
-          version=$(node -p "require('./package.json').version")
-          docker buildx build --progress=plain --platform linux/amd64 --build-arg PASEO_VERSION="$version" -f docker/base/Dockerfile . > /tmp/diagnostic.log 2>&1
-          status=$?
-          echo "status=$status" >> "$GITHUB_OUTPUT"
-          { grep -nEi 'error:|failed|killed|signal|out of memory|enomem|fatal|exit code' /tmp/diagnostic.log | tail -n 120 || true; echo '=== final output ==='; tail -n 50 /tmp/diagnostic.log; } > /tmp/summary.log
-          exit 0
-      - name: Publish focused Docker diagnostic
-        env:
-          GH_TOKEN: ${{ github.token }}
-          STATUS: ${{ steps.diagnose.outputs.status }}
-        shell: bash
-        run: |
-          marker='<!-- codius-diagnostic-docker -->'
-          { echo "$marker"; echo '## Docker build diagnostic'; echo; echo "Exit status: \`$STATUS\`"; echo; echo '```text'; tail -c 14000 /tmp/summary.log; echo; echo '```'; } > /tmp/comment.md
-          existing=$(gh api "repos/$GITHUB_REPOSITORY/issues/1/comments" --paginate --jq ".[] | select(.body | contains(\"$marker\")) | .id" | tail -n 1)
-          jq -n --rawfile body /tmp/comment.md '{body:$body}' | gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" --input -
-      - if: steps.diagnose.outputs.status != '0'
-        run: exit 1
+          status=$(cat "diagnostics/cli-shard-${{ matrix.shard }}.exit")
+          exit "$status"
