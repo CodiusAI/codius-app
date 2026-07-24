@@ -1,9 +1,10 @@
 name: Codius release diagnostics
 
 on:
-  push:
+  pull_request:
     branches:
-      - feat/codius-productization
+      - main
+    types: [opened, synchronize, reopened]
     paths:
       - .github/workflows/codius-release-diagnostics.yml
 
