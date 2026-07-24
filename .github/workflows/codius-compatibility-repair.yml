@@ -1,0 +1,125 @@
+name: Codius Desktop Compatibility Repair
+
+on:
+  push:
+    branches:
+      - feat/codius-productization
+    paths:
+      - .github/workflows/codius-compatibility-repair.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/codius-productization
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Apply compatibility-safe Codius defaults
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          preferences = Path('packages/app/src/create-agent-preferences/preferences.ts')
+          text = preferences.read_text()
+          text = re.sub(
+              r'export const DEFAULT_FORM_PREFERENCES: FormPreferences = \{\s*provider:\s*["\']codius["\'],?\s*\};',
+              'export const DEFAULT_FORM_PREFERENCES: FormPreferences = {};',
+              text,
+              flags=re.S,
+          )
+          preferences.write_text(text)
+
+          resolver = Path('packages/app/src/provider-selection/resolve-agent-form.ts')
+          text = resolver.read_text()
+          marker = '  return currentProvider;\n}\n\nfunction resolveModeId'
+          replacement = (
+              '  if (!currentProvider && allowedProviderMap.has("codius")) {\n'
+              '    return "codius";\n'
+              '  }\n'
+              '  return currentProvider;\n'
+              '}\n\nfunction resolveModeId'
+          )
+          if marker in text and 'allowedProviderMap.has("codius")' not in text:
+              text = text.replace(marker, replacement, 1)
+          resolver.write_text(text)
+
+          home = Path('packages/server/src/server/paseo-home.ts')
+          text = home.read_text()
+          if 'ensureCodiusHomeDefaults(resolved);' in text:
+              text = text.replace(
+                  '  ensureCodiusHomeDefaults(resolved);',
+                  '  if (env.CODIUS_DESKTOP_MANAGED === "1" || env.PASEO_DESKTOP_MANAGED === "1") {\n'
+                  '    ensureCodiusHomeDefaults(resolved);\n'
+                  '  }',
+              )
+          home.write_text(text)
+
+          preload = Path('packages/desktop/src/preload.ts')
+          if preload.exists():
+              preload.write_text(preload.read_text().replace('persist:paseo-browser', 'persist:codius-browser'))
+
+          test = Path('packages/app/src/provider-selection/codius-default.test.ts')
+          test.write_text('''import { describe, expect, it } from "vitest";
+          import {
+            INITIAL_USER_MODIFIED,
+            resolveFormState,
+            type FormState,
+          } from "./resolve-agent-form";
+
+          describe("Codius default provider", () => {
+            it("selects Codius for a fresh form when it is available", () => {
+              const current: FormState = {
+                serverId: "server",
+                provider: null,
+                modeId: "",
+                model: "",
+                thinkingOptionId: "",
+                workingDir: "",
+              };
+              const allowed = new Map([
+                [
+                  "codius",
+                  {
+                    id: "codius",
+                    label: "Codius",
+                    description: "Codius CLI",
+                    defaultModeId: null,
+                    modes: [],
+                  },
+                ],
+              ]) as Parameters<typeof resolveFormState>[5];
+
+              expect(
+                resolveFormState(undefined, {}, null, INITIAL_USER_MODIFIED, current, allowed).provider,
+              ).toBe("codius");
+            });
+          });
+          ''')
+          PY
+
+      - name: Install and format
+        run: |
+          npm ci --no-audit --no-fund
+          npm run format
+
+      - name: Commit compatibility repair
+        shell: bash
+        run: |
+          rm -f .github/workflows/codius-compatibility-repair.yml
+          git config user.name "Codius CI"
+          git config user.email "actions@codius.ai"
+          git add -A
+          git commit -m "fix: make Codius defaults compatible with upstream flows"
+          git push origin HEAD:feat/codius-productization
