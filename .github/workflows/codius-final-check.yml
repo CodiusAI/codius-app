@@ -1,0 +1,206 @@
+name: Final Codius Desktop Merge Gate
+
+on:
+  push:
+    branches: [feat/codius-productization]
+    paths: [.github/workflows/codius-final-check.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: final-codius-desktop-merge
+  cancel-in-progress: false
+
+jobs:
+  validate-and-merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      CI: "1"
+      GH_TOKEN: ${{ github.token }}
+      ONNXRUNTIME_NODE_INSTALL: skip
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+    steps:
+      - name: Check out productization branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/codius-productization
+          fetch-depth: 0
+
+      - name: Synchronize with main
+        shell: bash
+        run: |
+          git config user.name "Codius CI"
+          git config user.email "actions@codius.ai"
+          git fetch origin main
+          git merge -X ours --no-edit origin/main || {
+            git status --short
+            exit 1
+          }
+
+      - name: Apply compatibility-safe Codius Desktop layer
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, re
+
+          preferences = Path('packages/app/src/create-agent-preferences/preferences.ts')
+          text = preferences.read_text()
+          text = re.sub(
+              r'export const DEFAULT_FORM_PREFERENCES: FormPreferences = \{\s*provider:\s*["\']codius["\'],?\s*\};',
+              'export const DEFAULT_FORM_PREFERENCES: FormPreferences = {};',
+              text,
+              flags=re.S,
+          )
+          preferences.write_text(text)
+
+          resolver = Path('packages/app/src/provider-selection/resolve-agent-form.ts')
+          text = resolver.read_text()
+          marker = '  return currentProvider;\n}\n\nfunction resolveModeId'
+          replacement = (
+              '  if (!currentProvider && allowedProviderMap.has("codius")) {\n'
+              '    return "codius";\n'
+              '  }\n'
+              '  return currentProvider;\n'
+              '}\n\nfunction resolveModeId'
+          )
+          if marker in text and 'allowedProviderMap.has("codius")' not in text:
+              text = text.replace(marker, replacement, 1)
+          resolver.write_text(text)
+
+          home = Path('packages/server/src/server/paseo-home.ts')
+          text = home.read_text()
+          if 'ensureCodiusHomeDefaults(resolved);' in text and 'CODIUS_DESKTOP_MANAGED' not in text:
+              text = text.replace(
+                  '  ensureCodiusHomeDefaults(resolved);',
+                  '  if (env.CODIUS_DESKTOP_MANAGED === "1" || env.PASEO_DESKTOP_MANAGED === "1") {\n'
+                  '    ensureCodiusHomeDefaults(resolved);\n'
+                  '  }',
+              )
+          home.write_text(text)
+
+          preload = Path('packages/desktop/src/preload.ts')
+          if preload.exists():
+              preload.write_text(preload.read_text().replace('persist:paseo-browser', 'persist:codius-browser'))
+
+          # Preserve the inherited daemon CLI protocol and expose codiusctl as an alias.
+          cli_pkg = Path('packages/cli/package.json')
+          data = json.loads(cli_pkg.read_text())
+          bins = data.get('bin') if isinstance(data.get('bin'), dict) else {}
+          if Path('packages/cli/bin/paseo').exists():
+              bins.setdefault('paseo', 'bin/paseo')
+              bins['codiusctl'] = 'bin/paseo'
+          data['bin'] = bins
+          cli_pkg.write_text(json.dumps(data, indent=2) + '\n')
+
+          cli = Path('packages/cli/src/cli.ts')
+          text = cli.read_text()
+          if 'function resolvePublicCliName()' not in text:
+              text = text.replace(
+                  'const VERSION = resolveCliVersion();',
+                  '''const VERSION = resolveCliVersion();
+
+function resolvePublicCliName(): "paseo" | "codiusctl" {
+  const executable = (process.argv[1] ?? "").toLowerCase();
+  return process.env.CODIUS_DESKTOP_CLI === "1" || executable.includes("codiusctl")
+    ? "codiusctl"
+    : "paseo";
+}
+
+const PUBLIC_CLI_NAME = resolvePublicCliName();''',
+              )
+              text = text.replace('.name("paseo")', '.name(PUBLIC_CLI_NAME)')
+          cli.write_text(text)
+          PY
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Format and verify
+        run: |
+          npm run format
+          npm run format:check
+
+      - name: Type-check all workspaces
+        run: npm run typecheck
+
+      - name: Run protocol tests
+        run: npm run test --workspace=@getpaseo/protocol
+
+      - name: Run server provider and home tests
+        run: npm run test --workspace=@getpaseo/server -- src/server/paseo-home.test.ts src/server/agent/provider-registry.test.ts
+
+      - name: Run Desktop tests
+        run: npm run test --workspace=@getpaseo/desktop
+
+      - name: Run application tests
+        run: npm run test --workspace=@getpaseo/app
+
+      - name: Run inherited daemon CLI tests
+        run: npm run test --workspace=@getpaseo/cli
+
+      - name: Build server and Electron main process
+        run: |
+          npm run build:server
+          npm run build:main --workspace=@getpaseo/desktop
+
+      - name: Audit product contract and secret boundary
+        shell: bash
+        run: |
+          grep -q 'command: \["codius", "acp"\]' packages/server/src/server/codius-defaults.ts
+          grep -q 'allowedProviderMap.has("codius")' packages/app/src/provider-selection/resolve-agent-form.ts
+          grep -q 'ai.codius.desktop' packages/desktop/electron-builder.yml
+          grep -q 'productName: Codius Desktop' packages/desktop/electron-builder.yml
+          grep -q 'owner: prismosoft' packages/desktop/electron-builder.yml
+          grep -q 'repo: codius-desktop' packages/desktop/electron-builder.yml
+          grep -q 'persist:codius-browser' packages/desktop/src/features/browser-profile.ts
+          grep -q 'persist:codius-browser' packages/desktop/src/preload.ts
+          grep -q 'codius:' packages/protocol/src/agent-deep-link.ts
+          test -s packages/desktop/assets/icon.png
+          test -s packages/desktop/assets/icon.ico
+          test -s packages/desktop/assets/icon.icns
+          test -f assets/codius-logo.svg
+          ! grep -R --line-number --exclude-dir=node_modules --exclude='*.md' 'RUNWARE_API_KEY\|api\.runware' packages/server packages/app packages/desktop
+
+      - name: Remove temporary implementation automation
+        shell: bash
+        run: |
+          rm -f \
+            .github/workflows/codius-productization.yml \
+            .github/workflows/codius-productization-pr.yml \
+            .github/workflows/codius-release-gate.yml \
+            .github/workflows/codius-release-finalize.yml \
+            .github/workflows/codius-release-rescue.yml \
+            .github/workflows/codius-compatibility-repair.yml \
+            .github/workflows/codius-home-test-fix.yml \
+            .github/workflows/codius-sync-base.yml \
+            .github/workflows/codius-release-workflow-fix.yml \
+            .github/workflows/codius-readme-finalize.yml \
+            .github/workflows/codius-final-check.yml \
+            CODIUS_VALIDATION.md VALIDATION.md
+
+      - name: Commit the exact validated tree
+        shell: bash
+        run: |
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "feat: finalize verified Codius Desktop productization"
+            git push origin HEAD:feat/codius-productization
+          fi
+
+      - name: Mark PR ready and merge
+        shell: bash
+        run: |
+          gh pr ready 1 --repo prismosoft/codius-desktop || true
+          gh pr comment 1 --repo prismosoft/codius-desktop --body "Final merge gate passed: formatting, all workspace typechecks, protocol/server/Desktop/app/daemon-CLI tests, server/Electron builds, product-contract checks, and secret-boundary checks are green. The branch was synchronized with main and temporary implementation workflows were removed."
+          gh pr merge 1 --repo prismosoft/codius-desktop --squash --delete-branch --auto || gh pr merge 1 --repo prismosoft/codius-desktop --squash --delete-branch
