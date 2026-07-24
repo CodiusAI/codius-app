@@ -1,0 +1,123 @@
+name: Repair Codius PNG assets
+
+on:
+  push:
+    branches:
+      - feat/codius-productization
+    paths:
+      - .github/workflows/fix-codius-assets.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair-assets:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/codius-productization
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python -m pip install --disable-pip-version-check pillow==11.3.0
+
+      - name: Generate and fully decode Codius assets
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageDraw
+
+          DARK = (17, 24, 39, 255)
+          WHITE = (255, 255, 255, 255)
+          TRANSPARENT = (0, 0, 0, 0)
+
+          def symbol(size: int, canvas, margin: float, holes) -> Image.Image:
+              image = Image.new("RGBA", (size, size), canvas)
+              draw = ImageDraw.Draw(image)
+              inset = round(size * margin)
+              left = top = inset
+              right = bottom = size - inset - 1
+              width = right - left + 1
+              draw.rounded_rectangle(
+                  (left, top, right, bottom),
+                  radius=round(width * 0.22),
+                  fill=DARK,
+              )
+              stroke = max(1, round(width * 0.105))
+              y1 = top + round(width * 0.27)
+              y2 = bottom - round(width * 0.27)
+              x_left = left + round(width * 0.30)
+              x_right = right - round(width * 0.30)
+              arm = round(width * 0.15)
+              segments = [
+                  (x_left, y1, x_left, y2),
+                  (x_left, y1, x_left + arm, y1),
+                  (x_left, y2, x_left + arm, y2),
+                  (x_right, y1, x_right, y2),
+                  (x_right - arm, y1, x_right, y1),
+                  (x_right - arm, y2, x_right, y2),
+              ]
+              for segment in segments:
+                  draw.line(segment, fill=holes, width=stroke, joint="curve")
+              return image
+
+          def brackets(size: int) -> Image.Image:
+              image = Image.new("RGBA", (size, size), TRANSPARENT)
+              draw = ImageDraw.Draw(image)
+              inset = round(size * 0.18)
+              width = size - 2 * inset
+              stroke = max(1, round(width * 0.15))
+              y1 = inset + round(width * 0.18)
+              y2 = size - inset - round(width * 0.18)
+              x_left = inset + round(width * 0.18)
+              x_right = size - inset - round(width * 0.18)
+              arm = round(width * 0.25)
+              for segment in [
+                  (x_left, y1, x_left, y2),
+                  (x_left, y1, x_left + arm, y1),
+                  (x_left, y2, x_left + arm, y2),
+                  (x_right, y1, x_right, y2),
+                  (x_right - arm, y1, x_right, y1),
+                  (x_right - arm, y2, x_right, y2),
+              ]:
+                  draw.line(segment, fill=WHITE, width=stroke, joint="curve")
+              return image
+
+          assets = {
+              Path("packages/app/assets/images/icon.png"): (symbol(1024, WHITE, 0.10, WHITE), True),
+              Path("packages/app/assets/images/favicon.png"): (symbol(256, TRANSPARENT, 0.08, TRANSPARENT), False),
+              Path("packages/app/assets/images/splash-icon.png"): (symbol(1024, WHITE, 0.20, WHITE), True),
+              Path("packages/app/assets/images/android-icon-foreground.png"): (brackets(432), False),
+              Path("packages/app/assets/images/notification-icon.png"): (brackets(96), False),
+              Path("packages/desktop/assets/codius-icon.png"): (symbol(1024, WHITE, 0.10, WHITE), True),
+          }
+
+          for path, (image, opaque) in assets.items():
+              path.parent.mkdir(parents=True, exist_ok=True)
+              if opaque:
+                  image = image.convert("RGB")
+              image.save(path, format="PNG", optimize=False, compress_level=9)
+              with Image.open(path) as decoded:
+                  decoded.load()
+                  print(f"validated {path}: {decoded.size} {decoded.mode} {path.stat().st_size} bytes")
+          PY
+
+      - name: Commit repaired assets
+        shell: bash
+        run: |
+          git config user.name "Codius Automation"
+          git config user.email "actions@codius.ai"
+          git add \
+            packages/app/assets/images/android-icon-foreground.png \
+            packages/app/assets/images/favicon.png \
+            packages/app/assets/images/icon.png \
+            packages/app/assets/images/notification-icon.png \
+            packages/app/assets/images/splash-icon.png \
+            packages/desktop/assets/codius-icon.png
+          git commit -m "fix: replace malformed Codius PNG assets"
+          git push origin HEAD:feat/codius-productization
