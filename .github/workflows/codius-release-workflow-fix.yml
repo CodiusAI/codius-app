@@ -1,0 +1,55 @@
+name: Fix Codius Desktop Release Workflow
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/codius-release-workflow-fix.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main, fetch-depth: 0 }
+      - name: Patch release version synchronization
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/codius-release.yml')
+          text=p.read_text()
+          needle='''      - name: Validate release source
+        run: |
+'''
+          insert='''      - name: Synchronize workspace versions
+        shell: bash
+        run: |
+          npm version "${{ steps.version.outputs.version }}" --no-git-tag-version --workspaces --include-workspace-root
+          npm run version:sync-internal
+
+      - name: Validate release source
+        run: |
+'''
+          if needle in text and 'Synchronize workspace versions' not in text:
+              text=text.replace(needle,insert,1)
+          text=text.replace('''      - name: Build Codius Desktop packages
+        env:
+          npm_config_version: ${{ steps.version.outputs.version }}
+        run: npm run build:desktop -- --publish never
+''','''      - name: Build Codius Desktop packages
+        run: npm run build:desktop -- --publish never
+''')
+          p.write_text(text)
+          PY
+      - name: Commit release workflow correction
+        shell: bash
+        run: |
+          rm -f .github/workflows/codius-release-workflow-fix.yml
+          git config user.name "Codius CI"
+          git config user.email "actions@codius.ai"
+          git add -A
+          git commit -m "fix: synchronize Desktop versions before release packaging"
+          git push origin HEAD:main
