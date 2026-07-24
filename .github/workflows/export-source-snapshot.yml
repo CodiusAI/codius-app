@@ -1,22 +1,75 @@
-name: Export Desktop source snapshot
+name: Apply final Codius Desktop packaging repair
 
 on:
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened]
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: codius-desktop-final-packaging-repair
+  cancel-in-progress: true
 
 jobs:
-  export:
+  repair:
+    if: ${{ github.head_ref == 'feat/codius-productization' && !contains(github.event.pull_request.head.sha, 'packaging-repair') }}
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/upload-artifact@v4
+      - name: Check out writable productization branch
+        uses: actions/checkout@v4
         with:
-          name: codius-desktop-source
-          path: |
-            .
-            !.git
-          include-hidden-files: true
-          retention-days: 1
+          ref: feat/codius-productization
+          fetch-depth: 0
+
+      - name: Align packaged smoke harness with Codius runtime names
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          smoke = Path('packages/desktop/scripts/smoke-packaged-desktop-app.js')
+          source = smoke.read_text()
+          replacements = {
+              'const EXECUTABLE_NAME = "Paseo";': 'const EXECUTABLE_NAME = "codius-desktop";',
+              'return path.join(appPath, "Contents", "Resources", "bin", "paseo");': 'return path.join(appPath, "Contents", "Resources", "bin", "codiusctl");',
+              'return path.join(appPath, "resources", "bin", "paseo.cmd");': 'return path.join(appPath, "resources", "bin", "codiusctl.cmd");',
+              'return path.join(appPath, "resources", "bin", "paseo");': 'return path.join(appPath, "resources", "bin", "codiusctl");',
+              '.find((candidate) => candidate.url().startsWith("paseo://app/"));': '.find((candidate) => candidate.url().startsWith("codius://app/"));',
+              'Timed out waiting for the packaged paseo://app/ renderer': 'Timed out waiting for the packaged codius://app/ renderer',
+              'Usage: node smoke-packaged-desktop-app.js --app <Paseo.app>': 'Usage: node smoke-packaged-desktop-app.js --app <Codius Desktop.app>',
+          }
+          for old, new in replacements.items():
+              if old not in source:
+                  raise SystemExit(f'Missing expected smoke-harness text: {old}')
+              source = source.replace(old, new)
+          smoke.write_text(source)
+
+          after_pack = Path('packages/desktop/scripts/after-pack.js')
+          source = after_pack.read_text()
+          replacements = {
+              'const EXECUTABLE_NAME = "Paseo";': 'const APP_BUNDLE_NAME = "Codius Desktop";',
+              '`${EXECUTABLE_NAME}.app`': '`${APP_BUNDLE_NAME}.app`',
+              'Paseo requires user-installed `claude`': 'Codius Desktop requires user-installed `claude`',
+              'if (process.env.PASEO_DESKTOP_SMOKE !== "1") {': 'if (process.env.CODIUS_DESKTOP_SMOKE !== "1" && process.env.PASEO_DESKTOP_SMOKE !== "1") {',
+          }
+          for old, new in replacements.items():
+              if old not in source:
+                  raise SystemExit(f'Missing expected after-pack text: {old}')
+              source = source.replace(old, new)
+          after_pack.write_text(source)
+          PY
+
+          node --check packages/desktop/scripts/smoke-packaged-desktop-app.js
+          node --check packages/desktop/scripts/after-pack.js
+
+      - name: Commit packaging repair and remove this one-time workflow
+        shell: bash
+        run: |
+          git config user.name "Codius Automation"
+          git config user.email "actions@codius.ai"
+          git rm .github/workflows/export-source-snapshot.yml
+          git add packages/desktop/scripts/smoke-packaged-desktop-app.js packages/desktop/scripts/after-pack.js
+          git commit -m "fix(desktop): align packaged smoke harness with Codius"
+          git push origin HEAD:feat/codius-productization
