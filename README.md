@@ -1,188 +1,174 @@
 <p align="center">
-  <img src="packages/website/public/logo.svg" width="64" height="64" alt="Paseo logo">
+  <a href="https://codius.ai"><img src="assets/codius-logo.svg" alt="Codius" width="360" /></a>
 </p>
 
-<h1 align="center">Paseo</h1>
+<h1 align="center">Codius Desktop</h1>
+<p align="center"><strong>A local multi-agent coding workspace with Codius built in by default.</strong></p>
 
 <p align="center">
-  <a href="README.md">English</a> ·
-  <a href="README.zh-CN.md">简体中文</a> ·
-  <a href="README.ja.md">日本語</a>
+  <a href="https://github.com/prismosoft/codius-desktop/actions/workflows/codius-ci.yml"><img alt="Codius Desktop CI" src="https://img.shields.io/github/actions/workflow/status/prismosoft/codius-desktop/codius-ci.yml?branch=main&style=flat-square" /></a>
+  <a href="https://github.com/prismosoft/codius-desktop/releases"><img alt="Release" src="https://img.shields.io/github/v/release/prismosoft/codius-desktop?display_name=tag&style=flat-square" /></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/prismosoft/codius-desktop?style=flat-square" /></a>
 </p>
 
-<p align="center">
-  <a href="https://github.com/getpaseo/paseo/stargazers">
-    <img src="https://img.shields.io/github/stars/getpaseo/paseo?style=flat&logo=github" alt="GitHub stars">
-  </a>
-  <a href="https://github.com/getpaseo/paseo/releases">
-    <img src="https://img.shields.io/github/v/release/getpaseo/paseo?style=flat&logo=github" alt="GitHub release">
-  </a>
-  <a href="https://x.com/moboudra">
-    <img src="https://img.shields.io/badge/%40moboudra-555?logo=x" alt="X">
-  </a>
-  <a href="https://discord.gg/jz8T2uahpH">
-    <img src="https://img.shields.io/badge/Discord-555?logo=discord" alt="Discord">
-  </a>
-  <a href="https://www.reddit.com/r/PaseoAI/">
-    <img src="https://img.shields.io/badge/Reddit-555?logo=reddit" alt="Reddit">
-  </a>
-</p>
+Codius Desktop is derived from [Paseo](https://github.com/getpaseo/paseo). It preserves Paseo's workspaces, Git and worktrees, terminals, multi-agent orchestration, schedules, diffs, voice features, and visible inline browser while adding **Codius CLI as the first-party default provider**.
 
-<p align="center">One interface for Claude Code, Codex, Copilot, OpenCode, and Pi agents.</p>
+## Architecture
 
-<p align="center">
-  <img src="https://paseo.sh/hero-mockup.png" alt="Paseo app screenshot" width="100%">
-</p>
-
-<p align="center">
-  <img src="https://paseo.sh/mobile-mockup.png" alt="Paseo mobile app" width="100%">
-</p>
-
-> [!NOTE]
-> I'm a solo maintainer and don't always keep up with GitHub Issues daily.
-> If something is urgent or blocking you, [Discord](https://discord.gg/jz8T2uahpH) is the fastest place to reach me.
-
----
-
-Run agents in parallel on your own machines. Ship from your phone or your desk.
-
-- **Self-hosted:** Agents run on your machine with your full dev environment. Use your tools, your configs, and your skills.
-- **Multi-provider:** Claude Code, Codex, Copilot, OpenCode, and Pi through the same interface. Pick the right model for each job.
-- **Voice control:** Dictate tasks or talk through problems in voice mode. Hands-free when you need it.
-- **Cross-device:** iOS, Android, desktop, web, and CLI. Start work at your desk, check in from your phone, script it from the terminal.
-- **Privacy-first:** Paseo doesn't have any telemetry, tracking, or forced log-ins.
-
-## Getting Started
-
-Paseo runs a local server called the daemon that manages your coding agents. Clients like the desktop app, mobile app, web app, and CLI connect to it.
-
-### Prerequisites
-
-You need at least one agent CLI installed and configured with your credentials:
-
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
-- [Codex](https://github.com/openai/codex)
-- [GitHub Copilot](https://github.com/features/copilot/cli/)
-- [OpenCode](https://github.com/anomalyco/opencode)
-- [Pi](https://pi.dev)
-
-### Desktop app (recommended)
-
-Download it from [paseo.sh/download](https://paseo.sh/download) or the [GitHub releases page](https://github.com/getpaseo/paseo/releases). Open the app and the daemon starts automatically. Nothing else to install.
-
-To connect from your phone, open **Settings → your host → Connections → Pair a device**.
-
-### CLI / headless
-
-Install the CLI and start Paseo:
-
-```bash
-npm install -g @getpaseo/cli
-paseo
+```text
+Codius Desktop
+  ├── workspaces, Git, worktrees and diffs
+  ├── terminal and process management
+  ├── inline browser and visible browser automation
+  ├── agent sessions, permissions and schedules
+  └── provider picker
+       ├── Codius — default
+       ├── Codex
+       ├── Claude Code
+       ├── GitHub Copilot
+       ├── OpenCode
+       ├── Pi / OMP
+       └── custom ACP providers
+               │
+               │ local ACP over stdio
+               ▼
+          codius acp
+               │
+               │ OpenAI-compatible HTTPS
+               ▼
+          Codius API
 ```
 
-This shows a QR code in the terminal. Connect from any client. This path is useful for servers and remote machines.
+Codius Desktop does not contain model-infrastructure credentials. The Codius coding agent runs locally, and model requests go through the authenticated Codius API.
 
-For full setup and configuration, see:
+## What Codius adds
 
-- [Docs](https://paseo.sh/docs)
-- [Configuration reference](https://paseo.sh/docs/configuration)
+- **Codius is selected for a fresh agent** when the CLI is available.
+- The Desktop launches Codius using `codius acp`.
+- A user's explicit choice of Codex, Claude Code, OpenCode, or another provider is remembered.
+- Codius uses its own application identity, deep links, browser profile, installers, update repository, and `~/.codius` data directory.
+- `codiusctl` is the optional Desktop daemon-management command. It is separate from the coding-agent command `codius`.
+- Legacy Paseo home and deep-link compatibility is retained where needed for migration and upstream maintainability.
 
-### Docker
+## Inline browser and automation
 
-Run the Paseo daemon and self-hosted web UI in Docker:
+Browser tabs are embedded directly in the Desktop workspace. With browser tools enabled, the active agent can navigate, click, type, fill forms, upload workspace files, capture screenshots, inspect console messages, and verify multi-step application flows in the same browser tab the user can see.
+
+Browser access is intentionally opt-in. A browser profile may contain authenticated sessions, so enable agent control only for providers and tasks you trust.
+
+## Endpoints
+
+| Environment | Website | Codius API |
+|---|---|---|
+| Development | `https://dev.codius.dev` | `https://devapi.codius.dev/v1` |
+| Production | `https://codius.ai` | `https://api.codius.ai/v1` |
+
+## Prerequisites
+
+Install Codius CLI and connect a Codius account:
 
 ```bash
-docker run -d --name paseo \
-  -p 6767:6767 \
-  -e PASEO_PASSWORD=change-me \
-  -v "$PWD/paseo-home:/home/paseo" \
-  -v "$PWD:/workspace" \
-  ghcr.io/getpaseo/paseo:latest
+curl -fsSL https://raw.githubusercontent.com/prismosoft/codius-cli/dev/install | bash
+export CODIUS_API_KEY="codius_..."
+codius --version
+codius acp --help
 ```
 
-Open `http://localhost:6767` after it starts. Extend the base image with the agent CLIs you use, then provide credentials through environment variables or the persistent `/home/paseo` volume. See the [Docker documentation](docs/docker.md) for full setup details.
+Other supported agent CLIs can be installed independently and selected from the provider picker.
 
-## CLI
+## Run from source
 
-Everything you can do in the app, you can do from the terminal.
+Requirements:
 
-```bash
-paseo run --provider claude/opus-4.6 "implement user authentication"
-paseo run --provider codex/gpt-5.4 --worktree feature-x "implement feature X"
-
-paseo ls                           # list running agents
-paseo attach abc123                # stream live output
-paseo send abc123 "also add tests" # follow-up task
-
-# run on a remote daemon
-paseo --host workstation.local:6767 run "run the full test suite"
-```
-
-See the [full CLI reference](https://paseo.sh/docs/cli) for more.
-
-## Skills
-
-Skills teach your agent to use Paseo to orchestrate other agents.
+- Node.js 22
+- npm
+- Git
+- Codius CLI for the default provider
 
 ```bash
-npx skills add getpaseo/paseo
-```
-
-Then use them in any agent conversation:
-
-- `/paseo-handoff` — hand off work between agents. I use this to plan with Claude and then handoff to Codex to implement.
-- `/paseo-loop` — loop an agent against clear acceptance criteria (aka Ralph loops), optionally with a verifier.
-- `/paseo-advisor` — spin up a single agent as an advisor for a second opinion, without delegating the work itself.
-- `/paseo-committee` — form a committee of two contrasting agents to step back, do root cause analysis, and produce a plan.
-
-## Development
-
-Quick monorepo package map:
-
-- `packages/server`: Paseo daemon (agent process orchestration, WebSocket API, MCP server)
-- `packages/app`: Expo client (iOS, Android, web)
-- `packages/cli`: `paseo` CLI for daemon and agent workflows
-- `packages/desktop`: Electron desktop app
-- `packages/relay`: Relay package for remote connectivity
-- `packages/website`: Marketing site and documentation (`paseo.sh`)
-
-Common commands:
-
-```bash
-# run all local dev services
-npm run dev
-
-# run individual surfaces
-npm run dev:server
-npm run dev:app
+git clone https://github.com/prismosoft/codius-desktop.git
+cd codius-desktop
+npm ci
 npm run dev:desktop
-npm run dev:website
-
-# build the server stack
-npm run build:server
-
-# repo-wide checks
-npm run typecheck
 ```
 
-## Community
+Windows:
 
-- [paseo-relay](https://github.com/zenghongtu/paseo-relay) — self-hosted relay in Go
-- [paseo-vscode](https://marketplace.visualstudio.com/items?itemName=hinnes.paseo-vscode) — VS Code extension
+```powershell
+npm ci
+npm run dev:win:desktop
+```
 
----
+Development state is isolated from a production install. The Desktop daemon continues to accept inherited `PASEO_*` compatibility variables internally, while Codius-specific paths and public identities are used by the product layer.
 
-<p align="center">
-  <a href="https://star-history.com/#getpaseo/paseo&Date">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=getpaseo/paseo&type=Date&theme=dark">
-      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=getpaseo/paseo&type=Date">
-      <img src="https://api.star-history.com/svg?repos=getpaseo/paseo&type=Date" alt="Star history chart for getpaseo/paseo" width="600" style="max-width: 100%;">
-    </picture>
-  </a>
-</p>
+## First-run provider configuration
 
-## License
+A Desktop-managed first launch seeds a Codius ACP provider equivalent to:
 
-AGPL-3.0
+```json
+{
+  "agents": {
+    "providers": {
+      "codius": {
+        "extends": "acp",
+        "label": "Codius",
+        "command": ["codius", "acp"],
+        "enabled": true
+      }
+    }
+  }
+}
+```
+
+Normal home-path resolution does not overwrite or invent configuration. Existing user configuration always wins.
+
+## Other providers
+
+Codius Desktop retains Paseo's provider system. Codius being the default does not prevent users from using their own Codex, Claude Code, Copilot, OpenCode, Pi, OMP, or custom ACP setup. Requests are never silently moved between Codius and a personal third-party account.
+
+## Validation
+
+```bash
+npm run format:check
+npm run typecheck
+npm run test --workspace=@getpaseo/protocol
+npm run test --workspace=@getpaseo/server -- src/server/paseo-home.test.ts src/server/agent/provider-registry.test.ts
+npm run test --workspace=@getpaseo/desktop
+npm run test --workspace=@getpaseo/app
+npm run test --workspace=@getpaseo/cli
+npm run build:server
+npm run build:main --workspace=@getpaseo/desktop
+```
+
+Permanent checks are defined in `.github/workflows/codius-ci.yml`. Cross-platform release packaging is defined in `.github/workflows/codius-release.yml`; see [docs/releasing-codius.md](docs/releasing-codius.md).
+
+## Release artifacts
+
+Public builds use:
+
+- application ID: `ai.codius.desktop`
+- product name: **Codius Desktop**
+- executable: `codius-desktop`
+- deep-link scheme: `codius:`
+- Desktop controller: `codiusctl`
+- update repository: `prismosoft/codius-desktop`
+
+Stable macOS and Windows releases must be signed; macOS releases must also be notarized. The release guide lists the expected repository secrets.
+
+## Security and privacy
+
+- No infrastructure-provider key or internal routing secret belongs in the Desktop source or package.
+- Browser automation is opt-in and may access the browser profile's logged-in sessions.
+- File, terminal, and browser actions remain governed by local permission modes.
+- Review code and model-data handling before enabling unattended or full-access modes.
+
+## Upstream and license
+
+Codius Desktop is an independent modified version of Paseo. The covered work remains licensed under **AGPL-3.0-or-later**. Distributed binaries must include the corresponding source offer, license, notices, modification history, and required interactive legal notices. Codius is not produced by or affiliated with the Paseo maintainers.
+
+Generic fixes should be contributed upstream when practical. Internal `@getpaseo` package names and selected compatibility identifiers are intentionally retained to keep upstream synchronization feasible.
+
+Related repositories:
+
+- [Codius](https://github.com/prismosoft/codius) — plans, accounts, billing, model catalog, and OpenAI-compatible API
+- [Codius CLI](https://github.com/prismosoft/codius-cli) — local coding agent and ACP server
