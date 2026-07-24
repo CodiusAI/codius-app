@@ -19,8 +19,8 @@ const replacements = [
   },
   {
     name: "development worktree user-data prefix",
-    from: '`Paseo-${devWorktreeName}`',
-    to: '`Codius-${devWorktreeName}`',
+    from: "`Paseo-${devWorktreeName}`",
+    to: "`Codius-${devWorktreeName}`",
   },
 ];
 

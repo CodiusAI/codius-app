@@ -1,9 +1,6 @@
 import os from "node:os";
 import path from "node:path";
-import {
-  ensureCodiusHomeDefaults,
-  shouldSeedCodiusHomeDefaults,
-} from "./codius-defaults.js";
+import { ensureCodiusHomeDefaults, shouldSeedCodiusHomeDefaults } from "./codius-defaults.js";
 import { ensurePrivateDirectory } from "./private-files.js";
 
 function expandHomeDir(input: string): string {

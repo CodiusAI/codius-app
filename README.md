@@ -56,10 +56,10 @@ The desktop app receives streamed responses, reasoning events, model and mode di
 
 ## Codius environments
 
-| Environment | Website | OpenAI-compatible API |
-|---|---|---|
+| Environment | Website                  | OpenAI-compatible API          |
+| ----------- | ------------------------ | ------------------------------ |
 | Development | `https://dev.codius.dev` | `https://devapi.codius.dev/v1` |
-| Production | `https://codius.ai` | `https://api.codius.ai/v1` |
+| Production  | `https://codius.ai`      | `https://api.codius.ai/v1`     |
 
 Codius CLI controls which model API environment it uses. Development and prerelease CLI builds default to the development endpoints; stable releases default to production.
 

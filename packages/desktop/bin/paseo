@@ -7,7 +7,7 @@ case "$SCRIPT_PATH" in
   *) SCRIPT_PATH="$(pwd)/$SCRIPT_PATH" ;;
 esac
 
-# Follow symlinks so `/usr/local/bin/paseo` resolves back into the app bundle.
+# Follow symlinks so ~/.local/bin/codiusctl resolves back into the app bundle.
 while [ -L "$SCRIPT_PATH" ]; do
   SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$SCRIPT_PATH")" && pwd)
   LINK_TARGET=$(readlink "$SCRIPT_PATH")
@@ -19,31 +19,52 @@ done
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$SCRIPT_PATH")" && pwd)
 RESOURCES_DIR=$(CDPATH= cd -- "${SCRIPT_DIR}/.." && pwd)
-
 MACOS_DIR="${RESOURCES_DIR}/../MacOS"
-MACOS_HELPER_EXECUTABLE="${RESOURCES_DIR}/../Frameworks/Paseo Helper.app/Contents/MacOS/Paseo Helper"
 
-# macOS CLI invocations must enter Electron through the agent Helper. Launching
-# the main APPL executable here makes later daemon supervision inherit app UI
-# lifecycle behavior.
+find_executable() {
+  for candidate in "$@"; do
+    if [ -x "$candidate" ]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
 if [ -d "${MACOS_DIR}" ]; then
-  if [ ! -x "${MACOS_HELPER_EXECUTABLE}" ]; then
-    echo "Bundled Paseo Helper executable not found at ${MACOS_HELPER_EXECUTABLE}" >&2
+  APP_EXECUTABLE=$(find_executable \
+    "${RESOURCES_DIR}/../Frameworks/Codius Desktop Helper.app/Contents/MacOS/Codius Desktop Helper" \
+    "${RESOURCES_DIR}/../Frameworks/codius-desktop Helper.app/Contents/MacOS/codius-desktop Helper" \
+  ) || {
+    echo "Bundled Codius Desktop Helper executable not found under ${RESOURCES_DIR}/../Frameworks" >&2
     exit 1
-  fi
-  APP_EXECUTABLE="${MACOS_HELPER_EXECUTABLE}"
-elif [ -x "${RESOURCES_DIR}/../Paseo.bin" ]; then
-  APP_EXECUTABLE="${RESOURCES_DIR}/../Paseo.bin"
-elif [ -x "${RESOURCES_DIR}/../Paseo" ]; then
-  APP_EXECUTABLE="${RESOURCES_DIR}/../Paseo"
+  }
 else
-  echo "Bundled Paseo executable not found relative to ${RESOURCES_DIR}" >&2
-  exit 1
+  APP_EXECUTABLE=$(find_executable \
+    "${RESOURCES_DIR}/../codius-desktop" \
+    "${RESOURCES_DIR}/../Codius Desktop" \
+  ) || {
+    echo "Bundled Codius Desktop executable not found relative to ${RESOURCES_DIR}" >&2
+    exit 1
+  }
 fi
 
 RUNNER_PATH="${RESOURCES_DIR}/app.asar.unpacked/dist/daemon/node-entrypoint-runner.js"
 CLI_ENTRYPOINT="${RESOURCES_DIR}/app.asar/node_modules/@getpaseo/cli/dist/index.js"
 
-# PASEO_DESKTOP_MANAGED marks daemons started through this bundled CLI as
-# desktop-managed, so the desktop app restarts them when it upgrades.
-exec env ELECTRON_RUN_AS_NODE=1 PASEO_NODE_ENV=production PASEO_DESKTOP_MANAGED=1 PASEO_CLI="${SCRIPT_PATH}" "${APP_EXECUTABLE}" --disable-warning=DEP0040 "${RUNNER_PATH}" node-script "${CLI_ENTRYPOINT}" "$@"
+# Keep the inherited PASEO_* variables for internal package compatibility while
+# exposing the public Codius names to new integrations.
+exec env \
+  ELECTRON_RUN_AS_NODE=1 \
+  CODIUS_NODE_ENV=production \
+  CODIUS_DESKTOP_MANAGED=1 \
+  CODIUS_CLI="${SCRIPT_PATH}" \
+  PASEO_NODE_ENV=production \
+  PASEO_DESKTOP_MANAGED=1 \
+  PASEO_CLI="${SCRIPT_PATH}" \
+  "${APP_EXECUTABLE}" \
+  --disable-warning=DEP0040 \
+  "${RUNNER_PATH}" \
+  node-script \
+  "${CLI_ENTRYPOINT}" \
+  "$@"

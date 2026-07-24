@@ -17,9 +17,9 @@ describe.skipIf(process.platform === "win32")("Codius home permissions and defau
     const parent = mkdtempSync(path.join(tmpdir(), "codius-home-parent-"));
     const codiusHome = path.join(parent, "home");
     try {
-      expect(
-        resolvePaseoHome({ CODIUS_HOME: codiusHome, CODIUS_SEED_DEFAULTS: "1" }),
-      ).toBe(codiusHome);
+      expect(resolvePaseoHome({ CODIUS_HOME: codiusHome, CODIUS_SEED_DEFAULTS: "1" })).toBe(
+        codiusHome,
+      );
       expect(modeOf(codiusHome)).toBe(PRIVATE_DIRECTORY_MODE);
 
       const configPath = path.join(codiusHome, "config.json");
@@ -43,12 +43,13 @@ describe.skipIf(process.platform === "win32")("Codius home permissions and defau
         resolvePaseoHome({
           CODIUS_HOME: path.join(parent, "codius"),
           PASEO_HOME: path.join(parent, "paseo"),
+          CODIUS_SEED_DEFAULTS: "0",
         }),
       ).toBe(path.join(parent, "codius"));
 
-      expect(resolvePaseoHome({ PASEO_HOME: path.join(parent, "legacy") })).toBe(
-        path.join(parent, "legacy"),
-      );
+      expect(
+        resolvePaseoHome({ PASEO_HOME: path.join(parent, "legacy"), CODIUS_SEED_DEFAULTS: "0" }),
+      ).toBe(path.join(parent, "legacy"));
     } finally {
       rmSync(parent, { recursive: true, force: true });
     }
