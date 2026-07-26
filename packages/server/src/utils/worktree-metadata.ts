@@ -8,13 +8,13 @@ const ChangeRequestLookupTargetSchema = z.object({
   changeRequestNumber: z.number().int().positive().optional(),
 });
 
-const PaseoWorktreeMetadataV1Schema = z.object({
+const CodiusWorktreeMetadataV1Schema = z.object({
   version: z.literal(1),
   baseRefName: z.string().min(1),
   changeRequestLookupTarget: ChangeRequestLookupTargetSchema.optional(),
 });
 
-const PaseoWorktreeMetadataV2Schema = z.object({
+const CodiusWorktreeMetadataV2Schema = z.object({
   version: z.literal(2),
   baseRefName: z.string().min(1),
   changeRequestLookupTarget: ChangeRequestLookupTargetSchema.optional(),
@@ -38,13 +38,13 @@ const PaseoWorktreeMetadataV2Schema = z.object({
     .optional(),
 });
 
-const PaseoWorktreeMetadataSchema = z.union([
-  PaseoWorktreeMetadataV1Schema,
-  PaseoWorktreeMetadataV2Schema,
+const CodiusWorktreeMetadataSchema = z.union([
+  CodiusWorktreeMetadataV1Schema,
+  CodiusWorktreeMetadataV2Schema,
 ]);
 
-export type PaseoWorktreeMetadata = z.infer<typeof PaseoWorktreeMetadataSchema>;
-export type PaseoWorktreeChangeRequestLookupTarget = z.infer<
+export type CodiusWorktreeMetadata = z.infer<typeof CodiusWorktreeMetadataSchema>;
+export type CodiusWorktreeChangeRequestLookupTarget = z.infer<
   typeof ChangeRequestLookupTargetSchema
 >;
 
@@ -70,9 +70,9 @@ function getGitDirForWorktreeRoot(worktreeRoot: string): string {
   return gitPath;
 }
 
-export function getPaseoWorktreeMetadataPath(worktreeRoot: string): string {
+export function getCodiusWorktreeMetadataPath(worktreeRoot: string): string {
   const gitDir = getGitDirForWorktreeRoot(worktreeRoot);
-  return join(gitDir, "paseo", "worktree.json");
+  return join(gitDir, "codius", "worktree.json");
 }
 
 export function normalizeBaseRefName(input: string): string {
@@ -86,11 +86,11 @@ export function normalizeBaseRefName(input: string): string {
   return trimmed;
 }
 
-export function writePaseoWorktreeMetadata(
+export function writeCodiusWorktreeMetadata(
   worktreeRoot: string,
   options: {
     baseRefName: string;
-    changeRequestLookupTarget?: PaseoWorktreeChangeRequestLookupTarget;
+    changeRequestLookupTarget?: CodiusWorktreeChangeRequestLookupTarget;
   },
 ): void {
   const baseRefName = normalizeBaseRefName(options.baseRefName);
@@ -104,17 +104,17 @@ export function writePaseoWorktreeMetadata(
     throw new Error(`Invalid base branch: ${baseRefName}`);
   }
 
-  const metadata: PaseoWorktreeMetadata = {
+  const metadata: CodiusWorktreeMetadata = {
     version: 1,
     baseRefName,
     ...(options.changeRequestLookupTarget
       ? { changeRequestLookupTarget: options.changeRequestLookupTarget }
       : {}),
   };
-  writePaseoWorktreeMetadataFile(worktreeRoot, metadata);
+  writeCodiusWorktreeMetadataFile(worktreeRoot, metadata);
 }
 
-export function writePaseoWorktreeRuntimeMetadata(
+export function writeCodiusWorktreeRuntimeMetadata(
   worktreeRoot: string,
   options: { worktreePort: number },
 ): void {
@@ -122,12 +122,12 @@ export function writePaseoWorktreeRuntimeMetadata(
     throw new Error(`Invalid worktree runtime port: ${options.worktreePort}`);
   }
 
-  const current = readPaseoWorktreeMetadata(worktreeRoot);
+  const current = readCodiusWorktreeMetadata(worktreeRoot);
   if (!current) {
     throw new Error("Cannot persist worktree runtime metadata: missing base metadata");
   }
 
-  const next: PaseoWorktreeMetadata = {
+  const next: CodiusWorktreeMetadata = {
     version: 2,
     baseRefName: current.baseRefName,
     ...(current.changeRequestLookupTarget
@@ -140,10 +140,10 @@ export function writePaseoWorktreeRuntimeMetadata(
       worktreePort: options.worktreePort,
     },
   };
-  writePaseoWorktreeMetadataFile(worktreeRoot, next);
+  writeCodiusWorktreeMetadataFile(worktreeRoot, next);
 }
 
-export function writePaseoWorktreeFirstAgentBranchAutoNameMetadata(
+export function writeCodiusWorktreeFirstAgentBranchAutoNameMetadata(
   worktreeRoot: string,
   options: { placeholderBranchName: string },
 ): void {
@@ -152,12 +152,12 @@ export function writePaseoWorktreeFirstAgentBranchAutoNameMetadata(
     throw new Error("Placeholder branch name is required");
   }
 
-  const current = readPaseoWorktreeMetadata(worktreeRoot);
+  const current = readCodiusWorktreeMetadata(worktreeRoot);
   if (!current) {
     throw new Error("Cannot persist first-agent branch auto-name metadata: missing base metadata");
   }
 
-  writePaseoWorktreeMetadataFile(worktreeRoot, {
+  writeCodiusWorktreeMetadataFile(worktreeRoot, {
     version: 2,
     baseRefName: current.baseRefName,
     ...(current.changeRequestLookupTarget
@@ -171,16 +171,16 @@ export function writePaseoWorktreeFirstAgentBranchAutoNameMetadata(
   });
 }
 
-export function markPaseoWorktreeFirstAgentBranchAutoNameAttempted(
+export function markCodiusWorktreeFirstAgentBranchAutoNameAttempted(
   worktreeRoot: string,
   options: { attemptedAt?: string } = {},
-): PaseoWorktreeMetadata | null {
-  const current = readPaseoWorktreeMetadata(worktreeRoot);
+): CodiusWorktreeMetadata | null {
+  const current = readCodiusWorktreeMetadata(worktreeRoot);
   if (!current || current.version !== 2 || current.firstAgentBranchAutoName?.status !== "pending") {
     return current;
   }
 
-  const next: PaseoWorktreeMetadata = {
+  const next: CodiusWorktreeMetadata = {
     version: 2,
     baseRefName: current.baseRefName,
     ...(current.changeRequestLookupTarget
@@ -193,30 +193,30 @@ export function markPaseoWorktreeFirstAgentBranchAutoNameAttempted(
     },
     ...(current.runtime ? { runtime: current.runtime } : {}),
   };
-  writePaseoWorktreeMetadataFile(worktreeRoot, next);
+  writeCodiusWorktreeMetadataFile(worktreeRoot, next);
   return next;
 }
 
-export function readPaseoWorktreeMetadata(worktreeRoot: string): PaseoWorktreeMetadata | null {
-  const metadataPath = getPaseoWorktreeMetadataPath(worktreeRoot);
+export function readCodiusWorktreeMetadata(worktreeRoot: string): CodiusWorktreeMetadata | null {
+  const metadataPath = getCodiusWorktreeMetadataPath(worktreeRoot);
   if (!existsSync(metadataPath)) {
     return null;
   }
   const parsed = JSON.parse(readFileSync(metadataPath, "utf8"));
-  return PaseoWorktreeMetadataSchema.parse(parsed);
+  return CodiusWorktreeMetadataSchema.parse(parsed);
 }
 
-export function requirePaseoWorktreeBaseRefName(worktreeRoot: string): string {
-  const metadataPath = getPaseoWorktreeMetadataPath(worktreeRoot);
-  const metadata = readPaseoWorktreeMetadata(worktreeRoot);
+export function requireCodiusWorktreeBaseRefName(worktreeRoot: string): string {
+  const metadataPath = getCodiusWorktreeMetadataPath(worktreeRoot);
+  const metadata = readCodiusWorktreeMetadata(worktreeRoot);
   if (!metadata) {
-    throw new Error(`Missing Paseo worktree base metadata: ${metadataPath}`);
+    throw new Error(`Missing Codius worktree base metadata: ${metadataPath}`);
   }
   return metadata.baseRefName;
 }
 
-export function readPaseoWorktreeRuntimePort(worktreeRoot: string): number | null {
-  const metadata = readPaseoWorktreeMetadata(worktreeRoot);
+export function readCodiusWorktreeRuntimePort(worktreeRoot: string): number | null {
+  const metadata = readCodiusWorktreeMetadata(worktreeRoot);
   if (!metadata) {
     return null;
   }
@@ -226,12 +226,12 @@ export function readPaseoWorktreeRuntimePort(worktreeRoot: string): number | nul
   return null;
 }
 
-function writePaseoWorktreeMetadataFile(
+function writeCodiusWorktreeMetadataFile(
   worktreeRoot: string,
-  metadata: PaseoWorktreeMetadata,
+  metadata: CodiusWorktreeMetadata,
 ): void {
-  const metadataPath = getPaseoWorktreeMetadataPath(worktreeRoot);
-  mkdirSync(join(getGitDirForWorktreeRoot(worktreeRoot), "paseo"), { recursive: true });
+  const metadataPath = getCodiusWorktreeMetadataPath(worktreeRoot);
+  mkdirSync(join(getGitDirForWorktreeRoot(worktreeRoot), "codius"), { recursive: true });
   const tempPath = `${metadataPath}.${process.pid}.${Date.now()}.tmp`;
   writeFileSync(tempPath, `${JSON.stringify(metadata, null, 2)}\n`, "utf8");
   renameSync(tempPath, metadataPath);

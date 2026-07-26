@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
-import type { DaemonClient } from "@getpaseo/client/internal/daemon-client";
-import type { SessionOutboundMessage } from "@getpaseo/protocol/messages";
+import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { SessionOutboundMessage } from "@codius-ai/protocol/messages";
 import { useSessionStore } from "@/stores/session-store";
 import { DirectoryRefreshSupersededError, DirectorySync } from "./index";
 

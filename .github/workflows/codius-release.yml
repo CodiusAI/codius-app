@@ -117,14 +117,14 @@ jobs:
         run: |
           npm run build:server
           npm run build:app-deps
-          npm run build:main --workspace=@getpaseo/desktop
+          npm run build:main --workspace=@codius-ai/desktop
 
       - name: Validate release source
         run: |
           npm run format:check
           npm run typecheck
-          npm run test --workspace=@getpaseo/protocol
-          npm run test --workspace=@getpaseo/desktop
+          npm run test --workspace=@codius-ai/protocol
+          npm run test --workspace=@codius-ai/desktop
 
       - name: Build Codius Desktop packages
         run: npm run build:desktop -- --publish never

@@ -1,4 +1,4 @@
-export { createTestPaseoDaemon, type TestPaseoDaemon } from "./paseo-daemon.js";
+export { createTestCodiusDaemon, type TestCodiusDaemon } from "./codius-daemon.js";
 export {
   DaemonClient,
   type DaemonClientConfig,

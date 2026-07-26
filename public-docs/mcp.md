@@ -1,6 +1,6 @@
 ---
 title: MCP reference
-description: Reference for the Paseo tools agents use to manage agents, workspaces, terminals, and schedules.
+description: Reference for the Codius tools agents use to manage agents, workspaces, terminals, and schedules.
 nav: MCP reference
 order: 33
 category: Orchestration
@@ -10,9 +10,9 @@ category: Orchestration
 
 This is the complete catalog behind the workflows in [Orchestration](/docs/orchestration) and [Common workflows](/docs/orchestration-workflows). You normally ask for an outcome in natural language and let the agent choose the tools.
 
-Paseo can inject these tools into every new agent it launches. Open **Settings → your host → Agents** and turn on **Enable Paseo tools**, or set `daemon.mcp.injectIntoAgents` to `true`.
+Codius can inject these tools into every new agent it launches. Open **Settings → your host → Agents** and turn on **Enable Codius tools**, or set `daemon.mcp.injectIntoAgents` to `true`.
 
-Depending on the provider, Paseo delivers the catalog through its native tool interface or MCP. The capabilities are the same either way.
+Depending on the provider, Codius delivers the catalog through its native tool interface or MCP. The capabilities are the same either way.
 
 The MCP server itself is controlled by `daemon.mcp.enabled`. Existing agents may need a reload.
 

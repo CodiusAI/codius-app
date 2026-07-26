@@ -109,7 +109,7 @@ The packaged desktop smoke is an external observer of the production launch path
 
 The harness launches the unpacked packaged app with isolated user data and daemon state, connects to the real renderer over Chromium's debugging protocol, and requires all of these outcomes:
 
-- the `paseo://app/` renderer mounts into `#root`;
+- the `codius://app/` renderer mounts into `#root`;
 - the sandboxed preload exposes the desktop bridge;
 - the renderer starts a fresh desktop-managed daemon through the normal startup bootstrap;
 - the bundled CLI can query that daemon and run a terminal command.
@@ -119,8 +119,8 @@ Pull-request CI runs the Linux x64 smoke under Xvfb when the cumulative PR diff 
 To exercise the smoke locally on Linux:
 
 ```bash
-PASEO_DESKTOP_SMOKE=1 \
-PASEO_DESKTOP_SMOKE_ARTIFACT_DIR=/tmp/paseo-desktop-smoke \
+CODIUS_DESKTOP_SMOKE=1 \
+CODIUS_DESKTOP_SMOKE_ARTIFACT_DIR=/tmp/codius-desktop-smoke \
 npm run build:desktop -- --publish never --linux --x64 --dir
 ```
 
@@ -131,7 +131,7 @@ The desktop browser tab bridge E2E launches an isolated real daemon, Metro, and 
 Run it locally with the same command owned by the Ubuntu leg of the existing `desktop-tests` CI check:
 
 ```bash
-npm run test:e2e:browser-tab-bridge --workspace=@getpaseo/desktop
+npm run test:e2e:browser-tab-bridge --workspace=@codius-ai/desktop
 ```
 
 ## Test organization
@@ -154,7 +154,7 @@ Vitest picks up tests by suffix. The suffix tells the runner which category it b
 | `*.real.e2e.test.ts`  | E2E that hits a real provider (Claude/Codex/Copilot/OpenCode/Pi) — needs creds in `packages/server/.env.test` | `npm run test:integration:real` / `test:e2e:real`                                    |
 | `*.local.e2e.test.ts` | E2E that needs a local-only resource                                                                          | `npm run test:integration:local` / `test:e2e:local`                                  |
 
-App-level Playwright browser E2E lives in `packages/app/e2e/*.spec.ts` and runs via `npm run test:e2e --workspace=@getpaseo/app` (separate from Vitest E2E). App Playwright specs that hit real providers use `*.real.spec.ts` and run through `npm run test:e2e:real --workspace=@getpaseo/app`; the default app E2E project ignores that suffix so CI does not need provider credentials.
+App-level Playwright browser E2E lives in `packages/app/e2e/*.spec.ts` and runs via `npm run test:e2e --workspace=@codius-ai/app` (separate from Vitest E2E). App Playwright specs that hit real providers use `*.real.spec.ts` and run through `npm run test:e2e:real --workspace=@codius-ai/app`; the default app E2E project ignores that suffix so CI does not need provider credentials.
 
 Live provider smoke tests belong in `*.real.e2e.test.ts`, not `*.test.ts`, even when guarded by environment variables. Default unit suites must use deterministic provider adapters/fakes so missing credits, auth outages, and upstream model drift do not block normal CI.
 
@@ -162,7 +162,7 @@ Codex MultiAgentV2 real tests use local Codex authentication rather than the Ope
 
 ### Test setup
 
-- Server: `packages/server/src/test-utils/vitest-setup.ts` loads `.env.test`, sets `PASEO_SUPERVISED=0`, and disables Git/SSH prompts. Add new global env shims here, not in individual tests.
+- Server: `packages/server/src/test-utils/vitest-setup.ts` loads `.env.test`, sets `CODIUS_SUPERVISED=0`, and disables Git/SSH prompts. Add new global env shims here, not in individual tests.
 - App: `packages/app/vitest.setup.ts` provides `expo`/`__DEV__` shims and stubs a few native-only modules (`react-native-unistyles`, `react-native-svg`, `expo-linking`, `@xterm/addon-ligatures`). Stubbing here is for modules that have no meaningful Node behavior — not a license to mock app code.
 
 ## Running tests locally

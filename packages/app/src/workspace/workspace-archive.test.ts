@@ -1,4 +1,4 @@
-import type { DaemonClient } from "@getpaseo/client/internal/daemon-client";
+import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   clearWorkspaceArchivePending,

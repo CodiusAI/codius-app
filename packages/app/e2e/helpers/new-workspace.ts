@@ -1,5 +1,5 @@
 import { expect, type BrowserContext, type Page } from "@playwright/test";
-import type { DaemonClient as InternalDaemonClient } from "@getpaseo/client/internal/daemon-client";
+import type { DaemonClient as InternalDaemonClient } from "@codius-ai/client/internal/daemon-client";
 import { decodeWorkspaceIdFromPathSegment } from "@/utils/host-routes";
 import { connectDaemonClient } from "./daemon-client-loader";
 import { daemonWsRoutePattern } from "./daemon-port";
@@ -7,15 +7,15 @@ import { expectWorkspaceHeader } from "./workspace-ui";
 
 type NewWorkspaceDaemonClient = Pick<
   InternalDaemonClient,
-  | "archivePaseoWorktree"
+  | "archiveCodiusWorktree"
   | "archiveWorkspace"
   | "checkoutRefresh"
   | "close"
   | "connect"
-  | "createPaseoWorktree"
+  | "createCodiusWorktree"
   | "createWorkspace"
   | "fetchWorkspaces"
-  | "getPaseoWorktreeList"
+  | "getCodiusWorktreeList"
   | "getDaemonConfig"
   | "inspectWorkspaceRecovery"
   | "on"
@@ -115,7 +115,7 @@ export async function archiveWorkspaceFromDaemon(
   workspaceDirectory: string,
   options?: { scope?: "workspace" | "worktree" },
 ): Promise<void> {
-  const payload = await client.archivePaseoWorktree({
+  const payload = await client.archiveCodiusWorktree({
     worktreePath: workspaceDirectory,
     ...(options?.scope !== undefined ? { scope: options.scope } : {}),
   });
@@ -144,7 +144,7 @@ export async function createWorktreeViaDaemon(
   client: NewWorkspaceDaemonClient,
   input: { cwd: string; slug: string },
 ): Promise<OpenedProject> {
-  const payload = await client.createPaseoWorktree({
+  const payload = await client.createCodiusWorktree({
     cwd: input.cwd,
     worktreeSlug: input.slug,
   });

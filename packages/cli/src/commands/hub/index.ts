@@ -67,7 +67,7 @@ async function withClient<T>(
 }
 
 export function createHubCommand(): Command {
-  const hub = new Command("hub").description("Manage this daemon's Paseo Hub relationship");
+  const hub = new Command("hub").description("Manage this daemon's Codius Hub relationship");
   addJsonAndDaemonHostOptions(
     hub.command("connect").argument("<url>").requiredOption("--token <token>"),
   ).action(

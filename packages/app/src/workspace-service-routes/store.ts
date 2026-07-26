@@ -9,7 +9,7 @@ interface WorkspaceServiceRoutePreferencesState {
 }
 
 function isWorkspaceScriptLinkKind(value: unknown): value is WorkspaceScriptLinkKind {
-  return value === "public" || value === "paseo" || value === "direct";
+  return value === "public" || value === "codius" || value === "direct";
 }
 
 function sanitizePreferences(value: unknown): Record<string, WorkspaceScriptLinkKind> {

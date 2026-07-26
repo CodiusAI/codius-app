@@ -15,11 +15,11 @@ import type {
 } from "../workspace-git-service.js";
 import type { ForgeService } from "../../services/forge-service.js";
 import type { TerminalManager } from "../../terminal/terminal-manager.js";
-import { isPaseoOwnedWorktreeCwd } from "../../utils/worktree.js";
+import { isCodiusOwnedWorktreeCwd } from "../../utils/worktree.js";
 
 export interface AutoArchiveArchiveOptions {
-  paseoHome: string;
-  paseoWorktreesBaseRoot?: string;
+  codiusHome: string;
+  codiusWorktreesBaseRoot?: string;
   daemonConfigStore: DaemonConfigStore;
   workspaceGitService: WorkspaceGitServiceImpl;
   github: ForgeService;
@@ -37,14 +37,14 @@ export interface AutoArchiveArchiveOptions {
 export interface ArchiveIfSafeDependencies {
   archiveByScope: typeof archiveByScope;
   resolveWorkspaceIdAtPath: typeof resolveWorkspaceIdAtPath;
-  isPaseoOwnedWorktreeCwd: typeof isPaseoOwnedWorktreeCwd;
+  isCodiusOwnedWorktreeCwd: typeof isCodiusOwnedWorktreeCwd;
   killTerminalsForWorkspace: typeof killTerminalsForWorkspace;
 }
 
 const defaultDependencies: ArchiveIfSafeDependencies = {
   archiveByScope,
   resolveWorkspaceIdAtPath,
-  isPaseoOwnedWorktreeCwd,
+  isCodiusOwnedWorktreeCwd,
   killTerminalsForWorkspace,
 };
 
@@ -91,9 +91,9 @@ export async function archiveIfSafe(input: {
       return;
     }
 
-    const ownership = await deps.isPaseoOwnedWorktreeCwd(cwd, {
-      paseoHome: options.paseoHome,
-      worktreesRoot: options.paseoWorktreesBaseRoot,
+    const ownership = await deps.isCodiusOwnedWorktreeCwd(cwd, {
+      codiusHome: options.codiusHome,
+      worktreesRoot: options.codiusWorktreesBaseRoot,
     });
     if (!ownership.allowed) {
       return;
@@ -114,8 +114,8 @@ export async function archiveIfSafe(input: {
 
       await deps.archiveByScope(
         {
-          paseoHome: options.paseoHome,
-          paseoWorktreesBaseRoot: options.paseoWorktreesBaseRoot,
+          codiusHome: options.codiusHome,
+          codiusWorktreesBaseRoot: options.codiusWorktreesBaseRoot,
           github: options.github,
           workspaceGitService: options.workspaceGitService,
           agentManager: options.agentManager,

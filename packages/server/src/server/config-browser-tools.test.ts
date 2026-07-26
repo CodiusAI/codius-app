@@ -7,13 +7,13 @@ import { loadConfig } from "./config.js";
 
 const roots: string[] = [];
 
-async function createPaseoHome(config: unknown): Promise<string> {
-  const root = await mkdtemp(path.join(os.tmpdir(), "paseo-config-browser-tools-"));
+async function createCodiusHome(config: unknown): Promise<string> {
+  const root = await mkdtemp(path.join(os.tmpdir(), "codius-config-browser-tools-"));
   roots.push(root);
-  const paseoHome = path.join(root, ".paseo");
-  await mkdir(paseoHome, { recursive: true });
-  await writeFile(path.join(paseoHome, "config.json"), JSON.stringify(config, null, 2));
-  return paseoHome;
+  const codiusHome = path.join(root, ".codius");
+  await mkdir(codiusHome, { recursive: true });
+  await writeFile(path.join(codiusHome, "config.json"), JSON.stringify(config, null, 2));
+  return codiusHome;
 }
 
 describe("daemon browser tools config", () => {
@@ -22,13 +22,13 @@ describe("daemon browser tools config", () => {
   });
 
   test("defaults browser tools off when config is absent", async () => {
-    const home = await createPaseoHome({ version: 1 });
+    const home = await createCodiusHome({ version: 1 });
 
     expect(loadConfig(home, { env: {} }).browserToolsEnabled).toBe(false);
   });
 
   test("loads browser tools opt-in from persisted daemon config", async () => {
-    const home = await createPaseoHome({
+    const home = await createCodiusHome({
       version: 1,
       daemon: { browserTools: { enabled: true } },
     });

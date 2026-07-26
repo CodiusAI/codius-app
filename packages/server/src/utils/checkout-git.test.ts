@@ -40,7 +40,7 @@ import {
   resolveRepositoryDefaultBranch,
   parseWorktreeList,
   renameCurrentBranch,
-  isPaseoWorktreePath,
+  isCodiusWorktreePath,
   isDescendantPath,
   warmCheckoutShortstatInBackground,
 } from "./checkout-git.js";
@@ -65,7 +65,7 @@ interface LegacyCreateWorktreeTestOptions {
   baseBranch: string;
   worktreeSlug: string;
   runSetup?: boolean;
-  paseoHome?: string;
+  codiusHome?: string;
 }
 
 function createLegacyWorktreeForTest(
@@ -84,10 +84,10 @@ function createLegacyWorktreeForTest(
       branchName: options.branchName,
     },
     runSetup: options.runSetup ?? true,
-    paseoHome: options.paseoHome,
+    codiusHome: options.codiusHome,
   });
 }
-import { getPaseoWorktreeMetadataPath } from "./worktree-metadata.js";
+import { getCodiusWorktreeMetadataPath } from "./worktree-metadata.js";
 
 function initRepo(): { tempDir: string; repoDir: string } {
   const tempDir = realpathSync.native(mkdtempSync(join(tmpdir(), "checkout-git-test-")));
@@ -117,7 +117,7 @@ function createGitHubServiceForStatus(
     getPullRequest: async () => ({
       number: 1,
       title: "PR",
-      url: "https://github.com/getpaseo/paseo/pull/1",
+      url: "https://github.com/prismosoft/codius-desktop/pull/1",
       state: "OPEN",
       body: null,
       baseRefName: "main",
@@ -139,7 +139,7 @@ function createGitHubServiceForStatus(
       return status;
     },
     createPullRequest: async () => ({
-      url: "https://github.com/getpaseo/paseo/pull/1",
+      url: "https://github.com/prismosoft/codius-desktop/pull/1",
       number: 1,
     }),
     mergePullRequest: async () => ({ success: true }),
@@ -150,7 +150,7 @@ function createGitHubServiceForStatus(
 
 function createPullRequestStatus(overrides?: Partial<CurrentPullRequestStatus>) {
   return {
-    url: "https://github.com/getpaseo/paseo/pull/123",
+    url: "https://github.com/prismosoft/codius-desktop/pull/123",
     title: "Ship feature",
     state: "open",
     baseRefName: "main",
@@ -194,9 +194,9 @@ function createGitHubServiceRecordingPullRequestTargets(
 
 async function readPullRequestLookupTargetFromFacts(
   repoDir: string,
-  paseoHome: string,
+  codiusHome: string,
 ): Promise<RequestedPullRequestTarget | null> {
-  const facts = await getCheckoutSnapshotFacts(repoDir, { paseoHome });
+  const facts = await getCheckoutSnapshotFacts(repoDir, { codiusHome });
   if (!facts.isGit) {
     throw new Error("Expected git checkout facts");
   }
@@ -235,13 +235,13 @@ function commitFile(cwd: string, path: string, content: string, message: string)
 describe("checkout git utilities", () => {
   let tempDir: string;
   let repoDir: string;
-  let paseoHome: string;
+  let codiusHome: string;
 
   beforeEach(() => {
     const setup = initRepo();
     tempDir = setup.tempDir;
     repoDir = setup.repoDir;
-    paseoHome = join(tempDir, "paseo-home");
+    codiusHome = join(tempDir, "codius-home");
     __resetCheckoutShortstatCacheForTests();
     __resetPullRequestStatusCacheForTests();
   });
@@ -514,7 +514,7 @@ describe("checkout git utilities", () => {
     setupRemoteTrackingMain(repoDir, tempDir);
 
     startGitCommandMetrics();
-    const facts = await getCheckoutSnapshotFacts(repoDir, { paseoHome });
+    const facts = await getCheckoutSnapshotFacts(repoDir, { codiusHome });
     const metrics = stopGitCommandMetrics();
     const originUrlCommands = metrics.commands.filter(
       (command) => command.args.join(" ") === "config --get remote.origin.url",
@@ -536,7 +536,7 @@ describe("checkout git utilities", () => {
     execFileSync("git", ["config", "branch.main.merge", "refs/heads/main"], { cwd: repoDir });
 
     startGitCommandMetrics();
-    const facts = await getCheckoutSnapshotFacts(repoDir, { paseoHome });
+    const facts = await getCheckoutSnapshotFacts(repoDir, { codiusHome });
     const metrics = stopGitCommandMetrics();
     const commands = metrics.commands.map((command) => command.args.join(" "));
 
@@ -556,30 +556,30 @@ describe("checkout git utilities", () => {
     writeFileSync(join(repoDir, "feature.txt"), "feature\nchanged\n");
     const github = createGitHubServiceForStatus(createPullRequestStatus());
 
-    const facts = await getCheckoutSnapshotFacts(repoDir, { paseoHome });
-    const status = await getCheckoutStatus(repoDir, { paseoHome, facts });
-    const shortstat = await getCheckoutShortstat(repoDir, { paseoHome, facts }, { force: true });
+    const facts = await getCheckoutSnapshotFacts(repoDir, { codiusHome });
+    const status = await getCheckoutStatus(repoDir, { codiusHome, facts });
+    const shortstat = await getCheckoutShortstat(repoDir, { codiusHome, facts }, { force: true });
     const prStatus = await getPullRequestStatus(
       repoDir,
       github,
       { force: true, reason: "snapshot-equivalence" },
-      { paseoHome, facts },
+      { codiusHome, facts },
     );
 
     __resetCheckoutShortstatCacheForTests();
     __resetPullRequestStatusCacheForTests();
     startGitCommandMetrics();
-    const statusWithFacts = await getCheckoutStatus(repoDir, { paseoHome, facts });
+    const statusWithFacts = await getCheckoutStatus(repoDir, { codiusHome, facts });
     const shortstatWithFacts = await getCheckoutShortstat(
       repoDir,
-      { paseoHome, facts },
+      { codiusHome, facts },
       { force: true },
     );
     const prStatusWithFacts = await getPullRequestStatus(
       repoDir,
       github,
       { force: true, reason: "snapshot-equivalence-with-facts" },
-      { paseoHome, facts },
+      { codiusHome, facts },
     );
     const metrics = stopGitCommandMetrics();
     const commands = metrics.commands.map((command) => command.args.join(" "));
@@ -682,7 +682,7 @@ const x = 1;
     }
     expect(status.currentBranch).toBe("main");
     expect(realpathSync.native(status.repoRoot)).toBe(realpathSync.native(repoDir));
-    expect(status.isPaseoOwnedWorktree).toBe(false);
+    expect(status.isCodiusOwnedWorktree).toBe(false);
     expect(status.mainRepoRoot ?? null).toBeNull();
   });
 
@@ -762,15 +762,15 @@ const x = 1;
       cwd: repoDir,
     });
     commitFile(repoDir, "feature.txt", "feature\n", "feature commit");
-    execFileSync("git", ["remote", "add", "paseo-pr-1285", prRemoteDir], { cwd: repoDir });
+    execFileSync("git", ["remote", "add", "codius-pr-1285", prRemoteDir], { cwd: repoDir });
     execFileSync(
       "git",
-      ["push", "paseo-pr-1285", "HEAD:refs/heads/open-button-targets-active-file"],
+      ["push", "codius-pr-1285", "HEAD:refs/heads/open-button-targets-active-file"],
       { cwd: repoDir },
     );
     execFileSync(
       "git",
-      ["config", "branch.aaronzhongg/open-button-targets-active-file.remote", "paseo-pr-1285"],
+      ["config", "branch.aaronzhongg/open-button-targets-active-file.remote", "codius-pr-1285"],
       {
         cwd: repoDir,
       },
@@ -803,15 +803,15 @@ const x = 1;
       cwd: repoDir,
     });
     commitFile(repoDir, "feature.txt", "feature\n", "feature commit");
-    execFileSync("git", ["remote", "add", "paseo-pr-1285", prRemoteDir], { cwd: repoDir });
+    execFileSync("git", ["remote", "add", "codius-pr-1285", prRemoteDir], { cwd: repoDir });
     execFileSync(
       "git",
-      ["push", "paseo-pr-1285", "HEAD:refs/heads/open-button-targets-active-file"],
+      ["push", "codius-pr-1285", "HEAD:refs/heads/open-button-targets-active-file"],
       { cwd: repoDir },
     );
     execFileSync(
       "git",
-      ["config", "branch.aaronzhongg/open-button-targets-active-file.remote", "paseo-pr-1285"],
+      ["config", "branch.aaronzhongg/open-button-targets-active-file.remote", "codius-pr-1285"],
       { cwd: repoDir },
     );
     execFileSync(
@@ -829,7 +829,7 @@ const x = 1;
     execFileSync("git", ["config", "user.name", "Test"], { cwd: prCloneDir });
     commitFile(prCloneDir, "remote.txt", "remote\n", "remote update");
     execFileSync("git", ["push"], { cwd: prCloneDir });
-    execFileSync("git", ["fetch", "paseo-pr-1285"], { cwd: repoDir });
+    execFileSync("git", ["fetch", "codius-pr-1285"], { cwd: repoDir });
 
     const status = await getCheckoutStatus(repoDir);
 
@@ -857,7 +857,7 @@ const x = 1;
     expect(status.behindOfOrigin).toBeNull();
   });
 
-  it("does not report full history as unpushed for fresh no-track Paseo worktrees", async () => {
+  it("does not report full history as unpushed for fresh no-track Codius worktrees", async () => {
     setupRemoteTrackingMain(repoDir, tempDir);
     commitFile(repoDir, "second.txt", "second\n", "second commit");
     execFileSync("git", ["push"], { cwd: repoDir });
@@ -867,13 +867,13 @@ const x = 1;
       cwd: repoDir,
       baseBranch: "main",
       worktreeSlug: "fresh-feature",
-      paseoHome,
+      codiusHome,
     });
 
-    const status = await getCheckoutStatus(worktree.worktreePath, { paseoHome });
+    const status = await getCheckoutStatus(worktree.worktreePath, { codiusHome });
     expect(status).toMatchObject({
       isGit: true,
-      isPaseoOwnedWorktree: true,
+      isCodiusOwnedWorktree: true,
       baseRef: "main",
       aheadBehind: { ahead: 0, behind: 0 },
       aheadOfOrigin: null,
@@ -890,14 +890,14 @@ const x = 1;
       cwd: repoDir,
       baseBranch: "main",
       worktreeSlug: "fresh-feature",
-      paseoHome,
+      codiusHome,
     });
     commitFile(worktree.worktreePath, "feature.txt", "feature\n", "feature commit");
 
-    const status = await getCheckoutStatus(worktree.worktreePath, { paseoHome });
+    const status = await getCheckoutStatus(worktree.worktreePath, { codiusHome });
     expect(status).toMatchObject({
       isGit: true,
-      isPaseoOwnedWorktree: true,
+      isCodiusOwnedWorktree: true,
       baseRef: "main",
       aheadBehind: { ahead: 1, behind: 0 },
       aheadOfOrigin: null,
@@ -1474,17 +1474,17 @@ const x = 1;
     expect(diff.diff).toContain("# untracked-large.txt: diff too large omitted");
   });
 
-  it("resolves the Git common directory once when reading Paseo worktree facts", async () => {
+  it("resolves the Git common directory once when reading Codius worktree facts", async () => {
     const result = await createLegacyWorktreeForTest({
       branchName: "main",
       cwd: repoDir,
       baseBranch: "main",
       worktreeSlug: "common-dir",
-      paseoHome,
+      codiusHome,
     });
 
     startGitCommandMetrics();
-    const facts = await getCheckoutSnapshotFacts(result.worktreePath, { paseoHome });
+    const facts = await getCheckoutSnapshotFacts(result.worktreePath, { codiusHome });
     const metrics = stopGitCommandMetrics();
     const commonDirCommands = metrics.commands.filter(
       (command) => command.args.join(" ") === "rev-parse --git-common-dir",
@@ -1494,31 +1494,35 @@ const x = 1;
     expect(commonDirCommands).toHaveLength(1);
   });
 
-  it("handles status/diff/commit in a .paseo worktree", async () => {
+  it("handles status/diff/commit in a .codius worktree", async () => {
     const result = await createLegacyWorktreeForTest({
       branchName: "main",
       cwd: repoDir,
       baseBranch: "main",
       worktreeSlug: "alpha",
-      paseoHome,
+      codiusHome,
     });
 
     writeFileSync(join(result.worktreePath, "file.txt"), "worktree change\n");
 
-    const status = await getCheckoutStatus(result.worktreePath, { paseoHome });
+    const status = await getCheckoutStatus(result.worktreePath, { codiusHome });
     expect(status.isGit).toBe(true);
     expect(realpathSync.native(status.repoRoot)).toBe(realpathSync.native(result.worktreePath));
     expect(status.isDirty).toBe(true);
-    expect(status.isPaseoOwnedWorktree).toBe(true);
+    expect(status.isCodiusOwnedWorktree).toBe(true);
     expect(realpathSync.native(status.mainRepoRoot ?? "")).toBe(realpathSync.native(repoDir));
 
-    const diff = await getCheckoutDiff(result.worktreePath, { mode: "uncommitted" }, { paseoHome });
+    const diff = await getCheckoutDiff(
+      result.worktreePath,
+      { mode: "uncommitted" },
+      { codiusHome },
+    );
     expect(diff.diff).toContain("-hello");
     expect(diff.diff).toContain("+worktree change");
 
     await commitAll(result.worktreePath, "worktree update");
 
-    const cleanStatus = await getCheckoutStatus(result.worktreePath, { paseoHome });
+    const cleanStatus = await getCheckoutStatus(result.worktreePath, { codiusHome });
     expect(cleanStatus.isDirty).toBe(false);
     const message = execFileSync("git", ["log", "-1", "--pretty=%B"], {
       cwd: result.worktreePath,
@@ -1528,22 +1532,22 @@ const x = 1;
     expect(message).toBe("worktree update");
   });
 
-  it("returns checkout root metadata for .paseo worktrees", async () => {
+  it("returns checkout root metadata for .codius worktrees", async () => {
     const result = await createLegacyWorktreeForTest({
       branchName: "main",
       cwd: repoDir,
       baseBranch: "main",
       worktreeSlug: "lite-alpha",
-      paseoHome,
+      codiusHome,
     });
 
-    const status = await getCheckoutStatus(result.worktreePath, { paseoHome });
+    const status = await getCheckoutStatus(result.worktreePath, { codiusHome });
     expect(status.isGit).toBe(true);
     if (!status.isGit) {
       return;
     }
     expect(realpathSync.native(status.repoRoot)).toBe(realpathSync.native(result.worktreePath));
-    expect(status.isPaseoOwnedWorktree).toBe(true);
+    expect(status.isCodiusOwnedWorktree).toBe(true);
     expect(realpathSync.native(status.mainRepoRoot ?? "")).toBe(realpathSync.native(repoDir));
   });
 
@@ -1561,12 +1565,12 @@ const x = 1;
       cwd: mainCheckoutDir,
       baseBranch: "main",
       worktreeSlug: "feature-worktree",
-      paseoHome,
+      codiusHome,
     });
 
-    const status = await getCheckoutStatus(worktree.worktreePath, { paseoHome });
+    const status = await getCheckoutStatus(worktree.worktreePath, { codiusHome });
     expect(status.isGit).toBe(true);
-    expect(status.isPaseoOwnedWorktree).toBe(true);
+    expect(status.isCodiusOwnedWorktree).toBe(true);
     expect(realpathSync.native(status.mainRepoRoot ?? "")).toBe(
       realpathSync.native(mainCheckoutDir),
     );
@@ -1578,10 +1582,10 @@ const x = 1;
       cwd: repoDir,
     });
 
-    const status = await getCheckoutStatus(worktreeDir, { paseoHome });
+    const status = await getCheckoutStatus(worktreeDir, { codiusHome });
     expect(status.isGit).toBe(true);
     expect(realpathSync.native(status.repoRoot)).toBe(realpathSync.native(worktreeDir));
-    expect(status.isPaseoOwnedWorktree).toBe(false);
+    expect(status.isCodiusOwnedWorktree).toBe(false);
     expect(realpathSync.native(status.mainRepoRoot ?? "")).toBe(realpathSync.native(repoDir));
     expect(status.currentBranch).toBe("feature/plain");
   });
@@ -1592,7 +1596,7 @@ const x = 1;
       cwd: repoDir,
       baseBranch: "main",
       worktreeSlug: "merge",
-      paseoHome,
+      codiusHome,
     });
 
     writeFileSync(join(worktree.worktreePath, "merge.txt"), "feature\n");
@@ -1605,7 +1609,7 @@ const x = 1;
       .toString()
       .trim();
 
-    await mergeToBase(worktree.worktreePath, { baseRef: "main" }, { paseoHome });
+    await mergeToBase(worktree.worktreePath, { baseRef: "main" }, { codiusHome });
 
     const baseContainsFeature = execFileSync(
       "git",
@@ -1617,7 +1621,7 @@ const x = 1;
     );
     expect(baseContainsFeature).toBeDefined();
 
-    const statusAfterMerge = await getCheckoutStatus(worktree.worktreePath, { paseoHome });
+    const statusAfterMerge = await getCheckoutStatus(worktree.worktreePath, { codiusHome });
     expect(statusAfterMerge.isGit).toBe(true);
     if (statusAfterMerge.isGit) {
       expect(statusAfterMerge.aheadBehind?.ahead ?? 0).toBe(0);
@@ -1648,7 +1652,7 @@ const x = 1;
       cwd: repoDir,
       baseBranch: "develop",
       worktreeSlug: "feature-worktree",
-      paseoHome,
+      codiusHome,
     });
 
     writeFileSync(join(featureWorktree.worktreePath, "feature.txt"), "feature\n");
@@ -1657,7 +1661,7 @@ const x = 1;
       cwd: featureWorktree.worktreePath,
     });
 
-    const mutatedCwd = await mergeToBase(featureWorktree.worktreePath, {}, { paseoHome });
+    const mutatedCwd = await mergeToBase(featureWorktree.worktreePath, {}, { codiusHome });
 
     expect(realpathSync.native(mutatedCwd)).toBe(realpathSync.native(baseWorktreePath));
     expect(mutatedCwd).not.toBe(featureWorktree.worktreePath);
@@ -1921,10 +1925,10 @@ const x = 1;
     execFileSync("git", ["clone", "--bare", repoDir, originDir]);
     execFileSync("git", ["clone", "--bare", repoDir, prRemoteDir]);
     execFileSync("git", ["remote", "add", "origin", originDir], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "paseo-pr-526", prRemoteDir], { cwd: repoDir });
+    execFileSync("git", ["remote", "add", "codius-pr-526", prRemoteDir], { cwd: repoDir });
     execFileSync("git", ["checkout", "-b", "therainisme/main"], { cwd: repoDir });
-    execFileSync("git", ["fetch", "paseo-pr-526", "main"], { cwd: repoDir });
-    execFileSync("git", ["config", "branch.therainisme/main.remote", "paseo-pr-526"], {
+    execFileSync("git", ["fetch", "codius-pr-526", "main"], { cwd: repoDir });
+    execFileSync("git", ["config", "branch.therainisme/main.remote", "codius-pr-526"], {
       cwd: repoDir,
     });
     execFileSync("git", ["config", "branch.therainisme/main.merge", "refs/heads/main"], {
@@ -1957,7 +1961,7 @@ const x = 1;
       .toString()
       .trim();
     expect(prRemoteMain).toBe(localHead);
-    expect(upstream).toBe("paseo-pr-526/main");
+    expect(upstream).toBe("codius-pr-526/main");
   });
 
   it("pushes the current branch to its configured push remote", async () => {
@@ -1966,12 +1970,12 @@ const x = 1;
     execFileSync("git", ["clone", "--bare", repoDir, originDir]);
     execFileSync("git", ["clone", "--bare", repoDir, prRemoteDir]);
     execFileSync("git", ["remote", "add", "origin", originDir], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "paseo-pr-526", prRemoteDir], { cwd: repoDir });
+    execFileSync("git", ["remote", "add", "codius-pr-526", prRemoteDir], { cwd: repoDir });
     execFileSync("git", ["checkout", "-b", "therainisme/main"], { cwd: repoDir });
-    execFileSync("git", ["config", "branch.therainisme/main.pushRemote", "paseo-pr-526"], {
+    execFileSync("git", ["config", "branch.therainisme/main.pushRemote", "codius-pr-526"], {
       cwd: repoDir,
     });
-    execFileSync("git", ["config", "remote.paseo-pr-526.push", "HEAD:refs/heads/main"], {
+    execFileSync("git", ["config", "remote.codius-pr-526.push", "HEAD:refs/heads/main"], {
       cwd: repoDir,
     });
     writeFileSync(join(repoDir, "fork-pr.txt"), "fork pr edit\n");
@@ -2001,7 +2005,7 @@ const x = 1;
     );
     const trackedPrRemoteHead = execFileSync(
       "git",
-      ["rev-parse", "refs/remotes/paseo-pr-526/main"],
+      ["rev-parse", "refs/remotes/codius-pr-526/main"],
       {
         cwd: repoDir,
       },
@@ -2011,7 +2015,7 @@ const x = 1;
     const afterPushStatus = await getCheckoutStatus(repoDir);
     expect(upstreamBeforePush).toBeNull();
     expect(prRemoteMain).toBe(localHead);
-    expect(getBranchUpstream(repoDir)).toBe("paseo-pr-526/main");
+    expect(getBranchUpstream(repoDir)).toBe("codius-pr-526/main");
     expect(trackedPrRemoteHead).toBe(localHead);
     expect(afterPushStatus).toMatchObject({ aheadOfOrigin: 0, behindOfOrigin: 0 });
     expect(originBranch.status).toBe(1);
@@ -2023,11 +2027,11 @@ const x = 1;
     execFileSync("git", ["remote", "add", "origin", originDir], { cwd: repoDir });
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
     execFileSync("git", ["push", "-u", "origin", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "paseo-pr-1790", originDir], { cwd: repoDir });
-    execFileSync("git", ["config", "branch.feature.pushRemote", "paseo-pr-1790"], {
+    execFileSync("git", ["remote", "add", "codius-pr-1790", originDir], { cwd: repoDir });
+    execFileSync("git", ["config", "branch.feature.pushRemote", "codius-pr-1790"], {
       cwd: repoDir,
     });
-    execFileSync("git", ["config", "remote.paseo-pr-1790.push", "HEAD:refs/heads/feature"], {
+    execFileSync("git", ["config", "remote.codius-pr-1790.push", "HEAD:refs/heads/feature"], {
       cwd: repoDir,
     });
     writeFileSync(join(repoDir, "feature.txt"), "feature edit\n");
@@ -2342,9 +2346,13 @@ const x = 1;
   });
 
   it("disables GitHub features when gh is unavailable", async () => {
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     const github = createGitHubServiceForStatus(null);
     github.getCurrentPullRequestStatus = async () => {
@@ -2357,9 +2365,13 @@ const x = 1;
 
   it("returns merged PR status when no open PR exists for the current branch", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     const status = await getPullRequestStatus(
       repoDir,
@@ -2381,9 +2393,13 @@ const x = 1;
 
   it("propagates S1 PR metadata and check display fields through checkout PR status", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     const status = await getPullRequestStatus(
       repoDir,
@@ -2395,7 +2411,7 @@ const x = 1;
             {
               name: "server-tests",
               status: "success",
-              url: "https://github.com/getpaseo/paseo/actions/runs/123",
+              url: "https://github.com/prismosoft/codius-desktop/actions/runs/123",
               workflow: "Server CI",
               duration: "2m 14s",
             },
@@ -2409,7 +2425,7 @@ const x = 1;
       authState: "authenticated",
       status: {
         number: 123,
-        url: "https://github.com/getpaseo/paseo/pull/123",
+        url: "https://github.com/prismosoft/codius-desktop/pull/123",
         title: "Ship feature",
         state: "open",
         baseRefName: "main",
@@ -2420,7 +2436,7 @@ const x = 1;
           {
             name: "server-tests",
             status: "success",
-            url: "https://github.com/getpaseo/paseo/actions/runs/123",
+            url: "https://github.com/prismosoft/codius-desktop/actions/runs/123",
             workflow: "Server CI",
             duration: "2m 14s",
           },
@@ -2433,9 +2449,13 @@ const x = 1;
 
   it("uses an origin tracked head when the local branch name differs", async () => {
     execFileSync("git", ["checkout", "-b", "tender-parrot"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
     execFileSync("git", ["config", "branch.tender-parrot.remote", "origin"], { cwd: repoDir });
     execFileSync(
       "git",
@@ -2443,7 +2463,7 @@ const x = 1;
       { cwd: repoDir },
     );
 
-    const lookupTarget = await readPullRequestLookupTargetFromFacts(repoDir, paseoHome);
+    const lookupTarget = await readPullRequestLookupTargetFromFacts(repoDir, codiusHome);
 
     expect(lookupTarget).toMatchObject({ headRef: "refactor/workspace-scripts" });
     expect(lookupTarget?.headSha).toMatch(/^[0-9a-f]{40}$/);
@@ -2451,15 +2471,19 @@ const x = 1;
 
   it("keeps the local branch lookup when origin tracking uses the same head name", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
     execFileSync("git", ["config", "branch.feature.remote", "origin"], { cwd: repoDir });
     execFileSync("git", ["config", "branch.feature.merge", "refs/heads/feature"], {
       cwd: repoDir,
     });
 
-    const lookupTarget = await readPullRequestLookupTargetFromFacts(repoDir, paseoHome);
+    const lookupTarget = await readPullRequestLookupTargetFromFacts(repoDir, codiusHome);
 
     expect(lookupTarget).toMatchObject({ headRef: "feature" });
     expect(lookupTarget?.headSha).toMatch(/^[0-9a-f]{40}$/);
@@ -2467,12 +2491,20 @@ const x = 1;
 
   it("does not attach an owner when the tracked remote is the same GitHub repository", async () => {
     execFileSync("git", ["checkout", "-b", "local-feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "git@github.com:getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
-    execFileSync("git", ["remote", "add", "upstream", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "git@github.com:prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
+    execFileSync(
+      "git",
+      ["remote", "add", "upstream", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
     execFileSync("git", ["config", "branch.local-feature.remote", "upstream"], {
       cwd: repoDir,
     });
@@ -2482,7 +2514,7 @@ const x = 1;
       { cwd: repoDir },
     );
 
-    const lookupTarget = await readPullRequestLookupTargetFromFacts(repoDir, paseoHome);
+    const lookupTarget = await readPullRequestLookupTargetFromFacts(repoDir, codiusHome);
 
     expect(lookupTarget).toMatchObject({ headRef: "refactor/workspace-scripts" });
     expect(lookupTarget?.headSha).toMatch(/^[0-9a-f]{40}$/);
@@ -2491,17 +2523,17 @@ const x = 1;
   it("keeps the fork owner when same-repo comparison is indeterminate", async () => {
     execFileSync("git", ["checkout", "-b", "chethanuk/main"], { cwd: repoDir });
     execFileSync("git", ["remote", "add", "origin", "not-a-github-remote"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "paseo-pr-345", "git@github.com:chethanuk/paseo.git"], {
+    execFileSync("git", ["remote", "add", "codius-pr-345", "git@github.com:chethanuk/codius.git"], {
       cwd: repoDir,
     });
-    execFileSync("git", ["config", "branch.chethanuk/main.remote", "paseo-pr-345"], {
+    execFileSync("git", ["config", "branch.chethanuk/main.remote", "codius-pr-345"], {
       cwd: repoDir,
     });
     execFileSync("git", ["config", "branch.chethanuk/main.merge", "refs/heads/main"], {
       cwd: repoDir,
     });
 
-    const lookupTarget = await readPullRequestLookupTargetFromFacts(repoDir, paseoHome);
+    const lookupTarget = await readPullRequestLookupTargetFromFacts(repoDir, codiusHome);
 
     expect(lookupTarget).toMatchObject({ headRef: "main", headRepositoryOwner: "chethanuk" });
     expect(lookupTarget?.headSha).toMatch(/^[0-9a-f]{40}$/);
@@ -2509,27 +2541,31 @@ const x = 1;
 
   it("uses the configured push remote for fork PR lookup when upstream is absent", async () => {
     execFileSync("git", ["checkout", "-b", "chethanuk/main"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
+    execFileSync("git", ["remote", "add", "codius-pr-345", "git@github.com:chethanuk/codius.git"], {
       cwd: repoDir,
     });
-    execFileSync("git", ["remote", "add", "paseo-pr-345", "git@github.com:chethanuk/paseo.git"], {
+    execFileSync("git", ["config", "branch.chethanuk/main.pushRemote", "codius-pr-345"], {
       cwd: repoDir,
     });
-    execFileSync("git", ["config", "branch.chethanuk/main.pushRemote", "paseo-pr-345"], {
-      cwd: repoDir,
-    });
-    execFileSync("git", ["config", "remote.paseo-pr-345.push", "HEAD:refs/heads/main"], {
+    execFileSync("git", ["config", "remote.codius-pr-345.push", "HEAD:refs/heads/main"], {
       cwd: repoDir,
     });
     const requestedTargets: RequestedPullRequestTarget[] = [];
     const github = createGitHubServiceRecordingPullRequestTargets({ requestedTargets });
 
-    const factsTarget = await readPullRequestLookupTargetFromFacts(repoDir, paseoHome);
+    const factsTarget = await readPullRequestLookupTargetFromFacts(repoDir, codiusHome);
     await getPullRequestStatus(
       repoDir,
       github,
       { force: true, reason: "push-remote-pr-lookup" },
-      { paseoHome },
+      { codiusHome },
     );
 
     expect(getBranchUpstream(repoDir)).toBeNull();
@@ -2542,15 +2578,19 @@ const x = 1;
 
   it("keeps the local branch lookup when same-repo tracking points at the base branch", async () => {
     execFileSync("git", ["checkout", "-b", "tender-parrot"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
     execFileSync("git", ["config", "branch.tender-parrot.remote", "origin"], { cwd: repoDir });
     execFileSync("git", ["config", "branch.tender-parrot.merge", "refs/heads/main"], {
       cwd: repoDir,
     });
 
-    const lookupTarget = await readPullRequestLookupTargetFromFacts(repoDir, paseoHome);
+    const lookupTarget = await readPullRequestLookupTargetFromFacts(repoDir, codiusHome);
 
     expect(lookupTarget).toMatchObject({ headRef: "tender-parrot" });
     expect(lookupTarget?.headSha).toMatch(/^[0-9a-f]{40}$/);
@@ -2558,16 +2598,20 @@ const x = 1;
 
   it("derives the same origin tracked head for on-demand PR status reads", async () => {
     execFileSync("git", ["checkout", "-b", "tender-parrot"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
     execFileSync("git", ["config", "branch.tender-parrot.remote", "origin"], { cwd: repoDir });
     execFileSync(
       "git",
       ["config", "branch.tender-parrot.merge", "refs/heads/refactor/workspace-scripts"],
       { cwd: repoDir },
     );
-    const factsTarget = await readPullRequestLookupTargetFromFacts(repoDir, paseoHome);
+    const factsTarget = await readPullRequestLookupTargetFromFacts(repoDir, codiusHome);
     const requestedTargets: RequestedPullRequestTarget[] = [];
     const github = createGitHubServiceRecordingPullRequestTargets({ requestedTargets });
 
@@ -2575,7 +2619,7 @@ const x = 1;
       repoDir,
       github,
       { force: true, reason: "tracked-head-parity" },
-      { paseoHome },
+      { codiusHome },
     );
 
     expect(requestedTargets).toEqual([factsTarget]);
@@ -2583,13 +2627,17 @@ const x = 1;
 
   it("uses the tracked fork branch for PR worktree status lookup", async () => {
     execFileSync("git", ["checkout", "-b", "chethanuk/main"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
+    execFileSync("git", ["remote", "add", "codius-pr-345", "git@github.com:chethanuk/codius.git"], {
       cwd: repoDir,
     });
-    execFileSync("git", ["remote", "add", "paseo-pr-345", "git@github.com:chethanuk/paseo.git"], {
-      cwd: repoDir,
-    });
-    execFileSync("git", ["config", "branch.chethanuk/main.remote", "paseo-pr-345"], {
+    execFileSync("git", ["config", "branch.chethanuk/main.remote", "codius-pr-345"], {
       cwd: repoDir,
     });
     execFileSync("git", ["config", "branch.chethanuk/main.merge", "refs/heads/main"], {
@@ -2601,7 +2649,7 @@ const x = 1;
       requestedTargets,
       statusOverrides: {
         number: 345,
-        url: "https://github.com/getpaseo/paseo/pull/345",
+        url: "https://github.com/prismosoft/codius-desktop/pull/345",
       },
     });
 
@@ -2616,15 +2664,19 @@ const x = 1;
 
   it("returns closed-unmerged PR status without marking it as merged", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     const status = await getPullRequestStatus(
       repoDir,
       createGitHubServiceForStatus(
         createPullRequestStatus({
-          url: "https://github.com/getpaseo/paseo/pull/999",
+          url: "https://github.com/prismosoft/codius-desktop/pull/999",
           title: "Closed without merge",
           state: "closed",
         }),
@@ -2641,9 +2693,13 @@ const x = 1;
 
   it("caches PR status results for duplicate lookups", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     let callCount = 0;
     const github = createGitHubServiceForStatus(createPullRequestStatus(), {
@@ -2660,16 +2716,20 @@ const x = 1;
 
   it("does not reuse a PR status cache entry after HEAD changes on the same branch", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     const requestedShas: string[] = [];
     const github = createGitHubServiceForStatus(null);
     github.getCurrentPullRequestStatus = async (options) => {
       if (options.headSha) requestedShas.push(options.headSha);
       return createPullRequestStatus({
-        url: `https://github.com/getpaseo/paseo/pull/${requestedShas.length}`,
+        url: `https://github.com/prismosoft/codius-desktop/pull/${requestedShas.length}`,
       });
     };
 
@@ -2687,9 +2747,13 @@ const x = 1;
 
   it("passes forced PR status reads through to the GitHub service", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     const requested: Array<{ force?: boolean; reason?: string }> = [];
     const github = createGitHubServiceForStatus(null);
@@ -2711,9 +2775,13 @@ const x = 1;
 
   it("expires cached PR status after the TTL", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     __setPullRequestStatusCacheTtlForTests(50);
     try {
@@ -2726,7 +2794,7 @@ const x = 1;
       github.getCurrentPullRequestStatus = async () => {
         callCount += 1;
         return createPullRequestStatus({
-          url: `https://github.com/getpaseo/paseo/pull/${callCount}`,
+          url: `https://github.com/prismosoft/codius-desktop/pull/${callCount}`,
         });
       };
       const first = await getPullRequestStatus(repoDir, github);
@@ -2742,9 +2810,13 @@ const x = 1;
 
   it("keeps stale PR status when a refresh hits a transient GitHub error", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     __setPullRequestStatusCacheTtlForTests(50);
     try {
@@ -2754,7 +2826,7 @@ const x = 1;
         callCount += 1;
         if (callCount === 1) {
           return createPullRequestStatus({
-            url: "https://github.com/getpaseo/paseo/pull/123",
+            url: "https://github.com/prismosoft/codius-desktop/pull/123",
           });
         }
         throw new GitHubCommandError({
@@ -2815,14 +2887,18 @@ const x = 1;
 
   it("does not use stale PR status fallback for forced GitHub errors", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     const github = createGitHubServiceForStatus(null);
     github.getCurrentPullRequestStatus = async () =>
       createPullRequestStatus({
-        url: "https://github.com/getpaseo/paseo/pull/123",
+        url: "https://github.com/prismosoft/codius-desktop/pull/123",
       });
 
     const fresh = await getPullRequestStatus(repoDir, github);
@@ -2848,9 +2924,13 @@ const x = 1;
 
   it("clears stale PR status after a successful no-PR refresh", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     __setPullRequestStatusCacheTtlForTests(50);
     try {
@@ -2860,7 +2940,7 @@ const x = 1;
         callCount += 1;
         if (callCount === 1) {
           return createPullRequestStatus({
-            url: "https://github.com/getpaseo/paseo/pull/123",
+            url: "https://github.com/prismosoft/codius-desktop/pull/123",
           });
         }
         return null;
@@ -2920,9 +3000,13 @@ const x = 1;
 
   it("dedupes concurrent PR status lookups for the same cwd", async () => {
     execFileSync("git", ["checkout", "-b", "feature"], { cwd: repoDir });
-    execFileSync("git", ["remote", "add", "origin", "https://github.com/getpaseo/paseo.git"], {
-      cwd: repoDir,
-    });
+    execFileSync(
+      "git",
+      ["remote", "add", "origin", "https://github.com/prismosoft/codius-desktop.git"],
+      {
+        cwd: repoDir,
+      },
+    );
 
     let callCount = 0;
     const github = createGitHubServiceForStatus(createPullRequestStatus(), {
@@ -2967,7 +3051,7 @@ const x = 1;
     );
   });
 
-  it("uses stored baseRefName for Paseo worktrees (no heuristics)", async () => {
+  it("uses stored baseRefName for Codius worktrees (no heuristics)", async () => {
     // Create a non-default base branch with a unique commit.
     execFileSync("git", ["checkout", "-b", "develop"], { cwd: repoDir });
     writeFileSync(join(repoDir, "file.txt"), "develop\n");
@@ -2983,7 +3067,7 @@ const x = 1;
       cwd: repoDir,
       baseBranch: "develop",
       worktreeSlug: "feature",
-      paseoHome,
+      codiusHome,
     });
 
     writeFileSync(join(worktree.worktreePath, "feature.txt"), "feature\n");
@@ -2992,23 +3076,23 @@ const x = 1;
       cwd: worktree.worktreePath,
     });
 
-    const status = await getCheckoutStatus(worktree.worktreePath, { paseoHome });
+    const status = await getCheckoutStatus(worktree.worktreePath, { codiusHome });
     expect(status.isGit).toBe(true);
     expect(status.baseRef).toBe("develop");
     expect(status.aheadBehind?.ahead).toBe(1);
 
-    const baseDiff = await getCheckoutDiff(worktree.worktreePath, { mode: "base" }, { paseoHome });
+    const baseDiff = await getCheckoutDiff(worktree.worktreePath, { mode: "base" }, { codiusHome });
     expect(baseDiff.diff).toContain("feature.txt");
     expect(baseDiff.diff).not.toContain("file.txt");
   });
 
-  it("excludes dirty working tree changes from Paseo worktree base diffs", async () => {
+  it("excludes dirty working tree changes from Codius worktree base diffs", async () => {
     const worktree = await createLegacyWorktreeForTest({
       branchName: "feature",
       cwd: repoDir,
       baseBranch: "main",
       worktreeSlug: "dirty-feature",
-      paseoHome,
+      codiusHome,
     });
 
     writeFileSync(join(worktree.worktreePath, "feature.txt"), "feature\n");
@@ -3023,7 +3107,7 @@ const x = 1;
     const baseDiff = await getCheckoutDiff(
       worktree.worktreePath,
       { mode: "base", includeStructured: true },
-      { paseoHome },
+      { codiusHome },
     );
 
     expect(baseDiff.diff).toContain("feature.txt");
@@ -3061,13 +3145,13 @@ const x = 1;
     });
     execFileSync("git", ["checkout", "main"], { cwd: repoDir });
 
-    // Create a Paseo worktree configured to use develop as base.
+    // Create a Codius worktree configured to use develop as base.
     const worktree = await createLegacyWorktreeForTest({
       branchName: "feature",
       cwd: repoDir,
       baseBranch: "develop",
       worktreeSlug: "merge-to-develop",
-      paseoHome,
+      codiusHome,
     });
 
     writeFileSync(join(worktree.worktreePath, "feature.txt"), "feature\n");
@@ -3080,7 +3164,7 @@ const x = 1;
       .trim();
 
     // No baseRef passed: should merge into the configured base (develop), not default/main.
-    await mergeToBase(worktree.worktreePath, {}, { paseoHome });
+    await mergeToBase(worktree.worktreePath, {}, { codiusHome });
 
     execFileSync("git", ["merge-base", "--is-ancestor", featureCommit, "develop"], {
       cwd: repoDir,
@@ -3100,7 +3184,7 @@ const x = 1;
       cwd: repoDir,
       baseBranch: "main",
       worktreeSlug: "missing-metadata",
-      paseoHome,
+      codiusHome,
     });
 
     writeFileSync(join(worktree.worktreePath, "feature.txt"), "feature\n");
@@ -3109,33 +3193,33 @@ const x = 1;
       cwd: worktree.worktreePath,
     });
 
-    const metadataPath = getPaseoWorktreeMetadataPath(worktree.worktreePath);
+    const metadataPath = getCodiusWorktreeMetadataPath(worktree.worktreePath);
     rmSync(metadataPath, { force: true });
 
-    const baseDiff = await getCheckoutDiff(worktree.worktreePath, { mode: "base" }, { paseoHome });
+    const baseDiff = await getCheckoutDiff(worktree.worktreePath, { mode: "base" }, { codiusHome });
     expect(baseDiff.diff).toContain("feature.txt");
 
-    const shortstat = await getCheckoutShortstat(worktree.worktreePath, { paseoHome });
+    const shortstat = await getCheckoutShortstat(worktree.worktreePath, { codiusHome });
     expect(shortstat).toEqual({ additions: 1, deletions: 0 });
   });
 
-  it("falls back to plain git checkout status when Paseo worktree metadata is missing", async () => {
+  it("falls back to plain git checkout status when Codius worktree metadata is missing", async () => {
     const worktree = await createLegacyWorktreeForTest({
       branchName: "feature",
       cwd: repoDir,
       baseBranch: "main",
       worktreeSlug: "missing-metadata-status-fallback",
-      paseoHome,
+      codiusHome,
     });
 
-    const metadataPath = getPaseoWorktreeMetadataPath(worktree.worktreePath);
+    const metadataPath = getCodiusWorktreeMetadataPath(worktree.worktreePath);
     rmSync(metadataPath, { force: true });
 
-    const status = await getCheckoutStatus(worktree.worktreePath, { paseoHome });
+    const status = await getCheckoutStatus(worktree.worktreePath, { codiusHome });
     expect(status.isGit).toBe(true);
     expect(status.currentBranch).toBe("feature");
     expect(realpathSync.native(status.repoRoot)).toBe(realpathSync.native(worktree.worktreePath));
-    expect(status.isPaseoOwnedWorktree).toBe(true);
+    expect(status.isCodiusOwnedWorktree).toBe(true);
     expect(realpathSync.native(status.mainRepoRoot ?? "")).toBe(realpathSync.native(repoDir));
     expect(status.baseRef).toBe("main");
   });
@@ -3146,7 +3230,7 @@ const x = 1;
         "worktree /home/user/repo",
         "branch refs/heads/main",
         "",
-        "worktree /home/user/.paseo/worktrees/feature",
+        "worktree /home/user/.codius/worktrees/feature",
         "branch refs/heads/feature",
         "",
       ].join("\n");
@@ -3155,7 +3239,7 @@ const x = 1;
       expect(entries).toHaveLength(2);
       expect(entries[0]).toEqual({ path: "/home/user/repo", branchRef: "refs/heads/main" });
       expect(entries[1]).toEqual({
-        path: "/home/user/.paseo/worktrees/feature",
+        path: "/home/user/.codius/worktrees/feature",
         branchRef: "refs/heads/feature",
       });
     });
@@ -3168,32 +3252,32 @@ const x = 1;
     });
   });
 
-  describe("isPaseoWorktreePath", () => {
-    it("matches Unix .paseo/worktrees/ paths", () => {
-      expect(isPaseoWorktreePath("/home/user/.paseo/worktrees/feature")).toBe(true);
+  describe("isCodiusWorktreePath", () => {
+    it("matches Unix .codius/worktrees/ paths", () => {
+      expect(isCodiusWorktreePath("/home/user/.codius/worktrees/feature")).toBe(true);
     });
 
-    it("matches Windows .paseo\\worktrees\\ paths", () => {
-      expect(isPaseoWorktreePath("C:\\Users\\dev\\.paseo\\worktrees\\feature")).toBe(true);
+    it("matches Windows .codius\\worktrees\\ paths", () => {
+      expect(isCodiusWorktreePath("C:\\Users\\dev\\.codius\\worktrees\\feature")).toBe(true);
     });
 
-    it("matches worktrees under a custom PASEO_HOME", () => {
-      const customPaseoHome = process.platform === "win32" ? "C:\\paseo" : "/var/lib/paseo";
+    it("matches worktrees under a custom CODIUS_HOME", () => {
+      const customCodiusHome = process.platform === "win32" ? "C:\\codius" : "/var/lib/codius";
       const worktreePath =
         process.platform === "win32"
-          ? win32.join(customPaseoHome, "worktrees", "project", "feature")
-          : `${customPaseoHome}/worktrees/project/feature`;
+          ? win32.join(customCodiusHome, "worktrees", "project", "feature")
+          : `${customCodiusHome}/worktrees/project/feature`;
 
       expect(
-        isPaseoWorktreePath(worktreePath, {
-          paseoHome: customPaseoHome,
+        isCodiusWorktreePath(worktreePath, {
+          codiusHome: customCodiusHome,
         }),
       ).toBe(true);
     });
 
-    it("rejects paths without .paseo/worktrees segment", () => {
-      expect(isPaseoWorktreePath("/home/user/repo")).toBe(false);
-      expect(isPaseoWorktreePath("C:\\Users\\dev\\repo")).toBe(false);
+    it("rejects paths without .codius/worktrees segment", () => {
+      expect(isCodiusWorktreePath("/home/user/repo")).toBe(false);
+      expect(isCodiusWorktreePath("C:\\Users\\dev\\repo")).toBe(false);
     });
   });
 

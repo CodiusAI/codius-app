@@ -39,7 +39,7 @@ The first load of an agent without a local cursor is different: it fetches a bou
 
 ## Durable item anchors
 
-Provider message IDs are not guaranteed for every displayed item. Paseo-generated system errors are one example. Rendered item indices are not durable either because pagination and projection can merge source rows.
+Provider message IDs are not guaranteed for every displayed item. Codius-generated system errors are one example. Rendered item indices are not durable either because pagination and projection can merge source rows.
 
 Actions that address a point in chat history, such as Fork, use the daemon timeline `epoch` plus the projected item's `seqEnd`. The app carries that position on the rendered assistant item for both live and fetched history. When adjacent projected chunks merge, the merged item retains the newer chunk's position.
 
@@ -92,7 +92,7 @@ them. A canonical user row replaces its matching slot in place; an unmatched pro
 where the user submitted it. Other canonical rows are applied after the already-present timeline
 instead of relocating visible user messages around newly fetched history.
 
-Canonical submitted user rows carry the provider's `messageId` and Paseo's optional
+Canonical submitted user rows carry the provider's `messageId` and Codius's optional
 `clientMessageId`. Clients reconcile optimistic prompts by `clientMessageId`. Content matching is
 limited to the dated compatibility path for daemon timelines created before that field existed.
 

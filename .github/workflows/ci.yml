@@ -84,9 +84,9 @@ jobs:
 
       - name: Verify public package contents
         run: |
-          npm pack --dry-run --ignore-scripts --workspace=@getpaseo/protocol
-          npm pack --dry-run --ignore-scripts --workspace=@getpaseo/client
-          npm pack --dry-run --ignore-scripts --workspace=@getpaseo/server
+          npm pack --dry-run --ignore-scripts --workspace=@codius-ai/protocol
+          npm pack --dry-run --ignore-scripts --workspace=@codius-ai/client
+          npm pack --dry-run --ignore-scripts --workspace=@codius-ai/server
 
   server-tests:
     strategy:
@@ -119,7 +119,7 @@ jobs:
         run: npm run build:server-deps
 
       - name: Run server tests
-        run: npm run test --workspace=@getpaseo/server
+        run: npm run test --workspace=@codius-ai/server
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -158,7 +158,7 @@ jobs:
         run: npm run build:server
 
       - name: Run desktop tests
-        run: npm run test --workspace=@getpaseo/desktop
+        run: npm run test --workspace=@codius-ai/desktop
 
       - name: Build app dependencies for desktop E2E
         if: matrix.os == 'ubuntu-latest'
@@ -170,9 +170,9 @@ jobs:
 
       - name: Run real Electron browser tab bridge E2E
         if: matrix.os == 'ubuntu-latest'
-        run: npm run test:e2e:browser-tab-bridge --workspace=@getpaseo/desktop
+        run: npm run test:e2e:browser-tab-bridge --workspace=@codius-ai/desktop
         env:
-          PASEO_TAB_BRIDGE_E2E_ARTIFACT_DIR: ${{ runner.temp }}/browser-tab-bridge-e2e
+          CODIUS_TAB_BRIDGE_E2E_ARTIFACT_DIR: ${{ runner.temp }}/browser-tab-bridge-e2e
 
       - name: Upload browser tab bridge diagnostics
         uses: actions/upload-artifact@v4
@@ -188,8 +188,8 @@ jobs:
         run: npm run build:desktop -- --publish never --linux --x64 --dir
         env:
           EP_GH_IGNORE_TIME: true
-          PASEO_DESKTOP_SMOKE: "1"
-          PASEO_DESKTOP_SMOKE_ARTIFACT_DIR: ${{ runner.temp }}/desktop-smoke
+          CODIUS_DESKTOP_SMOKE: "1"
+          CODIUS_DESKTOP_SMOKE_ARTIFACT_DIR: ${{ runner.temp }}/desktop-smoke
 
       - name: Upload packaged smoke diagnostics
         if: failure() && matrix.os == 'ubuntu-latest' && steps.desktop_changes.outputs.desktop == 'true'
@@ -222,7 +222,7 @@ jobs:
         run: npm run build:app-deps
 
       - name: Run app unit tests
-        run: npm run test --workspace=@getpaseo/app
+        run: npm run test --workspace=@codius-ai/app
 
   sdk-tests:
     runs-on: ubuntu-latest
@@ -242,13 +242,13 @@ jobs:
         run: npm run build:client
 
       - name: Run protocol tests
-        run: npm run test --workspace=@getpaseo/protocol
+        run: npm run test --workspace=@codius-ai/protocol
 
       - name: Run client tests
-        run: npm run test --workspace=@getpaseo/client
+        run: npm run test --workspace=@codius-ai/client
 
       - name: Typecheck client examples
-        run: npm run typecheck:examples --workspace=@getpaseo/client
+        run: npm run typecheck:examples --workspace=@codius-ai/client
 
   playwright:
     strategy:
@@ -290,13 +290,13 @@ jobs:
 
       - name: Run Playwright E2E tests
         if: ${{ !matrix.desktop }}
-        run: npm run test:e2e --workspace=@getpaseo/app -- --shard=${{ matrix.shard }}/4
+        run: npm run test:e2e --workspace=@codius-ai/app -- --shard=${{ matrix.shard }}/4
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Run desktop-overlay Playwright tests
         if: ${{ matrix.desktop }}
-        run: npm run test:e2e:desktop --workspace=@getpaseo/app
+        run: npm run test:e2e:desktop --workspace=@codius-ai/app
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
@@ -327,7 +327,7 @@ jobs:
         run: npm run build:relay
 
       - name: Run relay tests
-        run: npm run test --workspace=@getpaseo/relay
+        run: npm run test --workspace=@codius-ai/relay
 
   cli-tests:
     strategy:
@@ -353,10 +353,10 @@ jobs:
         run: node scripts/npm-retry.mjs install -g @anthropic-ai/claude-code @openai/codex@0.105.0 opencode-ai
 
       - name: Run CLI tests
-        run: npm run test --workspace=@getpaseo/cli
+        run: npm run test --workspace=@codius-ai/cli
         env:
-          PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD: "0"
-          PASEO_DICTATION_ENABLED: "0"
-          PASEO_VOICE_MODE_ENABLED: "0"
-          PASEO_CLI_TEST_SHARD: ${{ matrix.shard }}
-          PASEO_CLI_TEST_SHARD_TOTAL: "3"
+          CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD: "0"
+          CODIUS_DICTATION_ENABLED: "0"
+          CODIUS_VOICE_MODE_ENABLED: "0"
+          CODIUS_CLI_TEST_SHARD: ${{ matrix.shard }}
+          CODIUS_CLI_TEST_SHARD_TOTAL: "3"

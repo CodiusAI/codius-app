@@ -129,7 +129,7 @@ const INTERRUPT_TIMEOUT_MS = 2_000;
 const CODEX_PROVIDER = "codex" as const;
 // Codex treats most app-server client names as the model-request originator.
 // This reserved Codex name is non-originating, so requests keep Codex's default
-// CLI identity instead of showing up as Paseo in provider usage logs.
+// CLI identity instead of showing up as Codius in provider usage logs.
 const CODEX_NON_ORIGINATING_APP_SERVER_CLIENT_INFO = {
   name: "codex_app_server_daemon",
   title: "Codex App Server Daemon",
@@ -139,7 +139,7 @@ const ASSISTANT_MESSAGE_BOUNDARY_MARKDOWN = "\n\n---\n\n";
 const MAX_PENDING_SUB_AGENT_THREADS = 32;
 const MAX_PENDING_SUB_AGENT_NOTIFICATIONS_PER_THREAD = 128;
 // COMPAT(codexLegacyCollabAgentToolCall): Codex <0.143 emits this shape. Added in
-// Paseo v0.1.105; remove after 2027-01-09 once the supported Codex floor is >=0.143.
+// Codius v0.1.105; remove after 2027-01-09 once the supported Codex floor is >=0.143.
 const CODEX_TOOL_THREAD_ITEM_TYPES = new Set([
   "commandExecution",
   "fileChange",

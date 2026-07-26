@@ -15,7 +15,7 @@ import {
 
 describe("pid-lock ownership", () => {
   test("writes and releases lock for explicit owner pid", async () => {
-    const paseoHome = await mkdtemp(join(tmpdir(), "paseo-pid-lock-owner-"));
+    const codiusHome = await mkdtemp(join(tmpdir(), "codius-pid-lock-owner-"));
     const ownerPid = process.pid + 10_000;
 
     try {
@@ -25,9 +25,9 @@ describe("pid-lock ownership", () => {
           sockPath: string | null,
           options: { ownerPid: number },
         ) => Promise<void>
-      )(paseoHome, null, { ownerPid });
+      )(codiusHome, null, { ownerPid });
 
-      const lock = await getPidLockInfo(paseoHome);
+      const lock = await getPidLockInfo(codiusHome);
       expect(lock?.pid).toBe(ownerPid);
       expect(lock?.listen).toBeNull();
       expect(lock?.heartbeat).toBe(true);
@@ -38,33 +38,33 @@ describe("pid-lock ownership", () => {
           patch: { listen: string },
           options: { ownerPid: number },
         ) => Promise<void>
-      )(paseoHome, { listen: "127.0.0.1:6767" }, { ownerPid });
+      )(codiusHome, { listen: "127.0.0.1:6767" }, { ownerPid });
 
-      const updatedLock = await getPidLockInfo(paseoHome);
+      const updatedLock = await getPidLockInfo(codiusHome);
       expect(updatedLock?.listen).toBe("127.0.0.1:6767");
 
       await (
         releasePidLock as unknown as (home: string, options: { ownerPid: number }) => Promise<void>
-      )(paseoHome, { ownerPid: ownerPid + 1 });
-      const lockAfterWrongOwnerRelease = await getPidLockInfo(paseoHome);
+      )(codiusHome, { ownerPid: ownerPid + 1 });
+      const lockAfterWrongOwnerRelease = await getPidLockInfo(codiusHome);
       expect(lockAfterWrongOwnerRelease?.pid).toBe(ownerPid);
 
       await (
         releasePidLock as unknown as (home: string, options: { ownerPid: number }) => Promise<void>
-      )(paseoHome, { ownerPid });
-      const lockAfterOwnerRelease = await getPidLockInfo(paseoHome);
+      )(codiusHome, { ownerPid });
+      const lockAfterOwnerRelease = await getPidLockInfo(codiusHome);
       expect(lockAfterOwnerRelease).toBeNull();
     } finally {
-      await rm(paseoHome, { recursive: true, force: true });
+      await rm(codiusHome, { recursive: true, force: true });
     }
   });
 
   test("keeps a stale heartbeat lock when the recorded pid is alive without a reachability check", async () => {
-    const paseoHome = await mkdtemp(join(tmpdir(), "paseo-pid-lock-stale-heartbeat-"));
+    const codiusHome = await mkdtemp(join(tmpdir(), "codius-pid-lock-stale-heartbeat-"));
     const replacementOwnerPid = process.pid + 10_000;
 
     try {
-      const pidPath = join(paseoHome, "paseo.pid");
+      const pidPath = join(codiusHome, "codius.pid");
       await writeFile(
         pidPath,
         JSON.stringify({
@@ -80,24 +80,24 @@ describe("pid-lock ownership", () => {
       const staleTime = new Date(Date.now() - 10 * 60_000);
       await utimes(pidPath, staleTime, staleTime);
 
-      await expect(isLocked(paseoHome)).resolves.toMatchObject({ locked: true });
+      await expect(isLocked(codiusHome)).resolves.toMatchObject({ locked: true });
       await expect(
-        acquirePidLock(paseoHome, null, { ownerPid: replacementOwnerPid }),
-      ).rejects.toThrow("Another Paseo daemon is already running");
+        acquirePidLock(codiusHome, null, { ownerPid: replacementOwnerPid }),
+      ).rejects.toThrow("Another Codius daemon is already running");
 
-      const lock = await getPidLockInfo(paseoHome);
+      const lock = await getPidLockInfo(codiusHome);
       expect(lock?.pid).toBe(process.pid);
     } finally {
-      await rm(paseoHome, { recursive: true, force: true });
+      await rm(codiusHome, { recursive: true, force: true });
     }
   });
 
   test("reclaims a stale desktop heartbeat lock after desktop confirms the daemon is unreachable", async () => {
-    const paseoHome = await mkdtemp(join(tmpdir(), "paseo-pid-lock-stale-desktop-heartbeat-"));
+    const codiusHome = await mkdtemp(join(tmpdir(), "codius-pid-lock-stale-desktop-heartbeat-"));
     const replacementOwnerPid = process.pid + 10_000;
 
     try {
-      const pidPath = join(paseoHome, "paseo.pid");
+      const pidPath = join(codiusHome, "codius.pid");
       await writeFile(
         pidPath,
         JSON.stringify({
@@ -113,22 +113,22 @@ describe("pid-lock ownership", () => {
       const staleTime = new Date(Date.now() - 10 * 60_000);
       await utimes(pidPath, staleTime, staleTime);
 
-      await acquirePidLock(paseoHome, null, {
+      await acquirePidLock(codiusHome, null, {
         ownerPid: replacementOwnerPid,
         reclaimStaleDesktopLock: true,
       });
 
-      const lock = await getPidLockInfo(paseoHome);
+      const lock = await getPidLockInfo(codiusHome);
       expect(lock?.pid).toBe(replacementOwnerPid);
       expect(lock?.listen).toBeNull();
     } finally {
-      await rm(paseoHome, { recursive: true, force: true });
+      await rm(codiusHome, { recursive: true, force: true });
     }
   });
 
   test("keeps a stale live lock written by a pre-heartbeat daemon", async () => {
-    const paseoHome = await mkdtemp(join(tmpdir(), "paseo-pid-lock-legacy-live-"));
-    const pidPath = join(paseoHome, "paseo.pid");
+    const codiusHome = await mkdtemp(join(tmpdir(), "codius-pid-lock-legacy-live-"));
+    const pidPath = join(codiusHome, "codius.pid");
 
     try {
       await writeFile(
@@ -146,20 +146,20 @@ describe("pid-lock ownership", () => {
       await utimes(pidPath, staleTime, staleTime);
 
       await expect(
-        acquirePidLock(paseoHome, null, { ownerPid: process.pid + 10_000 }),
-      ).rejects.toThrow("Another Paseo daemon is already running");
+        acquirePidLock(codiusHome, null, { ownerPid: process.pid + 10_000 }),
+      ).rejects.toThrow("Another Codius daemon is already running");
 
-      const lock = await getPidLockInfo(paseoHome);
+      const lock = await getPidLockInfo(codiusHome);
       expect(lock?.pid).toBe(process.pid);
     } finally {
-      await rm(paseoHome, { recursive: true, force: true });
+      await rm(codiusHome, { recursive: true, force: true });
     }
   });
 
   test("reclaims a stale legacy desktop lock after desktop confirms the daemon is unreachable", async () => {
-    const paseoHome = await mkdtemp(join(tmpdir(), "paseo-pid-lock-legacy-desktop-"));
+    const codiusHome = await mkdtemp(join(tmpdir(), "codius-pid-lock-legacy-desktop-"));
     const replacementOwnerPid = process.pid + 10_000;
-    const pidPath = join(paseoHome, "paseo.pid");
+    const pidPath = join(codiusHome, "codius.pid");
 
     try {
       await writeFile(
@@ -176,62 +176,62 @@ describe("pid-lock ownership", () => {
       const staleTime = new Date(Date.now() - 10 * 60_000);
       await utimes(pidPath, staleTime, staleTime);
 
-      await acquirePidLock(paseoHome, null, {
+      await acquirePidLock(codiusHome, null, {
         ownerPid: replacementOwnerPid,
         reclaimStaleDesktopLock: true,
       });
 
-      const lock = await getPidLockInfo(paseoHome);
+      const lock = await getPidLockInfo(codiusHome);
       expect(lock?.pid).toBe(replacementOwnerPid);
       expect(lock?.heartbeat).toBe(true);
     } finally {
-      await rm(paseoHome, { recursive: true, force: true });
+      await rm(codiusHome, { recursive: true, force: true });
     }
   });
 
   test("rejects a heartbeat refresh after another supervisor takes ownership", async () => {
-    const paseoHome = await mkdtemp(join(tmpdir(), "paseo-pid-lock-refresh-owner-"));
+    const codiusHome = await mkdtemp(join(tmpdir(), "codius-pid-lock-refresh-owner-"));
 
     try {
-      await acquirePidLock(paseoHome, null, { ownerPid: process.pid + 10_000 });
+      await acquirePidLock(codiusHome, null, { ownerPid: process.pid + 10_000 });
 
-      await expect(refreshPidLock(paseoHome, { ownerPid: process.pid })).rejects.toBeInstanceOf(
+      await expect(refreshPidLock(codiusHome, { ownerPid: process.pid })).rejects.toBeInstanceOf(
         PidLockError,
       );
     } finally {
-      await rm(paseoHome, { recursive: true, force: true });
+      await rm(codiusHome, { recursive: true, force: true });
     }
   });
 
   test("retries a heartbeat refresh while its owner is rewriting the lock", async () => {
-    const paseoHome = await mkdtemp(join(tmpdir(), "paseo-pid-lock-refresh-rewrite-"));
-    const pidPath = join(paseoHome, "paseo.pid");
+    const codiusHome = await mkdtemp(join(tmpdir(), "codius-pid-lock-refresh-rewrite-"));
+    const pidPath = join(codiusHome, "codius.pid");
 
     try {
-      await acquirePidLock(paseoHome, null, { ownerPid: process.pid });
-      const lock = await getPidLockInfo(paseoHome);
+      await acquirePidLock(codiusHome, null, { ownerPid: process.pid });
+      const lock = await getPidLockInfo(codiusHome);
       expect(lock).not.toBeNull();
 
       const rewriteHandle = await open(pidPath, "r+");
       await rewriteHandle.truncate(0);
 
-      const refresh = refreshPidLock(paseoHome, { ownerPid: process.pid });
+      const refresh = refreshPidLock(codiusHome, { ownerPid: process.pid });
       await new Promise((resolve) => setTimeout(resolve, 250));
       await rewriteHandle.writeFile(JSON.stringify(lock));
       await rewriteHandle.close();
 
       await expect(refresh).resolves.toBeUndefined();
     } finally {
-      await rm(paseoHome, { recursive: true, force: true });
+      await rm(codiusHome, { recursive: true, force: true });
     }
   });
 
   test("keeps a fresh lock when the recorded pid is alive", async () => {
-    const paseoHome = await mkdtemp(join(tmpdir(), "paseo-pid-lock-fresh-heartbeat-"));
+    const codiusHome = await mkdtemp(join(tmpdir(), "codius-pid-lock-fresh-heartbeat-"));
 
     try {
       await writeFile(
-        join(paseoHome, "paseo.pid"),
+        join(codiusHome, "codius.pid"),
         JSON.stringify({
           pid: process.pid,
           startedAt: new Date().toISOString(),
@@ -244,14 +244,14 @@ describe("pid-lock ownership", () => {
       );
 
       await expect(
-        acquirePidLock(paseoHome, null, { ownerPid: process.pid + 10_000 }),
-      ).rejects.toThrow("Another Paseo daemon is already running");
+        acquirePidLock(codiusHome, null, { ownerPid: process.pid + 10_000 }),
+      ).rejects.toThrow("Another Codius daemon is already running");
 
-      const lock = await getPidLockInfo(paseoHome);
+      const lock = await getPidLockInfo(codiusHome);
       expect(lock?.pid).toBe(process.pid);
       expect(lock?.listen).toBe("127.0.0.1:6767");
     } finally {
-      await rm(paseoHome, { recursive: true, force: true });
+      await rm(codiusHome, { recursive: true, force: true });
     }
   });
 });

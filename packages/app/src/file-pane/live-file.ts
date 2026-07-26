@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import type { DaemonClient, FileReadResult } from "@getpaseo/client/internal/daemon-client";
-import type { FileVersion } from "@getpaseo/protocol/messages";
+import type { DaemonClient, FileReadResult } from "@codius-ai/client/internal/daemon-client";
+import type { FileVersion } from "@codius-ai/protocol/messages";
 import { useFetchQuery } from "@/data/query";
 
 export function useLiveFile(input: {

@@ -1,6 +1,6 @@
 import { QueryClient, QueryObserver, skipToken } from "@tanstack/react-query";
 import { describe, expect, it } from "vitest";
-import type { MutableDaemonConfig, SessionOutboundMessage } from "@getpaseo/protocol/messages";
+import type { MutableDaemonConfig, SessionOutboundMessage } from "@codius-ai/protocol/messages";
 import { checkoutDiffQueryKey } from "@/git/query-keys";
 import { buildTerminalsQueryKey } from "@/screens/workspace/terminals/state";
 import { daemonConfigQueryKey } from "@/data/daemon-config";

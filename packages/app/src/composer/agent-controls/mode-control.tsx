@@ -40,8 +40,11 @@ import { resolveNextAgentModeId } from "@/composer/agent-controls/mode";
 import { useComposerKeyboardScope } from "@/composer/keyboard-scope";
 import { useComposerControlLayout } from "@/composer/agent-controls/layout-context";
 import { AgentControlTrigger } from "@/composer/agent-controls/control";
-import type { AgentMode } from "@getpaseo/protocol/agent-types";
-import { getModeVisuals, type AgentProviderDefinition } from "@getpaseo/protocol/provider-manifest";
+import type { AgentMode } from "@codius-ai/protocol/agent-types";
+import {
+  getModeVisuals,
+  type AgentProviderDefinition,
+} from "@codius-ai/protocol/provider-manifest";
 
 interface ModeIconProps {
   size?: number;

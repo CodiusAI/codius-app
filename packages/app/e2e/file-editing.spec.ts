@@ -155,7 +155,7 @@ test.describe("CodeMirror workspace file editing", () => {
 
   test("applies the interface font to portaled tooltips", async ({ page, withWorkspace }) => {
     await page.addInitScript(() => {
-      localStorage.setItem("@paseo:app-settings", JSON.stringify({ uiFontFamily: "monospace" }));
+      localStorage.setItem("@codius:app-settings", JSON.stringify({ uiFontFamily: "monospace" }));
     });
     const workspace = await withWorkspace({ prefix: "file-tooltip-font-" });
     const relativePath = "tooltip-font.txt";

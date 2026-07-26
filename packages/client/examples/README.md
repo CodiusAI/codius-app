@@ -1,9 +1,9 @@
-# Paseo Client SDK Examples
+# Codius Client SDK Examples
 
 These examples use only the public SDK root:
 
 ```ts
-import { createPaseoClient, type PaseoClient } from "@getpaseo/client";
+import { createCodiusClient, type CodiusClient } from "@codius-ai/client";
 ```
 
 Pass the daemon WebSocket URL into the exported functions. In worktree dev, read it

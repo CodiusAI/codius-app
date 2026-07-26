@@ -6,9 +6,9 @@ import {
   getScriptConfigs,
   getWorktreeTerminalSpecs,
   isServiceScript,
-  paseoConfigParseError,
+  codiusConfigParseError,
   processCarriageReturns,
-  readPaseoConfig,
+  readCodiusConfig,
   resolveWorktreeRuntimeEnv,
   runWorktreeSetupCommands,
   WorktreeSetupError,
@@ -30,7 +30,7 @@ import {
   requirePlannedWorkspaceServicePort,
   refreshWorkspaceServicePort,
 } from "./workspace-service-port-registry.js";
-import type { PaseoServicePortAllocation } from "@getpaseo/protocol/paseo-config-schema";
+import type { CodiusServicePortAllocation } from "@codius-ai/protocol/codius-config-schema";
 
 export interface WorktreeBootstrapTerminalResult {
   name: string | null;
@@ -357,7 +357,7 @@ function buildSetupTimelineItem(input: {
   if (input.status === "running") {
     return {
       type: "tool_call",
-      name: "paseo_worktree_setup",
+      name: "codius_worktree_setup",
       callId: input.callId,
       status: "running",
       detail,
@@ -368,7 +368,7 @@ function buildSetupTimelineItem(input: {
   if (input.status === "completed") {
     return {
       type: "tool_call",
-      name: "paseo_worktree_setup",
+      name: "codius_worktree_setup",
       callId: input.callId,
       status: "completed",
       detail,
@@ -378,7 +378,7 @@ function buildSetupTimelineItem(input: {
 
   return {
     type: "tool_call",
-    name: "paseo_worktree_setup",
+    name: "codius_worktree_setup",
     callId: input.callId,
     status: "failed",
     detail,
@@ -405,7 +405,7 @@ function buildTerminalTimelineItem(input: {
   if (input.status === "running") {
     return {
       type: "tool_call",
-      name: "paseo_worktree_terminals",
+      name: "codius_worktree_terminals",
       callId: input.callId,
       status: "running",
       detail: {
@@ -420,7 +420,7 @@ function buildTerminalTimelineItem(input: {
   if (input.status === "completed") {
     return {
       type: "tool_call",
-      name: "paseo_worktree_terminals",
+      name: "codius_worktree_terminals",
       callId: input.callId,
       status: "completed",
       detail: {
@@ -434,7 +434,7 @@ function buildTerminalTimelineItem(input: {
 
   return {
     type: "tool_call",
-    name: "paseo_worktree_terminals",
+    name: "codius_worktree_terminals",
     callId: input.callId,
     status: "failed",
     detail: {
@@ -711,7 +711,7 @@ export interface SpawnWorkspaceScriptOptions {
   serviceProxy: ServiceProxySubsystem;
   runtimeStore: WorkspaceScriptRuntimeStore;
   terminalManager: TerminalManager;
-  globalServicePorts?: PaseoServicePortAllocation;
+  globalServicePorts?: CodiusServicePortAllocation;
   logger?: Logger;
   onLifecycleChanged?: () => void;
 }
@@ -735,7 +735,7 @@ async function setupServiceScriptRoute(params: {
   serviceProxyPublicBaseUrl: string | null | undefined;
   existingRuntimeEntry: ReturnType<WorkspaceScriptRuntimeStore["get"]>;
   serviceProxy: ServiceProxySubsystem;
-  servicePortAllocation: PaseoServicePortAllocation | undefined;
+  servicePortAllocation: CodiusServicePortAllocation | undefined;
 }): Promise<ServiceScriptSetupResult> {
   const {
     scriptConfigs,
@@ -878,14 +878,14 @@ export async function spawnWorkspaceScript(
     logger,
     onLifecycleChanged,
   } = options;
-  const configResult = readPaseoConfig(repoRoot);
+  const configResult = readCodiusConfig(repoRoot);
   if (!configResult.ok) {
-    throw paseoConfigParseError(configResult);
+    throw codiusConfigParseError(configResult);
   }
   const scriptConfigs = getScriptConfigs(configResult.config);
   const config = scriptConfigs.get(scriptName);
   if (!config) {
-    throw new Error(`Script '${scriptName}' is not configured in paseo.json`);
+    throw new Error(`Script '${scriptName}' is not configured in codius.json`);
   }
 
   const serviceScript = isServiceScript(config);

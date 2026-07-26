@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { DaemonClient } from "@getpaseo/client/internal/daemon-client";
+import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
 import type { WorkspaceDescriptor } from "@/stores/session-store";
 import { useTranslation } from "react-i18next";
 import { useReplicaQuery } from "@/data/query";

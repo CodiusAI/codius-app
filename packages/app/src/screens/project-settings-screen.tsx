@@ -9,11 +9,11 @@ import { ArrowLeft, Check, ChevronDown, MoreVertical, Pencil, Plus, X } from "lu
 import { ProjectIconView } from "@/components/project-icon-view";
 import { HostPicker as SharedHostPicker, HostStatusDotSlot } from "@/components/hosts/host-picker";
 import type {
-  PaseoConfigRaw,
-  PaseoConfigRevision,
+  CodiusConfigRaw,
+  CodiusConfigRevision,
   ProjectConfigRpcError,
-} from "@getpaseo/protocol/messages";
-import type { DaemonClient } from "@getpaseo/client/internal/daemon-client";
+} from "@codius-ai/protocol/messages";
+import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -220,8 +220,8 @@ function ProjectSettingsBody({
     projects: projectIconTargets,
   });
   const projectIconDataUri = projectIconDataByKey.get(project.projectKey) ?? null;
-  const loadedConfig: PaseoConfigRaw | null = data?.ok ? (data.config ?? {}) : null;
-  const loadedRevision: PaseoConfigRevision | null = data?.ok ? data.revision : null;
+  const loadedConfig: CodiusConfigRaw | null = data?.ok ? (data.config ?? {}) : null;
+  const loadedRevision: CodiusConfigRevision | null = data?.ok ? data.revision : null;
   const readError: ProjectConfigRpcError | null = data && !data.ok ? data.error : null;
 
   const handleReload = useCallback(() => {
@@ -264,8 +264,8 @@ function ProjectSettingsBody({
 
 interface RenderContentInput {
   readQuery: ReturnType<typeof useQuery<ReadProjectConfigData>>;
-  loadedConfig: PaseoConfigRaw | null;
-  loadedRevision: PaseoConfigRevision | null;
+  loadedConfig: CodiusConfigRaw | null;
+  loadedRevision: CodiusConfigRevision | null;
   readError: ProjectConfigRpcError | null;
   selectedHost: ProjectHostEntry;
   queryKey: readonly [string, string, string];
@@ -343,7 +343,7 @@ function renderContent({
   );
 }
 
-function revisionToKey(revision: PaseoConfigRevision | null): string {
+function revisionToKey(revision: CodiusConfigRevision | null): string {
   if (!revision) return "none";
   return `${revision.mtimeMs}-${revision.size}`;
 }
@@ -418,8 +418,8 @@ function errorToDetail(error: unknown): string | null {
 }
 
 interface ProjectConfigFormProps {
-  baseConfig: PaseoConfigRaw;
-  revision: PaseoConfigRevision | null;
+  baseConfig: CodiusConfigRaw;
+  revision: CodiusConfigRevision | null;
   repoRoot: string;
   queryKey: readonly [string, string, string];
   client: DaemonClient;
@@ -444,8 +444,8 @@ function ProjectConfigForm({
 
   const saveMutation = useMutation({
     mutationFn: async (input: {
-      config: PaseoConfigRaw;
-      expectedRevision: PaseoConfigRevision | null;
+      config: CodiusConfigRaw;
+      expectedRevision: CodiusConfigRevision | null;
     }) => {
       return client.writeProjectConfig({
         repoRoot,

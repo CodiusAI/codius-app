@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { AgentStreamEventPayload } from "@getpaseo/protocol/messages";
+import type { AgentStreamEventPayload } from "@codius-ai/protocol/messages";
 import {
   buildOptimisticUserMessage,
   hydrateStreamState,
@@ -2571,7 +2571,7 @@ describe("processAgentStreamEvents", () => {
 
   it("keeps Claude image tool-result output before following assistant blocks while text streams", () => {
     const imageMarkdown =
-      "![Image](/tmp/paseo-attachments/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.png)";
+      "![Image](/tmp/codius-attachments/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.png)";
     const result = processAgentStreamEvents({
       events: [
         makeStreamReducerEvent(

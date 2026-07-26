@@ -377,7 +377,7 @@ describe("buildReviewAttachmentSnapshot", () => {
       commentCount: 1,
       attachment: {
         type: "review",
-        mimeType: "application/paseo-review",
+        mimeType: "application/codius-review",
         cwd: "/repo",
         mode: "base",
         baseRef: "main",

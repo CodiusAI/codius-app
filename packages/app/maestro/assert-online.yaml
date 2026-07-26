@@ -1,8 +1,8 @@
-appId: sh.paseo
+appId: sh.codius
 ---
 - runFlow:
     when:
-      visible: "Open in.*Paseo.*\\?"
+      visible: "Open in.*Codius.*\\?"
     commands:
       - tapOn: "Open"
 

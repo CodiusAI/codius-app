@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import type { DaemonClient } from "@getpaseo/client/internal/daemon-client";
+import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
 import { connectToDaemon, getDaemonHost, resolveAgentId } from "../../utils/client.js";
 import type {
   CommandError,

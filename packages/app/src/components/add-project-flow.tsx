@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import type { WorkspaceProjectDescriptorPayload } from "@getpaseo/protocol/messages";
+import type { WorkspaceProjectDescriptorPayload } from "@codius-ai/protocol/messages";
 import {
   ArrowLeft,
   Folder,

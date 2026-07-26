@@ -4,10 +4,10 @@ import type { BrowserKeyboardPolicy } from "./features/browser-keyboard/index.js
 // This preload runs in Electron's sandbox and is tsc-compiled (not bundled), so it MUST
 // NOT emit any runtime module load other than "electron" — a require() of a local or
 // third-party module throws and aborts the preload before exposeInMainWorld runs, leaving
-// window.paseoDesktop undefined (the 0.1.108 regression, #2103). Keep this literal in sync
-// with PASEO_BROWSER_PROFILE_PARTITION in features/browser-profile.ts; preload-sandbox.test.ts
+// window.codiusDesktop undefined (the 0.1.108 regression, #2103). Keep this literal in sync
+// with CODIUS_BROWSER_PROFILE_PARTITION in features/browser-profile.ts; preload-sandbox.test.ts
 // guards both the no-local-import rule and this drift. Type-only imports are fine (erased at emit).
-const PASEO_BROWSER_PROFILE_PARTITION = "persist:codius-browser";
+const CODIUS_BROWSER_PROFILE_PARTITION = "persist:codius-browser";
 
 type EventHandler = (payload: unknown) => void;
 
@@ -17,15 +17,15 @@ interface AttachedBrowserRegistration {
   webContentsId: number;
 }
 
-contextBridge.exposeInMainWorld("paseoDesktop", {
+contextBridge.exposeInMainWorld("codiusDesktop", {
   platform: process.platform,
   invoke: (command: string, args?: Record<string, unknown>) =>
-    ipcRenderer.invoke("paseo:invoke", command, args),
+    ipcRenderer.invoke("codius:invoke", command, args),
   getPendingOpenProject: () =>
-    ipcRenderer.invoke("paseo:get-pending-open-project") as Promise<string | null>,
+    ipcRenderer.invoke("codius:get-pending-open-project") as Promise<string | null>,
   agentNavigation: {
     ready: () =>
-      ipcRenderer.invoke("paseo:agent-navigation:ready") as Promise<{
+      ipcRenderer.invoke("codius:agent-navigation:ready") as Promise<{
         serverId: string;
         agentId: string;
       } | null>,
@@ -35,93 +35,93 @@ contextBridge.exposeInMainWorld("paseoDesktop", {
       const listener = (_ipcEvent: Electron.IpcRendererEvent, payload: unknown) => {
         handler(payload);
       };
-      ipcRenderer.on(`paseo:event:${event}`, listener);
+      ipcRenderer.on(`codius:event:${event}`, listener);
       return Promise.resolve(() => {
-        ipcRenderer.removeListener(`paseo:event:${event}`, listener);
+        ipcRenderer.removeListener(`codius:event:${event}`, listener);
       });
     },
   },
   window: {
     openNew: (options?: { pendingOpenProjectPath?: string | null }) =>
-      ipcRenderer.invoke("paseo:window:openNew", options),
+      ipcRenderer.invoke("codius:window:openNew", options),
     getCurrentWindow: () => ({
-      toggleMaximize: () => ipcRenderer.invoke("paseo:window:toggleMaximize"),
+      toggleMaximize: () => ipcRenderer.invoke("codius:window:toggleMaximize"),
       setFullscreen: (fullscreen: boolean) =>
-        ipcRenderer.invoke("paseo:window:setFullscreen", fullscreen),
-      isFullscreen: () => ipcRenderer.invoke("paseo:window:isFullscreen"),
+        ipcRenderer.invoke("codius:window:setFullscreen", fullscreen),
+      isFullscreen: () => ipcRenderer.invoke("codius:window:isFullscreen"),
       updateWindowControls: (update: {
         height?: number;
         backgroundColor?: string;
         foregroundColor?: string;
         trafficLightOffsetY?: number;
-      }) => ipcRenderer.invoke("paseo:window:updateWindowControls", update),
+      }) => ipcRenderer.invoke("codius:window:updateWindowControls", update),
       onResized: (handler: EventHandler): (() => void) => {
         const listener = (_ipcEvent: Electron.IpcRendererEvent, payload: unknown) => {
           handler(payload);
         };
-        ipcRenderer.on("paseo:window:resized", listener);
+        ipcRenderer.on("codius:window:resized", listener);
         return () => {
-          ipcRenderer.removeListener("paseo:window:resized", listener);
+          ipcRenderer.removeListener("codius:window:resized", listener);
         };
       },
-      setBadgeCount: (count?: number) => ipcRenderer.invoke("paseo:window:setBadgeCount", count),
+      setBadgeCount: (count?: number) => ipcRenderer.invoke("codius:window:setBadgeCount", count),
     }),
   },
   dialog: {
     ask: (message: string, options?: Record<string, unknown>) =>
-      ipcRenderer.invoke("paseo:dialog:ask", message, options),
+      ipcRenderer.invoke("codius:dialog:ask", message, options),
     askWithCheckbox: (message: string, options: Record<string, unknown>) =>
-      ipcRenderer.invoke("paseo:dialog:askWithCheckbox", message, options),
-    open: (options?: Record<string, unknown>) => ipcRenderer.invoke("paseo:dialog:open", options),
+      ipcRenderer.invoke("codius:dialog:askWithCheckbox", message, options),
+    open: (options?: Record<string, unknown>) => ipcRenderer.invoke("codius:dialog:open", options),
   },
   notification: {
-    isSupported: () => ipcRenderer.invoke("paseo:notification:isSupported"),
+    isSupported: () => ipcRenderer.invoke("codius:notification:isSupported"),
     sendNotification: (payload: { title: string; body?: string; data?: Record<string, unknown> }) =>
-      ipcRenderer.invoke("paseo:notification:send", payload),
+      ipcRenderer.invoke("codius:notification:send", payload),
   },
   opener: {
-    openUrl: (url: string) => ipcRenderer.invoke("paseo:opener:openUrl", url),
+    openUrl: (url: string) => ipcRenderer.invoke("codius:opener:openUrl", url),
   },
   editor: {
-    listTargets: () => ipcRenderer.invoke("paseo:editor:listTargets"),
+    listTargets: () => ipcRenderer.invoke("codius:editor:listTargets"),
     openTarget: (input: {
       editorId: string;
       workspacePath: string;
       filePath?: string;
       line?: number;
       column?: number;
-    }) => ipcRenderer.invoke("paseo:editor:openTarget", input),
+    }) => ipcRenderer.invoke("codius:editor:openTarget", input),
   },
   webUtils: {
     getPathForFile: (file: File) => webUtils.getPathForFile(file),
   },
   menu: {
     showContextMenu: (input?: Record<string, unknown>) =>
-      ipcRenderer.invoke("paseo:menu:showContextMenu", input),
+      ipcRenderer.invoke("codius:menu:showContextMenu", input),
     setCapturingShortcut: (capturing: boolean) =>
-      ipcRenderer.invoke("paseo:menu:set-capturing-shortcut", capturing),
+      ipcRenderer.invoke("codius:menu:set-capturing-shortcut", capturing),
   },
   browser: {
     setShortcutPolicy: (input: BrowserKeyboardPolicy) =>
-      ipcRenderer.invoke("paseo:browser:set-shortcut-policy", input),
-    profilePartition: PASEO_BROWSER_PROFILE_PARTITION,
+      ipcRenderer.invoke("codius:browser:set-shortcut-policy", input),
+    profilePartition: CODIUS_BROWSER_PROFILE_PARTITION,
     registerAttachedBrowser: (input: AttachedBrowserRegistration) =>
-      ipcRenderer.invoke("paseo:browser:register-attached", input),
+      ipcRenderer.invoke("codius:browser:register-attached", input),
     unregisterWorkspaceBrowser: (browserId: string) =>
-      ipcRenderer.invoke("paseo:browser:unregister-workspace-browser", browserId),
+      ipcRenderer.invoke("codius:browser:unregister-workspace-browser", browserId),
     setWorkspaceActiveBrowser: (input: { workspaceId: string; browserId: string | null }) =>
-      ipcRenderer.invoke("paseo:browser:set-workspace-active-browser", input),
+      ipcRenderer.invoke("codius:browser:set-workspace-active-browser", input),
     openDevTools: (browserId: string) =>
-      ipcRenderer.invoke("paseo:browser:open-devtools", browserId),
+      ipcRenderer.invoke("codius:browser:open-devtools", browserId),
     clearProfile: (legacyBrowserIds: string[]) =>
-      ipcRenderer.invoke("paseo:browser:clear-profile", legacyBrowserIds),
+      ipcRenderer.invoke("codius:browser:clear-profile", legacyBrowserIds),
     executeAutomationCommand: (request: Record<string, unknown>) =>
-      ipcRenderer.invoke("paseo:browser:execute-automation-command", request),
+      ipcRenderer.invoke("codius:browser:execute-automation-command", request),
     captureElement: (
       browserId: string,
       rect: { x: number; y: number; width: number; height: number },
-    ) => ipcRenderer.invoke("paseo:browser:capture-element", browserId, rect),
+    ) => ipcRenderer.invoke("codius:browser:capture-element", browserId, rect),
     copyElement: (payload: { text?: string; imageDataUrl?: string }) =>
-      ipcRenderer.invoke("paseo:browser:copy-element", payload),
+      ipcRenderer.invoke("codius:browser:copy-element", payload),
   },
 });

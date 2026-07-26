@@ -41,7 +41,7 @@ function createFakeMacBundle(options: { includeHelper: boolean }): {
 
   mkdirSync(dirname(shimPath), { recursive: true });
   mkdirSync(dirname(mainPath), { recursive: true });
-  copyFileSync(join(packageRoot, "bin", "paseo"), shimPath);
+  copyFileSync(join(packageRoot, "bin", "codius"), shimPath);
   chmodSync(shimPath, 0o755);
 
   writeExecutable(mainPath, "#!/bin/sh\necho main-executable\n");
@@ -52,7 +52,7 @@ function createFakeMacBundle(options: { includeHelper: boolean }): {
       helperPath,
       [
         "#!/bin/sh",
-        'printf "helper env=%s/%s managed=%s/%s cli=%s/%s\\n" "$CODIUS_NODE_ENV" "$PASEO_NODE_ENV" "$CODIUS_DESKTOP_MANAGED" "$PASEO_DESKTOP_MANAGED" "$CODIUS_CLI" "$PASEO_CLI"',
+        'printf "helper env=%s managed=%s cli=%s\\n" "$CODIUS_NODE_ENV" "$CODIUS_DESKTOP_MANAGED" "$CODIUS_CLI"',
         'printf "args=%s\\n" "$*"',
         "",
       ].join("\n"),
@@ -67,10 +67,10 @@ describe("desktop packaging", () => {
     const config = readFileSync(join(packageRoot, "electron-builder.yml"), "utf8");
 
     expect(config).toContain(
-      "node_modules/@getpaseo/server/dist/server/terminal/shell-integration/**/*",
+      "node_modules/@codius-ai/server/dist/server/terminal/shell-integration/**/*",
     );
     expect(config).not.toContain(
-      "node_modules/@getpaseo/server/dist/src/terminal/shell-integration/**/*",
+      "node_modules/@codius-ai/server/dist/src/terminal/shell-integration/**/*",
     );
   });
 
@@ -78,15 +78,15 @@ describe("desktop packaging", () => {
     const config = readFileSync(join(packageRoot, "electron-builder.yml"), "utf8");
 
     expect(config).toContain("!**/*.map");
-    expect(config).toContain("!node_modules/@getpaseo/*/src/**");
-    expect(config).toContain("!node_modules/@getpaseo/**/*.test.*");
-    expect(config).toContain("!node_modules/@getpaseo/**/*.spec.*");
+    expect(config).toContain("!node_modules/@codius-ai/*/src/**");
+    expect(config).toContain("!node_modules/@codius-ai/**/*.test.*");
+    expect(config).toContain("!node_modules/@codius-ai/**/*.spec.*");
   });
 
   it("excludes the bundled daemon web UI from the packaged app", () => {
     const config = readFileSync(join(packageRoot, "electron-builder.yml"), "utf8");
 
-    expect(config).toContain("!node_modules/@getpaseo/server/dist/server/web-ui/**");
+    expect(config).toContain("!node_modules/@codius-ai/server/dist/server/web-ui/**");
   });
 
   it("registers Codius agent links with the operating system", () => {
@@ -97,7 +97,7 @@ describe("desktop packaging", () => {
   });
 
   // electron-builder packs production dependencies declared in package.json into
-  // app.asar. Runtime code in runtime-paths.ts and bin/paseo dynamically resolves
+  // app.asar. Runtime code in runtime-paths.ts and bin/codius dynamically resolves
   // these workspace packages by string, so static analysis (TypeScript, Knip) cannot
   // see the link. If a runtime-required workspace dep is dropped from
   // dependencies, the build still succeeds but ships a broken bundle. This
@@ -108,7 +108,7 @@ describe("desktop packaging", () => {
     };
     const deps = pkg.dependencies ?? {};
 
-    for (const required of ["@getpaseo/cli", "@getpaseo/server"]) {
+    for (const required of ["@codius-ai/cli", "@codius-ai/server"]) {
       expect(deps[required], `${required} must be declared in dependencies`).toBe("*");
     }
   });
@@ -121,12 +121,10 @@ describe("desktop packaging", () => {
       const result = spawnSync(bundle.shimPath, ["--version"], { encoding: "utf8" });
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain(
-        `helper env=production/production managed=1/1 cli=${bundle.shimPath}/${bundle.shimPath}`,
-      );
+      expect(result.stdout).toContain(`helper env=production managed=1 cli=${bundle.shimPath}`);
       expect(result.stdout).toContain("node-entrypoint-runner.js");
       expect(result.stdout).toContain("node-script");
-      expect(result.stdout).toContain("@getpaseo/cli/dist/index.js");
+      expect(result.stdout).toContain("@codius-ai/cli/dist/index.js");
       expect(result.stdout).toContain("--version");
       expect(result.stdout).not.toContain("main-executable");
     } finally {

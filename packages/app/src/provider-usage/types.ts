@@ -6,7 +6,7 @@ import type {
   ProviderUsageStatus,
   ProviderUsageTone,
   ProviderUsageWindow,
-} from "@getpaseo/protocol/messages";
+} from "@codius-ai/protocol/messages";
 
 export type {
   ProviderUsage,

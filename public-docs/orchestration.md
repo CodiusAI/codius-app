@@ -1,6 +1,6 @@
 ---
 title: Orchestration
-description: Give any coding agent control of Paseo so it can launch and coordinate agents from other providers.
+description: Give any coding agent control of Codius so it can launch and coordinate agents from other providers.
 nav: Overview
 order: 30
 category: Orchestration
@@ -8,11 +8,11 @@ category: Orchestration
 
 # Orchestration
 
-Paseo orchestration gives a coding agent control of the Paseo daemon. The agent can discover every provider and model you have configured, create workspaces, launch other agents, send them follow-ups, and create heartbeats or schedules. The same work stays visible in the Paseo app.
+Codius orchestration gives a coding agent control of the Codius daemon. The agent can discover every provider and model you have configured, create workspaces, launch other agents, send them follow-ups, and create heartbeats or schedules. The same work stays visible in the Codius app.
 
-## Native subagents vs Paseo subagents
+## Native subagents vs Codius subagents
 
-The most important difference from native subagents is that **Paseo subagents can cross provider boundaries**.
+The most important difference from native subagents is that **Codius subagents can cross provider boundaries**.
 
 ```text
 Claude Code (Fable 5) => Codex (GPT-5.6)
@@ -22,24 +22,24 @@ Cursor => Claude Code (Fable 5)
 
 Native subagents belong to one provider. Claude Code launches Claude Code subagents; Codex launches Codex subagents. They are useful when the parent provider can handle the whole task itself.
 
-Paseo subagents are full agents managed by the Paseo daemon. The orchestrator can choose any configured provider and model, keep the worker in the current workspace, or place it in another workspace created for the task. Use them when you want one model to plan, another to implement, and another to review.
+Codius subagents are full agents managed by the Codius daemon. The orchestrator can choose any configured provider and model, keep the worker in the current workspace, or place it in another workspace created for the task. Use them when you want one model to plan, another to implement, and another to review.
 
-|                      | Native subagent                           | Paseo subagent                                     |
+|                      | Native subagent                           | Codius subagent                                    |
 | -------------------- | ----------------------------------------- | -------------------------------------------------- |
-| Provider             | Same provider as its parent               | Any provider configured in Paseo                   |
+| Provider             | Same provider as its parent               | Any provider configured in Codius                  |
 | Working directory    | Managed by the parent provider            | Current or explicitly selected workspace           |
-| Lifecycle            | Owned by the parent provider              | Managed by Paseo; can receive follow-ups           |
+| Lifecycle            | Owned by the parent provider              | Managed by Codius; can receive follow-ups          |
 | Where you inspect it | Read-only timeline in the Subagents track | Full agent session in the Subagents track          |
 | Best for             | Fast, provider-native delegation          | Cross-provider work and explicit workspace control |
 
 ## Try it
 
-Open **Settings → your host → Agents**, then turn on **Enable Paseo tools**. Start a new agent, or reload an existing one so it receives the tools.
+Open **Settings → your host → Agents**, then turn on **Enable Codius tools**. Start a new agent, or reload an existing one so it receives the tools.
 
 Then ask naturally:
 
 ```text
-Stay as the orchestrator. Use Paseo to find my available Codex models, then
+Stay as the orchestrator. Use Codius to find my available Codex models, then
 create a worktree-isolated workspace, then launch a GPT-5.6 subagent there. Ask
 it to implement the parser change, run the focused tests, and report back here.
 ```
@@ -54,12 +54,12 @@ Spawned work appears in the **Subagents track** above the composer. Open a row t
 
 Both kinds of subagent appear there:
 
-- **Paseo subagents** open as full agent sessions. You can talk to them directly, change their settings, or archive them.
+- **Codius subagents** open as full agent sessions. You can talk to them directly, change their settings, or archive them.
 - **Native provider subagents** open as read-only timelines. You can inspect their work, but their provider owns their lifecycle.
 
-A cross-workspace subagent still belongs to its parent's Subagents track. Paseo also opens its workspace so the work is not hidden in an otherwise empty workspace. If you want to turn any subagent into a top-level agent, detach it manually in the app or with `paseo agent detach`; detachment is not an agent-creation mode.
+A cross-workspace subagent still belongs to its parent's Subagents track. Codius also opens its workspace so the work is not hidden in an otherwise empty workspace. If you want to turn any subagent into a top-level agent, detach it manually in the app or with `codius agent detach`; detachment is not an agent-creation mode.
 
-If an agent says background work is running but the track is empty, update Paseo. Provider-created subagent timelines require Paseo 0.1.107 or newer.
+If an agent says background work is running but the track is empty, update Codius. Provider-created subagent timelines require Codius 0.1.107 or newer.
 
 ## Keep an agent working with a heartbeat
 
@@ -68,11 +68,11 @@ A heartbeat sends a prompt back into the same agent on a cron cadence. Use one w
 Ask the agent directly:
 
 ```text
-Use Paseo to create a heartbeat every 10 minutes. Keep checking this PR, fix any
+Use Codius to create a heartbeat every 10 minutes. Keep checking this PR, fix any
 new CI failures, and stop when all checks pass or after two hours.
 ```
 
-The base [`/paseo` orchestration skill](/docs/skills) teaches agents how to create heartbeats, so you only need to ask. A heartbeat continues the current conversation; a [schedule](/docs/schedules) is better for standalone cron-style jobs such as daily triage.
+The base [`/codius` orchestration skill](/docs/skills) teaches agents how to create heartbeats, so you only need to ask. A heartbeat continues the current conversation; a [schedule](/docs/schedules) is better for standalone cron-style jobs such as daily triage.
 
 You do not need to name MCP tools in your prompts. Ask for the workflow; the agent uses the tools underneath.
 

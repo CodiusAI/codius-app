@@ -1,14 +1,14 @@
-# Paseo Hub relationship
+# Codius Hub relationship
 
-Paseo Hub is an explicit opt-in connection from one Paseo daemon to one Hub. Running a daemon does
+Codius Hub is an explicit opt-in connection from one Codius daemon to one Hub. Running a daemon does
 not register it with a Hub. The relationship begins only when a user runs
-`paseo hub connect <url> --token <token>` from the daemon machine.
+`codius hub connect <url> --token <token>` from the daemon machine.
 
 ## Connection and authority
 
 The daemon enrolls over HTTP(S), then opens and maintains a direct outbound WebSocket to the Hub.
-The Hub never discovers or acquires the daemon through Paseo's relay. The relay remains an optional
-encrypted path for normal Paseo clients and has no role in Hub enrollment, authentication, dispatch,
+The Hub never discovers or acquires the daemon through Codius's relay. The relay remains an optional
+encrypted path for normal Codius clients and has no role in Hub enrollment, authentication, dispatch,
 or reconnects.
 
 The daemon persists a relationship ID and private connection credential before enrollment. The
@@ -40,7 +40,7 @@ Transient stream frames are not durably replayed.
 
 Daemon restart preserves the Hub relationship and owned execution identity, but interrupts any
 active turn. The daemon persists that agent as `closed`; an idempotent create retry returns the same
-daemon, execution, and agent identity with that terminal state. Paseo never stores or automatically
+daemon, execution, and agent identity with that terminal state. Codius never stores or automatically
 replays the original prompt. A duplicate create returns the existing agent without starting another
 turn.
 
@@ -58,7 +58,7 @@ Hub authentication rejection or close code `4403` permanently revokes the local 
 daemon deletes its credential, stops reconnecting, and retains only the relationship ID, Hub origin,
 scopes, and a sanitized reason for status reporting.
 
-`paseo hub disconnect` disables socket reconnect before requesting remote revocation. If the Hub is
+`codius hub disconnect` disables socket reconnect before requesting remote revocation. If the Hub is
 offline, the daemon persists `disconnecting` and retries revocation across daemon restarts without
 opening a Hub socket. This also covers an enrollment whose request may have succeeded but whose
 response was lost. `--force` removes local authority immediately and warns that remote revocation may
@@ -66,7 +66,7 @@ still be pending.
 
 ## Cross-repository compatibility
 
-The consumer implementation lives in Paseo Cloud. Cloud owns its copy of the Hub wire schemas and
-has no Paseo runtime or build dependency. Cross-repository end-to-end verification separately builds
-a Paseo source checkout and exercises the real daemon, CLI, direct WebSocket, Cloud service, and
+The consumer implementation lives in Codius Cloud. Cloud owns its copy of the Hub wire schemas and
+has no Codius runtime or build dependency. Cross-repository end-to-end verification separately builds
+a Codius source checkout and exercises the real daemon, CLI, direct WebSocket, Cloud service, and
 Postgres. That compatibility fixture is not a package dependency or fallback implementation.

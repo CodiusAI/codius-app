@@ -2,9 +2,9 @@ import type { Logger } from "pino";
 
 import {
   addModelVisibleStructuredContent,
-  serializePaseoToolInputParameters,
-} from "../../tools/paseo-tool-serialization.js";
-import type { PaseoToolCatalog, PaseoToolResult } from "../../tools/types.js";
+  serializeCodiusToolInputParameters,
+} from "../../tools/codius-tool-serialization.js";
+import type { CodiusToolCatalog, CodiusToolResult } from "../../tools/types.js";
 import type { OmpRuntimeSession } from "./runtime.js";
 import {
   OmpRpcHostToolCallRequestSchema,
@@ -24,18 +24,18 @@ interface PendingOmpHostToolCall {
 
 interface OmpHostToolRouterInput {
   runtimeSession: OmpRuntimeSession;
-  catalog: PaseoToolCatalog;
+  catalog: CodiusToolCatalog;
   logger: Logger;
 }
 
 const routersByRuntimeSession = new WeakMap<OmpRuntimeSession, OmpHostToolRouter>();
 
-export function serializeOmpHostTools(catalog: PaseoToolCatalog): OmpRpcHostToolDefinition[] {
+export function serializeOmpHostTools(catalog: CodiusToolCatalog): OmpRpcHostToolDefinition[] {
   return [...catalog.tools.values()].map((tool) => {
     const definition: OmpRpcHostToolDefinition = {
       name: tool.name,
       description: tool.description,
-      parameters: serializePaseoToolInputParameters(tool),
+      parameters: serializeCodiusToolInputParameters(tool),
     };
     if (tool.title) {
       definition.label = tool.title;
@@ -46,7 +46,7 @@ export function serializeOmpHostTools(catalog: PaseoToolCatalog): OmpRpcHostTool
 
 export async function setOmpHostTools(
   runtimeSession: OmpRuntimeSession,
-  catalog: PaseoToolCatalog,
+  catalog: CodiusToolCatalog,
 ): Promise<string[]> {
   return await runtimeSession.setHostTools(serializeOmpHostTools(catalog));
 }
@@ -55,7 +55,7 @@ export function handleOmpHostToolRuntimeEvent(
   event: unknown,
   input: {
     runtimeSession: OmpRuntimeSession;
-    paseoTools?: PaseoToolCatalog;
+    codiusTools?: CodiusToolCatalog;
     logger: Logger;
   },
 ): boolean {
@@ -105,10 +105,10 @@ export async function waitForOmpHostToolsIdle(runtimeSession: OmpRuntimeSession)
 
 function getRouter(input: {
   runtimeSession: OmpRuntimeSession;
-  paseoTools?: PaseoToolCatalog;
+  codiusTools?: CodiusToolCatalog;
   logger: Logger;
 }): OmpHostToolRouter | null {
-  if (!input.paseoTools) {
+  if (!input.codiusTools) {
     return null;
   }
   const existing = routersByRuntimeSession.get(input.runtimeSession);
@@ -117,7 +117,7 @@ function getRouter(input: {
   }
   const router = new OmpHostToolRouter({
     runtimeSession: input.runtimeSession,
-    catalog: input.paseoTools,
+    catalog: input.codiusTools,
     logger: input.logger,
   });
   routersByRuntimeSession.set(input.runtimeSession, router);
@@ -131,7 +131,7 @@ function sendMissingCatalogResult(
   runtimeSession.sendHostToolResult(
     toOmpHostToolErrorResult(
       request.id,
-      `Host tool "${request.toolName}" was called before Paseo tools were registered`,
+      `Host tool "${request.toolName}" was called before Codius tools were registered`,
     ),
   );
 }
@@ -142,7 +142,7 @@ function isOmpHostToolEventType(type: string): boolean {
 
 class OmpHostToolRouter {
   private readonly runtimeSession: OmpRuntimeSession;
-  private readonly catalog: PaseoToolCatalog;
+  private readonly catalog: CodiusToolCatalog;
   private readonly logger: Logger;
   private readonly pendingCalls = new Map<string, PendingOmpHostToolCall>();
   private readonly idleWaiters = new Set<() => void>();
@@ -222,7 +222,7 @@ class OmpHostToolRouter {
     this.idleWaiters.clear();
   }
 
-  private sendUpdate(callId: string, result: PaseoToolResult): void {
+  private sendUpdate(callId: string, result: CodiusToolResult): void {
     const update: OmpRpcHostToolUpdate = {
       type: "host_tool_update",
       id: callId,
@@ -232,7 +232,7 @@ class OmpHostToolRouter {
   }
 }
 
-function toOmpHostToolResult(id: string, result: PaseoToolResult): OmpRpcHostToolResult {
+function toOmpHostToolResult(id: string, result: CodiusToolResult): OmpRpcHostToolResult {
   const modelVisibleResult = addModelVisibleStructuredContent(result);
   const mappedResult = toOmpAgentToolResult(modelVisibleResult);
   return {
@@ -256,7 +256,7 @@ function toOmpHostToolErrorResult(id: string, error: unknown): OmpRpcHostToolRes
   };
 }
 
-function toOmpAgentToolResult(result: PaseoToolResult): OmpAgentToolResult {
+function toOmpAgentToolResult(result: CodiusToolResult): OmpAgentToolResult {
   const mapped: OmpAgentToolResult = {
     content: result.content.map((item) => ({ ...item })),
   };

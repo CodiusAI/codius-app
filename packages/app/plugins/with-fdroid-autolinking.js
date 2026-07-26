@@ -11,26 +11,26 @@ const EXCLUDED_ANDROID_MODULES = [
   "expo-dev-menu-interface",
 ];
 
-const FDROID_ABI_VERSION_CODE_BLOCK = `// Paseo F-Droid single-ABI version codes
-def paseoAbiVersionCodes = [
+const FDROID_ABI_VERSION_CODE_BLOCK = `// Codius F-Droid single-ABI version codes
+def codiusAbiVersionCodes = [
     "armeabi-v7a": 1,
     "arm64-v8a": 2,
     "x86": 3,
     "x86_64": 4,
 ]
-def paseoArchitectures = (findProperty("reactNativeArchitectures") ?: "")
+def codiusArchitectures = (findProperty("reactNativeArchitectures") ?: "")
     .toString()
     .split(",")
     .collect { it.trim() }
     .findAll { !it.isEmpty() }
 
-if (paseoArchitectures.size() == 1) {
-    def paseoAbi = paseoArchitectures[0]
-    def paseoAbiVersionCode = paseoAbiVersionCodes[paseoAbi]
-    if (paseoAbiVersionCode == null) {
-        throw new GradleException("Unsupported Paseo Android ABI: " + paseoAbi)
+if (codiusArchitectures.size() == 1) {
+    def codiusAbi = codiusArchitectures[0]
+    def codiusAbiVersionCode = codiusAbiVersionCodes[codiusAbi]
+    if (codiusAbiVersionCode == null) {
+        throw new GradleException("Unsupported Codius Android ABI: " + codiusAbi)
     }
-    android.defaultConfig.versionCode = android.defaultConfig.versionCode * 10 + paseoAbiVersionCode
+    android.defaultConfig.versionCode = android.defaultConfig.versionCode * 10 + codiusAbiVersionCode
 }
 `;
 
@@ -49,7 +49,7 @@ function configureFdroidAppBuildGradle(contents) {
     );
   }
 
-  if (!configuredContents.includes("// Paseo F-Droid single-ABI version codes")) {
+  if (!configuredContents.includes("// Codius F-Droid single-ABI version codes")) {
     configuredContents = `${configuredContents.trimEnd()}\n\n${FDROID_ABI_VERSION_CODE_BLOCK}`;
   }
 

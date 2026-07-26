@@ -5,9 +5,9 @@ import { openSettingsSection } from "./helpers/settings";
 const DISCORD_DESTINATION =
   /^https:\/\/(?:discord\.gg\/jz8T2uahpH|discord\.com\/invite\/jz8T2uahpH)(?:[/?#]|$)/;
 const GITHUB_ISSUE_DESTINATION =
-  /^https:\/\/github\.com\/(?:getpaseo\/paseo\/issues\/new(?:\/choose)?(?:[/?#]|$)|login\?return_to=https%3A%2F%2Fgithub\.com%2Fgetpaseo%2Fpaseo%2Fissues%2Fnew$)/;
-const CHANGELOG_DESTINATION = /^https:\/\/paseo\.sh\/changelog(?:[/?#]|$)/;
-const APP_VERSION = /^Paseo v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
+  /^https:\/\/github\.com\/(?:codius-ai\/codius\/issues\/new(?:\/choose)?(?:[/?#]|$)|login\?return_to=https%3A%2F%2Fgithub\.com%2Fcodius-ai%2Fcodius%2Fissues%2Fnew$)/;
+const CHANGELOG_DESTINATION = /^https:\/\/codius\.sh\/changelog(?:[/?#]|$)/;
+const APP_VERSION = /^Codius v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 
 async function openHelpMenu(page: Page): Promise<void> {
   await page.getByTestId("sidebar-help").click();

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { FetchRecentProviderSessionEntry } from "@getpaseo/client/internal/daemon-client";
+import type { FetchRecentProviderSessionEntry } from "@codius-ai/client/internal/daemon-client";
 import {
   aggregateSessionEntries,
   ALL_FILTER_VALUE,
@@ -21,7 +21,7 @@ function entry(
     providerId: "claude",
     providerLabel: "Claude Code",
     providerHandleId: "thread-1",
-    cwd: "/repo/paseo",
+    cwd: "/repo/codius",
     title: null,
     firstPromptPreview: null,
     lastPromptPreview: null,

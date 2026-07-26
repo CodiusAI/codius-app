@@ -12,17 +12,17 @@ function makeSources(): DesktopDiagnosticSources {
       listen: "127.0.0.1:6767",
       hostname: "host",
       pid: 4242,
-      home: "/paseo/home",
+      home: "/codius/home",
       version: "1.2.3",
       desktopManaged: true,
       error: null,
     }),
     getDaemonLogs: async () => ({
-      logPath: "/paseo/home/daemon.log",
+      logPath: "/codius/home/daemon.log",
       contents: "daemon line one\ndaemon line two",
     }),
     getAppLogs: async () => ({
-      logPath: "/logs/Paseo/main.log",
+      logPath: "/logs/Codius/main.log",
       contents: "[login-shell-env] start\n[login-shell-env] failed",
     }),
   };
@@ -64,8 +64,8 @@ describe("desktop diagnostic report", () => {
     const report = result.sections.join("\n\n");
 
     expect(result.status).toBe("done");
-    expect(report).toContain("  Log path: /paseo/home/daemon.log");
-    expect(report).toContain("  App log path: /logs/Paseo/main.log");
+    expect(report).toContain("  Log path: /codius/home/daemon.log");
+    expect(report).toContain("  App log path: /logs/Codius/main.log");
     expect(report).toContain("Desktop daemon log tail\n  daemon line one\n  daemon line two");
     expect(report).toContain(
       "Desktop app log tail\n  [login-shell-env] start\n  [login-shell-env] failed",

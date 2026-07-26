@@ -10,9 +10,9 @@ import {
   serializeConnectionUriForStorage,
   shouldUseTlsForDefaultHostedRelay,
   type HostPortParts,
-} from "@getpaseo/protocol/daemon-endpoints";
+} from "@codius-ai/protocol/daemon-endpoints";
 
-export { decodeOfferFragmentPayload } from "@getpaseo/protocol/connection-offer";
+export { decodeOfferFragmentPayload } from "@codius-ai/protocol/connection-offer";
 
 export type { HostPortParts };
 

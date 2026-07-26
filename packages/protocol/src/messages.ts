@@ -59,33 +59,33 @@ import {
 } from "./browser-automation/rpc-schemas.js";
 import { BrowserAutomationHostCapabilitySchema } from "./browser-automation/capabilities.js";
 import {
-  PaseoConfigRawSchema,
-  PaseoLifecycleCommandRawSchema,
-  PaseoMetadataGenerationEntrySchema,
-  PaseoMetadataGenerationSchema,
-  PaseoScriptEntryRawSchema,
-  PaseoWorktreeConfigRawSchema,
-  PaseoConfigRevisionSchema,
+  CodiusConfigRawSchema,
+  CodiusLifecycleCommandRawSchema,
+  CodiusMetadataGenerationEntrySchema,
+  CodiusMetadataGenerationSchema,
+  CodiusScriptEntryRawSchema,
+  CodiusWorktreeConfigRawSchema,
+  CodiusConfigRevisionSchema,
   ProjectConfigRpcErrorSchema,
-  type PaseoConfigRaw,
-  type PaseoConfigRevision,
-  type PaseoMetadataGeneration,
-  type PaseoMetadataGenerationEntry,
-  type PaseoScriptEntryRaw,
+  type CodiusConfigRaw,
+  type CodiusConfigRevision,
+  type CodiusMetadataGeneration,
+  type CodiusMetadataGenerationEntry,
+  type CodiusScriptEntryRaw,
   type ProjectConfigRpcError,
-} from "./paseo-config-schema.js";
+} from "./codius-config-schema.js";
 export {
-  PaseoConfigRawSchema,
-  PaseoLifecycleCommandRawSchema,
-  PaseoMetadataGenerationEntrySchema,
-  PaseoMetadataGenerationSchema,
-  PaseoScriptEntryRawSchema,
-  PaseoWorktreeConfigRawSchema,
-  type PaseoConfigRaw,
-  type PaseoConfigRevision,
-  type PaseoMetadataGeneration,
-  type PaseoMetadataGenerationEntry,
-  type PaseoScriptEntryRaw,
+  CodiusConfigRawSchema,
+  CodiusLifecycleCommandRawSchema,
+  CodiusMetadataGenerationEntrySchema,
+  CodiusMetadataGenerationSchema,
+  CodiusScriptEntryRawSchema,
+  CodiusWorktreeConfigRawSchema,
+  type CodiusConfigRaw,
+  type CodiusConfigRevision,
+  type CodiusMetadataGeneration,
+  type CodiusMetadataGenerationEntry,
+  type CodiusScriptEntryRaw,
   type ProjectConfigRpcError,
 };
 // ---------------------------------------------------------------------------
@@ -874,7 +874,7 @@ export const GitHubPrAttachmentSchema = z.object({
 
 export const ForgeChangeRequestAttachmentSchema = z.object({
   type: z.literal("forge_change_request"),
-  mimeType: z.literal("application/paseo-forge-change-request"),
+  mimeType: z.literal("application/codius-forge-change-request"),
   forge: z.string().optional().default("github"),
   number: z.number().int().positive(),
   title: z.string(),
@@ -896,7 +896,7 @@ export const GitHubIssueAttachmentSchema = z.object({
 
 export const ForgeIssueAttachmentSchema = z.object({
   type: z.literal("forge_issue"),
-  mimeType: z.literal("application/paseo-forge-issue"),
+  mimeType: z.literal("application/codius-forge-issue"),
   forge: z.string().optional().default("github"),
   number: z.number().int().positive(),
   title: z.string(),
@@ -939,7 +939,7 @@ export const ReviewAttachmentCommentSchema = z.object({
 
 export const ReviewAttachmentSchema = z.object({
   type: z.literal("review"),
-  mimeType: z.literal("application/paseo-review"),
+  mimeType: z.literal("application/codius-review"),
   cwd: z.string(),
   mode: z.enum(["uncommitted", "base"]),
   baseRef: z.string().nullable().optional(),
@@ -1179,8 +1179,8 @@ export const WriteProjectConfigRequestMessageSchema = z.object({
   type: z.literal("write_project_config_request"),
   requestId: z.string(),
   repoRoot: z.string(),
-  config: PaseoConfigRawSchema,
-  expectedRevision: PaseoConfigRevisionSchema.nullable(),
+  config: CodiusConfigRawSchema,
+  expectedRevision: CodiusConfigRevisionSchema.nullable(),
 });
 
 // ============================================================================
@@ -1840,8 +1840,8 @@ export const StashPopRequestSchema = z.object({
 export const StashListRequestSchema = z.object({
   type: z.literal("stash_list_request"),
   cwd: z.string(),
-  /** If true, only return paseo-created stashes. Default true. */
-  paseoOnly: z.boolean().optional(),
+  /** If true, only return codius-created stashes. Default true. */
+  codiusOnly: z.boolean().optional(),
   requestId: z.string(),
 });
 
@@ -1915,15 +1915,15 @@ export const DirectorySuggestionsRequestSchema = z.object({
   requestId: z.string(),
 });
 
-export const PaseoWorktreeListRequestSchema = z.object({
-  type: z.literal("paseo_worktree_list_request"),
+export const CodiusWorktreeListRequestSchema = z.object({
+  type: z.literal("codius_worktree_list_request"),
   cwd: z.string().optional(),
   repoRoot: z.string().optional(),
   requestId: z.string(),
 });
 
-export const PaseoWorktreeArchiveRequestSchema = z.object({
-  type: z.literal("paseo_worktree_archive_request"),
+export const CodiusWorktreeArchiveRequestSchema = z.object({
+  type: z.literal("codius_worktree_archive_request"),
   worktreePath: z.string().optional(),
   repoRoot: z.string().optional(),
   branchName: z.string().optional(),
@@ -1937,7 +1937,7 @@ export const PaseoWorktreeArchiveRequestSchema = z.object({
   // Scope of the archive operation. "workspace" archives a single workspace record
   // (today's default UI behavior). "worktree" archives every active workspace whose
   // cwd resolves to the target directory, then removes the directory if it is
-  // Paseo-owned. Omitted/unknown values default to "workspace" for old-client safety.
+  // Codius-owned. Omitted/unknown values default to "workspace" for old-client safety.
   scope: z.enum(["workspace", "worktree"]).optional().default("workspace"),
   // COMPAT(worktreeDiskDeletion): added in v0.1.97, ignored as of v0.1.97
   // (disk removal derived from scope + last-reference + ownership); field
@@ -1951,8 +1951,8 @@ export const FirstAgentContextSchema = z.object({
   attachments: AgentAttachmentsSchema,
 });
 
-export const CreatePaseoWorktreeRequestSchema = z.object({
-  type: z.literal("create_paseo_worktree_request"),
+export const CreateCodiusWorktreeRequestSchema = z.object({
+  type: z.literal("create_codius_worktree_request"),
   cwd: z.string(),
   projectId: z.string().optional(),
   worktreeSlug: z.string().optional(),
@@ -2047,7 +2047,7 @@ export const ArchiveWorkspaceRequestSchema = z.object({
 
 // Create a new workspace record. Unlike open_project, this never deduplicates by
 // directory: it always produces a fresh workspace. The source discriminates
-// between an existing local directory and a newly created paseo worktree.
+// between an existing local directory and a newly created codius worktree.
 export const WorkspaceCreateRequestSchema = z.object({
   type: z.literal("workspace.create.request"),
   requestId: z.string(),
@@ -2498,9 +2498,9 @@ export const SessionInboundMessageSchema = z.discriminatedUnion("type", [
   ForgeSearchRequestSchema,
   GitHubSearchRequestSchema,
   DirectorySuggestionsRequestSchema,
-  PaseoWorktreeListRequestSchema,
-  PaseoWorktreeArchiveRequestSchema,
-  CreatePaseoWorktreeRequestSchema,
+  CodiusWorktreeListRequestSchema,
+  CodiusWorktreeArchiveRequestSchema,
+  CreateCodiusWorktreeRequestSchema,
   WorkspaceSetupStatusRequestSchema,
   LegacyListAvailableEditorsRequestSchema,
   LegacyOpenInEditorRequestSchema,
@@ -2918,7 +2918,7 @@ export const ProjectCheckoutLiteNotGitPayloadSchema = z
     currentBranch: z.null(),
     remoteUrl: z.null(),
     worktreeRoot: z.null().optional(),
-    isPaseoOwnedWorktree: z.literal(false),
+    isCodiusOwnedWorktree: z.literal(false),
     mainRepoRoot: z.null(),
   })
   .transform((value) => ({
@@ -2926,14 +2926,14 @@ export const ProjectCheckoutLiteNotGitPayloadSchema = z
     worktreeRoot: null,
   }));
 
-export const ProjectCheckoutLiteGitNonPaseoPayloadSchema = z
+export const ProjectCheckoutLiteGitNonCodiusPayloadSchema = z
   .object({
     cwd: z.string(),
     isGit: z.literal(true),
     currentBranch: z.string().nullable(),
     remoteUrl: z.string().nullable(),
     worktreeRoot: z.string().optional(),
-    isPaseoOwnedWorktree: z.literal(false),
+    isCodiusOwnedWorktree: z.literal(false),
     mainRepoRoot: z.string().nullable().optional().default(null),
   })
   .transform((value) => ({
@@ -2941,14 +2941,14 @@ export const ProjectCheckoutLiteGitNonPaseoPayloadSchema = z
     worktreeRoot: value.worktreeRoot ?? value.cwd,
   }));
 
-export const ProjectCheckoutLiteGitPaseoPayloadSchema = z
+export const ProjectCheckoutLiteGitCodiusPayloadSchema = z
   .object({
     cwd: z.string(),
     isGit: z.literal(true),
     currentBranch: z.string().nullable(),
     remoteUrl: z.string().nullable(),
     worktreeRoot: z.string().optional(),
-    isPaseoOwnedWorktree: z.literal(true),
+    isCodiusOwnedWorktree: z.literal(true),
     mainRepoRoot: z.string(),
   })
   .transform((value) => ({
@@ -2958,8 +2958,8 @@ export const ProjectCheckoutLiteGitPaseoPayloadSchema = z
 
 export const ProjectCheckoutLitePayloadSchema = z.union([
   ProjectCheckoutLiteNotGitPayloadSchema,
-  ProjectCheckoutLiteGitNonPaseoPayloadSchema,
-  ProjectCheckoutLiteGitPaseoPayloadSchema,
+  ProjectCheckoutLiteGitNonCodiusPayloadSchema,
+  ProjectCheckoutLiteGitCodiusPayloadSchema,
 ]);
 
 export const ProjectPlacementPayloadSchema = z.object({
@@ -2990,7 +2990,7 @@ const WorkspaceGitRuntimePayloadSchema = z
   .object({
     currentBranch: z.string().nullable().optional(),
     remoteUrl: z.string().nullable().optional(),
-    isPaseoOwnedWorktree: z.boolean().optional(),
+    isCodiusOwnedWorktree: z.boolean().optional(),
     isDirty: z.boolean().nullable().optional(),
     aheadBehind: z
       .object({
@@ -3776,8 +3776,8 @@ export const ReadProjectConfigResponseMessageSchema = z.object({
       requestId: z.string(),
       repoRoot: z.string(),
       ok: z.literal(true),
-      config: PaseoConfigRawSchema.nullable(),
-      revision: PaseoConfigRevisionSchema.nullable(),
+      config: CodiusConfigRawSchema.nullable(),
+      revision: CodiusConfigRevisionSchema.nullable(),
     }),
     z.object({
       requestId: z.string(),
@@ -3797,8 +3797,8 @@ export const WriteProjectConfigResponseMessageSchema = z.object({
       requestId: z.string(),
       repoRoot: z.string(),
       ok: z.literal(true),
-      config: PaseoConfigRawSchema,
-      revision: PaseoConfigRevisionSchema,
+      config: CodiusConfigRawSchema,
+      revision: CodiusConfigRevisionSchema,
     }),
     z.object({
       requestId: z.string(),
@@ -3875,7 +3875,7 @@ const CheckoutStatusCommonSchema = z.object({
 
 const CheckoutStatusNotGitSchema = CheckoutStatusCommonSchema.extend({
   isGit: z.literal(false),
-  isPaseoOwnedWorktree: z.literal(false),
+  isCodiusOwnedWorktree: z.literal(false),
   repoRoot: z.null(),
   currentBranch: z.null(),
   isDirty: z.null(),
@@ -3887,9 +3887,9 @@ const CheckoutStatusNotGitSchema = CheckoutStatusCommonSchema.extend({
   remoteUrl: z.null(),
 });
 
-const CheckoutStatusGitNonPaseoSchema = CheckoutStatusCommonSchema.extend({
+const CheckoutStatusGitNonCodiusSchema = CheckoutStatusCommonSchema.extend({
   isGit: z.literal(true),
-  isPaseoOwnedWorktree: z.literal(false),
+  isCodiusOwnedWorktree: z.literal(false),
   repoRoot: z.string(),
   mainRepoRoot: z.string().nullable().optional().default(null),
   currentBranch: z.string().nullable(),
@@ -3902,9 +3902,9 @@ const CheckoutStatusGitNonPaseoSchema = CheckoutStatusCommonSchema.extend({
   remoteUrl: z.string().nullable(),
 });
 
-const CheckoutStatusGitPaseoSchema = CheckoutStatusCommonSchema.extend({
+const CheckoutStatusGitCodiusSchema = CheckoutStatusCommonSchema.extend({
   isGit: z.literal(true),
-  isPaseoOwnedWorktree: z.literal(true),
+  isCodiusOwnedWorktree: z.literal(true),
   repoRoot: z.string(),
   mainRepoRoot: z.string(),
   currentBranch: z.string().nullable(),
@@ -3921,8 +3921,8 @@ export const CheckoutStatusResponseSchema = z.object({
   type: z.literal("checkout_status_response"),
   payload: z.union([
     CheckoutStatusNotGitSchema,
-    CheckoutStatusGitNonPaseoSchema,
-    CheckoutStatusGitPaseoSchema,
+    CheckoutStatusGitNonCodiusSchema,
+    CheckoutStatusGitCodiusSchema,
   ]),
 });
 
@@ -4054,8 +4054,8 @@ export const CheckoutStatusUpdateSchema = z.object({
   payload: z
     .union([
       CheckoutStatusNotGitSchema,
-      CheckoutStatusGitNonPaseoSchema,
-      CheckoutStatusGitPaseoSchema,
+      CheckoutStatusGitNonCodiusSchema,
+      CheckoutStatusGitCodiusSchema,
     ])
     .and(CheckoutStatusUpdateMetadataSchema),
 });
@@ -4451,7 +4451,7 @@ const StashEntrySchema = z.object({
   index: z.number().int().min(0),
   message: z.string(),
   branch: z.string().nullable(),
-  isPaseo: z.boolean(),
+  isCodius: z.boolean(),
 });
 
 export const StashSaveResponseSchema = z.object({
@@ -4560,24 +4560,24 @@ export const DirectorySuggestionsResponseSchema = z.object({
   }),
 });
 
-const PaseoWorktreeSchema = z.object({
+const CodiusWorktreeSchema = z.object({
   worktreePath: z.string(),
   createdAt: z.string(),
   branchName: z.string().nullable().optional(),
   head: z.string().nullable().optional(),
 });
 
-export const PaseoWorktreeListResponseSchema = z.object({
-  type: z.literal("paseo_worktree_list_response"),
+export const CodiusWorktreeListResponseSchema = z.object({
+  type: z.literal("codius_worktree_list_response"),
   payload: z.object({
-    worktrees: z.array(PaseoWorktreeSchema),
+    worktrees: z.array(CodiusWorktreeSchema),
     error: CheckoutErrorSchema.nullable(),
     requestId: z.string(),
   }),
 });
 
-export const PaseoWorktreeArchiveResponseSchema = z.object({
-  type: z.literal("paseo_worktree_archive_response"),
+export const CodiusWorktreeArchiveResponseSchema = z.object({
+  type: z.literal("codius_worktree_archive_response"),
   payload: z.object({
     success: z.boolean(),
     removedAgents: z.array(z.string()).optional(),
@@ -4586,8 +4586,8 @@ export const PaseoWorktreeArchiveResponseSchema = z.object({
   }),
 });
 
-export const CreatePaseoWorktreeResponseSchema = z.object({
-  type: z.literal("create_paseo_worktree_response"),
+export const CreateCodiusWorktreeResponseSchema = z.object({
+  type: z.literal("create_codius_worktree_response"),
   payload: z.object({
     workspace: WorkspaceDescriptorPayloadSchema.nullable(),
     error: z.string().nullable(),
@@ -5197,9 +5197,9 @@ export const SessionOutboundMessageSchema = z.discriminatedUnion("type", [
   ForgeSearchResponseSchema,
   GitHubSearchResponseSchema,
   DirectorySuggestionsResponseSchema,
-  PaseoWorktreeListResponseSchema,
-  PaseoWorktreeArchiveResponseSchema,
-  CreatePaseoWorktreeResponseSchema,
+  CodiusWorktreeListResponseSchema,
+  CodiusWorktreeArchiveResponseSchema,
+  CreateCodiusWorktreeResponseSchema,
   FileExplorerResponseSchema,
   FileSubscribeResponseSchema,
   FileUnsubscribeResponseSchema,
@@ -5574,13 +5574,13 @@ export type GitHubSearchKind = z.infer<typeof GitHubSearchKindSchema>;
 export type GitHubSearchRequest = z.infer<typeof GitHubSearchRequestSchema>;
 export type GitHubSearchResponse = z.infer<typeof GitHubSearchResponseSchema>;
 export type ChangeRequestCheckoutSource = z.infer<typeof ChangeRequestCheckoutSourceSchema>;
-export type CreatePaseoWorktreeRequest = z.infer<typeof CreatePaseoWorktreeRequestSchema>;
+export type CreateCodiusWorktreeRequest = z.infer<typeof CreateCodiusWorktreeRequestSchema>;
 export type DirectorySuggestionsRequest = z.infer<typeof DirectorySuggestionsRequestSchema>;
 export type DirectorySuggestionsResponse = z.infer<typeof DirectorySuggestionsResponseSchema>;
-export type PaseoWorktreeListRequest = z.infer<typeof PaseoWorktreeListRequestSchema>;
-export type PaseoWorktreeListResponse = z.infer<typeof PaseoWorktreeListResponseSchema>;
-export type PaseoWorktreeArchiveRequest = z.infer<typeof PaseoWorktreeArchiveRequestSchema>;
-export type PaseoWorktreeArchiveResponse = z.infer<typeof PaseoWorktreeArchiveResponseSchema>;
+export type CodiusWorktreeListRequest = z.infer<typeof CodiusWorktreeListRequestSchema>;
+export type CodiusWorktreeListResponse = z.infer<typeof CodiusWorktreeListResponseSchema>;
+export type CodiusWorktreeArchiveRequest = z.infer<typeof CodiusWorktreeArchiveRequestSchema>;
+export type CodiusWorktreeArchiveResponse = z.infer<typeof CodiusWorktreeArchiveResponseSchema>;
 export type WorkspaceSetupStatusRequest = z.infer<typeof WorkspaceSetupStatusRequestSchema>;
 export type LegacyListAvailableEditorsRequest = z.infer<
   typeof LegacyListAvailableEditorsRequestSchema

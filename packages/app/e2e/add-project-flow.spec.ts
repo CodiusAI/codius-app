@@ -23,7 +23,7 @@ import { expectOpenedProject } from "./helpers/project-picker-ui";
 import { connectSeedClient } from "./helpers/seed-client";
 import { getServerId } from "./helpers/server-id";
 
-const EXTRA_HOSTS_KEY = "@paseo:e2e-extra-hosts";
+const EXTRA_HOSTS_KEY = "@codius:e2e-extra-hosts";
 const SECONDARY_HOST_ID = "add-project-flow-secondary";
 const SECONDARY_HOST_LABEL = "Secondary Host";
 
@@ -205,7 +205,7 @@ test.describe("Add Project command-center flow", () => {
     });
 
     test("New directory creates a Project on the selected remote host", async ({ page }) => {
-      const parentDirectory = await mkdtemp(path.join(tmpdir(), "paseo-e2e-remote-project-"));
+      const parentDirectory = await mkdtemp(path.join(tmpdir(), "codius-e2e-remote-project-"));
       const directoryName = `remote-${randomUUID().slice(0, 8)}`;
       const directoryPath = path.join(parentDirectory, directoryName);
 
@@ -295,7 +295,7 @@ test.describe("Add Project command-center flow", () => {
     const title = addProjectFlow(page).getByTestId("add-project-flow-title");
     await expect(title.getByText("Choose destination", { exact: true })).toBeVisible();
     await expect(title.getByText("localhost", { exact: true })).toBeVisible();
-    await expect(title).not.toContainText("Where should Paseo create");
+    await expect(title).not.toContainText("Where should Codius create");
     await addProjectFlowBack(page).click();
     await expect(addProjectFlowInput(page)).toHaveValue(remote);
   });
@@ -303,7 +303,7 @@ test.describe("Add Project command-center flow", () => {
   test("New directory validates the name, restores parent and name state, then creates a Project", async ({
     page,
   }) => {
-    const parentDirectory = await mkdtemp(path.join(tmpdir(), "paseo-e2e-new-project-"));
+    const parentDirectory = await mkdtemp(path.join(tmpdir(), "codius-e2e-new-project-"));
     const directoryName = `created-${randomUUID().slice(0, 8)}`;
     const directoryPath = path.join(parentDirectory, directoryName);
     let projectId: string | null = null;

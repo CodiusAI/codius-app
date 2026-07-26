@@ -9,8 +9,8 @@ import {
 } from "./agent/provider-launch-config.js";
 import type { AgentProviderRuntimeSettingsMap } from "./agent/provider-launch-config.js";
 import { ensurePrivateFile, writePrivateFileAtomicSync } from "./private-files.js";
-import { TerminalProfileSchema } from "@getpaseo/protocol/messages";
-import { PaseoServicePortAllocationSchema } from "@getpaseo/protocol/paseo-config-schema";
+import { TerminalProfileSchema } from "@codius-ai/protocol/messages";
+import { CodiusServicePortAllocationSchema } from "@codius-ai/protocol/codius-config-schema";
 
 export const LogLevelSchema = z.enum(["trace", "debug", "info", "warn", "error", "fatal"]);
 export const LogFormatSchema = z.enum(["pretty", "json"]);
@@ -78,7 +78,7 @@ const ProvidersSchema = z
 const WorktreesConfigSchema = z
   .object({
     root: z.string().min(1).optional(),
-    servicePorts: PaseoServicePortAllocationSchema.optional(),
+    servicePorts: CodiusServicePortAllocationSchema.optional(),
   })
   .strict();
 
@@ -331,14 +331,14 @@ const DEFAULT_PERSISTED_CONFIG = PersistedConfigSchema.parse({
   daemon: {
     listen: "127.0.0.1:6767",
     cors: {
-      allowedOrigins: ["https://app.paseo.sh"],
+      allowedOrigins: ["https://app.codius.ai"],
     },
     relay: {
       enabled: true,
     },
   },
   app: {
-    baseUrl: "https://app.paseo.sh",
+    baseUrl: "https://app.codius.ai",
   },
 }) as PersistedConfig;
 
@@ -347,8 +347,8 @@ interface LoggerLike {
   info(...args: unknown[]): void;
 }
 
-function getConfigPath(paseoHome: string): string {
-  return path.join(paseoHome, CONFIG_FILENAME);
+function getConfigPath(codiusHome: string): string {
+  return path.join(codiusHome, CONFIG_FILENAME);
 }
 
 function getLogger(logger: LoggerLike | undefined): LoggerLike | undefined {
@@ -394,9 +394,9 @@ function stripRemovedConfigFields(parsed: unknown): unknown {
   return root;
 }
 
-export function loadPersistedConfig(paseoHome: string, logger?: LoggerLike): PersistedConfig {
+export function loadPersistedConfig(codiusHome: string, logger?: LoggerLike): PersistedConfig {
   const log = getLogger(logger);
-  const configPath = getConfigPath(paseoHome);
+  const configPath = getConfigPath(codiusHome);
 
   if (!existsSync(configPath)) {
     try {
@@ -446,12 +446,12 @@ export function loadPersistedConfig(paseoHome: string, logger?: LoggerLike): Per
 }
 
 export function savePersistedConfig(
-  paseoHome: string,
+  codiusHome: string,
   config: PersistedConfig,
   logger?: LoggerLike,
 ): void {
   const log = getLogger(logger);
-  const configPath = getConfigPath(paseoHome);
+  const configPath = getConfigPath(codiusHome);
 
   const result = PersistedConfigSchema.safeParse(config);
   if (!result.success) {

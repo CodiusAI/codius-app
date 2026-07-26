@@ -9,7 +9,7 @@ import { Buffer } from "node:buffer";
 import dotenv from "dotenv";
 import { loadDaemonClientConstructor } from "./helpers/daemon-client-loader";
 import { createNodeWebSocketFactory, type NodeWebSocketFactory } from "./helpers/node-ws-factory";
-import { forkPaseoHomeMetadata, resolvePaseoHomePath } from "./helpers/paseo-home-fork";
+import { forkCodiusHomeMetadata, resolveCodiusHomePath } from "./helpers/codius-home-fork";
 import { withDisabledE2ESpeechEnv } from "./helpers/speech-env";
 
 const wranglerCliPath = path.resolve(__dirname, "../node_modules/wrangler/bin/wrangler.js");
@@ -194,7 +194,7 @@ function isProcessRunning(pid: number): boolean {
 
 async function readSupervisorPidLock(home: string): Promise<number | null> {
   try {
-    const content = await readFile(path.join(home, "paseo.pid"), "utf8");
+    const content = await readFile(path.join(home, "codius.pid"), "utf8");
     const parsed = JSON.parse(content) as { pid?: unknown };
     return typeof parsed.pid === "number" ? parsed.pid : null;
   } catch {
@@ -230,14 +230,14 @@ async function stopProcessByPid(pid: number): Promise<void> {
 }
 
 async function stopCurrentDaemonFromPidLock(): Promise<void> {
-  if (!paseoHome) {
+  if (!codiusHome) {
     return;
   }
   if (process.env.E2E_DAEMON_PORT === "6767") {
     throw new Error("Refusing to clean up daemon PID lock for developer daemon port 6767.");
   }
 
-  const pid = await readSupervisorPidLock(paseoHome);
+  const pid = await readSupervisorPidLock(codiusHome);
   if (pid === null) {
     return;
   }
@@ -288,19 +288,19 @@ async function isOpenAiApiKeyUsable(apiKey: string | undefined): Promise<boolean
 
 let daemonProcess: ChildProcess | null = null;
 let metroProcess: ChildProcess | null = null;
-let paseoHome: string | null = null;
+let codiusHome: string | null = null;
 let fakeEditorBinDir: string | null = null;
 let relayProcess: ChildProcess | null = null;
 
-function resolveOptionalPaseoHomeEnv(value: string | undefined): string | null {
+function resolveOptionalCodiusHomeEnv(value: string | undefined): string | null {
   const trimmed = value?.trim();
   if (!trimmed) {
     return null;
   }
   if (trimmed === "current") {
-    return resolvePaseoHomePath("~/.paseo");
+    return resolveCodiusHomePath("~/.codius");
   }
-  return resolvePaseoHomePath(trimmed);
+  return resolveCodiusHomePath(trimmed);
 }
 
 interface OfferPayload {
@@ -327,7 +327,7 @@ interface PairingDaemonClient {
 }
 
 async function createFakeEditorBin(): Promise<string> {
-  const binDir = await mkdtemp(path.join(tmpdir(), "paseo-e2e-editor-bin-"));
+  const binDir = await mkdtemp(path.join(tmpdir(), "codius-e2e-editor-bin-"));
   let realGhPath = "";
   try {
     realGhPath = execSync("which gh").toString().trim();
@@ -338,7 +338,7 @@ async function createFakeEditorBin(): Promise<string> {
   const fakeEditorSource = `#!/usr/bin/env node
 const fs = require("fs");
 const path = require("path");
-const recordPath = process.env.PASEO_E2E_EDITOR_RECORD_PATH;
+const recordPath = process.env.CODIUS_E2E_EDITOR_RECORD_PATH;
 
 if (recordPath) {
   fs.appendFileSync(recordPath, JSON.stringify({
@@ -359,7 +359,7 @@ if (recordPath) {
   const fakeGhSource = `#!/usr/bin/env node
 const { spawnSync } = require("child_process");
 const args = process.argv.slice(2);
-const fixtureRemote = "https://github.com/paseo-e2e/local-fixture.git";
+const fixtureRemote = "https://github.com/codius-e2e/local-fixture.git";
 const origin = spawnSync("git", ["config", "--get", "remote.origin.url"], {
   encoding: "utf8",
   stdio: ["ignore", "pipe", "ignore"]
@@ -369,7 +369,7 @@ if (origin === fixtureRemote) {
   const command = args.slice(0, 2).join(" ");
   if (command === "auth status") process.exit(0);
   if (command === "repo view") {
-    process.stdout.write(JSON.stringify({ owner: { login: "paseo-e2e" }, name: "local-fixture", parent: null }));
+    process.stdout.write(JSON.stringify({ owner: { login: "codius-e2e" }, name: "local-fixture", parent: null }));
     process.exit(0);
   }
   if (command === "issue list") {
@@ -380,7 +380,7 @@ if (origin === fixtureRemote) {
     const pr = {
       number: 1,
       title: "Use pasted PR as start ref",
-      url: "https://github.com/paseo-e2e/local-fixture/pull/1",
+      url: "https://github.com/codius-e2e/local-fixture/pull/1",
       state: "OPEN",
       body: null,
       labels: [],
@@ -398,9 +398,9 @@ if (origin === fixtureRemote) {
         baseRefName: "main",
         headRefName: "pr-branch-1",
         isCrossRepository: false,
-        headRepositoryOwner: { login: "paseo-e2e" },
+        headRepositoryOwner: { login: "codius-e2e" },
         headRepository: {
-          sshUrl: "git@github.com:paseo-e2e/local-fixture.git",
+          sshUrl: "git@github.com:codius-e2e/local-fixture.git",
           url: fixtureRemote
         }
       } } }
@@ -434,7 +434,7 @@ function ensureRelayBuildArtifact(repoRoot: string): void {
     return;
   }
 
-  console.log("[e2e] Building @getpaseo/relay for daemon startup");
+  console.log("[e2e] Building @codius-ai/relay for daemon startup");
   execSync("npm run build:relay", {
     cwd: repoRoot,
     stdio: "inherit",
@@ -509,27 +509,27 @@ async function loadEnvTestFile(repoRoot: string): Promise<void> {
   }
 }
 
-async function applyPaseoHomeFork(targetHome: string): Promise<void> {
-  const forkSourceHome = resolveOptionalPaseoHomeEnv(process.env.E2E_FORK_PASEO_HOME_FROM);
+async function applyCodiusHomeFork(targetHome: string): Promise<void> {
+  const forkSourceHome = resolveOptionalCodiusHomeEnv(process.env.E2E_FORK_CODIUS_HOME_FROM);
   if (!forkSourceHome) {
     return;
   }
-  const forkResult = await forkPaseoHomeMetadata({
+  const forkResult = await forkCodiusHomeMetadata({
     sourceHome: forkSourceHome,
     targetHome,
   });
-  process.env.E2E_FORK_SOURCE_PASEO_HOME = forkResult.sourceHome;
-  process.env.E2E_FORK_TARGET_PASEO_HOME = forkResult.targetHome;
+  process.env.E2E_FORK_SOURCE_CODIUS_HOME = forkResult.sourceHome;
+  process.env.E2E_FORK_TARGET_CODIUS_HOME = forkResult.targetHome;
   process.env.E2E_FORK_COPIED_FILES = String(forkResult.copiedFiles);
   process.env.E2E_FORK_COPIED_BYTES = String(forkResult.copiedBytes);
   console.log(
-    `[e2e] Forked Paseo metadata from ${forkResult.sourceHome} to ${forkResult.targetHome} ` +
+    `[e2e] Forked Codius metadata from ${forkResult.sourceHome} to ${forkResult.targetHome} ` +
       `(${forkResult.agentFiles} agent files, ${forkResult.projectFiles} project registry files, ` +
       `${forkResult.copiedBytes} bytes)`,
   );
   if (forkResult.skippedMissing.length > 0) {
     console.warn(
-      `[e2e] Paseo metadata fork skipped missing paths: ${forkResult.skippedMissing.join(", ")}`,
+      `[e2e] Codius metadata fork skipped missing paths: ${forkResult.skippedMissing.join(", ")}`,
     );
   }
 }
@@ -538,7 +538,7 @@ async function logSpeechHarnessConfig(): Promise<void> {
   const openAiUsable = await isOpenAiApiKeyUsable(process.env.OPENAI_API_KEY);
   const defaultLocalModelsDir = path.join(
     process.env.HOME ?? "",
-    ".paseo",
+    ".codius",
     "models",
     "local-speech",
   );
@@ -550,7 +550,7 @@ async function logSpeechHarnessConfig(): Promise<void> {
   if (!openAiUsable && !hasDefaultLocalModelsDir) {
     console.warn(
       "[e2e] Neither OPENAI_API_KEY nor local speech models found — app E2E keeps dictation/voice disabled. " +
-        "Tests that require dictation should gate on PASEO_DICTATION_ENABLED.",
+        "Tests that require dictation should gate on CODIUS_DICTATION_ENABLED.",
     );
     return;
   }
@@ -726,7 +726,7 @@ function startMetro(input: {
       BROWSER: "none",
       ...(process.env.E2E_DESKTOP_RUNTIME === "1"
         ? {
-            PASEO_WEB_PLATFORM: "electron",
+            CODIUS_WEB_PLATFORM: "electron",
             EXPO_PUBLIC_LOCAL_DAEMON: `127.0.0.1:${input.daemonPort}`,
           }
         : {}),
@@ -764,7 +764,7 @@ interface DaemonSpawnArgs {
   port: number;
   relayPort: number;
   metroPort: number;
-  paseoHome: string;
+  codiusHome: string;
   fakeEditorBinDir: string;
   editorRecordPath: string;
   buffer: ReturnType<typeof createLineBuffer>;
@@ -776,13 +776,13 @@ function startDaemon(args: DaemonSpawnArgs): ChildProcess {
   const env = withDisabledE2ESpeechEnv({
     ...process.env,
     PATH: `${args.fakeEditorBinDir}${path.delimiter}${process.env.PATH ?? ""}`,
-    PASEO_HOME: args.paseoHome,
-    PASEO_E2E_EDITOR_RECORD_PATH: args.editorRecordPath,
-    PASEO_SERVER_ID: "srv_e2e_test_daemon",
-    PASEO_LISTEN: `0.0.0.0:${args.port}`,
-    PASEO_RELAY_ENDPOINT: `127.0.0.1:${args.relayPort}`,
-    PASEO_CORS_ORIGINS: `http://localhost:${args.metroPort}`,
-    PASEO_NODE_ENV: "development",
+    CODIUS_HOME: args.codiusHome,
+    CODIUS_E2E_EDITOR_RECORD_PATH: args.editorRecordPath,
+    CODIUS_SERVER_ID: "srv_e2e_test_daemon",
+    CODIUS_LISTEN: `0.0.0.0:${args.port}`,
+    CODIUS_RELAY_ENDPOINT: `127.0.0.1:${args.relayPort}`,
+    CODIUS_CORS_ORIGINS: `http://localhost:${args.metroPort}`,
+    CODIUS_NODE_ENV: "development",
     NODE_ENV: "development",
   });
 
@@ -829,7 +829,7 @@ async function removeTempTree(targetPath: string): Promise<void> {
   });
 }
 
-async function performCleanup(shouldRemovePaseoHome: boolean): Promise<void> {
+async function performCleanup(shouldRemoveCodiusHome: boolean): Promise<void> {
   await Promise.all([
     stopProcess(daemonProcess),
     stopProcess(metroProcess),
@@ -839,11 +839,11 @@ async function performCleanup(shouldRemovePaseoHome: boolean): Promise<void> {
   daemonProcess = null;
   metroProcess = null;
   relayProcess = null;
-  if (paseoHome && shouldRemovePaseoHome) {
-    await removeTempTree(paseoHome);
-    paseoHome = null;
-  } else if (paseoHome) {
-    console.log(`[e2e] Preserving PASEO_HOME: ${paseoHome}`);
+  if (codiusHome && shouldRemoveCodiusHome) {
+    await removeTempTree(codiusHome);
+    codiusHome = null;
+  } else if (codiusHome) {
+    console.log(`[e2e] Preserving CODIUS_HOME: ${codiusHome}`);
   }
   if (fakeEditorBinDir) {
     await removeTempTree(fakeEditorBinDir);
@@ -858,17 +858,17 @@ export default async function globalSetup() {
 
   const port = await getAvailablePortExcluding(new Set());
   const metroPort = await getAvailablePortExcluding(new Set([port]));
-  const requestedPaseoHome = resolveOptionalPaseoHomeEnv(process.env.E2E_PASEO_HOME);
-  const shouldRemovePaseoHome = !requestedPaseoHome && process.env.E2E_KEEP_PASEO_HOME !== "1";
-  paseoHome = requestedPaseoHome ?? (await mkdtemp(path.join(tmpdir(), "paseo-e2e-home-")));
-  const editorRecordPath = path.join(paseoHome, "editor-open-records.jsonl");
+  const requestedCodiusHome = resolveOptionalCodiusHomeEnv(process.env.E2E_CODIUS_HOME);
+  const shouldRemoveCodiusHome = !requestedCodiusHome && process.env.E2E_KEEP_CODIUS_HOME !== "1";
+  codiusHome = requestedCodiusHome ?? (await mkdtemp(path.join(tmpdir(), "codius-e2e-home-")));
+  const editorRecordPath = path.join(codiusHome, "editor-open-records.jsonl");
   fakeEditorBinDir = await createFakeEditorBin();
   const metroLineBuffer = createLineBuffer();
   const daemonLineBuffer = createLineBuffer();
 
-  await applyPaseoHomeFork(paseoHome);
+  await applyCodiusHomeFork(codiusHome);
 
-  const cleanup = () => performCleanup(shouldRemovePaseoHome);
+  const cleanup = () => performCleanup(shouldRemoveCodiusHome);
 
   await logSpeechHarnessConfig();
 
@@ -890,14 +890,14 @@ export default async function globalSetup() {
       port,
       relayPort,
       metroPort,
-      paseoHome,
+      codiusHome,
       fakeEditorBinDir,
       editorRecordPath,
       buffer: daemonLineBuffer,
     });
 
     await waitForServer(port, {
-      label: "Paseo daemon",
+      label: "Codius daemon",
       childProcess: daemonProcess,
       getRecentOutput: daemonLineBuffer.dump,
     });
@@ -911,10 +911,10 @@ export default async function globalSetup() {
     process.env.E2E_SERVER_ID = offer.serverId;
     process.env.E2E_RELAY_DAEMON_PUBLIC_KEY = offer.daemonPublicKeyB64;
     process.env.E2E_METRO_PORT = String(metroPort);
-    process.env.E2E_PASEO_HOME = paseoHome;
+    process.env.E2E_CODIUS_HOME = codiusHome;
     process.env.E2E_EDITOR_RECORD_PATH = editorRecordPath;
     console.log(
-      `[e2e] Test daemon started on port ${port}, Metro on port ${metroPort}, relay on port ${relayPort}, relay inspector on port ${inspectorPort}, home: ${paseoHome}`,
+      `[e2e] Test daemon started on port ${port}, Metro on port ${metroPort}, relay on port ${relayPort}, relay inspector on port ${inspectorPort}, home: ${codiusHome}`,
     );
 
     return async () => {

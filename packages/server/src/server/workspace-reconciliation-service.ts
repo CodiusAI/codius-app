@@ -1,5 +1,5 @@
 import { statSync, watch as watchPath } from "node:fs";
-import type { ProjectCheckoutLitePayload } from "@getpaseo/protocol/messages";
+import type { ProjectCheckoutLitePayload } from "@codius-ai/protocol/messages";
 import type pino from "pino";
 import type {
   ProjectRegistry,
@@ -487,7 +487,7 @@ export class WorkspaceReconciliationService {
         currentBranch: null,
         remoteUrl: null,
         worktreeRoot: null,
-        isPaseoOwnedWorktree: false as const,
+        isCodiusOwnedWorktree: false as const,
         mainRepoRoot: null,
       };
     }

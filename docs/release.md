@@ -55,7 +55,7 @@ diff. The highest-impact change determines the version:
 The release agent selects patch or minor during preparation and presents the
 target version with the changelog for approval. Agents never select a major
 version autonomously. A major release requires an explicit user instruction and
-approval; Paseo remains on major version zero until that deliberate decision.
+approval; Codius remains on major version zero until that deliberate decision.
 
 Version bumps are never used to retry a failed build. Retry the existing version
 as described in **Fixing a failed release build**.
@@ -76,9 +76,9 @@ npm run release:minor
 
 This bumps the version across all workspaces, runs checks, publishes to npm, and pushes the branch + tag. The tag push triggers `Desktop Release`, `Android APK Release`, `Docker`, and `Release Notes Sync` on GitHub Actions. EAS picks up the same tag via the EAS GitHub app and starts the iOS + Android store builds in parallel (see "Mobile builds (EAS)" below) — there is no `release-mobile.yml` in this repo.
 
-The Docker workflow builds images from the checked-out source tree on pull requests and on `main` as non-publishing checks. Stable `vX.Y.Z` tag pushes publish `ghcr.io/getpaseo/paseo:X.Y.Z` and `ghcr.io/getpaseo/paseo:latest`; beta `vX.Y.Z-beta.N` tag pushes publish only `ghcr.io/getpaseo/paseo:X.Y.Z-beta.N` and never move `latest`.
+The Docker workflow builds images from the checked-out source tree on pull requests and on `main` as non-publishing checks. Stable `vX.Y.Z` tag pushes publish `ghcr.io/prismosoft/codius-desktop:X.Y.Z` and `ghcr.io/prismosoft/codius-desktop:latest`; beta `vX.Y.Z-beta.N` tag pushes publish only `ghcr.io/prismosoft/codius-desktop:X.Y.Z-beta.N` and never move `latest`.
 
-Relay deployment is manual-only while `relay.paseo.sh` bridges traffic to the Fly deployment. Releases and pushes to `main` do not deploy the Cloudflare relay worker. Deploy it explicitly with `gh workflow run deploy-relay.yml` only when the production bridge should change.
+Relay deployment is manual-only while `relay.codius.ai` bridges traffic to the Fly deployment. Releases and pushes to `main` do not deploy the Cloudflare relay worker. Deploy it explicitly with `gh workflow run deploy-relay.yml` only when the production bridge should change.
 
 **Stable means stable.** If the user says "stable" or "ship stable", do not ask whether they want a beta first. They picked stable; treat it as a direct stable release. Only run the beta flow when the user explicitly says "beta".
 
@@ -105,7 +105,7 @@ npm run release:promote          # Promote X.Y.Z-beta.N to stable X.Y.Z
 ```
 
 - Beta tags are published GitHub prereleases like `v0.1.41-beta.1`
-- Betas publish npm packages with `--tag beta`, so `npm install @getpaseo/cli@beta` opts in while plain `npm install @getpaseo/cli` stays on `latest`
+- Betas publish npm packages with `--tag beta`, so `npm install @codius-ai/cli@beta` opts in while plain `npm install @codius-ai/cli` stays on `latest`
 - Betas publish desktop assets and APKs for testing, but they do not trigger the production web/mobile release flows
 - `release:promote` creates a fresh stable tag like `v0.1.41`; the final release never reuses the beta tag
 - Desktop assets now come from the Electron package at `packages/desktop`
@@ -275,7 +275,7 @@ The user rarely opens the Expo dashboard. A failed EAS build or submit/review jo
 Pattern:
 
 ```jsonc
-// mcp__paseo__create_heartbeat arguments
+// mcp__codius__create_heartbeat arguments
 {
   "name": "vX.Y.Z release babysit heartbeat",
   "cron": "*/15 * * * *",
@@ -311,13 +311,13 @@ and EAS mobile release builds. Use the Docker workflow dispatch instead:
 ```bash
 gh workflow run docker.yml \
   --ref main \
-  -f paseo_version=X.Y.Z-beta.N \
+  -f codius_version=X.Y.Z-beta.N \
   -f publish=true
 ```
 
-This replaces `ghcr.io/getpaseo/paseo:X.Y.Z-beta.N` in place without touching
+This replaces `ghcr.io/prismosoft/codius-desktop:X.Y.Z-beta.N` in place without touching
 desktop, APK, or EAS release builders. The Docker exception is safe because the
-dispatch runs from `--ref main` and uses the explicit `paseo_version`; it does
+dispatch runs from `--ref main` and uses the explicit `codius_version`; it does
 not check out or move the `v*` release tag.
 
 To retry a failed non-Docker release workflow, push a retry tag on the commit
@@ -356,7 +356,7 @@ This ensures the checkout ref matches the actual code on `main` with the fix inc
 
 ## Notes
 
-- `version:all:*` bumps root + syncs workspace versions and `@getpaseo/*` dependency versions
+- `version:all:*` bumps root + syncs workspace versions and `@codius-ai/*` dependency versions
 - `release:prepare` refreshes workspace `node_modules` links to prevent stale types
 - `npm run dev:desktop` and `npm run build:desktop` target the Electron desktop package in `packages/desktop`
 - If `release:publish` partially fails, re-run it — npm skips already-published versions
@@ -390,7 +390,7 @@ No prefix (`v`), no extra text. `Release Notes Sync` matches the `## X.Y.Z` (or 
 
 ## Changelog voice
 
-The changelog is shown on the Paseo homepage. Write it for **end users**, not developers.
+The changelog is shown on the Codius homepage. Write it for **end users**, not developers.
 
 - **Frame everything from the user's perspective.** Describe what changed in the app, not what changed in the code. Users care that "workspaces load instantly" — not that a component no longer remounts.
 - **Never mention component names, internal modules, or implementation details.** No `WorkingIndicator`, no `accumulatedUsage`, no `reconcileAndEmitWorkspaceUpdates`. Also no "virtualized lists", no "remount", no "memoization", no "debounced", no "fuzzy ranking", no "controlled input", no "uncontrolled input" — these are implementation words masquerading as user-facing copy.
@@ -430,15 +430,15 @@ Every bullet must be scannable at a glance. The changelog is not release documen
 
 Every changelog bullet must credit contributors and link to the PR(s) that delivered the change. This is not one-PR-per-line — a single bullet describes a user-facing change and may reference multiple PRs.
 
-Format: append `([#123](https://github.com/getpaseo/paseo/pull/123) by [@user](https://github.com/user))` at the end of each bullet. For changes spanning multiple PRs or contributors:
+Format: append `([#123](https://github.com/prismosoft/codius-desktop/pull/123) by [@user](https://github.com/user))` at the end of each bullet. For changes spanning multiple PRs or contributors:
 
 ```markdown
-- Voice mode now works on tablets with proper microphone permissions. ([#210](https://github.com/getpaseo/paseo/pull/210), [#215](https://github.com/getpaseo/paseo/pull/215) by [@alice](https://github.com/alice), [@bob](https://github.com/bob))
+- Voice mode now works on tablets with proper microphone permissions. ([#210](https://github.com/prismosoft/codius-desktop/pull/210), [#215](https://github.com/prismosoft/codius-desktop/pull/215) by [@alice](https://github.com/alice), [@bob](https://github.com/bob))
 ```
 
 Rules:
 
-- **Always link the PR number** as `[#N](https://github.com/getpaseo/paseo/pull/N)`.
+- **Always link the PR number** as `[#N](https://github.com/prismosoft/codius-desktop/pull/N)`.
 - **Always link the contributor's GitHub profile** as `[@user](https://github.com/user)`.
 - **One bullet = one user-facing change**, regardless of how many PRs went into it. Group related PRs on the same bullet.
 - **De-duplicate contributors.** If the same person authored multiple PRs in one bullet, list them once.

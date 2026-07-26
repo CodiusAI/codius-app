@@ -32,8 +32,8 @@ console.log("=== Run Command Tests ===\n");
 
 // Get random port that's definitely not in use (never 6767)
 const port = 10000 + Math.floor(Math.random() * 50000);
-const paseoHome = await mkdtemp(join(tmpdir(), "paseo-test-home-"));
-const schemaPath = join(paseoHome, "run-output-schema.json");
+const codiusHome = await mkdtemp(join(tmpdir(), "codius-test-home-"));
+const schemaPath = join(codiusHome, "run-output-schema.json");
 await writeFile(
   schemaPath,
   JSON.stringify({
@@ -50,7 +50,7 @@ try {
   // Test 1: run --help shows options
   {
     console.log("Test 1: run --help shows options");
-    const result = await $`npx paseo run --help`.nothrow();
+    const result = await $`npx codiusctl run --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "run --help should exit 0");
     assert(result.stdout.includes("-d"), "help should mention -d flag");
     assert(result.stdout.includes("--background"), "help should mention --background flag");
@@ -72,7 +72,7 @@ try {
   {
     console.log("Test 2: run requires prompt argument");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail without prompt");
     const output = result.stdout + result.stderr;
     // Commander should complain about missing argument
@@ -88,7 +88,7 @@ try {
   {
     console.log("Test 3: run handles daemon not running");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --provider claude "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --provider claude "test prompt"`.nothrow();
     // Should fail because daemon not running
     assert.notStrictEqual(result.exitCode, 0, "should fail when daemon not running");
     const output = result.stdout + result.stderr;
@@ -104,7 +104,7 @@ try {
   {
     console.log("Test 4: run -d flag is accepted");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run -d "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run -d "test prompt"`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -d flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -115,7 +115,7 @@ try {
   {
     console.log("Test 5: run --name flag is accepted");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --name "test-agent" "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --name "test-agent" "test prompt"`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --name flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -126,7 +126,7 @@ try {
   {
     console.log("Test 6: run --provider flag is accepted");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --provider codex "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --provider codex "test prompt"`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --provider flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -137,7 +137,7 @@ try {
   {
     console.log("Test 6b: run --provider provider/model syntax is accepted");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --provider codex/gpt-5.4 "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --provider codex/gpt-5.4 "test prompt"`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept provider/model syntax");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -148,7 +148,7 @@ try {
   {
     console.log("Test 7: run --mode flag is accepted");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --mode bypass "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --mode bypass "test prompt"`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --mode flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -159,7 +159,7 @@ try {
   {
     console.log("Test 8: run --cwd flag is accepted");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --cwd /tmp "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --cwd /tmp "test prompt"`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --cwd flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -170,7 +170,7 @@ try {
   {
     console.log("Test 9: run --output-schema flag is accepted");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --output-schema ${schemaPath} "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --output-schema ${schemaPath} "test prompt"`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --output-schema flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -181,7 +181,7 @@ try {
   {
     console.log("Test 10: run --output-schema cannot be used with --background");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --background --output-schema ${schemaPath} "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --background --output-schema ${schemaPath} "test prompt"`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail with --background and --output-schema");
     const output = result.stdout + result.stderr;
     assert(
@@ -195,7 +195,7 @@ try {
   {
     console.log("Test 11: -q (quiet) flag is accepted with run");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo -q run -d "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl -q run -d "test prompt"`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -q flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -206,7 +206,7 @@ try {
   {
     console.log("Test 12: Combined flags work together");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo -q run -d --name "test-fixer" --provider claude --mode bypass --cwd /tmp "Fix the tests"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl -q run -d --name "test-fixer" --provider claude --mode bypass --cwd /tmp "Fix the tests"`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept all combined flags");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -217,7 +217,7 @@ try {
   {
     console.log("Test 12b: conflicting provider/model syntax is rejected");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --provider codex/gpt-5.4 --model gpt-5.5 "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --provider codex/gpt-5.4 --model gpt-5.5 "test prompt"`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail for conflicting model inputs");
     const output = result.stdout + result.stderr;
     assert(
@@ -227,20 +227,20 @@ try {
     console.log("✓ conflicting provider/model syntax is rejected\n");
   }
 
-  // Test 13: paseo --help shows run command
+  // Test 13: codiusctl --help shows run command
   {
-    console.log("Test 13: paseo --help shows run command");
-    const result = await $`npx paseo --help`.nothrow();
-    assert.strictEqual(result.exitCode, 0, "paseo --help should exit 0");
+    console.log("Test 13: codiusctl --help shows run command");
+    const result = await $`npx codiusctl --help`.nothrow();
+    assert.strictEqual(result.exitCode, 0, "codiusctl --help should exit 0");
     assert(result.stdout.includes("run"), "help should mention run command");
-    console.log("✓ paseo --help shows run command\n");
+    console.log("✓ codiusctl --help shows run command\n");
   }
 
   // Test 14: run --ui is rejected (flag removed)
   {
     console.log("Test 14: run --ui is rejected");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --ui "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --ui "test prompt"`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail for removed --ui flag");
     const output = result.stdout + result.stderr;
     assert(output.includes("unknown option"), "should report unknown option for --ui");
@@ -251,7 +251,7 @@ try {
   {
     console.log("Test 15: run --new-workspace is accepted");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --new-workspace local "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --new-workspace local "test prompt"`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --new-workspace");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -262,7 +262,7 @@ try {
   {
     console.log("Test 16: run --isolation is rejected");
     const result =
-      await $`PASEO_HOST=localhost:${port} PASEO_HOME=${paseoHome} npx paseo run --isolation local "test prompt"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl run --isolation local "test prompt"`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail for removed --isolation flag");
     const output = result.stdout + result.stderr;
     assert(output.includes("unknown option"), "should report unknown option for --isolation");
@@ -270,7 +270,7 @@ try {
   }
 } finally {
   // Clean up temp directory
-  await rm(paseoHome, { recursive: true, force: true });
+  await rm(codiusHome, { recursive: true, force: true });
 }
 
 console.log("=== All run tests passed ===");

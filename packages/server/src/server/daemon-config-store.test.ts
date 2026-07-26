@@ -64,11 +64,11 @@ describe("DaemonConfigStore", () => {
   });
 
   test("patch persists provider enabled flags into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
-    const initial = loadPersistedConfig(paseoHome);
-    const configPath = path.join(paseoHome, "config.json");
+    const initial = loadPersistedConfig(codiusHome);
+    const configPath = path.join(codiusHome, "config.json");
     // Reuse the validated serializer through the store path by seeding the file directly.
     // This keeps the test focused on the merge behavior.
     const seeded =
@@ -91,7 +91,7 @@ describe("DaemonConfigStore", () => {
     writeFileSync(configPath, seeded);
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -110,7 +110,7 @@ describe("DaemonConfigStore", () => {
       },
     });
 
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.agents?.providers?.gemini).toEqual({
       extends: "acp",
       label: "Gemini",
@@ -120,10 +120,10 @@ describe("DaemonConfigStore", () => {
   });
 
   test("patch removes provider entries from config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
-    const configPath = path.join(paseoHome, "config.json");
+    const configPath = path.join(codiusHome, "config.json");
     writeFileSync(
       configPath,
       `${JSON.stringify(
@@ -148,7 +148,7 @@ describe("DaemonConfigStore", () => {
     );
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -168,16 +168,16 @@ describe("DaemonConfigStore", () => {
 
     expect(next.providers.gemini).toBeUndefined();
     expect(next.providers.claude).toEqual({ enabled: false });
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.agents?.providers?.gemini).toBeUndefined();
     expect(persisted.agents?.providers?.claude).toEqual({ enabled: false });
   });
 
   test("patch removes the providers object when the last provider is deleted", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
-    const configPath = path.join(paseoHome, "config.json");
+    const configPath = path.join(codiusHome, "config.json");
     writeFileSync(
       configPath,
       `${JSON.stringify(
@@ -199,7 +199,7 @@ describe("DaemonConfigStore", () => {
     );
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -214,15 +214,15 @@ describe("DaemonConfigStore", () => {
 
     store.patch({ removeProviders: ["gemini"] });
 
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.agents?.providers).toBeUndefined();
   });
 
   test("patch removes deleted providers from metadata generation", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
-    const configPath = path.join(paseoHome, "config.json");
+    const configPath = path.join(codiusHome, "config.json");
     writeFileSync(
       configPath,
       `${JSON.stringify(
@@ -253,7 +253,7 @@ describe("DaemonConfigStore", () => {
     );
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -277,17 +277,17 @@ describe("DaemonConfigStore", () => {
     const next = store.patch({ removeProviders: ["gemini"] });
 
     expect(next.metadataGeneration.providers).toEqual([{ provider: "claude", model: "haiku" }]);
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.agents?.metadataGeneration).toEqual({
       providers: [{ provider: "claude", model: "haiku" }],
     });
   });
 
   test("patch persists provider removal when in-memory config is already clean", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
-    const configPath = path.join(paseoHome, "config.json");
+    const configPath = path.join(codiusHome, "config.json");
     writeFileSync(
       configPath,
       `${JSON.stringify(
@@ -312,7 +312,7 @@ describe("DaemonConfigStore", () => {
     );
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -328,17 +328,17 @@ describe("DaemonConfigStore", () => {
     const next = store.patch({ removeProviders: ["gemini"] });
 
     expect(next.providers.gemini).toBeUndefined();
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.agents?.providers).toBeUndefined();
     expect(persisted.agents?.metadataGeneration).toEqual({ providers: [] });
   });
 
   test("patch persists append system prompt into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -355,16 +355,16 @@ describe("DaemonConfigStore", () => {
       appendSystemPrompt: "Prefer terse replies.",
     });
 
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.daemon?.appendSystemPrompt).toBe("Prefer terse replies.");
   });
 
   test("patch persists browser tools opt-in into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -378,16 +378,16 @@ describe("DaemonConfigStore", () => {
 
     store.patch({ browserTools: { enabled: true } });
 
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.daemon?.browserTools).toEqual({ enabled: true });
   });
 
   test("patch persists provider additional models into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -413,7 +413,7 @@ describe("DaemonConfigStore", () => {
       },
     });
 
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.agents?.providers?.claude).toEqual({
       additionalModels: [
         {
@@ -425,11 +425,11 @@ describe("DaemonConfigStore", () => {
   });
 
   test("patch persists daemon append system prompt into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -446,16 +446,16 @@ describe("DaemonConfigStore", () => {
       appendSystemPrompt: "Prefer terse replies.",
     });
 
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.daemon?.appendSystemPrompt).toBe("Prefer terse replies.");
   });
 
   test("patch persists enable terminal agent hooks into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         providers: {},
@@ -469,16 +469,16 @@ describe("DaemonConfigStore", () => {
 
     store.patch({ enableTerminalAgentHooks: true });
 
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.daemon?.enableTerminalAgentHooks).toBe(true);
   });
 
   test("patch persists metadata generation providers into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -500,7 +500,7 @@ describe("DaemonConfigStore", () => {
       },
     });
 
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.agents?.metadataGeneration).toEqual({
       providers: [
         { provider: "claude", model: "haiku" },
@@ -510,10 +510,10 @@ describe("DaemonConfigStore", () => {
   });
 
   test("patch persists clearing metadata generation providers into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
-    const configPath = path.join(paseoHome, "config.json");
+    const configPath = path.join(codiusHome, "config.json");
     writeFileSync(
       configPath,
       `${JSON.stringify(
@@ -531,7 +531,7 @@ describe("DaemonConfigStore", () => {
     );
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -546,16 +546,16 @@ describe("DaemonConfigStore", () => {
 
     store.patch({ metadataGeneration: { providers: [] } });
 
-    const persisted = loadPersistedConfig(paseoHome);
+    const persisted = loadPersistedConfig(codiusHome);
     expect(persisted.agents?.metadataGeneration).toEqual({ providers: [] });
   });
 
   test("patch persists custom ACP provider overrides into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
-    tempDirs.push(paseoHome);
+    const codiusHome = mkdtempSync(path.join(tmpdir(), "codius-daemon-config-store-"));
+    tempDirs.push(codiusHome);
 
     const store = new DaemonConfigStore(
-      paseoHome,
+      codiusHome,
       {
         mcp: { injectIntoAgents: false },
         browserTools: { enabled: false },
@@ -570,9 +570,9 @@ describe("DaemonConfigStore", () => {
 
     store.patch({
       providers: {
-        "paseo-e2e-acp": {
+        "codius-e2e-acp": {
           extends: "acp",
-          label: "Paseo E2E ACP",
+          label: "Codius E2E ACP",
           description: "E2E ACP provider fixture",
           command: ["npx", "-y", "--version"],
           env: {},
@@ -580,10 +580,10 @@ describe("DaemonConfigStore", () => {
       },
     });
 
-    const persisted = loadPersistedConfig(paseoHome);
-    expect(persisted.agents?.providers?.["paseo-e2e-acp"]).toEqual({
+    const persisted = loadPersistedConfig(codiusHome);
+    expect(persisted.agents?.providers?.["codius-e2e-acp"]).toEqual({
       extends: "acp",
-      label: "Paseo E2E ACP",
+      label: "Codius E2E ACP",
       description: "E2E ACP provider fixture",
       command: ["npx", "-y", "--version"],
       env: {},

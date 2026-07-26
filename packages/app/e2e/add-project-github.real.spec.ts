@@ -26,7 +26,7 @@ test.describe("Add Project GitHub flow", () => {
     test.skip(!hasGithubAuth(), "Requires GitHub authentication (gh auth login)");
 
     let repository: GhRepoFixture | null = null;
-    const parentDirectory = await mkdtemp(path.join(tmpdir(), "paseo-e2e-github-clone-"));
+    const parentDirectory = await mkdtemp(path.join(tmpdir(), "codius-e2e-github-clone-"));
     let projectId: string | null = null;
 
     try {
@@ -37,8 +37,10 @@ test.describe("Add Project GitHub flow", () => {
       await openAddProjectFlow(page);
       await chooseAddProjectMethod(page, "github");
 
-      await addProjectFlowInput(page).fill("getpaseo/paseo");
-      await expect(addProjectFlow(page).getByText("getpaseo/paseo", { exact: true })).toBeVisible({
+      await addProjectFlowInput(page).fill("prismosoft/codius-desktop");
+      await expect(
+        addProjectFlow(page).getByText("prismosoft/codius-desktop", { exact: true }),
+      ).toBeVisible({
         timeout: 30_000,
       });
       await addProjectFlowInput(page).fill("");

@@ -1,4 +1,4 @@
-import type { DaemonClient } from "@getpaseo/client/internal/daemon-client";
+import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
 import type { MessagePayload } from "@/composer/types";
 import type { MessageInputKeyboardActionKind } from "@/keyboard/actions";
 

@@ -74,9 +74,9 @@ import { ICON_SIZE, type Theme } from "@/styles/theme";
 import type { ComposerAttachment } from "@/attachments/types";
 import { useDraftWorkspaceAttachmentScopeKey } from "@/attachments/workspace-attachments-store";
 import type { MessagePayload } from "@/composer/types";
-import type { AgentAttachment, ForgeSearchItem } from "@getpaseo/protocol/messages";
-import type { CreatePaseoWorktreeInput } from "@getpaseo/client/internal/daemon-client";
-import type { AgentProvider } from "@getpaseo/protocol/agent-types";
+import type { AgentAttachment, ForgeSearchItem } from "@codius-ai/protocol/messages";
+import type { CreateCodiusWorktreeInput } from "@codius-ai/client/internal/daemon-client";
+import type { AgentProvider } from "@codius-ai/protocol/agent-types";
 import type { WorkspaceDraftTabSetup, WorkspaceTabTarget } from "@/workspace-tabs/model";
 import { isEmptyWorkspaceSubmission, runCreateEmptyWorkspace } from "./new-workspace-empty";
 import {
@@ -781,7 +781,7 @@ interface WorkspaceDraftSubmissionConfig {
 async function createAndMergeWorkspace(input: {
   client: NonNullable<ReturnType<typeof useHostRuntimeClient>>;
   createInput: Parameters<
-    NonNullable<ReturnType<typeof useHostRuntimeClient>>["createPaseoWorktree"]
+    NonNullable<ReturnType<typeof useHostRuntimeClient>>["createCodiusWorktree"]
   >[0];
   mergeWorkspaces: (
     serverId: string,
@@ -790,7 +790,7 @@ async function createAndMergeWorkspace(input: {
   serverId: string;
   createFailedMessage: string;
 }): Promise<ReturnType<typeof normalizeWorkspaceDescriptor>> {
-  const payload = await input.client.createPaseoWorktree(input.createInput);
+  const payload = await input.client.createCodiusWorktree(input.createInput);
   if (payload.error || !payload.workspace) {
     throw new Error(payload.error ?? input.createFailedMessage);
   }
@@ -1860,7 +1860,7 @@ export function NewWorkspaceScreen({
       cwd: string;
       prompt: string;
       attachments: AgentAttachment[];
-    }): CreatePaseoWorktreeInput => {
+    }): CreateCodiusWorktreeInput => {
       if (!selectedProject) {
         throw new Error("Choose a project");
       }

@@ -3,8 +3,7 @@ const path = require("node:path");
 const pkg = require("./package.json");
 const withFdroidAutolinking = require("./plugins/with-fdroid-autolinking");
 const appVariant = process.env.APP_VARIANT ?? "production";
-const isFdroidBuild =
-  process.env.CODIUS_FDROID_BUILD === "1" || process.env.PASEO_FDROID_BUILD === "1";
+const isFdroidBuild = process.env.CODIUS_FDROID_BUILD === "1";
 
 const buildProfile = isFdroidBuild
   ? {

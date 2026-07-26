@@ -36,7 +36,7 @@ describe("persistence hooks", () => {
         thinkingOptionId: "minimal",
         systemPrompt: "Use speak first.",
         mcpServers: {
-          paseo: {
+          codius: {
             type: "stdio",
             command: "node",
             args: ["/tmp/bridge.mjs", "--socket", "/tmp/agent.sock"],
@@ -52,7 +52,7 @@ describe("persistence hooks", () => {
       thinkingOptionId: "minimal",
       systemPrompt: "Use speak first.",
       mcpServers: {
-        paseo: {
+        codius: {
           type: "stdio",
           command: "node",
           args: ["/tmp/bridge.mjs", "--socket", "/tmp/agent.sock"],
@@ -70,7 +70,7 @@ describe("persistence hooks", () => {
         model: "gpt-5.4-mini",
         systemPrompt: "Confirm and speak first.",
         mcpServers: {
-          paseo: {
+          codius: {
             type: "stdio",
             command: "node",
             args: ["/tmp/bridge.mjs", "--socket", "/tmp/agent.sock"],
@@ -86,7 +86,7 @@ describe("persistence hooks", () => {
       model: "gpt-5.4-mini",
       systemPrompt: "Confirm and speak first.",
       mcpServers: {
-        paseo: {
+        codius: {
           type: "stdio",
           command: "node",
           args: ["/tmp/bridge.mjs", "--socket", "/tmp/agent.sock"],
@@ -95,13 +95,13 @@ describe("persistence hooks", () => {
     });
   });
 
-  test("buildConfigOverrides drops persisted internal paseo MCP server", () => {
+  test("buildConfigOverrides drops persisted internal codius MCP server", () => {
     const record = createRecord({
       config: {
         modeId: "default",
         model: "gpt-5.4-mini",
         mcpServers: {
-          paseo: {
+          codius: {
             type: "http",
             url: "http://127.0.0.1:6767/mcp/agents?callerAgentId=stale-agent",
           },
@@ -121,24 +121,24 @@ describe("persistence hooks", () => {
     });
   });
 
-  test("buildConfigOverrides preserves user-provided paseo MCP server", () => {
+  test("buildConfigOverrides preserves user-provided codius MCP server", () => {
     const record = createRecord({
       config: {
         modeId: "default",
         model: "gpt-5.4-mini",
         mcpServers: {
-          paseo: {
+          codius: {
             type: "http",
-            url: "https://example.com/custom-paseo",
+            url: "https://example.com/custom-codius",
           },
         },
       },
     });
 
     expect(buildConfigOverrides(record).mcpServers).toEqual({
-      paseo: {
+      codius: {
         type: "http",
-        url: "https://example.com/custom-paseo",
+        url: "https://example.com/custom-codius",
       },
     });
   });

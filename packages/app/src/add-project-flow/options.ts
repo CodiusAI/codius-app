@@ -2,7 +2,7 @@ import {
   isCompleteGitRemote,
   parseGitHubRemoteUrl,
   parseGitRemoteLocation,
-} from "@getpaseo/protocol/git-remote";
+} from "@codius-ai/protocol/git-remote";
 import { shortenPath } from "@/utils/shorten-path";
 import type { AddProjectHost, GithubRepositoryChoice } from "./model";
 

@@ -1,13 +1,13 @@
 /**
  * Test Daemon Helper
  *
- * Provides utilities for launching real Paseo daemons in E2E tests.
- * Each test gets an isolated daemon on an available local port with its own PASEO_HOME.
+ * Provides utilities for launching real Codius daemons in E2E tests.
+ * Each test gets an isolated daemon on an available local port with its own CODIUS_HOME.
  *
  * CRITICAL RULES (from design doc):
  * 1. Port: Use an available ephemeral local port - NEVER use 6767 (production)
  * 2. Protocol: WebSocket ONLY - daemon has no HTTP endpoints
- * 3. Temp dirs: Create temp directories for PASEO_HOME and agent --cwd
+ * 3. Temp dirs: Create temp directories for CODIUS_HOME and agent --cwd
  * 4. Model: Always use claude provider with haiku model for fast, cheap tests
  * 5. Cleanup: Kill daemon and remove temp dirs after each test
  */
@@ -24,8 +24,8 @@ export interface TestDaemonContext {
   port: number;
   /** WebSocket URL for connecting to daemon */
   wsUrl: string;
-  /** Temp directory for PASEO_HOME */
-  paseoHome: string;
+  /** Temp directory for CODIUS_HOME */
+  codiusHome: string;
   /** Temp directory for agent working directory */
   workDir: string;
   /** Running daemon process */
@@ -37,16 +37,16 @@ export interface TestDaemonContext {
 }
 
 const TEST_DAEMON_ENV_DEFAULTS: Record<string, string> = {
-  PASEO_RELAY_ENABLED: "false",
-  PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD: process.env.PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD ?? "0",
-  PASEO_DICTATION_ENABLED: process.env.PASEO_DICTATION_ENABLED ?? "0",
-  PASEO_VOICE_MODE_ENABLED: process.env.PASEO_VOICE_MODE_ENABLED ?? "0",
+  CODIUS_RELAY_ENABLED: "false",
+  CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD: process.env.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD ?? "0",
+  CODIUS_DICTATION_ENABLED: process.env.CODIUS_DICTATION_ENABLED ?? "0",
+  CODIUS_VOICE_MODE_ENABLED: process.env.CODIUS_VOICE_MODE_ENABLED ?? "0",
 };
 const TEST_DAEMON_HOST = "127.0.0.1";
 
 const DEFAULT_OUTPUT_CAPTURE_LIMIT = 256 * 1024;
 const TEST_OUTPUT_CAPTURE_LIMIT = Number.parseInt(
-  process.env.PASEO_TEST_OUTPUT_CAPTURE_BYTES ?? `${DEFAULT_OUTPUT_CAPTURE_LIMIT}`,
+  process.env.CODIUS_TEST_OUTPUT_CAPTURE_BYTES ?? `${DEFAULT_OUTPUT_CAPTURE_LIMIT}`,
   10,
 );
 
@@ -152,28 +152,28 @@ export function getRandomPort(): number {
 /**
  * Create isolated temp directories for testing
  */
-export async function createTempDirs(): Promise<{ paseoHome: string; workDir: string }> {
-  const paseoHome = await mkdtemp(join(tmpdir(), "paseo-e2e-home-"));
-  const workDir = await mkdtemp(join(tmpdir(), "paseo-e2e-work-"));
+export async function createTempDirs(): Promise<{ codiusHome: string; workDir: string }> {
+  const codiusHome = await mkdtemp(join(tmpdir(), "codius-e2e-home-"));
+  const workDir = await mkdtemp(join(tmpdir(), "codius-e2e-work-"));
 
   // Create the agents directory that the daemon expects
-  const agentsDir = join(paseoHome, "agents");
+  const agentsDir = join(codiusHome, "agents");
   await mkdir(agentsDir, { recursive: true });
 
-  return { paseoHome, workDir };
+  return { codiusHome, workDir };
 }
 
 /**
- * Wait for daemon to be ready by running `paseo agent ls`
+ * Wait for daemon to be ready by running `codiusctl agent ls`
  * This connects via WebSocket and ensures the daemon is responsive
  */
 async function probeDaemonReady(port: number): Promise<boolean> {
   try {
-    const { exitCode } = await runPaseoCli(
+    const { exitCode } = await runCodiusCli(
       {
         port,
         wsUrl: `ws://${TEST_DAEMON_HOST}:${port}`,
-        paseoHome: "",
+        codiusHome: "",
         workDir: "",
         process: null,
         isReady: false,
@@ -210,19 +210,19 @@ function sleep(ms: number): Promise<void> {
  * Start a test daemon programmatically using the server's bootstrap API
  *
  * This starts the daemon in a separate process using the CLI's daemon start command
- * with isolated PASEO_HOME and PASEO_LISTEN environment variables.
+ * with isolated CODIUS_HOME and CODIUS_LISTEN environment variables.
  */
 export async function startTestDaemon(options?: {
   port?: number;
-  paseoHome?: string;
+  codiusHome?: string;
   workDir?: string;
   timeout?: number;
   env?: NodeJS.ProcessEnv;
 }): Promise<TestDaemonContext> {
   const port = options?.port ?? (await getAvailablePort());
-  const { paseoHome, workDir } =
-    options?.paseoHome && options?.workDir
-      ? { paseoHome: options.paseoHome, workDir: options.workDir }
+  const { codiusHome, workDir } =
+    options?.codiusHome && options?.workDir
+      ? { codiusHome: options.codiusHome, workDir: options.workDir }
       : await createTempDirs();
   const timeout = options?.timeout ?? 30000;
 
@@ -237,8 +237,8 @@ export async function startTestDaemon(options?: {
     env: {
       ...process.env,
       ...TEST_DAEMON_ENV_DEFAULTS,
-      PASEO_HOME: paseoHome,
-      PASEO_LISTEN: `${TEST_DAEMON_HOST}:${port}`,
+      CODIUS_HOME: codiusHome,
+      CODIUS_LISTEN: `${TEST_DAEMON_HOST}:${port}`,
       // Force no TTY to prevent QR code output
       CI: "true",
       ...options?.env,
@@ -265,8 +265,8 @@ export async function startTestDaemon(options?: {
 
     // Clean up temp directories
     try {
-      if (existsSync(paseoHome)) {
-        await rm(paseoHome, { recursive: true, force: true });
+      if (existsSync(codiusHome)) {
+        await rm(codiusHome, { recursive: true, force: true });
       }
     } catch {
       // Ignore cleanup errors
@@ -299,7 +299,7 @@ export async function startTestDaemon(options?: {
   const ctx: TestDaemonContext = {
     port,
     wsUrl,
-    paseoHome,
+    codiusHome,
     workDir,
     process: daemonProcess,
     isReady: false,
@@ -324,12 +324,12 @@ export async function startTestDaemon(options?: {
 }
 
 /**
- * Run a paseo CLI command against a test daemon
+ * Run a codiusctl CLI command against a test daemon
  *
  * This is a helper that sets the correct environment variables
  * to point at the test daemon.
  */
-export async function runPaseoCli(
+export async function runCodiusCli(
   ctx: TestDaemonContext,
   args: string[],
   options?: {
@@ -349,8 +349,8 @@ export async function runPaseoCli(
       env: {
         ...process.env,
         ...TEST_DAEMON_ENV_DEFAULTS,
-        PASEO_HOST: `${TEST_DAEMON_HOST}:${ctx.port}`,
-        PASEO_HOME: ctx.paseoHome,
+        CODIUS_HOST: `${TEST_DAEMON_HOST}:${ctx.port}`,
+        CODIUS_HOME: ctx.codiusHome,
         ...options?.env,
       },
       cwd,
@@ -373,7 +373,7 @@ export async function runPaseoCli(
       if (proc.pid) {
         signalProcessTree(proc.pid, "SIGKILL");
       }
-      reject(new Error(`CLI command timed out after ${timeout}ms: paseo ${args.join(" ")}`));
+      reject(new Error(`CLI command timed out after ${timeout}ms: codiusctl ${args.join(" ")}`));
     }, timeout);
 
     proc.on("exit", (code) => {
@@ -403,8 +403,8 @@ export async function createE2ETestContext(options?: {
   env?: NodeJS.ProcessEnv;
 }): Promise<
   TestDaemonContext & {
-    /** Run a paseo CLI command against this daemon */
-    paseo: (
+    /** Run a codiusctl CLI command against this daemon */
+    codius: (
       args: string[],
       opts?: { timeout?: number; cwd?: string; env?: NodeJS.ProcessEnv },
     ) => Promise<{
@@ -416,13 +416,13 @@ export async function createE2ETestContext(options?: {
 > {
   const ctx = await startTestDaemon({ timeout: options?.timeout, env: options?.env });
 
-  const paseo = (
+  const codius = (
     args: string[],
     opts?: { timeout?: number; cwd?: string; env?: NodeJS.ProcessEnv },
-  ) => runPaseoCli(ctx, args, opts);
+  ) => runCodiusCli(ctx, args, opts);
 
   return {
     ...ctx,
-    paseo,
+    codius,
   };
 }

@@ -6,7 +6,7 @@ import {
   loadPersistedConfig,
   savePersistedConfig,
   type PersistedConfig,
-} from "@getpaseo/server";
+} from "@codius-ai/server";
 import type {
   CommandError,
   CommandOptions,
@@ -14,7 +14,7 @@ import type {
   OutputSchema,
   SingleResult,
 } from "../../output/index.js";
-import { resolveLocalPaseoHome } from "./local-daemon.js";
+import { resolveLocalCodiusHome } from "./local-daemon.js";
 
 const CONFIG_FILENAME = "config.json";
 
@@ -81,9 +81,9 @@ export async function setDaemonPasswordInConfig(
   newPassword: string,
   options: SetPasswordOptions = {},
 ): Promise<SetPasswordResult> {
-  const paseoHome = resolveLocalPaseoHome(options.home);
-  const configPath = path.join(paseoHome, CONFIG_FILENAME);
-  const persisted = loadPersistedConfig(paseoHome);
+  const codiusHome = resolveLocalCodiusHome(options.home);
+  const configPath = path.join(codiusHome, CONFIG_FILENAME);
+  const persisted = loadPersistedConfig(codiusHome);
   const nextConfig: PersistedConfig = {
     ...persisted,
     daemon: {
@@ -95,13 +95,13 @@ export async function setDaemonPasswordInConfig(
     },
   };
 
-  savePersistedConfig(paseoHome, nextConfig);
+  savePersistedConfig(codiusHome, nextConfig);
 
   return {
     action: "password_set",
     configPath,
-    restartCommand: "paseo daemon restart",
-    message: `Password written to ${configPath}\nRestart the daemon for the change to take effect.\nRun: paseo daemon restart`,
+    restartCommand: "codiusctl daemon restart",
+    message: `Password written to ${configPath}\nRestart the daemon for the change to take effect.\nRun: codiusctl daemon restart`,
   };
 }
 

@@ -57,7 +57,7 @@ export class CheckoutDiffManager {
 
   constructor(options: {
     logger: pino.Logger;
-    paseoHome: string;
+    codiusHome: string;
     workspaceGitService: CheckoutDiffWorkspace;
   }) {
     this.workspaceGitService = options.workspaceGitService;

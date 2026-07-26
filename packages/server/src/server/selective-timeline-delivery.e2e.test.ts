@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, expect, test } from "vitest";
-import { CLIENT_CAPS } from "@getpaseo/protocol/client-capabilities";
-import type { SessionOutboundMessage } from "@getpaseo/protocol/messages";
+import { CLIENT_CAPS } from "@codius-ai/protocol/client-capabilities";
+import type { SessionOutboundMessage } from "@codius-ai/protocol/messages";
 import { DaemonClient } from "./test-utils/daemon-client.js";
-import { createTestPaseoDaemon, type TestPaseoDaemon } from "./test-utils/paseo-daemon.js";
+import { createTestCodiusDaemon, type TestCodiusDaemon } from "./test-utils/codius-daemon.js";
 
 interface MessageWaiter {
   predicate(message: SessionOutboundMessage): boolean;
@@ -108,11 +108,11 @@ function legacyAttentionResult(message: SessionOutboundMessage) {
   };
 }
 
-let daemon: TestPaseoDaemon;
+let daemon: TestCodiusDaemon;
 const clients: ConnectedClient[] = [];
 
 beforeEach(async () => {
-  daemon = await createTestPaseoDaemon();
+  daemon = await createTestCodiusDaemon();
 });
 
 afterEach(async () => {

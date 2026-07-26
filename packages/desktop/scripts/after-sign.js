@@ -2,10 +2,10 @@ const path = require("node:path");
 
 const { smokePackagedDesktopApp } = require("./smoke-packaged-desktop-app.js");
 
-const EXECUTABLE_NAME = "Paseo";
+const EXECUTABLE_NAME = "Codius";
 
 exports.default = async function afterSign(context) {
-  if (process.env.PASEO_DESKTOP_SMOKE !== "1") {
+  if (process.env.CODIUS_DESKTOP_SMOKE !== "1") {
     return;
   }
 

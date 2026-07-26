@@ -20,21 +20,22 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv);
 
-const serverId = args["server-id"] ?? process.env.PASEO_SERVER_ID;
-const daemonPublicKeyB64 = args["daemon-public-key-b64"] ?? process.env.PASEO_DAEMON_PUBLIC_KEY_B64;
+const serverId = args["server-id"] ?? process.env.CODIUS_SERVER_ID;
+const daemonPublicKeyB64 =
+  args["daemon-public-key-b64"] ?? process.env.CODIUS_DAEMON_PUBLIC_KEY_B64;
 const relayEndpoint =
-  args["relay-endpoint"] ?? process.env.PASEO_RELAY_ENDPOINT ?? "relay.paseo.sh:443";
-const baseUrl = args["base-url"] ?? process.env.PASEO_APP_URL ?? "https://app.paseo.sh";
-const timeoutMs = Number(args["timeout-ms"] ?? process.env.PASEO_PROVE_TIMEOUT_MS ?? 60_000);
-const stabilityMs = Number(args["stability-ms"] ?? process.env.PASEO_PROVE_STABILITY_MS ?? 30_000);
+  args["relay-endpoint"] ?? process.env.CODIUS_RELAY_ENDPOINT ?? "relay.codius.ai:443";
+const baseUrl = args["base-url"] ?? process.env.CODIUS_APP_URL ?? "https://app.codius.ai";
+const timeoutMs = Number(args["timeout-ms"] ?? process.env.CODIUS_PROVE_TIMEOUT_MS ?? 60_000);
+const stabilityMs = Number(args["stability-ms"] ?? process.env.CODIUS_PROVE_STABILITY_MS ?? 30_000);
 
 if (!serverId || typeof serverId !== "string") {
-  console.error("Missing server ID. Provide --server-id or PASEO_SERVER_ID.");
+  console.error("Missing server ID. Provide --server-id or CODIUS_SERVER_ID.");
   process.exit(2);
 }
 if (!daemonPublicKeyB64 || typeof daemonPublicKeyB64 !== "string") {
   console.error(
-    "Missing daemon public key. Provide --daemon-public-key-b64 or PASEO_DAEMON_PUBLIC_KEY_B64.",
+    "Missing daemon public key. Provide --daemon-public-key-b64 or CODIUS_DAEMON_PUBLIC_KEY_B64.",
   );
   process.exit(2);
 }
@@ -58,8 +59,8 @@ page.on("pageerror", (e) => console.error(`[browser:pageerror] ${e.message}`));
 
 await page.addInitScript(
   (seed) => {
-    localStorage.setItem("@paseo:daemon-registry", JSON.stringify([seed.daemon]));
-    localStorage.removeItem("@paseo:settings");
+    localStorage.setItem("@codius:daemon-registry", JSON.stringify([seed.daemon]));
+    localStorage.removeItem("@codius:settings");
   },
   { daemon },
 );

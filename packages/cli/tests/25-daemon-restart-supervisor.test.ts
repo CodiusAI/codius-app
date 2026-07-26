@@ -18,9 +18,9 @@ $.verbose = false;
 
 const pollIntervalMs = 100;
 const testEnv = {
-  PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD: process.env.PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD ?? "0",
-  PASEO_DICTATION_ENABLED: process.env.PASEO_DICTATION_ENABLED ?? "0",
-  PASEO_VOICE_MODE_ENABLED: process.env.PASEO_VOICE_MODE_ENABLED ?? "0",
+  CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD: process.env.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD ?? "0",
+  CODIUS_DICTATION_ENABLED: process.env.CODIUS_DICTATION_ENABLED ?? "0",
+  CODIUS_VOICE_MODE_ENABLED: process.env.CODIUS_VOICE_MODE_ENABLED ?? "0",
 };
 
 function sleep(ms: number): Promise<void> {
@@ -74,9 +74,9 @@ interface DaemonStatus {
   pid: number | null;
 }
 
-async function readDaemonStatus(paseoHome: string): Promise<DaemonStatus> {
+async function readDaemonStatus(codiusHome: string): Promise<DaemonStatus> {
   const result =
-    await $`PASEO_HOME=${paseoHome} PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD} PASEO_DICTATION_ENABLED=${testEnv.PASEO_DICTATION_ENABLED} PASEO_VOICE_MODE_ENABLED=${testEnv.PASEO_VOICE_MODE_ENABLED} npx paseo daemon status --home ${paseoHome} --json`.nothrow();
+    await $`CODIUS_HOME=${codiusHome} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${testEnv.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${testEnv.CODIUS_VOICE_MODE_ENABLED} npx codiusctl daemon status --home ${codiusHome} --json`.nothrow();
   if (result.exitCode !== 0) {
     return { localDaemon: null, pid: null };
   }
@@ -94,8 +94,8 @@ async function readDaemonStatus(paseoHome: string): Promise<DaemonStatus> {
   }
 }
 
-async function readCapturedSupervisorLogs(paseoHome: string, recentLogs: string): Promise<string> {
-  const durableLogs = await readFile(join(paseoHome, "daemon.log"), "utf8").catch(() => "");
+async function readCapturedSupervisorLogs(codiusHome: string, recentLogs: string): Promise<string> {
+  const durableLogs = await readFile(join(codiusHome, "daemon.log"), "utf8").catch(() => "");
   return `${recentLogs}\n${durableLogs}`;
 }
 
@@ -119,7 +119,7 @@ async function waitFor(
 console.log("=== Daemon Restart (supervisor regression) ===\n");
 
 const port = await getAvailablePort();
-const paseoHome = await mkdtemp(join(tmpdir(), "paseo-restart-supervisor-"));
+const codiusHome = await mkdtemp(join(tmpdir(), "codius-restart-supervisor-"));
 const cliRoot = join(import.meta.dirname, "..");
 const host = `127.0.0.1:${port}`;
 
@@ -127,7 +127,7 @@ let supervisorProcess: ChildProcess | null = null;
 let recentSupervisorLogs = "";
 
 try {
-  console.log("Test 1: start supervisor-entrypoint in dev mode with isolated PASEO_HOME");
+  console.log("Test 1: start supervisor-entrypoint in dev mode with isolated CODIUS_HOME");
 
   supervisorProcess = spawn(
     process.execPath,
@@ -137,9 +137,9 @@ try {
       env: {
         ...process.env,
         ...testEnv,
-        PASEO_HOME: paseoHome,
-        PASEO_LISTEN: host,
-        PASEO_RELAY_ENABLED: "false",
+        CODIUS_HOME: codiusHome,
+        CODIUS_LISTEN: host,
+        CODIUS_RELAY_ENABLED: "false",
         CI: "true",
       },
       stdio: ["ignore", "pipe", "pipe"],
@@ -155,7 +155,7 @@ try {
 
   await waitFor(
     async () => {
-      const status = await readDaemonStatus(paseoHome);
+      const status = await readDaemonStatus(codiusHome);
       return (
         status.localDaemon === "running" && status.pid !== null && isProcessRunning(status.pid)
       );
@@ -164,7 +164,7 @@ try {
     "daemon did not become running in time",
   );
 
-  const statusBeforeRestart = await readDaemonStatus(paseoHome);
+  const statusBeforeRestart = await readDaemonStatus(codiusHome);
   const supervisorPid = statusBeforeRestart.pid;
   assert.strictEqual(
     statusBeforeRestart.localDaemon,
@@ -217,12 +217,12 @@ try {
   );
 
   await waitFor(
-    async () => (await readDaemonStatus(paseoHome)).localDaemon === "running",
+    async () => (await readDaemonStatus(codiusHome)).localDaemon === "running",
     120000,
     "daemon did not become healthy after the supervised restart",
   );
 
-  const statusAfterRestart = await readDaemonStatus(paseoHome);
+  const statusAfterRestart = await readDaemonStatus(codiusHome);
   assert.strictEqual(
     statusAfterRestart.localDaemon,
     "running",
@@ -233,7 +233,7 @@ try {
     supervisorPid,
     "supervisor pid should remain stable across restart",
   );
-  const capturedSupervisorLogs = await readCapturedSupervisorLogs(paseoHome, recentSupervisorLogs);
+  const capturedSupervisorLogs = await readCapturedSupervisorLogs(codiusHome, recentSupervisorLogs);
   assert(
     capturedSupervisorLogs.includes('"msg":"Worker requested restart"') &&
       capturedSupervisorLogs.includes('"reason":"settings_update"'),
@@ -257,8 +257,8 @@ try {
     });
   }
 
-  await $`PASEO_HOME=${paseoHome} PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD} PASEO_DICTATION_ENABLED=${testEnv.PASEO_DICTATION_ENABLED} PASEO_VOICE_MODE_ENABLED=${testEnv.PASEO_VOICE_MODE_ENABLED} npx paseo daemon stop --home ${paseoHome} --force`.nothrow();
-  await rm(paseoHome, { recursive: true, force: true });
+  await $`CODIUS_HOME=${codiusHome} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${testEnv.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${testEnv.CODIUS_VOICE_MODE_ENABLED} npx codiusctl daemon stop --home ${codiusHome} --force`.nothrow();
+  await rm(codiusHome, { recursive: true, force: true });
 }
 
 if (recentSupervisorLogs.trim().length === 0) {

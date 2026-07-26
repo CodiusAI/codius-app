@@ -7,8 +7,8 @@ import type { AgentStorage, StoredAgentRecord } from "./agent/agent-storage.js";
 import type { WorkspaceGitService } from "./workspace-git-service.js";
 import type { ForgeService } from "../services/forge-service.js";
 import {
-  deletePaseoWorktree,
-  isPaseoOwnedWorktreeCwd,
+  deleteCodiusWorktree,
+  isCodiusOwnedWorktreeCwd,
   runWorktreeTeardownCommands,
   WorktreeTeardownError,
 } from "../utils/worktree.js";
@@ -18,13 +18,13 @@ import { createRealpathAwarePathMatcher } from "../utils/path.js";
 
 export type ActiveWorkspaceRef = Pick<
   PersistedWorkspaceRecord,
-  "workspaceId" | "cwd" | "kind" | "worktreeRoot" | "isPaseoOwnedWorktree" | "mainRepoRoot"
+  "workspaceId" | "cwd" | "kind" | "worktreeRoot" | "isCodiusOwnedWorktree" | "mainRepoRoot"
 >;
 
 export interface ArchiveDependencies {
-  paseoHome?: string;
+  codiusHome?: string;
   // Base directory that may hold worktrees across repositories.
-  paseoWorktreesBaseRoot?: string;
+  codiusWorktreesBaseRoot?: string;
   github: ForgeService;
   workspaceGitService: Pick<WorkspaceGitService, "getSnapshot">;
   agentManager: Pick<AgentManager, "listAgents" | "archiveAgent" | "archiveSnapshot">;
@@ -82,9 +82,9 @@ export async function requireActiveWorkspaceForArchive(
 
 interface BackingDirectory {
   path: string;
-  isPaseoOwnedWorktree: boolean;
+  isCodiusOwnedWorktree: boolean;
   mainRepoRoot: string | null;
-  paseoWorktreesRoot: string | null;
+  codiusWorktreesRoot: string | null;
 }
 
 interface ArchiveTarget {
@@ -109,7 +109,7 @@ export async function resolveWorkspaceIdAtPath(
 
 // Resolves the in-scope record set, tears each down
 // (agents + terminals + record), then removes the backing directory iff it is
-// Paseo-owned AND no active workspace still references it.
+// Codius-owned AND no active workspace still references it.
 export async function archiveByScope(
   dependencies: ArchiveDependencies,
   request: ArchiveByScopeRequest,
@@ -224,22 +224,22 @@ async function resolveArchiveTarget(
 
 async function resolveWorkspaceBackingDirectory(
   workspace: ActiveWorkspaceRef,
-  dependencies: Pick<ArchiveDependencies, "paseoHome" | "paseoWorktreesBaseRoot">,
+  dependencies: Pick<ArchiveDependencies, "codiusHome" | "codiusWorktreesBaseRoot">,
 ): Promise<BackingDirectory> {
-  if (workspace.isPaseoOwnedWorktree && workspace.worktreeRoot && workspace.mainRepoRoot) {
+  if (workspace.isCodiusOwnedWorktree && workspace.worktreeRoot && workspace.mainRepoRoot) {
     return {
       path: resolve(workspace.worktreeRoot),
-      isPaseoOwnedWorktree: true,
+      isCodiusOwnedWorktree: true,
       mainRepoRoot: workspace.mainRepoRoot,
-      paseoWorktreesRoot: null,
+      codiusWorktreesRoot: null,
     };
   }
   if (workspace.kind !== "worktree") {
     return {
       path: resolve(workspace.cwd),
-      isPaseoOwnedWorktree: false,
+      isCodiusOwnedWorktree: false,
       mainRepoRoot: workspace.mainRepoRoot ?? null,
-      paseoWorktreesRoot: null,
+      codiusWorktreesRoot: null,
     };
   }
 
@@ -254,18 +254,18 @@ async function resolveWorkspaceBackingDirectory(
 
 async function resolveBackingDirectory(
   cwd: string,
-  dependencies: Pick<ArchiveDependencies, "paseoHome" | "paseoWorktreesBaseRoot">,
+  dependencies: Pick<ArchiveDependencies, "codiusHome" | "codiusWorktreesBaseRoot">,
 ): Promise<BackingDirectory> {
   const options = {
-    paseoHome: dependencies.paseoHome,
-    worktreesRoot: dependencies.paseoWorktreesBaseRoot,
+    codiusHome: dependencies.codiusHome,
+    worktreesRoot: dependencies.codiusWorktreesBaseRoot,
   };
-  const ownership = await isPaseoOwnedWorktreeCwd(cwd, options);
+  const ownership = await isCodiusOwnedWorktreeCwd(cwd, options);
   return {
     path: resolve(ownership.allowed && ownership.worktreePath ? ownership.worktreePath : cwd),
-    isPaseoOwnedWorktree: ownership.allowed,
+    isCodiusOwnedWorktree: ownership.allowed,
     mainRepoRoot: ownership.repoRoot ?? null,
-    paseoWorktreesRoot: ownership.worktreeRoot ?? null,
+    codiusWorktreesRoot: ownership.worktreeRoot ?? null,
   };
 }
 
@@ -309,7 +309,7 @@ async function maybeRemoveDirectory(
   archivedWorkspaceIds: string[],
 ): Promise<boolean> {
   const backing = target.backing;
-  if (!backing?.isPaseoOwnedWorktree) {
+  if (!backing?.isCodiusOwnedWorktree) {
     return false;
   }
 
@@ -356,13 +356,13 @@ async function maybeRemoveDirectory(
   }
 
   try {
-    await deletePaseoWorktree({
+    await deleteCodiusWorktree({
       cwd: backing.mainRepoRoot,
       worktreePath: backing.path,
       teardownCwds: [],
-      worktreesRoot: backing.paseoWorktreesRoot ?? undefined,
-      paseoHome: dependencies.paseoHome,
-      worktreesBaseRoot: dependencies.paseoWorktreesBaseRoot,
+      worktreesRoot: backing.codiusWorktreesRoot ?? undefined,
+      codiusHome: dependencies.codiusHome,
+      worktreesBaseRoot: dependencies.codiusWorktreesBaseRoot,
     });
     dependencies.github.invalidate({ cwd: backing.path });
     return true;
@@ -455,7 +455,7 @@ async function isDirectoryUnreferenced(
   activeWorkspaces: ActiveWorkspaceRef[],
   targetDir: string,
   archivedWorkspaceIds: ReadonlySet<string>,
-  dependencies: Pick<ArchiveDependencies, "paseoHome" | "paseoWorktreesBaseRoot">,
+  dependencies: Pick<ArchiveDependencies, "codiusHome" | "codiusWorktreesBaseRoot">,
 ): Promise<boolean> {
   const target = resolve(targetDir);
   const matchesTarget = createRealpathAwarePathMatcher(target);

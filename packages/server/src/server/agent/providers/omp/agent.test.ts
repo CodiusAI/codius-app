@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import type { PaseoToolCatalog } from "../../tools/types.js";
+import type { CodiusToolCatalog } from "../../tools/types.js";
 import type { OmpNoTurnScheduler, OmpProviderIdleScheduler } from "./agent.js";
 import { OmpHarness } from "./test-utils/omp-harness.js";
 
@@ -65,14 +65,14 @@ class ManualNoTurnScheduler implements OmpNoTurnScheduler {
   }
 }
 
-function createToolCatalog(): PaseoToolCatalog {
+function createToolCatalog(): CodiusToolCatalog {
   return {
     tools: new Map([
       [
         "create_agent",
         {
           name: "create_agent",
-          description: "Create a Paseo agent.",
+          description: "Create a Codius agent.",
           handler: async () => ({ content: [] }),
         },
       ],
@@ -88,7 +88,7 @@ describe("OMP agent client and session", () => {
     await omp.start({ modeId: "ask" }, createToolCatalog());
 
     expect(omp.launchConfiguration()).toEqual({
-      cwd: "/tmp/paseo-omp-agent-test",
+      cwd: "/tmp/codius-omp-agent-test",
       protocolMode: "rpc-ui",
       modeId: "ask",
       argv: ["omp", "--mode", "rpc-ui", "--approval-mode", "always-ask", "--thinking", "medium"],
@@ -98,7 +98,7 @@ describe("OMP agent client and session", () => {
     ]);
     expect(omp.capabilities()).toMatchObject({
       supportsMcpServers: false,
-      supportsNativePaseoTools: true,
+      supportsNativeCodiusTools: true,
     });
   });
 
@@ -114,7 +114,7 @@ describe("OMP agent client and session", () => {
     await omp.start({ modeId: "write" });
 
     expect(omp.launchConfiguration()).toEqual({
-      cwd: "/tmp/paseo-omp-agent-test",
+      cwd: "/tmp/codius-omp-agent-test",
       protocolMode: "rpc-ui",
       modeId: "write",
       argv: ["omp", "--mode", "rpc-ui", "--approval-mode", "write", "--thinking", "medium"],
@@ -376,7 +376,7 @@ describe("OMP agent client and session", () => {
       cwd: "/workspace/resumed",
       protocolMode: "rpc-ui",
       modeId: "ask",
-      session: expect.stringMatching(/[\\/]paseo-omp-resume-.*[\\/]session\.jsonl$/),
+      session: expect.stringMatching(/[\\/]codius-omp-resume-.*[\\/]session\.jsonl$/),
       argv: [
         "omp",
         "--mode",
@@ -386,7 +386,7 @@ describe("OMP agent client and session", () => {
         "--thinking",
         "high",
         "--session",
-        expect.stringMatching(/[\\/]paseo-omp-resume-.*[\\/]session\.jsonl$/),
+        expect.stringMatching(/[\\/]codius-omp-resume-.*[\\/]session\.jsonl$/),
       ],
     });
     await expect(omp.history()).resolves.toEqual([

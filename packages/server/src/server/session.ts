@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { lstat, mkdir, mkdtemp, rename, rm, stat } from "node:fs/promises";
 import { resolve, sep } from "path";
 import { homedir } from "node:os";
-import { CLIENT_CAPS, type ClientCapability } from "@getpaseo/protocol/client-capabilities";
+import { CLIENT_CAPS, type ClientCapability } from "@codius-ai/protocol/client-capabilities";
 import {
   serializeAgentStreamEvent,
   type AgentSnapshotPayload,
@@ -24,8 +24,8 @@ import type {
   TerminalWorkspaceContributionChangedEvent,
 } from "../terminal/terminal-manager.js";
 import { TerminalSessionController } from "../terminal/terminal-session-controller.js";
-import type { TerminalActivity } from "@getpaseo/protocol/terminal-activity";
-import type { BinaryFrame } from "@getpaseo/protocol/binary-frames/index";
+import type { TerminalActivity } from "@codius-ai/protocol/terminal-activity";
+import type { BinaryFrame } from "@codius-ai/protocol/binary-frames/index";
 import { CursorError } from "./pagination/cursor.js";
 import { SortablePager, type SortSpec } from "./pagination/sortable-pager.js";
 import type { SpeechToTextProvider, TextToSpeechProvider } from "./speech/speech-provider.js";
@@ -54,9 +54,9 @@ import {
 import type { DaemonConfigStore } from "./daemon-config-store.js";
 import { loadPersistedConfig } from "./persisted-config.js";
 import { releaseWorkspaceServicePortPlan } from "./workspace-service-port-registry.js";
-import { getErrorMessage, getErrorMessageOr } from "@getpaseo/protocol/error-utils";
-import { getAgentStatusPriority } from "@getpaseo/protocol/agent-state-bucket";
-import { getParentAgentIdFromLabels } from "@getpaseo/protocol/agent-labels";
+import { getErrorMessage, getErrorMessageOr } from "@codius-ai/protocol/error-utils";
+import { getAgentStatusPriority } from "@codius-ai/protocol/agent-state-bucket";
+import { getParentAgentIdFromLabels } from "@codius-ai/protocol/agent-labels";
 import type { WorkspaceGitRuntimeSnapshot, WorkspaceGitService } from "./workspace-git-service.js";
 import type { ProjectUpdate } from "./workspace-reconciliation-service.js";
 import {
@@ -213,24 +213,24 @@ import {
 } from "./workspace-directory.js";
 import { shouldEmitPendingBootstrapUpdate } from "./workspace-bootstrap-dedupe.js";
 import {
-  createPaseoWorktree,
-  type CreatePaseoWorktreeInput,
-  type CreatePaseoWorktreeResult,
-} from "./paseo-worktree-service.js";
+  createCodiusWorktree,
+  type CreateCodiusWorktreeInput,
+  type CreateCodiusWorktreeResult,
+} from "./codius-worktree-service.js";
 import { WorkspaceAutoName } from "./workspace-auto-name.js";
 import {
   buildAgentSessionConfig as buildWorktreeAgentSessionConfig,
-  createPaseoWorktreeWorkflow as createWorktreeWorkflow,
-  type CreatePaseoWorktreeSetupContinuationInput,
-  type CreatePaseoWorktreeWorkflowResult,
-  handleCreatePaseoWorktreeRequest as handleCreateWorktreeRequest,
-  handlePaseoWorktreeArchiveRequest as handleWorktreeArchiveRequest,
-  handlePaseoWorktreeListRequest as handleWorktreeListRequest,
+  createCodiusWorktreeWorkflow as createWorktreeWorkflow,
+  type CreateCodiusWorktreeSetupContinuationInput,
+  type CreateCodiusWorktreeWorkflowResult,
+  handleCreateCodiusWorktreeRequest as handleCreateWorktreeRequest,
+  handleCodiusWorktreeArchiveRequest as handleWorktreeArchiveRequest,
+  handleCodiusWorktreeListRequest as handleWorktreeListRequest,
   handleWorkspaceSetupStatusRequest as handleWorkspaceSetupStatusRequestMessage,
 } from "./worktree-session.js";
 import { archiveByScope, type ActiveWorkspaceRef } from "./workspace-archive-service.js";
 import { WorktreeRequestError, toWorktreeWireError } from "./worktree-errors.js";
-import { parseGitRemoteLocation } from "@getpaseo/protocol/git-remote";
+import { parseGitRemoteLocation } from "@codius-ai/protocol/git-remote";
 import {
   createProjectDirectory,
   ProjectDirectoryRequestError,
@@ -407,7 +407,7 @@ export interface SessionOptions {
   logger: pino.Logger;
   downloadTokenStore: DownloadTokenStore;
   pushTokenStore: PushTokenStore;
-  paseoHome: string;
+  codiusHome: string;
   worktreesRoot?: string;
   agentManager: AgentManager;
   agentStorage: AgentStorage;
@@ -570,7 +570,7 @@ export class Session {
     | ((workspace: PersistedWorkspaceRecord) => Promise<void>)
     | null;
   private readonly sessionLogger: pino.Logger;
-  private readonly paseoHome: string;
+  private readonly codiusHome: string;
   private readonly worktreesRoot: string | undefined;
 
   private agentManager: AgentManager;
@@ -648,7 +648,7 @@ export class Session {
       logger,
       downloadTokenStore,
       pushTokenStore,
-      paseoHome,
+      codiusHome,
       worktreesRoot,
       agentManager,
       agentStorage,
@@ -698,7 +698,7 @@ export class Session {
     this.onLifecycleIntent = onLifecycleIntent ?? null;
     this.onWorkspaceRecovered = onWorkspaceRecovered ?? null;
     this.pushTokenStore = pushTokenStore;
-    this.paseoHome = paseoHome;
+    this.codiusHome = codiusHome;
     this.worktreesRoot = worktreesRoot;
     this.sessionLogger = logger.child({
       module: "session",
@@ -712,7 +712,7 @@ export class Session {
         hasBinaryChannel: () => this.onBinaryMessage !== null,
       },
       downloadTokenStore,
-      paseoHome,
+      codiusHome,
       logger: this.sessionLogger,
     });
     this.agentManager = agentManager;
@@ -735,7 +735,7 @@ export class Session {
       logger: this.sessionLogger,
     });
     this.workspaceRecovery = createWorkspaceRecoveryService({
-      paseoHome: this.paseoHome,
+      codiusHome: this.codiusHome,
       worktreesRoot: this.worktreesRoot,
       getWorkspace: (workspaceId) => this.workspaceRegistry.get(workspaceId),
       getProject: (projectId) => this.projectRegistry.get(projectId),
@@ -765,7 +765,7 @@ export class Session {
           getFocusedSelection: (cwd) => this.getFocusedAgentSelectionForCwd(cwd),
         }),
       }),
-      paseoHome: this.paseoHome,
+      codiusHome: this.codiusHome,
       worktreesRoot: this.worktreesRoot,
       logger: this.sessionLogger,
     });
@@ -850,7 +850,7 @@ export class Session {
         emitLifecycleIntent: (intent) => this.emitLifecycleIntent(intent),
       },
       clientId: this.clientId,
-      paseoHome: this.paseoHome,
+      codiusHome: this.codiusHome,
       serverId,
       daemonVersion,
       daemonRuntimeConfig,
@@ -894,14 +894,14 @@ export class Session {
       logger: this.sessionLogger,
     });
     this.createAgentLifecycleDispatch = new CreateAgentLifecycleDispatch({
-      paseoHome: this.paseoHome,
+      codiusHome: this.codiusHome,
       worktreesRoot: this.worktreesRoot,
       agentManager: this.agentManager,
       agentStorage: this.agentStorage,
       github: this.github,
       workspaceGitService: this.workspaceGitService,
-      createPaseoWorktreeWorkflow: (input, workflowOptions) =>
-        this.createPaseoWorktreeWorkflow(input, workflowOptions),
+      createCodiusWorktreeWorkflow: (input, workflowOptions) =>
+        this.createCodiusWorktreeWorkflow(input, workflowOptions),
       archiveAgentForClose: (agentId) => this.archiveAgentForClose(agentId),
       findWorkspaceIdForCwd: (cwd) => this.findWorkspaceIdForCwd(cwd),
       listActiveWorkspaces: () => this.listActiveWorkspaceRefs(),
@@ -939,7 +939,7 @@ export class Session {
       logger: this.sessionLogger,
       emit: (message) => this.emit(message),
       spawnWorkspaceScript,
-      globalServicePorts: loadPersistedConfig(this.paseoHome).worktrees?.servicePorts,
+      globalServicePorts: loadPersistedConfig(this.codiusHome).worktrees?.servicePorts,
     });
     this.subscribeToOptionalManagers();
     this.workspaceDirectory = new WorkspaceDirectory({
@@ -2060,12 +2060,12 @@ export class Session {
     switch (msg.type) {
       case "fetch_workspaces_request":
         return this.handleFetchWorkspacesRequest(msg);
-      case "paseo_worktree_list_request":
-        return this.handlePaseoWorktreeListRequest(msg);
-      case "paseo_worktree_archive_request":
-        return this.handlePaseoWorktreeArchiveRequest(msg);
-      case "create_paseo_worktree_request":
-        return this.handleCreatePaseoWorktreeRequest(msg);
+      case "codius_worktree_list_request":
+        return this.handleCodiusWorktreeListRequest(msg);
+      case "codius_worktree_archive_request":
+        return this.handleCodiusWorktreeArchiveRequest(msg);
+      case "create_codius_worktree_request":
+        return this.handleCreateCodiusWorktreeRequest(msg);
       case "workspace_setup_status_request":
         return this.handleWorkspaceSetupStatusRequest(msg);
       // COMPAT(desktopEditorBridge): added in v0.1.88, remove after 2026-12-03 once old clients no longer call daemon editor RPCs.
@@ -2975,7 +2975,7 @@ export class Session {
       }`,
     );
 
-    let createdWorktreeForCleanup: CreatePaseoWorktreeWorkflowResult | null = null;
+    let createdWorktreeForCleanup: CreateCodiusWorktreeWorkflowResult | null = null;
     let createdAgentId: string | null = null;
     try {
       const requestedCwd = resolve(config.cwd);
@@ -3017,7 +3017,7 @@ export class Session {
           agentManager: this.agentManager,
           agentStorage: this.agentStorage,
           logger: this.sessionLogger,
-          paseoHome: this.paseoHome,
+          codiusHome: this.codiusHome,
           worktreesRoot: this.worktreesRoot,
           providerSnapshotManager: this.providerSnapshotManager,
         },
@@ -3106,7 +3106,7 @@ export class Session {
 
   private async resolveSessionCreateAgentIntent(input: {
     request: CreateAgentRequestMessage;
-    createdWorktree: CreatePaseoWorktreeWorkflowResult | null;
+    createdWorktree: CreateCodiusWorktreeWorkflowResult | null;
     workspacePromptTitle: string | null;
   }): Promise<ResolvedSessionCreateAgentIntent> {
     const { request, createdWorktree } = input;
@@ -3456,17 +3456,17 @@ export class Session {
     firstAgentContext?: FirstAgentContext,
   ): Promise<{
     sessionConfig: AgentSessionConfig;
-    setupContinuation?: CreatePaseoWorktreeWorkflowResult["setupContinuation"];
+    setupContinuation?: CreateCodiusWorktreeWorkflowResult["setupContinuation"];
     createdWorkspaceId?: string;
   }> {
     return buildWorktreeAgentSessionConfig(
       {
-        paseoHome: this.paseoHome,
+        codiusHome: this.codiusHome,
         worktreesRoot: this.worktreesRoot,
         sessionLogger: this.sessionLogger,
         workspaceGitService: this.workspaceGitService,
-        createPaseoWorktree: (input, serviceOptions) =>
-          this.createPaseoWorktreeWorkflow(input, {
+        createCodiusWorktree: (input, serviceOptions) =>
+          this.createCodiusWorktreeWorkflow(input, {
             ...serviceOptions,
             setupContinuation: {
               kind: "agent",
@@ -3764,26 +3764,26 @@ export class Session {
     }
   }
 
-  private async handlePaseoWorktreeListRequest(
-    msg: Extract<SessionInboundMessage, { type: "paseo_worktree_list_request" }>,
+  private async handleCodiusWorktreeListRequest(
+    msg: Extract<SessionInboundMessage, { type: "codius_worktree_list_request" }>,
   ): Promise<void> {
     return handleWorktreeListRequest(
       {
         emit: (message) => this.emit(message),
-        paseoHome: this.paseoHome,
+        codiusHome: this.codiusHome,
         workspaceGitService: this.workspaceGitService,
       },
       msg,
     );
   }
 
-  private async handlePaseoWorktreeArchiveRequest(
-    msg: Extract<SessionInboundMessage, { type: "paseo_worktree_archive_request" }>,
+  private async handleCodiusWorktreeArchiveRequest(
+    msg: Extract<SessionInboundMessage, { type: "codius_worktree_archive_request" }>,
   ): Promise<void> {
     return handleWorktreeArchiveRequest(
       {
-        paseoHome: this.paseoHome,
-        paseoWorktreesBaseRoot: this.worktreesRoot,
+        codiusHome: this.codiusHome,
+        codiusWorktreesBaseRoot: this.worktreesRoot,
         github: this.github,
         workspaceGitService: this.workspaceGitService,
         agentManager: this.agentManager,
@@ -4222,7 +4222,7 @@ export class Session {
     return {
       currentBranch: snapshot.git.currentBranch,
       remoteUrl: snapshot.git.remoteUrl,
-      isPaseoOwnedWorktree: snapshot.git.isPaseoOwnedWorktree,
+      isCodiusOwnedWorktree: snapshot.git.isCodiusOwnedWorktree,
       isDirty: snapshot.git.isDirty,
       aheadBehind: snapshot.git.aheadBehind,
       aheadOfOrigin: snapshot.git.aheadOfOrigin,
@@ -4267,7 +4267,7 @@ export class Session {
   }
 
   private async describeCreatedWorktreeWorkspace(
-    result: CreatePaseoWorktreeResult,
+    result: CreateCodiusWorktreeResult,
   ): Promise<WorkspaceDescriptorPayload> {
     const projectRecord = await this.projectRegistry.get(result.workspace.projectId);
     return {
@@ -4296,7 +4296,7 @@ export class Session {
       gitRuntime: {
         currentBranch: result.worktree.branchName || null,
         remoteUrl: null,
-        isPaseoOwnedWorktree: true,
+        isCodiusOwnedWorktree: true,
         isDirty: false,
         aheadBehind: null,
         aheadOfOrigin: null,
@@ -4489,13 +4489,13 @@ export class Session {
     await this.restoreWorkspaceAndEmit(record.workspaceId);
   }
 
-  private async createPaseoWorktree(
-    input: CreatePaseoWorktreeInput,
+  private async createCodiusWorktree(
+    input: CreateCodiusWorktreeInput,
     options?: {
       resolveDefaultBranch?: (repoRoot: string) => Promise<string>;
     },
-  ): Promise<CreatePaseoWorktreeResult> {
-    const result = await createPaseoWorktree(input, {
+  ): Promise<CreateCodiusWorktreeResult> {
+    const result = await createCodiusWorktree(input, {
       github: this.github,
       ...(options?.resolveDefaultBranch
         ? { resolveDefaultBranch: options.resolveDefaultBranch }
@@ -4524,7 +4524,7 @@ export class Session {
         cwd: workspace.cwd,
         kind: workspace.kind,
         worktreeRoot: workspace.worktreeRoot,
-        isPaseoOwnedWorktree: workspace.isPaseoOwnedWorktree,
+        isCodiusOwnedWorktree: workspace.isCodiusOwnedWorktree,
         mainRepoRoot: workspace.mainRepoRoot,
       }));
   }
@@ -5169,7 +5169,7 @@ export class Session {
 
     const sourceCwd = await resolveWorktreeSourceCwd(source, this.projectRegistry);
 
-    const result = await this.createPaseoWorktreeWorkflow(
+    const result = await this.createCodiusWorktreeWorkflow(
       {
         cwd: sourceCwd,
         projectId: source.projectId,
@@ -5508,7 +5508,7 @@ export class Session {
         }
       }
 
-      const cloneStagingPath = await mkdtemp(resolve(targetParent, ".paseo-clone-"));
+      const cloneStagingPath = await mkdtemp(resolve(targetParent, ".codius-clone-"));
       try {
         await runGitCommand(["clone", repo.cloneUrl, cloneStagingPath], {
           cwd: targetParent,
@@ -5598,35 +5598,35 @@ export class Session {
     });
   }
 
-  private async handleCreatePaseoWorktreeRequest(
-    request: Extract<SessionInboundMessage, { type: "create_paseo_worktree_request" }>,
+  private async handleCreateCodiusWorktreeRequest(
+    request: Extract<SessionInboundMessage, { type: "create_codius_worktree_request" }>,
   ): Promise<void> {
     return handleCreateWorktreeRequest(
       {
-        paseoHome: this.paseoHome,
+        codiusHome: this.codiusHome,
         worktreesRoot: this.worktreesRoot,
         describeWorkspaceRecord: (result) => this.describeCreatedWorktreeWorkspace(result),
         emit: (message) => this.emit(message),
         sessionLogger: this.sessionLogger,
-        createPaseoWorktreeWorkflow: (input) => this.createPaseoWorktreeWorkflow(input),
+        createCodiusWorktreeWorkflow: (input) => this.createCodiusWorktreeWorkflow(input),
       },
       request,
     );
   }
 
-  private async createPaseoWorktreeWorkflow(
-    input: CreatePaseoWorktreeInput,
+  private async createCodiusWorktreeWorkflow(
+    input: CreateCodiusWorktreeInput,
     options?: {
       resolveDefaultBranch?: (repoRoot: string) => Promise<string>;
-      setupContinuation?: CreatePaseoWorktreeSetupContinuationInput;
+      setupContinuation?: CreateCodiusWorktreeSetupContinuationInput;
     },
-  ): Promise<CreatePaseoWorktreeWorkflowResult> {
+  ): Promise<CreateCodiusWorktreeWorkflowResult> {
     return createWorktreeWorkflow(
       {
-        paseoHome: this.paseoHome,
+        codiusHome: this.codiusHome,
         worktreesRoot: this.worktreesRoot,
-        createPaseoWorktree: (workflowInput, serviceOptions) =>
-          this.createPaseoWorktree(workflowInput, serviceOptions),
+        createCodiusWorktree: (workflowInput, serviceOptions) =>
+          this.createCodiusWorktree(workflowInput, serviceOptions),
         warmWorkspaceGitData: (workspace) => this.warmWorkspaceGitDataForWorkspace(workspace),
         autoNameWorkspaceBranchForFirstAgent: (autoNameInput) =>
           this.workspaceAutoName.scheduleForWorktree(autoNameInput, {
@@ -5678,8 +5678,8 @@ export class Session {
 
       await archiveByScope(
         {
-          paseoHome: this.paseoHome,
-          paseoWorktreesBaseRoot: this.worktreesRoot,
+          codiusHome: this.codiusHome,
+          codiusWorktreesBaseRoot: this.worktreesRoot,
           github: this.github,
           workspaceGitService: this.workspaceGitService,
           agentManager: this.agentManager,

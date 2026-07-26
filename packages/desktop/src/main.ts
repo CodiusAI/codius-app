@@ -51,27 +51,27 @@ import { setupApplicationMenu } from "./features/menu.js";
 import {
   BROWSER_NEW_TAB_REQUEST_EVENT,
   decideBrowserWindowOpenRequest,
-  getPaseoBrowserIdForWebContents,
-  getPaseoBrowserWebContentsForHostWindow,
-  getPaseoBrowserWebviewRegistry,
-  listRegisteredPaseoBrowserIds,
-  isPaseoBrowserWebviewAttach,
-  preparePaseoBrowserWebContents,
+  getCodiusBrowserIdForWebContents,
+  getCodiusBrowserWebContentsForHostWindow,
+  getCodiusBrowserWebviewRegistry,
+  listRegisteredCodiusBrowserIds,
+  isCodiusBrowserWebviewAttach,
+  prepareCodiusBrowserWebContents,
   PendingBrowserWindowOpenRequests,
   registerBrowserWebviewNavigationGuards,
-  unregisterPaseoBrowserFromHost,
-  registerAttachedPaseoBrowser,
-  setWorkspaceActivePaseoBrowserId,
-  unregisterPaseoBrowserHost,
+  unregisterCodiusBrowserFromHost,
+  registerAttachedCodiusBrowser,
+  setWorkspaceActiveCodiusBrowserId,
+  unregisterCodiusBrowserHost,
 } from "./features/browser-webviews/index.js";
 import {
-  clearPaseoBrowserProfile,
-  getLegacyPaseoBrowserProfileSession,
-  PASEO_BROWSER_PROFILE_PARTITION,
-  getPaseoBrowserProfileSession,
-  getPaseoBrowserProfileSessions,
-  listPaseoBrowserProfileGuests,
-  readLegacyPaseoBrowserIds,
+  clearCodiusBrowserProfile,
+  getLegacyCodiusBrowserProfileSession,
+  CODIUS_BROWSER_PROFILE_PARTITION,
+  getCodiusBrowserProfileSession,
+  getCodiusBrowserProfileSessions,
+  listCodiusBrowserProfileGuests,
+  readLegacyCodiusBrowserIds,
 } from "./features/browser-profile.js";
 import { parseOpenProjectPathFromArgv } from "./open-project-routing.js";
 import { PendingOpenProjectStore } from "./pending-open-project-store.js";
@@ -94,14 +94,14 @@ import {
   buildAgentDeepLinkRoute,
   parseAgentDeepLink,
   type AgentDeepLinkTarget,
-} from "@getpaseo/protocol/agent-deep-link";
+} from "@codius-ai/protocol/agent-deep-link";
 import { AgentNavigationInbox, parseAgentDeepLinkFromArgv } from "./agent-navigation.js";
 
 const DEV_SERVER_URL = process.env.EXPO_DEV_URL ?? "http://localhost:8081";
-const APP_SCHEME = "paseo";
-const PASEO_DEBUG = process.env.PASEO_DEBUG === "1";
-const DISABLE_SINGLE_INSTANCE_LOCK = process.env.PASEO_DISABLE_SINGLE_INSTANCE_LOCK === "1";
-const APP_NAME = process.env.PASEO_TEST_APP_NAME?.trim() || "Paseo";
+const APP_SCHEME = "codius";
+const CODIUS_DEBUG = process.env.CODIUS_DEBUG === "1";
+const DISABLE_SINGLE_INSTANCE_LOCK = process.env.CODIUS_DISABLE_SINGLE_INSTANCE_LOCK === "1";
+const APP_NAME = process.env.CODIUS_TEST_APP_NAME?.trim() || "Codius";
 const UPDATE_QUIT_DEADLINE_MS = 5_000;
 const pendingBrowserWindowOpenRequests = new PendingBrowserWindowOpenRequests();
 const agentNavigationInbox = new AgentNavigationInbox();
@@ -162,7 +162,7 @@ function readActiveBrowserInput(
   return { workspaceId: record.workspaceId.trim(), browserId: browserId || null };
 }
 
-const browserKeyboard = new BrowserKeyboard(getPaseoBrowserWebviewRegistry());
+const browserKeyboard = new BrowserKeyboard(getCodiusBrowserWebviewRegistry());
 browserKeyboard.registerIpc();
 
 function showBrowserWebviewContextMenu(
@@ -181,7 +181,7 @@ function showBrowserWebviewContextMenu(
             click: () => {
               log.info("[browser-devtools] inspect-element.request", {
                 webContentsId: contents.id,
-                browserId: getPaseoBrowserIdForWebContents(contents),
+                browserId: getCodiusBrowserIdForWebContents(contents),
                 x: params.x,
                 y: params.y,
                 isDevToolsOpened: contents.isDevToolsOpened(),
@@ -207,7 +207,7 @@ function getBrowserPopupWindowOptions(
     show: true,
     autoHideMenuBar: true,
     webPreferences: {
-      partition: PASEO_BROWSER_PROFILE_PARTITION,
+      partition: CODIUS_BROWSER_PROFILE_PARTITION,
       nodeIntegration: false,
       nodeIntegrationInSubFrames: false,
       nodeIntegrationInWorker: false,
@@ -246,7 +246,7 @@ function installBrowserWindowOpenHandler(input: {
       };
     }
 
-    const sourceBrowserId = getPaseoBrowserIdForWebContents(sourceContents);
+    const sourceBrowserId = getCodiusBrowserIdForWebContents(sourceContents);
     if (sourceBrowserId) {
       mainWindow.webContents.send(BROWSER_NEW_TAB_REQUEST_EVENT, {
         sourceBrowserId,
@@ -275,7 +275,7 @@ function installBrowserWindowOpenHandler(input: {
 // In dev mode, detect git worktrees and isolate each instance so multiple
 // Electron windows can run side-by-side (separate userData = separate lock).
 let devWorktreeName: string | null = null;
-const forcedUserDataDir = process.env.PASEO_ELECTRON_USER_DATA_DIR?.trim();
+const forcedUserDataDir = process.env.CODIUS_ELECTRON_USER_DATA_DIR?.trim();
 if (forcedUserDataDir) {
   app.setPath("userData", forcedUserDataDir);
   log.info("[dev-user-data] forced userData dir:", forcedUserDataDir);
@@ -287,7 +287,7 @@ if (forcedUserDataDir) {
       windowsHide: true,
     }).trim();
     devWorktreeName = path.basename(topLevel);
-    // Main checkout (e.g. "paseo") gets default userData — only worktrees diverge.
+    // Main checkout (e.g. "codius") gets default userData — only worktrees diverge.
     const commonDir = path.resolve(
       topLevel,
       execFileSync("git", ["rev-parse", "--git-common-dir"], {
@@ -299,7 +299,7 @@ if (forcedUserDataDir) {
     );
     const isWorktree = path.resolve(topLevel, ".git") !== commonDir;
     if (isWorktree) {
-      app.setPath("userData", path.join(app.getPath("appData"), `Paseo-${devWorktreeName}`));
+      app.setPath("userData", path.join(app.getPath("appData"), `Codius-${devWorktreeName}`));
       log.info("[worktree] isolated userData for worktree:", devWorktreeName);
     } else {
       devWorktreeName = null;
@@ -316,10 +316,10 @@ if (process.platform === "linux" && process.env.APPIMAGE) {
   app.commandLine.appendSwitch("no-sandbox");
 }
 
-// Allow users to pass Chromium flags via PASEO_ELECTRON_FLAGS for debugging
+// Allow users to pass Chromium flags via CODIUS_ELECTRON_FLAGS for debugging
 // rendering issues (e.g. "--disable-gpu --ozone-platform=x11").
 // Must run before app.whenReady().
-const electronFlags = process.env.PASEO_ELECTRON_FLAGS?.trim();
+const electronFlags = process.env.CODIUS_ELECTRON_FLAGS?.trim();
 if (electronFlags) {
   for (const token of electronFlags.split(/\s+/)) {
     const [key, ...rest] = token.replace(/^--/, "").split("=");
@@ -340,7 +340,7 @@ let pendingAgentNavigation = parseAgentDeepLinkFromArgv(process.argv);
 // racing a global.
 const pendingOpenProjectStore = new PendingOpenProjectStore();
 
-if (PASEO_DEBUG) {
+if (CODIUS_DEBUG) {
   log.info("[open-project] argv:", process.argv);
   log.info("[open-project] isDefaultApp:", process.defaultApp);
   log.info("[open-project] pendingOpenProjectPath:", pendingOpenProjectPath);
@@ -348,7 +348,7 @@ if (PASEO_DEBUG) {
 
 // The renderer pulls the pending path on mount via IPC — this avoids
 // a race where the push event arrives before React registers its listener.
-ipcMain.handle("paseo:get-pending-open-project", (event) => {
+ipcMain.handle("codius:get-pending-open-project", (event) => {
   const webContentsId = event.sender.id;
   const result = pendingOpenProjectStore.take(webContentsId);
   log.info("[open-project] renderer requested pending path:", {
@@ -358,7 +358,7 @@ ipcMain.handle("paseo:get-pending-open-project", (event) => {
   return result;
 });
 
-ipcMain.handle("paseo:agent-navigation:ready", (event) => {
+ipcMain.handle("codius:agent-navigation:ready", (event) => {
   return agentNavigationInbox.windowReady(event.sender.id);
 });
 
@@ -395,15 +395,15 @@ function normalizeBrowserCaptureRect(
   };
 }
 
-ipcMain.handle("paseo:browser:register-attached", (event, rawInput: unknown) => {
+ipcMain.handle("codius:browser:register-attached", (event, rawInput: unknown) => {
   const input = readAttachedBrowserInput(rawInput);
   if (!input) {
     throw new Error("Invalid attached browser registration");
   }
-  const registered = registerAttachedPaseoBrowser({
+  const registered = registerAttachedCodiusBrowser({
     ...input,
     sender: event.sender,
-    profileSession: getPaseoBrowserProfileSession(session),
+    profileSession: getCodiusBrowserProfileSession(session),
     findWebContents: (webContentsId) => webContents.fromId(webContentsId) ?? null,
   });
   if (!registered) {
@@ -417,7 +417,7 @@ ipcMain.handle("paseo:browser:register-attached", (event, rawInput: unknown) => 
   log.info("[browser-webview] registered", {
     browserId: input.browserId,
     webContentsId: input.webContentsId,
-    registeredBrowserIds: listRegisteredPaseoBrowserIds(),
+    registeredBrowserIds: listRegisteredCodiusBrowserIds(),
   });
   for (const url of pendingBrowserWindowOpenRequests.take(input.webContentsId)) {
     event.sender.send(BROWSER_NEW_TAB_REQUEST_EVENT, {
@@ -427,21 +427,21 @@ ipcMain.handle("paseo:browser:register-attached", (event, rawInput: unknown) => 
   }
 });
 
-ipcMain.handle("paseo:browser:unregister-workspace-browser", async (event, browserId: unknown) => {
+ipcMain.handle("codius:browser:unregister-workspace-browser", async (event, browserId: unknown) => {
   if (typeof browserId === "string" && browserId.trim().length > 0) {
     const normalizedBrowserId = browserId.trim();
-    const hasOtherHost = getPaseoBrowserWebviewRegistry().hasBrowserInOtherHostWindow(
+    const hasOtherHost = getCodiusBrowserWebviewRegistry().hasBrowserInOtherHostWindow(
       event.sender.id,
       normalizedBrowserId,
     );
-    unregisterPaseoBrowserFromHost(event.sender.id, normalizedBrowserId);
+    unregisterCodiusBrowserFromHost(event.sender.id, normalizedBrowserId);
     // COMPAT(browserProfile): added in v0.1.108; remove after 2027-01-15.
     const legacyProfile = hasOtherHost
       ? null
-      : getLegacyPaseoBrowserProfileSession(session, normalizedBrowserId);
+      : getLegacyCodiusBrowserProfileSession(session, normalizedBrowserId);
     if (legacyProfile) {
       try {
-        await clearPaseoBrowserProfile({
+        await clearCodiusBrowserProfile({
           profileSessions: [legacyProfile],
           listGuests: () => [],
           logReloadError: () => {},
@@ -456,31 +456,31 @@ ipcMain.handle("paseo:browser:unregister-workspace-browser", async (event, brows
   }
 });
 
-ipcMain.handle("paseo:browser:set-workspace-active-browser", (event, rawInput: unknown) => {
+ipcMain.handle("codius:browser:set-workspace-active-browser", (event, rawInput: unknown) => {
   const input = readActiveBrowserInput(rawInput);
   if (input) {
-    setWorkspaceActivePaseoBrowserId({ ...input, hostWebContentsId: event.sender.id });
+    setWorkspaceActiveCodiusBrowserId({ ...input, hostWebContentsId: event.sender.id });
   }
 });
 
-ipcMain.handle("paseo:browser:open-devtools", (event, browserId: unknown) => {
+ipcMain.handle("codius:browser:open-devtools", (event, browserId: unknown) => {
   if (typeof browserId !== "string" || browserId.trim().length === 0) {
     const result = {
       ok: false,
       reason: "invalid-browser-id",
       browserId,
-      registeredBrowserIds: listRegisteredPaseoBrowserIds(),
+      registeredBrowserIds: listRegisteredCodiusBrowserIds(),
     };
     log.warn("[browser-devtools] open-devtools.invalid", result);
     return result;
   }
-  const contents = getPaseoBrowserWebContentsForHostWindow(browserId, event.sender.id);
+  const contents = getCodiusBrowserWebContentsForHostWindow(browserId, event.sender.id);
   if (!contents) {
     const result = {
       ok: false,
       reason: "browser-webcontents-not-found",
       browserId,
-      registeredBrowserIds: listRegisteredPaseoBrowserIds(),
+      registeredBrowserIds: listRegisteredCodiusBrowserIds(),
     };
     log.warn("[browser-devtools] open-devtools.not-found", result);
     return result;
@@ -490,7 +490,7 @@ ipcMain.handle("paseo:browser:open-devtools", (event, browserId: unknown) => {
     webContentsId: contents.id,
     isDestroyed: contents.isDestroyed(),
     isDevToolsOpened: contents.isDevToolsOpened(),
-    registeredBrowserIds: listRegisteredPaseoBrowserIds(),
+    registeredBrowserIds: listRegisteredCodiusBrowserIds(),
   });
   contents.openDevTools({ mode: "detach" });
   const result = {
@@ -504,16 +504,16 @@ ipcMain.handle("paseo:browser:open-devtools", (event, browserId: unknown) => {
   return result;
 });
 
-ipcMain.handle("paseo:browser:clear-profile", async (_event, rawLegacyBrowserIds: unknown) => {
-  const profileSessions = getPaseoBrowserProfileSessions(
+ipcMain.handle("codius:browser:clear-profile", async (_event, rawLegacyBrowserIds: unknown) => {
+  const profileSessions = getCodiusBrowserProfileSessions(
     session,
-    readLegacyPaseoBrowserIds(rawLegacyBrowserIds),
+    readLegacyCodiusBrowserIds(rawLegacyBrowserIds),
   );
   const profileSession = profileSessions[0];
-  await clearPaseoBrowserProfile({
+  await clearCodiusBrowserProfile({
     profileSessions,
     listGuests: () =>
-      listPaseoBrowserProfileGuests({
+      listCodiusBrowserProfileGuests({
         profileSession,
         webContents: webContents.getAllWebContents(),
       }),
@@ -524,12 +524,12 @@ ipcMain.handle("paseo:browser:clear-profile", async (_event, rawLegacyBrowserIds
 });
 
 ipcMain.handle(
-  "paseo:browser:capture-element",
+  "codius:browser:capture-element",
   async (event, browserId: unknown, rect: unknown) => {
     if (typeof browserId !== "string" || browserId.trim().length === 0) {
       return null;
     }
-    const contents = getPaseoBrowserWebContentsForHostWindow(browserId, event.sender.id);
+    const contents = getCodiusBrowserWebContentsForHostWindow(browserId, event.sender.id);
     if (!contents || contents.isDestroyed()) {
       return null;
     }
@@ -555,7 +555,7 @@ ipcMain.handle(
   },
 );
 
-ipcMain.handle("paseo:browser:copy-element", (_event, payload: unknown): boolean => {
+ipcMain.handle("codius:browser:copy-element", (_event, payload: unknown): boolean => {
   if (!payload || typeof payload !== "object") {
     return false;
   }
@@ -724,7 +724,7 @@ async function createWindow(
   mainWindow.on("closed", () => {
     pendingOpenProjectStore.delete(webContentsId);
     agentNavigationInbox.removeWindow(webContentsId);
-    unregisterPaseoBrowserHost(webContentsId);
+    unregisterCodiusBrowserHost(webContentsId);
     browserKeyboard.detachHost(webContentsId);
   });
 
@@ -744,7 +744,7 @@ async function createWindow(
   setupDefaultContextMenu(mainWindow);
   setupDragDropPrevention(mainWindow);
   mainWindow.webContents.on("will-attach-webview", (event, webPreferences, params) => {
-    if (!isPaseoBrowserWebviewAttach(params)) {
+    if (!isCodiusBrowserWebviewAttach(params)) {
       event.preventDefault();
       return;
     }
@@ -765,7 +765,7 @@ async function createWindow(
     webPreferences.preload = getBrowserKeyboardPreloadPath();
   });
   mainWindow.webContents.on("did-attach-webview", (_event, contents) => {
-    preparePaseoBrowserWebContents(contents);
+    prepareCodiusBrowserWebContents(contents);
     contents.once("destroyed", () => {
       pendingBrowserWindowOpenRequests.delete(contents.id);
     });
@@ -839,7 +839,7 @@ function focusExistingWindowOnAgent(target: AgentDeepLinkTarget): void {
 
   const deliverable = agentNavigationInbox.deliverOrQueue(mainWindow.webContents.id, target);
   if (deliverable) {
-    mainWindow.webContents.send("paseo:event:open-agent", deliverable);
+    mainWindow.webContents.send("codius:event:open-agent", deliverable);
   }
 }
 
@@ -872,7 +872,7 @@ app.on("open-url", (event, url) => {
 
 function setupSingleInstanceLock(): boolean {
   if (DISABLE_SINGLE_INSTANCE_LOCK) {
-    log.info("[single-instance] disabled by PASEO_DISABLE_SINGLE_INSTANCE_LOCK");
+    log.info("[single-instance] disabled by CODIUS_DISABLE_SINGLE_INSTANCE_LOCK");
     return true;
   }
 
@@ -895,7 +895,7 @@ function setupSingleInstanceLock(): boolean {
       isDefaultApp: false,
     });
     log.info("[open-project] second-instance openProjectPath:", openProjectPath);
-    // Relaunching the app (CLI `paseo [path]`, double-click, etc.) opens a new
+    // Relaunching the app (CLI `codius [path]`, double-click, etc.) opens a new
     // window rather than focusing the existing one. Wait for bootstrap (not just
     // app.whenReady) so the protocol + IPC handlers exist before the window loads.
     void bootstrapComplete
@@ -979,7 +979,7 @@ async function bootstrap(): Promise<void> {
 
   // In-app "Open in new window": opens a window that lands on the given project
   // via the same open-project flow as a CLI launch (no move, no ownership).
-  ipcMain.handle("paseo:window:openNew", async (_event, options?: unknown) => {
+  ipcMain.handle("codius:window:openNew", async (_event, options?: unknown) => {
     const pendingPath =
       options && typeof options === "object" && "pendingOpenProjectPath" in options
         ? (options as { pendingOpenProjectPath?: unknown }).pendingOpenProjectPath
@@ -1035,7 +1035,7 @@ void runDesktopStartup({
 
 function showDaemonShutdownDialog(): void {
   for (const win of BrowserWindow.getAllWindows()) {
-    win.webContents.send("paseo:event:quitting", {});
+    win.webContents.send("codius:event:quitting", {});
   }
 }
 

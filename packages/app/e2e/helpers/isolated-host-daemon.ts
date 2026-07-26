@@ -83,7 +83,7 @@ export async function startIsolatedHostDaemon(serverId: string): Promise<Isolate
   const metroPort = process.env.E2E_METRO_PORT;
   if (!metroPort) throw new Error("E2E_METRO_PORT is required to start an isolated host daemon");
 
-  const paseoHome = await mkdtemp(path.join(tmpdir(), "paseo-e2e-secondary-host-"));
+  const codiusHome = await mkdtemp(path.join(tmpdir(), "codius-e2e-secondary-host-"));
   const serverDir = path.resolve(__dirname, "../../../server");
   const tsxBin = execSync("which tsx").toString().trim();
   const spawnDaemon = async (): Promise<ChildProcess> => {
@@ -91,12 +91,12 @@ export async function startIsolatedHostDaemon(serverId: string): Promise<Isolate
       cwd: serverDir,
       env: withDisabledE2ESpeechEnv({
         ...process.env,
-        PASEO_HOME: paseoHome,
-        PASEO_SERVER_ID: serverId,
-        PASEO_LISTEN: `127.0.0.1:${port}`,
-        PASEO_CORS_ORIGINS: `http://localhost:${metroPort}`,
-        PASEO_RELAY_ENABLED: "0",
-        PASEO_NODE_ENV: "development",
+        CODIUS_HOME: codiusHome,
+        CODIUS_SERVER_ID: serverId,
+        CODIUS_LISTEN: `127.0.0.1:${port}`,
+        CODIUS_CORS_ORIGINS: `http://localhost:${metroPort}`,
+        CODIUS_RELAY_ENABLED: "0",
+        CODIUS_NODE_ENV: "development",
         NODE_ENV: "development",
       }),
       stdio: ["ignore", "ignore", "pipe"],
@@ -125,7 +125,7 @@ export async function startIsolatedHostDaemon(serverId: string): Promise<Isolate
   try {
     child = await spawnDaemon();
   } catch (error) {
-    await rm(paseoHome, { recursive: true, force: true });
+    await rm(codiusHome, { recursive: true, force: true });
     throw error;
   }
   let closed = false;
@@ -142,7 +142,7 @@ export async function startIsolatedHostDaemon(serverId: string): Promise<Isolate
       if (closed) return;
       closed = true;
       await stopProcess(child);
-      await rm(paseoHome, { recursive: true, force: true });
+      await rm(codiusHome, { recursive: true, force: true });
     },
   };
 }

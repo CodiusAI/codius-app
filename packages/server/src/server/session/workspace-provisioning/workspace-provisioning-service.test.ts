@@ -13,7 +13,7 @@ import {
   createPersistedWorkspaceRecord,
   type WorkspaceRegistry,
 } from "../../workspace-registry.js";
-import type { CreatePaseoWorktreeWorkflowResult } from "../../worktree-session.js";
+import type { CreateCodiusWorktreeWorkflowResult } from "../../worktree-session.js";
 import {
   createWorkspaceProvisioningService,
   WorkspaceProvisioningError,
@@ -56,7 +56,7 @@ function gitService() {
         currentBranch: worktreeRoot ? (gitBranches.get(worktreeRoot) ?? "main") : null,
         remoteUrl: null,
         worktreeRoot,
-        isPaseoOwnedWorktree: false,
+        isCodiusOwnedWorktree: false,
         mainRepoRoot: null,
       };
     },
@@ -150,7 +150,7 @@ test("re-opening refreshes mutable checkout metadata without renaming the worksp
     branch: "feature/refresh",
     displayName: first.displayName,
     title: "Pinned work",
-    isPaseoOwnedWorktree: false,
+    isCodiusOwnedWorktree: false,
     mainRepoRoot: null,
   });
   expect(await workspaceRegistry.get(first.workspaceId)).toEqual(refreshed);
@@ -171,7 +171,7 @@ test("persists manual worktree ownership separately from its workspace kind", as
         currentBranch: "feature/manual",
         remoteUrl: null,
         worktreeRoot: cwd,
-        isPaseoOwnedWorktree: false,
+        isCodiusOwnedWorktree: false,
         mainRepoRoot,
       }),
     }),
@@ -181,7 +181,7 @@ test("persists manual worktree ownership separately from its workspace kind", as
 
   expect(workspace).toMatchObject({
     kind: "worktree",
-    isPaseoOwnedWorktree: false,
+    isCodiusOwnedWorktree: false,
     mainRepoRoot,
   });
 });
@@ -229,7 +229,7 @@ test("reopening archived exact-root records restores the fresh Git project", asy
         currentBranch: "main",
         remoteUrl: null,
         worktreeRoot: cwd,
-        isPaseoOwnedWorktree: false,
+        isCodiusOwnedWorktree: false,
         mainRepoRoot: null,
       }),
     }),
@@ -354,7 +354,7 @@ test("resolveOrCreateWorkspaceIdForCreateAgent returns a created worktree's id w
   // The branch only reads workspace.workspaceId off the worktree result.
   const createdWorktree = {
     workspace: { workspaceId: "ws-from-worktree" },
-  } as unknown as CreatePaseoWorktreeWorkflowResult;
+  } as unknown as CreateCodiusWorktreeWorkflowResult;
 
   const id = await provisioning.resolveOrCreateWorkspaceIdForCreateAgent({
     createdWorktree,

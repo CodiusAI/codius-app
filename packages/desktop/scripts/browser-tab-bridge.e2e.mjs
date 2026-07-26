@@ -82,7 +82,7 @@ function writeJson(filePath, value) {
   fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`);
 }
 
-function seedPaseoHome(paseoHome, listen, workspaceRoot) {
+function seedCodiusHome(codiusHome, listen, workspaceRoot) {
   const timestamp = "2026-01-01T00:00:00.000Z";
   const projects = workspaceIds.map((workspaceId, index) => {
     const cwd = path.join(workspaceRoot, `workspace-${index + 1}`);
@@ -113,7 +113,7 @@ function seedPaseoHome(paseoHome, listen, workspaceRoot) {
     pinnedAt: null,
   }));
 
-  writeJson(path.join(paseoHome, "config.json"), {
+  writeJson(path.join(codiusHome, "config.json"), {
     version: 1,
     daemon: {
       listen,
@@ -123,8 +123,8 @@ function seedPaseoHome(paseoHome, listen, workspaceRoot) {
       cors: { allowedOrigins: ["*"] },
     },
   });
-  writeJson(path.join(paseoHome, "projects", "projects.json"), projects);
-  writeJson(path.join(paseoHome, "projects", "workspaces.json"), workspaces);
+  writeJson(path.join(codiusHome, "projects", "projects.json"), projects);
+  writeJson(path.join(codiusHome, "projects", "workspaces.json"), workspaces);
 }
 
 function spawnLogged(name, command, args, options, logDir) {
@@ -176,8 +176,8 @@ async function waitForDesktopStatus(page) {
   while (Date.now() < deadline) {
     try {
       const status = await page.evaluate(async () => {
-        if (typeof window.paseoDesktop?.invoke !== "function") return null;
-        return await window.paseoDesktop.invoke("desktop_daemon_status");
+        if (typeof window.codiusDesktop?.invoke !== "function") return null;
+        return await window.codiusDesktop.invoke("desktop_daemon_status");
       });
       if (typeof status?.serverId === "string") return status;
     } catch (error) {
@@ -265,7 +265,7 @@ async function createCallerAgent(daemonPort) {
 
 async function readGuest(page, browserId) {
   return await page.evaluate((id) => {
-    const webview = document.querySelector(`[data-paseo-browser-id="${id}"]`);
+    const webview = document.querySelector(`[data-codius-browser-id="${id}"]`);
     if (!(webview instanceof HTMLElement) || typeof webview.getWebContentsId !== "function") {
       return null;
     }
@@ -292,8 +292,8 @@ async function runRegression({ page, client, serverId, targetUrl }) {
   await originalDeck.getByTestId(`workspace-tab-browser_${browserId}`).click();
   await page.waitForFunction(
     (id) => {
-      const webview = document.querySelector(`[data-paseo-browser-id="${id}"]`);
-      return webview && webview.parentElement?.id !== "paseo-browser-resident-webviews";
+      const webview = document.querySelector(`[data-codius-browser-id="${id}"]`);
+      return webview && webview.parentElement?.id !== "codius-browser-resident-webviews";
     },
     browserId,
     { timeout: timeoutMs },
@@ -310,9 +310,9 @@ async function runRegression({ page, client, serverId, targetUrl }) {
 
   await page.waitForFunction(
     ({ id, previousWebContentsId }) => {
-      const webview = document.querySelector(`[data-paseo-browser-id="${id}"]`);
+      const webview = document.querySelector(`[data-codius-browser-id="${id}"]`);
       return (
-        webview?.parentElement?.id === "paseo-browser-resident-webviews" &&
+        webview?.parentElement?.id === "codius-browser-resident-webviews" &&
         typeof webview.getWebContentsId === "function" &&
         webview.getWebContentsId() !== previousWebContentsId
       );
@@ -356,14 +356,14 @@ async function runRegression({ page, client, serverId, targetUrl }) {
 
 async function main() {
   const artifactDir =
-    process.env.PASEO_TAB_BRIDGE_E2E_ARTIFACT_DIR ??
-    fs.mkdtempSync(path.join(os.tmpdir(), "paseo-tab-bridge-e2e-artifacts-"));
-  const runtimeDir = fs.mkdtempSync(path.join(os.tmpdir(), "paseo-tab-bridge-e2e-"));
+    process.env.CODIUS_TAB_BRIDGE_E2E_ARTIFACT_DIR ??
+    fs.mkdtempSync(path.join(os.tmpdir(), "codius-tab-bridge-e2e-artifacts-"));
+  const runtimeDir = fs.mkdtempSync(path.join(os.tmpdir(), "codius-tab-bridge-e2e-"));
   fs.mkdirSync(artifactDir, { recursive: true });
-  const paseoHome = path.join(runtimeDir, "paseo-home");
+  const codiusHome = path.join(runtimeDir, "codius-home");
   const userData = path.join(runtimeDir, "electron-user-data");
   const workspaceRoot = path.join(runtimeDir, "workspaces");
-  fs.mkdirSync(paseoHome, { recursive: true });
+  fs.mkdirSync(codiusHome, { recursive: true });
 
   const [daemonPort, expoPort, cdpPort] = await Promise.all([
     reservePort(),
@@ -371,7 +371,7 @@ async function main() {
     reservePort(),
   ]);
   const listen = `127.0.0.1:${daemonPort}`;
-  seedPaseoHome(paseoHome, listen, workspaceRoot);
+  seedCodiusHome(codiusHome, listen, workspaceRoot);
   const target = await startTargetPage();
   const children = [];
   let browser = null;
@@ -380,13 +380,13 @@ async function main() {
   try {
     const commonEnv = {
       ...process.env,
-      PASEO_HOME: paseoHome,
-      PASEO_LISTEN: listen,
-      PASEO_DAEMON_ENDPOINT: `localhost:${daemonPort}`,
-      PASEO_CORS_ORIGINS: "*",
-      PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD: "0",
-      PASEO_DICTATION_ENABLED: "0",
-      PASEO_VOICE_MODE_ENABLED: "0",
+      CODIUS_HOME: codiusHome,
+      CODIUS_LISTEN: listen,
+      CODIUS_DAEMON_ENDPOINT: `localhost:${daemonPort}`,
+      CODIUS_CORS_ORIGINS: "*",
+      CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD: "0",
+      CODIUS_DICTATION_ENABLED: "0",
+      CODIUS_VOICE_MODE_ENABLED: "0",
       FORCE_COLOR: "0",
       NO_COLOR: "1",
     };
@@ -394,7 +394,7 @@ async function main() {
       "daemon",
       process.execPath,
       ["--import", "tsx", path.join(rootDir, "packages/server/scripts/dev-runner.ts")],
-      { cwd: rootDir, env: { ...commonEnv, PASEO_NODE_ENV: "development" } },
+      { cwd: rootDir, env: { ...commonEnv, CODIUS_NODE_ENV: "development" } },
       artifactDir,
     );
     children.push(daemon.child);
@@ -420,9 +420,9 @@ async function main() {
           ...commonEnv,
           EXPO_PORT: String(expoPort),
           EXPO_DEV_URL: `http://localhost:${expoPort}`,
-          PASEO_ELECTRON_REMOTE_DEBUGGING_PORT: String(cdpPort),
-          PASEO_ELECTRON_USER_DATA_DIR: userData,
-          PASEO_ELECTRON_FLAGS: `--remote-debugging-address=127.0.0.1 --remote-debugging-port=${cdpPort}`,
+          CODIUS_ELECTRON_REMOTE_DEBUGGING_PORT: String(cdpPort),
+          CODIUS_ELECTRON_USER_DATA_DIR: userData,
+          CODIUS_ELECTRON_FLAGS: `--remote-debugging-address=127.0.0.1 --remote-debugging-port=${cdpPort}`,
         },
       },
       artifactDir,

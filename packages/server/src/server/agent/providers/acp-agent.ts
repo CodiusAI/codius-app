@@ -357,7 +357,7 @@ export function createLoggedNdJsonStream(
 
 // Lets a provider that publishes its slash commands through a vendor-specific
 // ACP extension notification (rather than the standard
-// `available_commands_update` session update) translate that payload into Paseo
+// `available_commands_update` session update) translate that payload into Codius
 // slash commands, without the generic ACP session/client carrying any vendor
 // knowledge. Return the parsed commands (possibly empty) for a notification this
 // provider owns, or null to ignore notifications it does not handle.
@@ -1067,7 +1067,7 @@ export class ACPAgentClient implements AgentClient {
               this.clientCapabilityMeta,
               this.clientCapabilities,
             ),
-            clientInfo: { name: "Paseo", version: "dev" },
+            clientInfo: { name: "Codius", version: "dev" },
           }),
           transport.spawnError,
           ...(initializeTimeoutPromise ? [initializeTimeoutPromise] : []),
@@ -2367,7 +2367,7 @@ export class ACPAgentSession implements AgentSession, ACPClient {
           this.clientCapabilityMeta,
           this.clientCapabilities,
         ),
-        clientInfo: { name: "Paseo", version: "dev" },
+        clientInfo: { name: "Codius", version: "dev" },
       }),
     );
 

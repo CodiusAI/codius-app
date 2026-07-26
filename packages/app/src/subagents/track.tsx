@@ -204,7 +204,7 @@ function SubagentsTrackRow({
             <Text style={styles.rowLabel} numberOfLines={1}>
               {displayLabel}
             </Text>
-            {row.kind === "paseo" ? (
+            {row.kind === "codius" ? (
               <SubagentRowActions
                 rowId={row.id}
                 displayLabel={displayLabel}

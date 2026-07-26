@@ -4,170 +4,170 @@
 
 ### Added
 
-- Open the complete Changes view as a workspace tab ([#2298](https://github.com/getpaseo/paseo/pull/2298) by [@nikuscs](https://github.com/nikuscs))
-- Add files to chat directly from Files and Changes ([#2275](https://github.com/getpaseo/paseo/pull/2275) by [@nikuscs](https://github.com/nikuscs))
-- Open existing agents from Paseo links or the CLI ([#2324](https://github.com/getpaseo/paseo/pull/2324))
-- Use Oh My Pi's Write Approval mode to allow reads while requiring approval for changes ([#2228](https://github.com/getpaseo/paseo/pull/2228) by [@theslava](https://github.com/theslava))
+- Open the complete Changes view as a workspace tab ([#2298](https://github.com/prismosoft/codius-desktop/pull/2298) by [@nikuscs](https://github.com/nikuscs))
+- Add files to chat directly from Files and Changes ([#2275](https://github.com/prismosoft/codius-desktop/pull/2275) by [@nikuscs](https://github.com/nikuscs))
+- Open existing agents from Codius links or the CLI ([#2324](https://github.com/prismosoft/codius-desktop/pull/2324))
+- Use Oh My Pi's Write Approval mode to allow reads while requiring approval for changes ([#2228](https://github.com/prismosoft/codius-desktop/pull/2228) by [@theslava](https://github.com/theslava))
 
 ### Improved
 
-- Usage bars now warn as provider limits approach ([#2322](https://github.com/getpaseo/paseo/pull/2322) by [@cleiter](https://github.com/cleiter))
-- Oh My Pi advisor results now retain their structure and severity ([#2219](https://github.com/getpaseo/paseo/pull/2219) by [@ebg1223](https://github.com/ebg1223))
+- Usage bars now warn as provider limits approach ([#2322](https://github.com/prismosoft/codius-desktop/pull/2322) by [@cleiter](https://github.com/cleiter))
+- Oh My Pi advisor results now retain their structure and severity ([#2219](https://github.com/prismosoft/codius-desktop/pull/2219) by [@ebg1223](https://github.com/ebg1223))
 
 ### Fixed
 
-- Notifications now open the correct workspace and agent ([#2331](https://github.com/getpaseo/paseo/pull/2331))
-- Archived agents can be restored directly from History ([#2316](https://github.com/getpaseo/paseo/pull/2316))
-- CLI agent runs stay in the current workspace unless a new workspace is requested ([#2315](https://github.com/getpaseo/paseo/pull/2315))
-- Oh My Pi slash commands now include commands from every supported source ([#2175](https://github.com/getpaseo/paseo/pull/2175) by [@bendavid](https://github.com/bendavid))
-- Oh My Pi chats no longer stay stuck as running after delayed or incomplete completion events ([#2261](https://github.com/getpaseo/paseo/pull/2261), [#2282](https://github.com/getpaseo/paseo/pull/2282) by [@isac322](https://github.com/isac322))
+- Notifications now open the correct workspace and agent ([#2331](https://github.com/prismosoft/codius-desktop/pull/2331))
+- Archived agents can be restored directly from History ([#2316](https://github.com/prismosoft/codius-desktop/pull/2316))
+- CLI agent runs stay in the current workspace unless a new workspace is requested ([#2315](https://github.com/prismosoft/codius-desktop/pull/2315))
+- Oh My Pi slash commands now include commands from every supported source ([#2175](https://github.com/prismosoft/codius-desktop/pull/2175) by [@bendavid](https://github.com/bendavid))
+- Oh My Pi chats no longer stay stuck as running after delayed or incomplete completion events ([#2261](https://github.com/prismosoft/codius-desktop/pull/2261), [#2282](https://github.com/prismosoft/codius-desktop/pull/2282) by [@isac322](https://github.com/isac322))
 
 ## 0.2.0-beta.2 - 2026-07-22
 
 ### Added
 
-- Edit files directly in the web and desktop apps ([#2270](https://github.com/getpaseo/paseo/pull/2270), [#2309](https://github.com/getpaseo/paseo/pull/2309))
-- Switch models from the Command Center for active agents and new drafts ([#2147](https://github.com/getpaseo/paseo/pull/2147) by [@kedrzu](https://github.com/kedrzu))
-- Configure workspace service ports with a fixed range or external allocator ([#2165](https://github.com/getpaseo/paseo/pull/2165) by [@mcowger](https://github.com/mcowger))
-- Search keyboard shortcuts by action, note, or key combination ([#2160](https://github.com/getpaseo/paseo/pull/2160))
-- Turn thinking off for supported Claude models ([#2257](https://github.com/getpaseo/paseo/pull/2257))
-- Use Pi's Max thinking level ([#2267](https://github.com/getpaseo/paseo/pull/2267) by [@ByteTrue](https://github.com/ByteTrue))
+- Edit files directly in the web and desktop apps ([#2270](https://github.com/prismosoft/codius-desktop/pull/2270), [#2309](https://github.com/prismosoft/codius-desktop/pull/2309))
+- Switch models from the Command Center for active agents and new drafts ([#2147](https://github.com/prismosoft/codius-desktop/pull/2147) by [@kedrzu](https://github.com/kedrzu))
+- Configure workspace service ports with a fixed range or external allocator ([#2165](https://github.com/prismosoft/codius-desktop/pull/2165) by [@mcowger](https://github.com/mcowger))
+- Search keyboard shortcuts by action, note, or key combination ([#2160](https://github.com/prismosoft/codius-desktop/pull/2160))
+- Turn thinking off for supported Claude models ([#2257](https://github.com/prismosoft/codius-desktop/pull/2257))
+- Use Pi's Max thinking level ([#2267](https://github.com/prismosoft/codius-desktop/pull/2267) by [@ByteTrue](https://github.com/ByteTrue))
 
 ### Improved
 
-- Improved parity of CLI and MCP tools for workspace, agent and schedule management ([#2186](https://github.com/getpaseo/paseo/pull/2186))
-- Pasted PR/MR links in the composer become auto-selected as a checkout option ([#2290](https://github.com/getpaseo/paseo/pull/2290))
-- Projects, workspaces and chat syncing is more efficient ([#2028](https://github.com/getpaseo/paseo/pull/2028), [#2185](https://github.com/getpaseo/paseo/pull/2185), [#2196](https://github.com/getpaseo/paseo/pull/2196), [#2206](https://github.com/getpaseo/paseo/pull/2206), [#2259](https://github.com/getpaseo/paseo/pull/2259), [#2263](https://github.com/getpaseo/paseo/pull/2263))
-- Make project creation more explicit ([#2098](https://github.com/getpaseo/paseo/pull/2098), [#2187](https://github.com/getpaseo/paseo/pull/2187))
-- Idle agents release processes automatically and resume when needed ([#2203](https://github.com/getpaseo/paseo/pull/2203), [#2209](https://github.com/getpaseo/paseo/pull/2209))
-- New Claude and Codex agents default to safer automatic approval modes when supported ([#2213](https://github.com/getpaseo/paseo/pull/2213))
-- Oh My Pi now supports Max thinking in imported and new sessions ([#2191](https://github.com/getpaseo/paseo/pull/2191) by [@mvanhorn](https://github.com/mvanhorn))
-- Commit history now includes recent pushed and base-branch commits ([#2312](https://github.com/getpaseo/paseo/pull/2312))
-- Permission and thinking changes made during a turn now show when they take effect ([#2201](https://github.com/getpaseo/paseo/pull/2201))
+- Improved parity of CLI and MCP tools for workspace, agent and schedule management ([#2186](https://github.com/prismosoft/codius-desktop/pull/2186))
+- Pasted PR/MR links in the composer become auto-selected as a checkout option ([#2290](https://github.com/prismosoft/codius-desktop/pull/2290))
+- Projects, workspaces and chat syncing is more efficient ([#2028](https://github.com/prismosoft/codius-desktop/pull/2028), [#2185](https://github.com/prismosoft/codius-desktop/pull/2185), [#2196](https://github.com/prismosoft/codius-desktop/pull/2196), [#2206](https://github.com/prismosoft/codius-desktop/pull/2206), [#2259](https://github.com/prismosoft/codius-desktop/pull/2259), [#2263](https://github.com/prismosoft/codius-desktop/pull/2263))
+- Make project creation more explicit ([#2098](https://github.com/prismosoft/codius-desktop/pull/2098), [#2187](https://github.com/prismosoft/codius-desktop/pull/2187))
+- Idle agents release processes automatically and resume when needed ([#2203](https://github.com/prismosoft/codius-desktop/pull/2203), [#2209](https://github.com/prismosoft/codius-desktop/pull/2209))
+- New Claude and Codex agents default to safer automatic approval modes when supported ([#2213](https://github.com/prismosoft/codius-desktop/pull/2213))
+- Oh My Pi now supports Max thinking in imported and new sessions ([#2191](https://github.com/prismosoft/codius-desktop/pull/2191) by [@mvanhorn](https://github.com/mvanhorn))
+- Commit history now includes recent pushed and base-branch commits ([#2312](https://github.com/prismosoft/codius-desktop/pull/2312))
+- Permission and thinking changes made during a turn now show when they take effect ([#2201](https://github.com/prismosoft/codius-desktop/pull/2201))
 
 ### Fixed
 
-- Reused branches no longer attach an unrelated merged or closed pull request ([#2172](https://github.com/getpaseo/paseo/pull/2172) by [@nllptrx](https://github.com/nllptrx))
-- Pi compaction waits for long summaries instead of reporting a false timeout ([#2181](https://github.com/getpaseo/paseo/pull/2181) by [@jasonhnd](https://github.com/jasonhnd))
-- Pi chats keep new messages aligned with the correct history after an idle agent resumes ([#2313](https://github.com/getpaseo/paseo/pull/2313))
-- OpenCode follow-ups triggered by completed background work now remain visible ([#2258](https://github.com/getpaseo/paseo/pull/2258))
-- Codex no longer shows the parent agent as a phantom subagent ([#2214](https://github.com/getpaseo/paseo/pull/2214))
-- Local dictation now works in Nix-packaged installations ([#1587](https://github.com/getpaseo/paseo/pull/1587) by [@yhori991](https://github.com/yhori991))
-- The composer remains visible after submitting dictated text and returning to the app ([#2194](https://github.com/getpaseo/paseo/pull/2194))
-- Desktop's dictation shortcut remains responsive after finishing a recording ([#2268](https://github.com/getpaseo/paseo/pull/2268))
-- Projects can be renamed before their first workspace ([#2252](https://github.com/getpaseo/paseo/pull/2252) by [@albertodeago](https://github.com/albertodeago))
-- Settings keep showing a connected remote host when the local daemon is stopped ([#1749](https://github.com/getpaseo/paseo/pull/1749) by [@dwyanewang](https://github.com/dwyanewang))
-- Pinned workspaces no longer disappear briefly when reopening the compact sidebar ([#2210](https://github.com/getpaseo/paseo/pull/2210))
-- Session imports find older matches from the current workspace ([#2265](https://github.com/getpaseo/paseo/pull/2265) by [@nikuscs](https://github.com/nikuscs))
+- Reused branches no longer attach an unrelated merged or closed pull request ([#2172](https://github.com/prismosoft/codius-desktop/pull/2172) by [@nllptrx](https://github.com/nllptrx))
+- Pi compaction waits for long summaries instead of reporting a false timeout ([#2181](https://github.com/prismosoft/codius-desktop/pull/2181) by [@jasonhnd](https://github.com/jasonhnd))
+- Pi chats keep new messages aligned with the correct history after an idle agent resumes ([#2313](https://github.com/prismosoft/codius-desktop/pull/2313))
+- OpenCode follow-ups triggered by completed background work now remain visible ([#2258](https://github.com/prismosoft/codius-desktop/pull/2258))
+- Codex no longer shows the parent agent as a phantom subagent ([#2214](https://github.com/prismosoft/codius-desktop/pull/2214))
+- Local dictation now works in Nix-packaged installations ([#1587](https://github.com/prismosoft/codius-desktop/pull/1587) by [@yhori991](https://github.com/yhori991))
+- The composer remains visible after submitting dictated text and returning to the app ([#2194](https://github.com/prismosoft/codius-desktop/pull/2194))
+- Desktop's dictation shortcut remains responsive after finishing a recording ([#2268](https://github.com/prismosoft/codius-desktop/pull/2268))
+- Projects can be renamed before their first workspace ([#2252](https://github.com/prismosoft/codius-desktop/pull/2252) by [@albertodeago](https://github.com/albertodeago))
+- Settings keep showing a connected remote host when the local daemon is stopped ([#1749](https://github.com/prismosoft/codius-desktop/pull/1749) by [@dwyanewang](https://github.com/dwyanewang))
+- Pinned workspaces no longer disappear briefly when reopening the compact sidebar ([#2210](https://github.com/prismosoft/codius-desktop/pull/2210))
+- Session imports find older matches from the current workspace ([#2265](https://github.com/prismosoft/codius-desktop/pull/2265) by [@nikuscs](https://github.com/nikuscs))
 
 ## 0.2.0-beta.1 - 2026-07-17
 
 ### Added
 
-- Work with pull requests and merge requests from GitLab, Gitea, Forgejo, and Codeberg ([#1913](https://github.com/getpaseo/paseo/pull/1913) by [@nllptrx](https://github.com/nllptrx))
-- Use Oh My Pi as a native agent provider ([#2067](https://github.com/getpaseo/paseo/pull/2067) by [@ebg1223](https://github.com/ebg1223))
-- Browse branch commit history and open individual commit diffs from Changes ([#1534](https://github.com/getpaseo/paseo/pull/1534), [#2146](https://github.com/getpaseo/paseo/pull/2146) by [@adradr](https://github.com/adradr))
-- Open workspace files in more installed editors and file managers ([#2119](https://github.com/getpaseo/paseo/pull/2119))
-- Remove individual custom providers from Settings ([#1951](https://github.com/getpaseo/paseo/pull/1951))
+- Work with pull requests and merge requests from GitLab, Gitea, Forgejo, and Codeberg ([#1913](https://github.com/prismosoft/codius-desktop/pull/1913) by [@nllptrx](https://github.com/nllptrx))
+- Use Oh My Pi as a native agent provider ([#2067](https://github.com/prismosoft/codius-desktop/pull/2067) by [@ebg1223](https://github.com/ebg1223))
+- Browse branch commit history and open individual commit diffs from Changes ([#1534](https://github.com/prismosoft/codius-desktop/pull/1534), [#2146](https://github.com/prismosoft/codius-desktop/pull/2146) by [@adradr](https://github.com/adradr))
+- Open workspace files in more installed editors and file managers ([#2119](https://github.com/prismosoft/codius-desktop/pull/2119))
+- Remove individual custom providers from Settings ([#1951](https://github.com/prismosoft/codius-desktop/pull/1951))
 
 ### Improved
 
 - ACP provider catalog updated to the latest registry versions
-- Workspace focus mode stays confined to the active workspace with a visible exit control ([#2151](https://github.com/getpaseo/paseo/pull/2151))
-- Desktop installs the newest available update instead of a cached older release ([#2149](https://github.com/getpaseo/paseo/pull/2149))
-- Remote daemon update failures now show specific recovery steps ([#2120](https://github.com/getpaseo/paseo/pull/2120))
-- Agent history errors now appear immediately instead of after a timeout ([#2124](https://github.com/getpaseo/paseo/pull/2124))
+- Workspace focus mode stays confined to the active workspace with a visible exit control ([#2151](https://github.com/prismosoft/codius-desktop/pull/2151))
+- Desktop installs the newest available update instead of a cached older release ([#2149](https://github.com/prismosoft/codius-desktop/pull/2149))
+- Remote daemon update failures now show specific recovery steps ([#2120](https://github.com/prismosoft/codius-desktop/pull/2120))
+- Agent history errors now appear immediately instead of after a timeout ([#2124](https://github.com/prismosoft/codius-desktop/pull/2124))
 
 ### Fixed
 
-- Terminal panes no longer remain at 80x24 after focus or visibility changes ([#2059](https://github.com/getpaseo/paseo/pull/2059), [#2154](https://github.com/getpaseo/paseo/pull/2154) by [@cleiter](https://github.com/cleiter))
-- Sign-in popups in the desktop browser now complete successfully ([#2137](https://github.com/getpaseo/paseo/pull/2137))
-- Browser typing and shortcuts no longer submit the active Paseo prompt ([#1982](https://github.com/getpaseo/paseo/pull/1982))
-- Agent browser tabs remain controllable after switching workspaces ([#2156](https://github.com/getpaseo/paseo/pull/2156))
-- Archived workspaces now show the correct Unarchive or Restore action ([#2002](https://github.com/getpaseo/paseo/pull/2002))
-- Archived sessions can be reimported into the current workspace ([#2123](https://github.com/getpaseo/paseo/pull/2123))
-- Browser shortcuts no longer appear where browser tabs are unavailable ([#2116](https://github.com/getpaseo/paseo/pull/2116) by [@jasonhnd](https://github.com/jasonhnd))
+- Terminal panes no longer remain at 80x24 after focus or visibility changes ([#2059](https://github.com/prismosoft/codius-desktop/pull/2059), [#2154](https://github.com/prismosoft/codius-desktop/pull/2154) by [@cleiter](https://github.com/cleiter))
+- Sign-in popups in the desktop browser now complete successfully ([#2137](https://github.com/prismosoft/codius-desktop/pull/2137))
+- Browser typing and shortcuts no longer submit the active Codius prompt ([#1982](https://github.com/prismosoft/codius-desktop/pull/1982))
+- Agent browser tabs remain controllable after switching workspaces ([#2156](https://github.com/prismosoft/codius-desktop/pull/2156))
+- Archived workspaces now show the correct Unarchive or Restore action ([#2002](https://github.com/prismosoft/codius-desktop/pull/2002))
+- Archived sessions can be reimported into the current workspace ([#2123](https://github.com/prismosoft/codius-desktop/pull/2123))
+- Browser shortcuts no longer appear where browser tabs are unavailable ([#2116](https://github.com/prismosoft/codius-desktop/pull/2116) by [@jasonhnd](https://github.com/jasonhnd))
 
 ## 0.1.110 - 2026-07-16
 
 ### Fixed
 
-- Kimi and other ACP agents now stay marked as running while a response is actively streaming ([#2148](https://github.com/getpaseo/paseo/pull/2148))
+- Kimi and other ACP agents now stay marked as running while a response is actively streaming ([#2148](https://github.com/prismosoft/codius-desktop/pull/2148))
 
 ## 0.1.109 - 2026-07-16
 
 > **Important update notice**
 >
-> If you installed Paseo Desktop 0.1.108, you need to [download and reinstall Paseo manually](https://paseo.sh/download) to get this fix. The bug in 0.1.108 prevents its automatic updater from installing 0.1.109. Users on 0.1.107 or earlier can update normally.
+> If you installed Codius Desktop 0.1.108, you need to [download and reinstall Codius manually](https://codius.ai/download) to get this fix. The bug in 0.1.108 prevents its automatic updater from installing 0.1.109. Users on 0.1.107 or earlier can update normally.
 
 ### Fixed
 
-- Paseo Desktop no longer gets stuck connecting or loses native window controls after updating ([#2111](https://github.com/getpaseo/paseo/pull/2111) by [@cleiter](https://github.com/cleiter))
+- Codius Desktop no longer gets stuck connecting or loses native window controls after updating ([#2111](https://github.com/prismosoft/codius-desktop/pull/2111) by [@cleiter](https://github.com/cleiter))
 
 ## 0.1.108 - 2026-07-16
 
 ### Added
 
-- Create a new project folder or clone a GitHub repository from Add Project ([#1331](https://github.com/getpaseo/paseo/pull/1331), [#2045](https://github.com/getpaseo/paseo/pull/2045), [#2097](https://github.com/getpaseo/paseo/pull/2097) by [@mcowger](https://github.com/mcowger))
-- Search for and open workspaces from the search menu ([#2096](https://github.com/getpaseo/paseo/pull/2096))
-- Pin workspaces to the top of the sidebar ([#1981](https://github.com/getpaseo/paseo/pull/1981) by [@half144](https://github.com/half144))
-- Summarize tool calls in a single collapsed item with a new appearance setting ([#2031](https://github.com/getpaseo/paseo/pull/2031), [#2069](https://github.com/getpaseo/paseo/pull/2069), [#2090](https://github.com/getpaseo/paseo/pull/2090) by [@mcowger](https://github.com/mcowger))
-- Save browser cookies and site data across tabs and restarts ([#2089](https://github.com/getpaseo/paseo/pull/2089))
-- Claude and Codex subagents now show their actual names, with a new option to archive finished Claude Code, Codex, and OpenCode subagents ([#2073](https://github.com/getpaseo/paseo/pull/2073))
-- Fork chats from failed turns ([#2063](https://github.com/getpaseo/paseo/pull/2063))
+- Create a new project folder or clone a GitHub repository from Add Project ([#1331](https://github.com/prismosoft/codius-desktop/pull/1331), [#2045](https://github.com/prismosoft/codius-desktop/pull/2045), [#2097](https://github.com/prismosoft/codius-desktop/pull/2097) by [@mcowger](https://github.com/mcowger))
+- Search for and open workspaces from the search menu ([#2096](https://github.com/prismosoft/codius-desktop/pull/2096))
+- Pin workspaces to the top of the sidebar ([#1981](https://github.com/prismosoft/codius-desktop/pull/1981) by [@half144](https://github.com/half144))
+- Summarize tool calls in a single collapsed item with a new appearance setting ([#2031](https://github.com/prismosoft/codius-desktop/pull/2031), [#2069](https://github.com/prismosoft/codius-desktop/pull/2069), [#2090](https://github.com/prismosoft/codius-desktop/pull/2090) by [@mcowger](https://github.com/mcowger))
+- Save browser cookies and site data across tabs and restarts ([#2089](https://github.com/prismosoft/codius-desktop/pull/2089))
+- Claude and Codex subagents now show their actual names, with a new option to archive finished Claude Code, Codex, and OpenCode subagents ([#2073](https://github.com/prismosoft/codius-desktop/pull/2073))
+- Fork chats from failed turns ([#2063](https://github.com/prismosoft/codius-desktop/pull/2063))
 
 ### Improved
 
-- Permission modes have clearer icons ([#1980](https://github.com/getpaseo/paseo/pull/1980) by [@cleiter](https://github.com/cleiter))
-- Desktop stays usable in narrower windows ([#1983](https://github.com/getpaseo/paseo/pull/1983))
-- Sidebar controls stay in place when desktop panels open and close ([#2078](https://github.com/getpaseo/paseo/pull/2078))
-- Typing in long drafts is smoother ([#2086](https://github.com/getpaseo/paseo/pull/2086))
-- Codex terminal commands always appear in chat, even when they have no output ([#2037](https://github.com/getpaseo/paseo/pull/2037))
+- Permission modes have clearer icons ([#1980](https://github.com/prismosoft/codius-desktop/pull/1980) by [@cleiter](https://github.com/cleiter))
+- Desktop stays usable in narrower windows ([#1983](https://github.com/prismosoft/codius-desktop/pull/1983))
+- Sidebar controls stay in place when desktop panels open and close ([#2078](https://github.com/prismosoft/codius-desktop/pull/2078))
+- Typing in long drafts is smoother ([#2086](https://github.com/prismosoft/codius-desktop/pull/2086))
+- Codex terminal commands always appear in chat, even when they have no output ([#2037](https://github.com/prismosoft/codius-desktop/pull/2037))
 
 ### Fixed
 
-- New Workspace keeps your prompt and attachments when you switch projects or hosts ([#2030](https://github.com/getpaseo/paseo/pull/2030), [#2036](https://github.com/getpaseo/paseo/pull/2036))
-- OpenCode sessions close without crashing Paseo ([#2027](https://github.com/getpaseo/paseo/pull/2027) by [@mcowger](https://github.com/mcowger))
-- Pi slash commands no longer leave chats stuck as running ([#2066](https://github.com/getpaseo/paseo/pull/2066) by [@ebg1223](https://github.com/ebg1223))
-- Background-agent updates now appear after the main reply ([#2058](https://github.com/getpaseo/paseo/pull/2058) by [@1254087415](https://github.com/1254087415))
-- Codex subagents no longer disappear from the Subagents track ([#2068](https://github.com/getpaseo/paseo/pull/2068))
-- Forked chats open ready to edit in their new tab ([#2038](https://github.com/getpaseo/paseo/pull/2038))
-- Paseo Desktop opens normally after an interrupted shutdown ([#1962](https://github.com/getpaseo/paseo/pull/1962))
-- Keyboard shortcuts now work with `-`, `=`, `;`, and `'` ([#2047](https://github.com/getpaseo/paseo/pull/2047) by [@OnCloud125252](https://github.com/OnCloud125252))
-- Codebuddy Code models now appear in the model picker ([#1979](https://github.com/getpaseo/paseo/pull/1979) by [@park0er](https://github.com/park0er))
-- Workspace search now includes OpenCode commands and workflows ([#2049](https://github.com/getpaseo/paseo/pull/2049))
-- Nix installations now include the Paseo web app ([#1978](https://github.com/getpaseo/paseo/pull/1978) by [@liamdiprose](https://github.com/liamdiprose))
+- New Workspace keeps your prompt and attachments when you switch projects or hosts ([#2030](https://github.com/prismosoft/codius-desktop/pull/2030), [#2036](https://github.com/prismosoft/codius-desktop/pull/2036))
+- OpenCode sessions close without crashing Codius ([#2027](https://github.com/prismosoft/codius-desktop/pull/2027) by [@mcowger](https://github.com/mcowger))
+- Pi slash commands no longer leave chats stuck as running ([#2066](https://github.com/prismosoft/codius-desktop/pull/2066) by [@ebg1223](https://github.com/ebg1223))
+- Background-agent updates now appear after the main reply ([#2058](https://github.com/prismosoft/codius-desktop/pull/2058) by [@1254087415](https://github.com/1254087415))
+- Codex subagents no longer disappear from the Subagents track ([#2068](https://github.com/prismosoft/codius-desktop/pull/2068))
+- Forked chats open ready to edit in their new tab ([#2038](https://github.com/prismosoft/codius-desktop/pull/2038))
+- Codius Desktop opens normally after an interrupted shutdown ([#1962](https://github.com/prismosoft/codius-desktop/pull/1962))
+- Keyboard shortcuts now work with `-`, `=`, `;`, and `'` ([#2047](https://github.com/prismosoft/codius-desktop/pull/2047) by [@OnCloud125252](https://github.com/OnCloud125252))
+- Codebuddy Code models now appear in the model picker ([#1979](https://github.com/prismosoft/codius-desktop/pull/1979) by [@park0er](https://github.com/park0er))
+- Workspace search now includes OpenCode commands and workflows ([#2049](https://github.com/prismosoft/codius-desktop/pull/2049))
+- Nix installations now include the Codius web app ([#1978](https://github.com/prismosoft/codius-desktop/pull/1978) by [@liamdiprose](https://github.com/liamdiprose))
 
 ## 0.1.107 - 2026-07-13
 
 ### Added
 
-- Inspect provider-created subagents and their live conversations from the Subagents track ([#2013](https://github.com/getpaseo/paseo/pull/2013) by [@omercnet](https://github.com/omercnet))
-- Fork chats with every supported agent provider ([#2022](https://github.com/getpaseo/paseo/pull/2022))
+- Inspect provider-created subagents and their live conversations from the Subagents track ([#2013](https://github.com/prismosoft/codius-desktop/pull/2013) by [@omercnet](https://github.com/omercnet))
+- Fork chats with every supported agent provider ([#2022](https://github.com/prismosoft/codius-desktop/pull/2022))
 
 ### Improved
 
-- Add projects directly from New Workspace when none are configured ([#2026](https://github.com/getpaseo/paseo/pull/2026))
-- New terminals open at the correct size immediately ([#2023](https://github.com/getpaseo/paseo/pull/2023) by [@cleiter](https://github.com/cleiter))
-- Sidebar footer actions now explain themselves with tooltips ([#2025](https://github.com/getpaseo/paseo/pull/2025))
-- Codex shell tool calls show only the command being run ([#2029](https://github.com/getpaseo/paseo/pull/2029))
-- Custom ACP providers keep file and terminal work in the agent environment by default ([#2024](https://github.com/getpaseo/paseo/pull/2024))
+- Add projects directly from New Workspace when none are configured ([#2026](https://github.com/prismosoft/codius-desktop/pull/2026))
+- New terminals open at the correct size immediately ([#2023](https://github.com/prismosoft/codius-desktop/pull/2023) by [@cleiter](https://github.com/cleiter))
+- Sidebar footer actions now explain themselves with tooltips ([#2025](https://github.com/prismosoft/codius-desktop/pull/2025))
+- Codex shell tool calls show only the command being run ([#2029](https://github.com/prismosoft/codius-desktop/pull/2029))
+- Custom ACP providers keep file and terminal work in the agent environment by default ([#2024](https://github.com/prismosoft/codius-desktop/pull/2024))
 - ACP provider catalog updated to the latest registry versions
 
 ### Fixed
 
 - Large tables no longer make iOS chats unresponsive
-- Chat controls remain clickable near the scroll-to-bottom button ([#2007](https://github.com/getpaseo/paseo/pull/2007))
-- Oversized tool output no longer slows or floods chat timelines ([#2020](https://github.com/getpaseo/paseo/pull/2020))
-- Cross-provider subagents can use providers without mode settings ([#2000](https://github.com/getpaseo/paseo/pull/2000) by [@githubbzxs](https://github.com/githubbzxs))
-- Pi's internal metadata tasks no longer clutter normal session history ([#1999](https://github.com/getpaseo/paseo/pull/1999) by [@githubbzxs](https://github.com/githubbzxs))
-- Pi chats remain usable after canceling extension commands ([#2019](https://github.com/getpaseo/paseo/pull/2019))
+- Chat controls remain clickable near the scroll-to-bottom button ([#2007](https://github.com/prismosoft/codius-desktop/pull/2007))
+- Oversized tool output no longer slows or floods chat timelines ([#2020](https://github.com/prismosoft/codius-desktop/pull/2020))
+- Cross-provider subagents can use providers without mode settings ([#2000](https://github.com/prismosoft/codius-desktop/pull/2000) by [@githubbzxs](https://github.com/githubbzxs))
+- Pi's internal metadata tasks no longer clutter normal session history ([#1999](https://github.com/prismosoft/codius-desktop/pull/1999) by [@githubbzxs](https://github.com/githubbzxs))
+- Pi chats remain usable after canceling extension commands ([#2019](https://github.com/prismosoft/codius-desktop/pull/2019))
 
 ## 0.1.106 - 2026-07-12
 
 ### Added
 
-- Approve Codex MCP permission requests in Paseo ([#2001](https://github.com/getpaseo/paseo/pull/2001))
+- Approve Codex MCP permission requests in Codius ([#2001](https://github.com/prismosoft/codius-desktop/pull/2001))
 
 ### Improved
 
@@ -175,145 +175,145 @@
 
 ### Fixed
 
-- Reduced mobile chat freezes and blank screens when switching workspaces while agents are streaming ([#1989](https://github.com/getpaseo/paseo/pull/1989))
-- OpenCode sessions start reliably instead of occasionally losing the first turn ([#2015](https://github.com/getpaseo/paseo/pull/2015) by [@mcowger](https://github.com/mcowger))
+- Reduced mobile chat freezes and blank screens when switching workspaces while agents are streaming ([#1989](https://github.com/prismosoft/codius-desktop/pull/1989))
+- OpenCode sessions start reliably instead of occasionally losing the first turn ([#2015](https://github.com/prismosoft/codius-desktop/pull/2015) by [@mcowger](https://github.com/mcowger))
 - Switching between workspaces no longer flashes a white screen
-- Pi keeps your existing MCP tools and settings when Paseo adds its own ([#1990](https://github.com/getpaseo/paseo/pull/1990) by [@mcowger](https://github.com/mcowger))
+- Pi keeps your existing MCP tools and settings when Codius adds its own ([#1990](https://github.com/prismosoft/codius-desktop/pull/1990) by [@mcowger](https://github.com/mcowger))
 
 ## 0.1.105 - 2026-07-10
 
 ### Added
 
-- Browse changed files as a collapsible folder tree or flat list ([#1918](https://github.com/getpaseo/paseo/pull/1918), [#1945](https://github.com/getpaseo/paseo/pull/1945) by [@cleiter](https://github.com/cleiter))
-- Always expand agent reasoning with a new appearance setting ([#1943](https://github.com/getpaseo/paseo/pull/1943) by [@mcowger](https://github.com/mcowger))
+- Browse changed files as a collapsible folder tree or flat list ([#1918](https://github.com/prismosoft/codius-desktop/pull/1918), [#1945](https://github.com/prismosoft/codius-desktop/pull/1945) by [@cleiter](https://github.com/cleiter))
+- Always expand agent reasoning with a new appearance setting ([#1943](https://github.com/prismosoft/codius-desktop/pull/1943) by [@mcowger](https://github.com/mcowger))
 
 ### Improved
 
-- Project picker finds folders with fuzzy search and native desktop browsing ([#1968](https://github.com/getpaseo/paseo/pull/1968))
-- Large workspace sidebars stay responsive ([#1966](https://github.com/getpaseo/paseo/pull/1966))
-- Generated workspace names and Git text can use MiniMax M3 ([#1955](https://github.com/getpaseo/paseo/pull/1955) by [@octo-patch](https://github.com/octo-patch))
-- Cursor now exposes thinking and fast mode ([#1952](https://github.com/getpaseo/paseo/pull/1952))
+- Project picker finds folders with fuzzy search and native desktop browsing ([#1968](https://github.com/prismosoft/codius-desktop/pull/1968))
+- Large workspace sidebars stay responsive ([#1966](https://github.com/prismosoft/codius-desktop/pull/1966))
+- Generated workspace names and Git text can use MiniMax M3 ([#1955](https://github.com/prismosoft/codius-desktop/pull/1955) by [@octo-patch](https://github.com/octo-patch))
+- Cursor now exposes thinking and fast mode ([#1952](https://github.com/prismosoft/codius-desktop/pull/1952))
 
 ### Fixed
 
-- Codex stays active and streams correctly while subagents run ([#1967](https://github.com/getpaseo/paseo/pull/1967))
-- Android audio interruptions no longer crash voice mode or leave dictation stuck ([#1941](https://github.com/getpaseo/paseo/pull/1941))
-- Mobile sidebars stay in sync and retain swipe-to-open gestures ([#1953](https://github.com/getpaseo/paseo/pull/1953), [#1976](https://github.com/getpaseo/paseo/pull/1976))
-- Pi text-only models accept image prompts without breaking the session ([#1960](https://github.com/getpaseo/paseo/pull/1960))
-- App render failures show a retryable recovery screen instead of a blank screen ([#1924](https://github.com/getpaseo/paseo/pull/1924))
-- Pi context usage remains visible with older Oh My Pi versions ([#1886](https://github.com/getpaseo/paseo/pull/1886) by [@theslava](https://github.com/theslava))
-- Provider usage popovers no longer error when opened and closed quickly ([#1885](https://github.com/getpaseo/paseo/pull/1885) by [@theslava](https://github.com/theslava))
-- Mobile workspace menus hide desktop-only shortcut badges ([#1964](https://github.com/getpaseo/paseo/pull/1964))
+- Codex stays active and streams correctly while subagents run ([#1967](https://github.com/prismosoft/codius-desktop/pull/1967))
+- Android audio interruptions no longer crash voice mode or leave dictation stuck ([#1941](https://github.com/prismosoft/codius-desktop/pull/1941))
+- Mobile sidebars stay in sync and retain swipe-to-open gestures ([#1953](https://github.com/prismosoft/codius-desktop/pull/1953), [#1976](https://github.com/prismosoft/codius-desktop/pull/1976))
+- Pi text-only models accept image prompts without breaking the session ([#1960](https://github.com/prismosoft/codius-desktop/pull/1960))
+- App render failures show a retryable recovery screen instead of a blank screen ([#1924](https://github.com/prismosoft/codius-desktop/pull/1924))
+- Pi context usage remains visible with older Oh My Pi versions ([#1886](https://github.com/prismosoft/codius-desktop/pull/1886) by [@theslava](https://github.com/theslava))
+- Provider usage popovers no longer error when opened and closed quickly ([#1885](https://github.com/prismosoft/codius-desktop/pull/1885) by [@theslava](https://github.com/theslava))
+- Mobile workspace menus hide desktop-only shortcut badges ([#1964](https://github.com/prismosoft/codius-desktop/pull/1964))
 
 ## 0.1.104 - 2026-07-08
 
 ### Added
 
-- Agents can drive the in-app browser with page snapshots, trusted input, dialogs, and tab controls ([#1881](https://github.com/getpaseo/paseo/pull/1881))
-- Inspect, annotate, and send page elements from a browser tab to the agent ([#1708](https://github.com/getpaseo/paseo/pull/1708) by [@huiliaoning](https://github.com/huiliaoning))
-- Schedules screen to create and manage recurring agents ([#1246](https://github.com/getpaseo/paseo/pull/1246))
-- Open a project from anywhere with Cmd+O ([#1849](https://github.com/getpaseo/paseo/pull/1849))
-- Agents can rename workspaces after they understand the task ([#1876](https://github.com/getpaseo/paseo/pull/1876))
-- Claude Ultra Code is available for supported Claude models ([#1872](https://github.com/getpaseo/paseo/pull/1872))
-- ByteDance TRAE CLI available as an agent provider ([#1831](https://github.com/getpaseo/paseo/pull/1831), [#1896](https://github.com/getpaseo/paseo/pull/1896) by [@park0er](https://github.com/park0er))
+- Agents can drive the in-app browser with page snapshots, trusted input, dialogs, and tab controls ([#1881](https://github.com/prismosoft/codius-desktop/pull/1881))
+- Inspect, annotate, and send page elements from a browser tab to the agent ([#1708](https://github.com/prismosoft/codius-desktop/pull/1708) by [@huiliaoning](https://github.com/huiliaoning))
+- Schedules screen to create and manage recurring agents ([#1246](https://github.com/prismosoft/codius-desktop/pull/1246))
+- Open a project from anywhere with Cmd+O ([#1849](https://github.com/prismosoft/codius-desktop/pull/1849))
+- Agents can rename workspaces after they understand the task ([#1876](https://github.com/prismosoft/codius-desktop/pull/1876))
+- Claude Ultra Code is available for supported Claude models ([#1872](https://github.com/prismosoft/codius-desktop/pull/1872))
+- ByteDance TRAE CLI available as an agent provider ([#1831](https://github.com/prismosoft/codius-desktop/pull/1831), [#1896](https://github.com/prismosoft/codius-desktop/pull/1896) by [@park0er](https://github.com/park0er))
 
 ### Improved
 
-- Manage the built-in daemon from one place in desktop settings ([#1938](https://github.com/getpaseo/paseo/pull/1938))
-- Scheduled and loop runs each get their own workspace in the sidebar ([#1909](https://github.com/getpaseo/paseo/pull/1909), [#1934](https://github.com/getpaseo/paseo/pull/1934))
-- Large provider and model refreshes load faster in the app ([#1895](https://github.com/getpaseo/paseo/pull/1895))
-- Workspaces created by agents now get readable generated names ([#1887](https://github.com/getpaseo/paseo/pull/1887))
-- Browser tabs opened by agents stay in the background until you switch to them ([#1875](https://github.com/getpaseo/paseo/pull/1875))
-- Clearer cards when an agent asks a question ([#1643](https://github.com/getpaseo/paseo/pull/1643) by [@cleiter](https://github.com/cleiter))
-- Diagnostic reports include desktop app logs ([#1914](https://github.com/getpaseo/paseo/pull/1914))
-- Paseo's built-in tools take less context ([#1939](https://github.com/getpaseo/paseo/pull/1939))
+- Manage the built-in daemon from one place in desktop settings ([#1938](https://github.com/prismosoft/codius-desktop/pull/1938))
+- Scheduled and loop runs each get their own workspace in the sidebar ([#1909](https://github.com/prismosoft/codius-desktop/pull/1909), [#1934](https://github.com/prismosoft/codius-desktop/pull/1934))
+- Large provider and model refreshes load faster in the app ([#1895](https://github.com/prismosoft/codius-desktop/pull/1895))
+- Workspaces created by agents now get readable generated names ([#1887](https://github.com/prismosoft/codius-desktop/pull/1887))
+- Browser tabs opened by agents stay in the background until you switch to them ([#1875](https://github.com/prismosoft/codius-desktop/pull/1875))
+- Clearer cards when an agent asks a question ([#1643](https://github.com/prismosoft/codius-desktop/pull/1643) by [@cleiter](https://github.com/cleiter))
+- Diagnostic reports include desktop app logs ([#1914](https://github.com/prismosoft/codius-desktop/pull/1914))
+- Codius's built-in tools take less context ([#1939](https://github.com/prismosoft/codius-desktop/pull/1939))
 
 ### Fixed
 
-- Renamed hosts keep their name after reconnecting ([#1940](https://github.com/getpaseo/paseo/pull/1940))
-- Desktop finds your installed CLIs even when your shell is slow to start ([#1916](https://github.com/getpaseo/paseo/pull/1916))
-- Restarting the daemon from desktop settings works reliably ([#1915](https://github.com/getpaseo/paseo/pull/1915))
-- Restarting the daemon from the bundled CLI keeps it managed by the desktop app ([#1919](https://github.com/getpaseo/paseo/pull/1919))
-- Web UI loads when the daemon is started from the bundled CLI ([#1899](https://github.com/getpaseo/paseo/pull/1899) by [@yzim](https://github.com/yzim))
-- Worktree setup scripts keep your PATH ([#1908](https://github.com/getpaseo/paseo/pull/1908))
-- Docker images keep running during provider cleanup and diagnostics ([#1877](https://github.com/getpaseo/paseo/pull/1877))
-- New Workspace drafts survive archiving a workspace ([#1838](https://github.com/getpaseo/paseo/pull/1838))
-- Composer autocomplete stays open after switching screens ([#1851](https://github.com/getpaseo/paseo/pull/1851))
-- Claude usage appears when a quota window has no scheduled reset ([#1855](https://github.com/getpaseo/paseo/pull/1855))
-- New workspace action shows for non-git projects in the sidebar ([#1857](https://github.com/getpaseo/paseo/pull/1857) by [@cleiter](https://github.com/cleiter))
+- Renamed hosts keep their name after reconnecting ([#1940](https://github.com/prismosoft/codius-desktop/pull/1940))
+- Desktop finds your installed CLIs even when your shell is slow to start ([#1916](https://github.com/prismosoft/codius-desktop/pull/1916))
+- Restarting the daemon from desktop settings works reliably ([#1915](https://github.com/prismosoft/codius-desktop/pull/1915))
+- Restarting the daemon from the bundled CLI keeps it managed by the desktop app ([#1919](https://github.com/prismosoft/codius-desktop/pull/1919))
+- Web UI loads when the daemon is started from the bundled CLI ([#1899](https://github.com/prismosoft/codius-desktop/pull/1899) by [@yzim](https://github.com/yzim))
+- Worktree setup scripts keep your PATH ([#1908](https://github.com/prismosoft/codius-desktop/pull/1908))
+- Docker images keep running during provider cleanup and diagnostics ([#1877](https://github.com/prismosoft/codius-desktop/pull/1877))
+- New Workspace drafts survive archiving a workspace ([#1838](https://github.com/prismosoft/codius-desktop/pull/1838))
+- Composer autocomplete stays open after switching screens ([#1851](https://github.com/prismosoft/codius-desktop/pull/1851))
+- Claude usage appears when a quota window has no scheduled reset ([#1855](https://github.com/prismosoft/codius-desktop/pull/1855))
+- New workspace action shows for non-git projects in the sidebar ([#1857](https://github.com/prismosoft/codius-desktop/pull/1857) by [@cleiter](https://github.com/cleiter))
 
 ## 0.1.103 - 2026-07-01
 
 ### Added
 
-- Claude Sonnet 5 is available in the Claude model picker ([#1850](https://github.com/getpaseo/paseo/pull/1850))
+- Claude Sonnet 5 is available in the Claude model picker ([#1850](https://github.com/prismosoft/codius-desktop/pull/1850))
 
 ## 0.1.102 - 2026-06-30
 
 ### Added
 
-- Fork chats into a new tab or new worktree ([#1788](https://github.com/getpaseo/paseo/pull/1788))
-- See workspaces from all connected hosts ([#1538](https://github.com/getpaseo/paseo/pull/1538), [#1775](https://github.com/getpaseo/paseo/pull/1775), [#1825](https://github.com/getpaseo/paseo/pull/1825))
-- Daemon can now serve the web UI ([#1635](https://github.com/getpaseo/paseo/pull/1635), [#1739](https://github.com/getpaseo/paseo/pull/1739))
-- Run Paseo from an official Docker image ([#1740](https://github.com/getpaseo/paseo/pull/1740) by [@Herbrant](https://github.com/Herbrant))
-- Update a daemon remotely from the app ([#1513](https://github.com/getpaseo/paseo/pull/1513) by [@thedavidweng](https://github.com/thedavidweng))
-- Configure separate OpenAI endpoints for speech-to-text and text-to-speech ([#1823](https://github.com/getpaseo/paseo/pull/1823))
-- Drop files into any composer ([#1750](https://github.com/getpaseo/paseo/pull/1750), [#1801](https://github.com/getpaseo/paseo/pull/1801))
-- Show MiniMax usage in quota views ([#1662](https://github.com/getpaseo/paseo/pull/1662) by [@ilteoood](https://github.com/ilteoood))
-- Highlight C# code blocks ([#1651](https://github.com/getpaseo/paseo/pull/1651) by [@dev693](https://github.com/dev693))
+- Fork chats into a new tab or new worktree ([#1788](https://github.com/prismosoft/codius-desktop/pull/1788))
+- See workspaces from all connected hosts ([#1538](https://github.com/prismosoft/codius-desktop/pull/1538), [#1775](https://github.com/prismosoft/codius-desktop/pull/1775), [#1825](https://github.com/prismosoft/codius-desktop/pull/1825))
+- Daemon can now serve the web UI ([#1635](https://github.com/prismosoft/codius-desktop/pull/1635), [#1739](https://github.com/prismosoft/codius-desktop/pull/1739))
+- Run Codius from an official Docker image ([#1740](https://github.com/prismosoft/codius-desktop/pull/1740) by [@Herbrant](https://github.com/Herbrant))
+- Update a daemon remotely from the app ([#1513](https://github.com/prismosoft/codius-desktop/pull/1513) by [@thedavidweng](https://github.com/thedavidweng))
+- Configure separate OpenAI endpoints for speech-to-text and text-to-speech ([#1823](https://github.com/prismosoft/codius-desktop/pull/1823))
+- Drop files into any composer ([#1750](https://github.com/prismosoft/codius-desktop/pull/1750), [#1801](https://github.com/prismosoft/codius-desktop/pull/1801))
+- Show MiniMax usage in quota views ([#1662](https://github.com/prismosoft/codius-desktop/pull/1662) by [@ilteoood](https://github.com/ilteoood))
+- Highlight C# code blocks ([#1651](https://github.com/prismosoft/codius-desktop/pull/1651) by [@dev693](https://github.com/dev693))
 
 ### Improved
 
-- New Workspace opens from anywhere ([#1746](https://github.com/getpaseo/paseo/pull/1746), [#1806](https://github.com/getpaseo/paseo/pull/1806))
-- Project search shows loading progress ([#1762](https://github.com/getpaseo/paseo/pull/1762))
-- Desktop update checks show clearer status ([#1808](https://github.com/getpaseo/paseo/pull/1808), [#1815](https://github.com/getpaseo/paseo/pull/1815))
-- Slow remote hosts time out less aggressively ([#1789](https://github.com/getpaseo/paseo/pull/1789))
-- Pi waits longer for extension results ([#1732](https://github.com/getpaseo/paseo/pull/1732) by [@theslava](https://github.com/theslava))
-- Open file tabs refresh when you revisit them ([#1699](https://github.com/getpaseo/paseo/pull/1699) by [@cleiter](https://github.com/cleiter))
-- Web terminals scroll more smoothly ([#1622](https://github.com/getpaseo/paseo/pull/1622) by [@TommyLike](https://github.com/TommyLike))
+- New Workspace opens from anywhere ([#1746](https://github.com/prismosoft/codius-desktop/pull/1746), [#1806](https://github.com/prismosoft/codius-desktop/pull/1806))
+- Project search shows loading progress ([#1762](https://github.com/prismosoft/codius-desktop/pull/1762))
+- Desktop update checks show clearer status ([#1808](https://github.com/prismosoft/codius-desktop/pull/1808), [#1815](https://github.com/prismosoft/codius-desktop/pull/1815))
+- Slow remote hosts time out less aggressively ([#1789](https://github.com/prismosoft/codius-desktop/pull/1789))
+- Pi waits longer for extension results ([#1732](https://github.com/prismosoft/codius-desktop/pull/1732) by [@theslava](https://github.com/theslava))
+- Open file tabs refresh when you revisit them ([#1699](https://github.com/prismosoft/codius-desktop/pull/1699) by [@cleiter](https://github.com/cleiter))
+- Web terminals scroll more smoothly ([#1622](https://github.com/prismosoft/codius-desktop/pull/1622) by [@TommyLike](https://github.com/TommyLike))
 
 ### Fixed
 
-- Freshly added projects can be edited without restarting ([#1761](https://github.com/getpaseo/paseo/pull/1761) by [@huiliaoning](https://github.com/huiliaoning))
-- Large repos open more reliably ([#1620](https://github.com/getpaseo/paseo/pull/1620) by [@jms830](https://github.com/jms830))
-- Mobile restores the saved workspace on launch ([#1777](https://github.com/getpaseo/paseo/pull/1777))
-- Agent prompts no longer rename workspaces ([#1779](https://github.com/getpaseo/paseo/pull/1779))
-- Chat stays put when delayed history arrives ([#1776](https://github.com/getpaseo/paseo/pull/1776))
-- Streamed chat images stay in order ([#1805](https://github.com/getpaseo/paseo/pull/1805))
-- Chat actions stay below tool output ([#1827](https://github.com/getpaseo/paseo/pull/1827))
-- Claude subagent narration stays out of chat ([#1807](https://github.com/getpaseo/paseo/pull/1807))
-- Kiro slash commands and skills appear in Paseo ([#1792](https://github.com/getpaseo/paseo/pull/1792) by [@park0er](https://github.com/park0er))
-- Agent lists survive stale project records ([#1812](https://github.com/getpaseo/paseo/pull/1812))
-- Windows image previews handle drive-letter paths ([#1811](https://github.com/getpaseo/paseo/pull/1811))
-- OpenCode closes cleanly on Windows ([#1771](https://github.com/getpaseo/paseo/pull/1771) by [@agamotto](https://github.com/agamotto))
-- Desktop file uploads keep their extensions ([#1741](https://github.com/getpaseo/paseo/pull/1741))
-- Claude Code cleanup kills child processes ([#1540](https://github.com/getpaseo/paseo/pull/1540) by [@TommyLike](https://github.com/TommyLike))
-- OpenCode no longer indexes your home directory ([#1704](https://github.com/getpaseo/paseo/pull/1704) by [@rex-chang](https://github.com/rex-chang))
-- Packaged macOS CLI daemon no longer shows extra Dock icons ([#1759](https://github.com/getpaseo/paseo/pull/1759) by [@yzim](https://github.com/yzim))
-- `paseo daemon status` works without loading agents ([#1810](https://github.com/getpaseo/paseo/pull/1810))
-- PR worktrees show pushed state correctly ([#1804](https://github.com/getpaseo/paseo/pull/1804))
+- Freshly added projects can be edited without restarting ([#1761](https://github.com/prismosoft/codius-desktop/pull/1761) by [@huiliaoning](https://github.com/huiliaoning))
+- Large repos open more reliably ([#1620](https://github.com/prismosoft/codius-desktop/pull/1620) by [@jms830](https://github.com/jms830))
+- Mobile restores the saved workspace on launch ([#1777](https://github.com/prismosoft/codius-desktop/pull/1777))
+- Agent prompts no longer rename workspaces ([#1779](https://github.com/prismosoft/codius-desktop/pull/1779))
+- Chat stays put when delayed history arrives ([#1776](https://github.com/prismosoft/codius-desktop/pull/1776))
+- Streamed chat images stay in order ([#1805](https://github.com/prismosoft/codius-desktop/pull/1805))
+- Chat actions stay below tool output ([#1827](https://github.com/prismosoft/codius-desktop/pull/1827))
+- Claude subagent narration stays out of chat ([#1807](https://github.com/prismosoft/codius-desktop/pull/1807))
+- Kiro slash commands and skills appear in Codius ([#1792](https://github.com/prismosoft/codius-desktop/pull/1792) by [@park0er](https://github.com/park0er))
+- Agent lists survive stale project records ([#1812](https://github.com/prismosoft/codius-desktop/pull/1812))
+- Windows image previews handle drive-letter paths ([#1811](https://github.com/prismosoft/codius-desktop/pull/1811))
+- OpenCode closes cleanly on Windows ([#1771](https://github.com/prismosoft/codius-desktop/pull/1771) by [@agamotto](https://github.com/agamotto))
+- Desktop file uploads keep their extensions ([#1741](https://github.com/prismosoft/codius-desktop/pull/1741))
+- Claude Code cleanup kills child processes ([#1540](https://github.com/prismosoft/codius-desktop/pull/1540) by [@TommyLike](https://github.com/TommyLike))
+- OpenCode no longer indexes your home directory ([#1704](https://github.com/prismosoft/codius-desktop/pull/1704) by [@rex-chang](https://github.com/rex-chang))
+- Packaged macOS CLI daemon no longer shows extra Dock icons ([#1759](https://github.com/prismosoft/codius-desktop/pull/1759) by [@yzim](https://github.com/yzim))
+- `codius daemon status` works without loading agents ([#1810](https://github.com/prismosoft/codius-desktop/pull/1810))
+- PR worktrees show pushed state correctly ([#1804](https://github.com/prismosoft/codius-desktop/pull/1804))
 
 ## 0.1.101 - 2026-06-26
 
 ### Added
 
-- Copy a troubleshooting report from Settings when support needs host, daemon, provider, and log details ([#1728](https://github.com/getpaseo/paseo/pull/1728))
-- Claude image tool results now render as images in chat ([#1717](https://github.com/getpaseo/paseo/pull/1717))
-- Added Japanese ([#1694](https://github.com/getpaseo/paseo/pull/1694) by [@sysCat64](https://github.com/sysCat64))
-- Added Brazilian Portuguese ([#1653](https://github.com/getpaseo/paseo/pull/1653) by [@Alcimerio](https://github.com/Alcimerio))
+- Copy a troubleshooting report from Settings when support needs host, daemon, provider, and log details ([#1728](https://github.com/prismosoft/codius-desktop/pull/1728))
+- Claude image tool results now render as images in chat ([#1717](https://github.com/prismosoft/codius-desktop/pull/1717))
+- Added Japanese ([#1694](https://github.com/prismosoft/codius-desktop/pull/1694) by [@sysCat64](https://github.com/sysCat64))
+- Added Brazilian Portuguese ([#1653](https://github.com/prismosoft/codius-desktop/pull/1653) by [@Alcimerio](https://github.com/Alcimerio))
 
 ### Improved
 
-- Provider diagnostics stay useful even when model discovery is slow ([#1724](https://github.com/getpaseo/paseo/pull/1724))
-- Slow provider requests no longer make the app look disconnected ([#1723](https://github.com/getpaseo/paseo/pull/1723))
-- Worktrees linked to differently named tracked branches find their PRs correctly ([#1718](https://github.com/getpaseo/paseo/pull/1718))
-- Workspaces started from slash-command prompts get clearer names ([#1709](https://github.com/getpaseo/paseo/pull/1709))
+- Provider diagnostics stay useful even when model discovery is slow ([#1724](https://github.com/prismosoft/codius-desktop/pull/1724))
+- Slow provider requests no longer make the app look disconnected ([#1723](https://github.com/prismosoft/codius-desktop/pull/1723))
+- Worktrees linked to differently named tracked branches find their PRs correctly ([#1718](https://github.com/prismosoft/codius-desktop/pull/1718))
+- Workspaces started from slash-command prompts get clearer names ([#1709](https://github.com/prismosoft/codius-desktop/pull/1709))
 - ACP provider catalog updated to the latest registry versions
 
 ### Fixed
 
-- Pi no longer creates empty sessions while loading new-agent options ([#1727](https://github.com/getpaseo/paseo/pull/1727))
-- Windows daemon status finds the daemon process more reliably ([#1725](https://github.com/getpaseo/paseo/pull/1725))
+- Pi no longer creates empty sessions while loading new-agent options ([#1727](https://github.com/prismosoft/codius-desktop/pull/1727))
+- Windows daemon status finds the daemon process more reliably ([#1725](https://github.com/prismosoft/codius-desktop/pull/1725))
 - OpenAI voice credentials no longer affect other OpenAI-backed tools
 - Provider model lists no longer disappear during refresh
 
@@ -322,7 +322,7 @@
 ### Added
 
 - Cycle agent modes with Shift+Tab
-- Select a custom Copilot agent when starting or mid-session ([#1700](https://github.com/getpaseo/paseo/pull/1700))
+- Select a custom Copilot agent when starting or mid-session ([#1700](https://github.com/prismosoft/codius-desktop/pull/1700))
 
 ### Improved
 
@@ -330,88 +330,88 @@
 
 ### Fixed
 
-- Claude no longer sends an extra API request after each message ([#1701](https://github.com/getpaseo/paseo/pull/1701))
-- OpenCode no longer leaves stray background servers running after sessions end ([#1697](https://github.com/getpaseo/paseo/pull/1697))
-- Slash commands and skills now load in OMP agents ([#1698](https://github.com/getpaseo/paseo/pull/1698))
+- Claude no longer sends an extra API request after each message ([#1701](https://github.com/prismosoft/codius-desktop/pull/1701))
+- OpenCode no longer leaves stray background servers running after sessions end ([#1697](https://github.com/prismosoft/codius-desktop/pull/1697))
+- Slash commands and skills now load in OMP agents ([#1698](https://github.com/prismosoft/codius-desktop/pull/1698))
 
 ## 0.1.99 - 2026-06-23
 
 ### Improved
 
-- The PR panel now has a refresh button and clearer loading states ([#1664](https://github.com/getpaseo/paseo/pull/1664))
-- Provider diagnostics and model lists now stay in sync ([#1660](https://github.com/getpaseo/paseo/pull/1660))
+- The PR panel now has a refresh button and clearer loading states ([#1664](https://github.com/prismosoft/codius-desktop/pull/1664))
+- Provider diagnostics and model lists now stay in sync ([#1660](https://github.com/prismosoft/codius-desktop/pull/1660))
 
 ### Fixed
 
 - ACP providers like Grok no longer show duplicate user messages
-- Saved composer modes no longer reset while provider data is loading ([#1658](https://github.com/getpaseo/paseo/pull/1658))
-- The right sidebar no longer gets stuck on mobile ([#1661](https://github.com/getpaseo/paseo/pull/1661))
+- Saved composer modes no longer reset while provider data is loading ([#1658](https://github.com/prismosoft/codius-desktop/pull/1658))
+- The right sidebar no longer gets stuck on mobile ([#1661](https://github.com/prismosoft/codius-desktop/pull/1661))
 
 ## 0.1.98 - 2026-06-21
 
 ### Added
 
-- See plan usage in-app for Claude, Codex, Copilot, Cursor, Z.AI, Grok, and Kimi ([#1278](https://github.com/getpaseo/paseo/pull/1278) by [@ABorakati](https://github.com/ABorakati))
-- Added Ultracode for Claude ([#1625](https://github.com/getpaseo/paseo/pull/1625))
-- Detach a subagent to run it on its own ([#1612](https://github.com/getpaseo/paseo/pull/1612))
+- See plan usage in-app for Claude, Codex, Copilot, Cursor, Z.AI, Grok, and Kimi ([#1278](https://github.com/prismosoft/codius-desktop/pull/1278) by [@ABorakati](https://github.com/ABorakati))
+- Added Ultracode for Claude ([#1625](https://github.com/prismosoft/codius-desktop/pull/1625))
+- Detach a subagent to run it on its own ([#1612](https://github.com/prismosoft/codius-desktop/pull/1612))
 - Add a project without creating a workspace
 - Add a setting to show branch names instead of titles in the sidebar
 
 ### Improved
 
 - Mid-turn thinking and mode changes now say they apply next turn
-- PR merge options name their method: squash, merge, or rebase ([#1608](https://github.com/getpaseo/paseo/pull/1608) by [@mcowger](https://github.com/mcowger))
+- PR merge options name their method: squash, merge, or rebase ([#1608](https://github.com/prismosoft/codius-desktop/pull/1608) by [@mcowger](https://github.com/mcowger))
 - A running agent's mode change is remembered for new agents
-- Copy a provider's launch diagnostic in one tap ([#1611](https://github.com/getpaseo/paseo/pull/1611))
+- Copy a provider's launch diagnostic in one tap ([#1611](https://github.com/prismosoft/codius-desktop/pull/1611))
 
 ### Fixed
 
-- OpenCode no longer scans your whole disk on macOS desktop ([#1626](https://github.com/getpaseo/paseo/pull/1626))
-- Daemon no longer crashes when OpenAI speech has no API key ([#1368](https://github.com/getpaseo/paseo/pull/1368) by [@mcowger](https://github.com/mcowger))
+- OpenCode no longer scans your whole disk on macOS desktop ([#1626](https://github.com/prismosoft/codius-desktop/pull/1626))
+- Daemon no longer crashes when OpenAI speech has no API key ([#1368](https://github.com/prismosoft/codius-desktop/pull/1368) by [@mcowger](https://github.com/mcowger))
 - Reopening an archived Codex agent no longer hangs
 - Claude's context meter no longer jumps to subagent usage
 - Claude's context meter fills from the first message in a new session
-- OpenCode's mode picker now respects your disabled modes ([#1366](https://github.com/getpaseo/paseo/pull/1366) by [@mcowger](https://github.com/mcowger))
-- File links and @-mentions find files in dot-folders and deep paths ([#1609](https://github.com/getpaseo/paseo/pull/1609))
-- Archiving a project's last workspace no longer makes it vanish ([#1631](https://github.com/getpaseo/paseo/pull/1631))
+- OpenCode's mode picker now respects your disabled modes ([#1366](https://github.com/prismosoft/codius-desktop/pull/1366) by [@mcowger](https://github.com/mcowger))
+- File links and @-mentions find files in dot-folders and deep paths ([#1609](https://github.com/prismosoft/codius-desktop/pull/1609))
+- Archiving a project's last workspace no longer makes it vanish ([#1631](https://github.com/prismosoft/codius-desktop/pull/1631))
 - Collapsed sidebar projects stay collapsed
 
 ## 0.1.97 - 2026-06-18
 
 ### Added
 
-- **Simplify workspace model** — run multiple workspaces on the same code without a worktree, each with its own agents, terminals, and status ([#1539](https://github.com/getpaseo/paseo/pull/1539))
+- **Simplify workspace model** — run multiple workspaces on the same code without a worktree, each with its own agents, terminals, and status ([#1539](https://github.com/prismosoft/codius-desktop/pull/1539))
 - **Reopen archived workspaces from History** — restore a past workspace even after its worktree was removed
-- **Terminals show when their agent is working, idle, or waiting for input** ([#1507](https://github.com/getpaseo/paseo/pull/1507))
-- **Attach files to agents on mobile** ([#1501](https://github.com/getpaseo/paseo/pull/1501))
-- **Hide dotfiles in the file explorer** ([#1516](https://github.com/getpaseo/paseo/pull/1516) by [@yuruiz](https://github.com/yuruiz))
+- **Terminals show when their agent is working, idle, or waiting for input** ([#1507](https://github.com/prismosoft/codius-desktop/pull/1507))
+- **Attach files to agents on mobile** ([#1501](https://github.com/prismosoft/codius-desktop/pull/1501))
+- **Hide dotfiles in the file explorer** ([#1516](https://github.com/prismosoft/codius-desktop/pull/1516) by [@yuruiz](https://github.com/yuruiz))
 - **Pin terminal, browser, and new-tab buttons to the tab row and sidebar**
 - **Create a new workspace with a keyboard shortcut**
 
 ### Improved
 
-- Workspace titles come from your first prompt and are shorter ([#1563](https://github.com/getpaseo/paseo/pull/1563))
+- Workspace titles come from your first prompt and are shorter ([#1563](https://github.com/prismosoft/codius-desktop/pull/1563))
 - Copy a workspace's branch or path from its hover card
-- Terminals stay smooth under heavy output ([#1500](https://github.com/getpaseo/paseo/pull/1500))
-- Worktrees are removed when their last workspace is archived ([#1562](https://github.com/getpaseo/paseo/pull/1562))
-- Finish notifications include subagent results ([#1558](https://github.com/getpaseo/paseo/pull/1558))
-- Cursor lists only models you can select ([#1556](https://github.com/getpaseo/paseo/pull/1556))
+- Terminals stay smooth under heavy output ([#1500](https://github.com/prismosoft/codius-desktop/pull/1500))
+- Worktrees are removed when their last workspace is archived ([#1562](https://github.com/prismosoft/codius-desktop/pull/1562))
+- Finish notifications include subagent results ([#1558](https://github.com/prismosoft/codius-desktop/pull/1558))
+- Cursor lists only models you can select ([#1556](https://github.com/prismosoft/codius-desktop/pull/1556))
 - ACP provider catalog updated to the latest registry versions
 
 ### Fixed
 
 - Brief daemon slowdowns no longer drop your connection
-- Linux AppImage updates no longer hang on quit or delete the app ([#1485](https://github.com/getpaseo/paseo/pull/1485) by [@xpufx](https://github.com/xpufx))
-- Opening Providers settings no longer crashes on Android ([#1537](https://github.com/getpaseo/paseo/pull/1537))
-- Coding-agent terminal shortcuts work on Windows ([#1509](https://github.com/getpaseo/paseo/pull/1509))
-- ACP and Kimi sessions can be imported again ([#1510](https://github.com/getpaseo/paseo/pull/1510) by [@wbxl2000](https://github.com/wbxl2000))
-- ACP agents shut down without leaving orphaned processes ([#1460](https://github.com/getpaseo/paseo/pull/1460) by [@yeshan333](https://github.com/yeshan333))
-- Imported session previews show clean prompts ([#1502](https://github.com/getpaseo/paseo/pull/1502))
-- Local pairing offers use the correct app URL ([#1187](https://github.com/getpaseo/paseo/pull/1187) by [@aibaiiqpl](https://github.com/aibaiiqpl))
+- Linux AppImage updates no longer hang on quit or delete the app ([#1485](https://github.com/prismosoft/codius-desktop/pull/1485) by [@xpufx](https://github.com/xpufx))
+- Opening Providers settings no longer crashes on Android ([#1537](https://github.com/prismosoft/codius-desktop/pull/1537))
+- Coding-agent terminal shortcuts work on Windows ([#1509](https://github.com/prismosoft/codius-desktop/pull/1509))
+- ACP and Kimi sessions can be imported again ([#1510](https://github.com/prismosoft/codius-desktop/pull/1510) by [@wbxl2000](https://github.com/wbxl2000))
+- ACP agents shut down without leaving orphaned processes ([#1460](https://github.com/prismosoft/codius-desktop/pull/1460) by [@yeshan333](https://github.com/yeshan333))
+- Imported session previews show clean prompts ([#1502](https://github.com/prismosoft/codius-desktop/pull/1502))
+- Local pairing offers use the correct app URL ([#1187](https://github.com/prismosoft/codius-desktop/pull/1187) by [@aibaiiqpl](https://github.com/aibaiiqpl))
 - The app no longer freezes from repeated provider re-probes
 - Removing a project from the sidebar now removes the project itself instead of leaving it behind
-- Workspace shortcut numbers no longer appear for the wrong key ([#1580](https://github.com/getpaseo/paseo/pull/1580) by [@cleiter](https://github.com/cleiter))
-- Chats no longer hang when a message contains unmatched backticks ([#1585](https://github.com/getpaseo/paseo/pull/1585) by [@thaning0](https://github.com/thaning0))
+- Workspace shortcut numbers no longer appear for the wrong key ([#1580](https://github.com/prismosoft/codius-desktop/pull/1580) by [@cleiter](https://github.com/cleiter))
+- Chats no longer hang when a message contains unmatched backticks ([#1585](https://github.com/prismosoft/codius-desktop/pull/1585) by [@thaning0](https://github.com/thaning0))
 
 ## 0.1.96 - 2026-06-13
 
@@ -425,43 +425,43 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- **Attach any file to agents on desktop** ([#1474](https://github.com/getpaseo/paseo/pull/1474))
+- **Attach any file to agents on desktop** ([#1474](https://github.com/prismosoft/codius-desktop/pull/1474))
 
 ### Improved
 
-- The git push button shows before merge actions when your branch is ahead ([#1488](https://github.com/getpaseo/paseo/pull/1488))
+- The git push button shows before merge actions when your branch is ahead ([#1488](https://github.com/prismosoft/codius-desktop/pull/1488))
 - SVG attachments are uploaded to disk
 - Switching workspaces feels smoother
 
 ### Fixed
 
-- Fixed cases where outdated GitHub data could be shown ([#1491](https://github.com/getpaseo/paseo/pull/1491))
-- Uploaded images in PR comments and review threads now load in the PR panel ([#1486](https://github.com/getpaseo/paseo/pull/1486))
-- Opening a project whose folder is missing shows a clear error ([#1490](https://github.com/getpaseo/paseo/pull/1490))
-- The new workspace title moves out of the way of the keyboard ([#1489](https://github.com/getpaseo/paseo/pull/1489))
+- Fixed cases where outdated GitHub data could be shown ([#1491](https://github.com/prismosoft/codius-desktop/pull/1491))
+- Uploaded images in PR comments and review threads now load in the PR panel ([#1486](https://github.com/prismosoft/codius-desktop/pull/1486))
+- Opening a project whose folder is missing shows a clear error ([#1490](https://github.com/prismosoft/codius-desktop/pull/1490))
+- The new workspace title moves out of the way of the keyboard ([#1489](https://github.com/prismosoft/codius-desktop/pull/1489))
 - Sidebars no longer open on their own on Android
 
 ## 0.1.94 - 2026-06-12
 
 ### Added
 
-- **Attach pull request comments, reviews, threads, and failed check logs to chat from the PR panel** ([#1400](https://github.com/getpaseo/paseo/pull/1400))
-- **Use Paseo in Arabic, Chinese, English, French, Russian, and Spanish** ([#1282](https://github.com/getpaseo/paseo/pull/1282), [#1478](https://github.com/getpaseo/paseo/pull/1478) by [@chyendongnhanh338](https://github.com/chyendongnhanh338), [@dwyanewang](https://github.com/dwyanewang))
+- **Attach pull request comments, reviews, threads, and failed check logs to chat from the PR panel** ([#1400](https://github.com/prismosoft/codius-desktop/pull/1400))
+- **Use Codius in Arabic, Chinese, English, French, Russian, and Spanish** ([#1282](https://github.com/prismosoft/codius-desktop/pull/1282), [#1478](https://github.com/prismosoft/codius-desktop/pull/1478) by [@chyendongnhanh338](https://github.com/chyendongnhanh338), [@dwyanewang](https://github.com/dwyanewang))
 - **Create reusable terminal profiles from Host settings**
-- **Open workspaces in Antigravity** ([#1424](https://github.com/getpaseo/paseo/pull/1424) by [@krumpyzoid](https://github.com/krumpyzoid))
+- **Open workspaces in Antigravity** ([#1424](https://github.com/prismosoft/codius-desktop/pull/1424) by [@krumpyzoid](https://github.com/krumpyzoid))
 
 ### Improved
 
-- Claude skills appear in prompt autocomplete as you type ([#1464](https://github.com/getpaseo/paseo/pull/1464))
-- Copy file paths directly from file preview tab menus ([#1473](https://github.com/getpaseo/paseo/pull/1473))
-- PR status stays current after an agent merges a branch ([#1455](https://github.com/getpaseo/paseo/pull/1455))
-- Workspace tabs stay fast by retaining only the active workspace screens ([#1472](https://github.com/getpaseo/paseo/pull/1472))
+- Claude skills appear in prompt autocomplete as you type ([#1464](https://github.com/prismosoft/codius-desktop/pull/1464))
+- Copy file paths directly from file preview tab menus ([#1473](https://github.com/prismosoft/codius-desktop/pull/1473))
+- PR status stays current after an agent merges a branch ([#1455](https://github.com/prismosoft/codius-desktop/pull/1455))
+- Workspace tabs stay fast by retaining only the active workspace screens ([#1472](https://github.com/prismosoft/codius-desktop/pull/1472))
 
 ### Fixed
 
 - Composer send shortcuts no longer conflict with other keyboard shortcuts
-- Multi-question prompts advance one answer at a time ([#1462](https://github.com/getpaseo/paseo/pull/1462))
-- Imported Pi sessions keep their original model and thinking settings ([#1441](https://github.com/getpaseo/paseo/pull/1441) by [@thomasaull](https://github.com/thomasaull))
+- Multi-question prompts advance one answer at a time ([#1462](https://github.com/prismosoft/codius-desktop/pull/1462))
+- Imported Pi sessions keep their original model and thinking settings ([#1441](https://github.com/prismosoft/codius-desktop/pull/1441) by [@thomasaull](https://github.com/thomasaull))
 - Reconnecting to a desktop host keeps the saved shell and workspace route
 - Worktree terminals no longer appear in parent workspaces
 - Mobile reconnects show the welcome screen correctly
@@ -470,7 +470,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- **Claude Fable 5 is available in the Claude model picker** ([#1443](https://github.com/getpaseo/paseo/pull/1443) by [@0-Captain](https://github.com/0-Captain))
+- **Claude Fable 5 is available in the Claude model picker** ([#1443](https://github.com/prismosoft/codius-desktop/pull/1443) by [@0-Captain](https://github.com/0-Captain))
 
 ## 0.1.92 - 2026-06-10
 
@@ -480,7 +480,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Improved
 
-- Provider catalog is inline in Host settings ([#1423](https://github.com/getpaseo/paseo/pull/1423))
+- Provider catalog is inline in Host settings ([#1423](https://github.com/prismosoft/codius-desktop/pull/1423))
 - Manual update checks skip staged rollout delays
 - CodeWhale replaces DeepSeek TUI in the provider catalog
 - ACP provider catalog entries are updated for Cline, Codebuddy Code, DimCode, Factory Droid, Gemini, Nova, and Qoder
@@ -490,10 +490,10 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Fixed
 
-- New Paseo worktree branches can push their first commits
+- New Codius worktree branches can push their first commits
 - Imported sessions no longer open blank or in the wrong workspace
-- Windows Explorer opens the selected workspace instead of Documents ([#1412](https://github.com/getpaseo/paseo/pull/1412) by [@bjspi](https://github.com/bjspi))
-- Windows editor shortcuts installed as command shims launch correctly ([#1387](https://github.com/getpaseo/paseo/pull/1387) by [@Peter7896](https://github.com/Peter7896))
+- Windows Explorer opens the selected workspace instead of Documents ([#1412](https://github.com/prismosoft/codius-desktop/pull/1412) by [@bjspi](https://github.com/bjspi))
+- Windows editor shortcuts installed as command shims launch correctly ([#1387](https://github.com/prismosoft/codius-desktop/pull/1387) by [@Peter7896](https://github.com/Peter7896))
 - ACP providers that cannot use MCP servers can start correctly
 - Removed hosts no longer leave host pages stuck connecting
 - File preview links open in your external browser
@@ -504,10 +504,10 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- **Open multiple desktop windows** ([#1355](https://github.com/getpaseo/paseo/pull/1355) by [@arieel-ost](https://github.com/arieel-ost))
-- **Open browser pop-ups and links inside workspace tabs** ([#1375](https://github.com/getpaseo/paseo/pull/1375))
+- **Open multiple desktop windows** ([#1355](https://github.com/prismosoft/codius-desktop/pull/1355) by [@arieel-ost](https://github.com/arieel-ost))
+- **Open browser pop-ups and links inside workspace tabs** ([#1375](https://github.com/prismosoft/codius-desktop/pull/1375))
 - **Use the command center from mobile**
-- **Add OMP as a provider** ([#1388](https://github.com/getpaseo/paseo/pull/1388))
+- **Add OMP as a provider** ([#1388](https://github.com/prismosoft/codius-desktop/pull/1388))
 
 ### Improved
 
@@ -515,51 +515,51 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Git controls now default ready branches to pull requests and hide unavailable pull or push actions
 - Desktop-managed hosts recover more reliably after stale daemon state
 - Daemon status now explains authentication failures
-- Project search skips Python virtual environments ([#1356](https://github.com/getpaseo/paseo/pull/1356))
+- Project search skips Python virtual environments ([#1356](https://github.com/prismosoft/codius-desktop/pull/1356))
 - Config files can include `$schema` for editor help
-- Claude MCP servers preserve always-load tool settings ([#1333](https://github.com/getpaseo/paseo/pull/1333) by [@nodomain](https://github.com/nodomain))
-- Claude profiles keep their configured models ([#1311](https://github.com/getpaseo/paseo/pull/1311) by [@ilteoood](https://github.com/ilteoood))
-- Provider loading can wait longer on slow machines ([#1346](https://github.com/getpaseo/paseo/pull/1346) by [@nodomain](https://github.com/nodomain))
-- The Kimi catalog entry now points to Kimi Code CLI ([#1403](https://github.com/getpaseo/paseo/pull/1403) by [@wbxl2000](https://github.com/wbxl2000))
+- Claude MCP servers preserve always-load tool settings ([#1333](https://github.com/prismosoft/codius-desktop/pull/1333) by [@nodomain](https://github.com/nodomain))
+- Claude profiles keep their configured models ([#1311](https://github.com/prismosoft/codius-desktop/pull/1311) by [@ilteoood](https://github.com/ilteoood))
+- Provider loading can wait longer on slow machines ([#1346](https://github.com/prismosoft/codius-desktop/pull/1346) by [@nodomain](https://github.com/nodomain))
+- The Kimi catalog entry now points to Kimi Code CLI ([#1403](https://github.com/prismosoft/codius-desktop/pull/1403) by [@wbxl2000](https://github.com/wbxl2000))
 - ACP provider catalog entries are updated for Auggie, Claude Agent, Cline, Codebuddy Code, DimCode, Factory Droid, fast-agent, Gemini, GitHub Copilot, and Nova
-- Local dictation crash reports show more useful details ([#1379](https://github.com/getpaseo/paseo/pull/1379))
+- Local dictation crash reports show more useful details ([#1379](https://github.com/prismosoft/codius-desktop/pull/1379))
 - Daemon logs show why managed workers exit
 
 ### Fixed
 
-- Pi compaction slash commands run correctly ([#1338](https://github.com/getpaseo/paseo/pull/1338) by [@chyendongnhanh338](https://github.com/chyendongnhanh338))
-- Auto-archiving still works after a merged PR branch is deleted ([#1378](https://github.com/getpaseo/paseo/pull/1378))
-- Worktrees can check out existing branch refs correctly ([#1358](https://github.com/getpaseo/paseo/pull/1358) by [@dixonl90](https://github.com/dixonl90))
-- File downloads work when daemon password protection is enabled ([#1351](https://github.com/getpaseo/paseo/pull/1351) by [@nodomain](https://github.com/nodomain))
-- iOS markdown links are tappable again ([#1334](https://github.com/getpaseo/paseo/pull/1334) by [@kaspesi](https://github.com/kaspesi))
+- Pi compaction slash commands run correctly ([#1338](https://github.com/prismosoft/codius-desktop/pull/1338) by [@chyendongnhanh338](https://github.com/chyendongnhanh338))
+- Auto-archiving still works after a merged PR branch is deleted ([#1378](https://github.com/prismosoft/codius-desktop/pull/1378))
+- Worktrees can check out existing branch refs correctly ([#1358](https://github.com/prismosoft/codius-desktop/pull/1358) by [@dixonl90](https://github.com/dixonl90))
+- File downloads work when daemon password protection is enabled ([#1351](https://github.com/prismosoft/codius-desktop/pull/1351) by [@nodomain](https://github.com/nodomain))
+- iOS markdown links are tappable again ([#1334](https://github.com/prismosoft/codius-desktop/pull/1334) by [@kaspesi](https://github.com/kaspesi))
 - iOS markdown images render correctly
-- Windows workspaces load their providers correctly ([#1329](https://github.com/getpaseo/paseo/pull/1329))
-- Removing a localhost host stops its local daemon ([#1297](https://github.com/getpaseo/paseo/pull/1297) by [@mcowger](https://github.com/mcowger))
+- Windows workspaces load their providers correctly ([#1329](https://github.com/prismosoft/codius-desktop/pull/1329))
+- Removing a localhost host stops its local daemon ([#1297](https://github.com/prismosoft/codius-desktop/pull/1297) by [@mcowger](https://github.com/mcowger))
 - Provider settings sheets stack correctly
 - The new workspace screen no longer opens behind the mobile sidebar
-- Global agent listing works again ([#1420](https://github.com/getpaseo/paseo/pull/1420))
+- Global agent listing works again ([#1420](https://github.com/prismosoft/codius-desktop/pull/1420))
 - OpenCode compaction summaries stay out of chat
-- OpenCode agents sharing a workspace keep their own Paseo tools
+- OpenCode agents sharing a workspace keep their own Codius tools
 
 ## 0.1.90 - 2026-06-04
 
 ### Added
 
-- **Group the sidebar by status so workspaces waiting on you, ready to review, working, and done are visible at a glance** ([#1317](https://github.com/getpaseo/paseo/pull/1317))
-- **Start a new workspace from the global sidebar button without choosing a project first** ([#1324](https://github.com/getpaseo/paseo/pull/1324))
-- **Open the active file directly in your editor, file manager, or GitHub instead of only opening the workspace root** ([#1285](https://github.com/getpaseo/paseo/pull/1285) by [@aaronzhongg](https://github.com/aaronzhongg))
-- **Automatically archive clean PR workspaces after the PR is merged from host settings** ([#1313](https://github.com/getpaseo/paseo/pull/1313))
-- **Desktop-managed Paseo skills stay current after installing a newer desktop build** ([#1309](https://github.com/getpaseo/paseo/pull/1309))
-- **Dart files and Dart code blocks are now syntax-highlighted** ([#1326](https://github.com/getpaseo/paseo/pull/1326))
+- **Group the sidebar by status so workspaces waiting on you, ready to review, working, and done are visible at a glance** ([#1317](https://github.com/prismosoft/codius-desktop/pull/1317))
+- **Start a new workspace from the global sidebar button without choosing a project first** ([#1324](https://github.com/prismosoft/codius-desktop/pull/1324))
+- **Open the active file directly in your editor, file manager, or GitHub instead of only opening the workspace root** ([#1285](https://github.com/prismosoft/codius-desktop/pull/1285) by [@aaronzhongg](https://github.com/aaronzhongg))
+- **Automatically archive clean PR workspaces after the PR is merged from host settings** ([#1313](https://github.com/prismosoft/codius-desktop/pull/1313))
+- **Desktop-managed Codius skills stay current after installing a newer desktop build** ([#1309](https://github.com/prismosoft/codius-desktop/pull/1309))
+- **Dart files and Dart code blocks are now syntax-highlighted** ([#1326](https://github.com/prismosoft/codius-desktop/pull/1326))
 
 ### Improved
 
-- Sidebar workspaces can be marked as read when they are ready to review or failed ([#1317](https://github.com/getpaseo/paseo/pull/1317))
-- Child agents keep unattended permissions when delegated across providers ([#1315](https://github.com/getpaseo/paseo/pull/1315))
-- Scheduled agents open with the real prompt and title instead of looking empty ([#1316](https://github.com/getpaseo/paseo/pull/1316))
-- Git controls prioritize the action that gets a ready branch shipped ([#1316](https://github.com/getpaseo/paseo/pull/1316))
+- Sidebar workspaces can be marked as read when they are ready to review or failed ([#1317](https://github.com/prismosoft/codius-desktop/pull/1317))
+- Child agents keep unattended permissions when delegated across providers ([#1315](https://github.com/prismosoft/codius-desktop/pull/1315))
+- Scheduled agents open with the real prompt and title instead of looking empty ([#1316](https://github.com/prismosoft/codius-desktop/pull/1316))
+- Git controls prioritize the action that gets a ready branch shipped ([#1316](https://github.com/prismosoft/codius-desktop/pull/1316))
 - Multiple agent questions are shown one at a time
-- OpenCode questions with free-write answers show the typed response in Paseo
+- OpenCode questions with free-write answers show the typed response in Codius
 - Delegated agent activity is visible on the parent workspace
 - Sessions are ordered by latest activity
 - ACP provider catalog entries are updated for Claude Agent, Cline, Codebuddy Code, Factory Droid, and Qoder
@@ -578,9 +578,9 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- **Open workspace services through public service proxy links** ([#1280](https://github.com/getpaseo/paseo/pull/1280) by [@mcowger](https://github.com/mcowger))
-- **Choose where new worktrees are created** ([#1230](https://github.com/getpaseo/paseo/pull/1230) by [@mcowger](https://github.com/mcowger))
-- **Desktop windows reopen at the same size and position** ([#1224](https://github.com/getpaseo/paseo/pull/1224) by [@everton-dgn](https://github.com/everton-dgn))
+- **Open workspace services through public service proxy links** ([#1280](https://github.com/prismosoft/codius-desktop/pull/1280) by [@mcowger](https://github.com/mcowger))
+- **Choose where new worktrees are created** ([#1230](https://github.com/prismosoft/codius-desktop/pull/1230) by [@mcowger](https://github.com/mcowger))
+- **Desktop windows reopen at the same size and position** ([#1224](https://github.com/prismosoft/codius-desktop/pull/1224) by [@everton-dgn](https://github.com/everton-dgn))
 - **Delegated agents can run independently and send recurring heartbeat updates**
 
 ### Improved
@@ -591,9 +591,9 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Fixed
 
-- Archiving a worktree finishes even if teardown hits an error ([#1260](https://github.com/getpaseo/paseo/pull/1260) by [@mcowger](https://github.com/mcowger))
-- iOS chat messages render bold, italics, strikethrough, and line breaks correctly ([#1254](https://github.com/getpaseo/paseo/pull/1254) by [@outofrange-consulting](https://github.com/outofrange-consulting))
-- Right-edge split pane resizing no longer clips ([#1261](https://github.com/getpaseo/paseo/pull/1261) by [@everton-dgn](https://github.com/everton-dgn))
+- Archiving a worktree finishes even if teardown hits an error ([#1260](https://github.com/prismosoft/codius-desktop/pull/1260) by [@mcowger](https://github.com/mcowger))
+- iOS chat messages render bold, italics, strikethrough, and line breaks correctly ([#1254](https://github.com/prismosoft/codius-desktop/pull/1254) by [@outofrange-consulting](https://github.com/outofrange-consulting))
+- Right-edge split pane resizing no longer clips ([#1261](https://github.com/prismosoft/codius-desktop/pull/1261) by [@everton-dgn](https://github.com/everton-dgn))
 - Pi extension command output no longer hangs
 - Delegated agents no longer appear in workspace alert counts
 
@@ -607,7 +607,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - **Adjust the interface text size**
 - **Adjust the code text size**
 - **Choose a syntax highlighting theme**
-- **Keep cron schedules aligned to a chosen time zone** ([#1232](https://github.com/getpaseo/paseo/pull/1232) by [@damselem](https://github.com/damselem))
+- **Keep cron schedules aligned to a chosen time zone** ([#1232](https://github.com/prismosoft/codius-desktop/pull/1232) by [@damselem](https://github.com/damselem))
 
 ### Improved
 
@@ -615,7 +615,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Workspace tab switching is faster
 - Compact composers now show context usage as a percentage
 - Agent terminals opened in workspace subdirectories now appear with the rest of the workspace terminals
-- macOS displays can idle normally while the desktop app is open ([#1242](https://github.com/getpaseo/paseo/pull/1242) by [@fireblue](https://github.com/fireblue))
+- macOS displays can idle normally while the desktop app is open ([#1242](https://github.com/prismosoft/codius-desktop/pull/1242) by [@fireblue](https://github.com/fireblue))
 - Large generated diffs now show a clear too-large placeholder instead of trying to render the whole file
 
 ### Fixed
@@ -624,13 +624,13 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Terminal panes keep the right size after splitting or resizing panes
 - Restored terminal snapshots reflow correctly after the pane size changes
 - Workspace scripts menus keep the right size after launching a service
-- iOS chat messages no longer hide inline links, URLs, or linked file paths ([#1257](https://github.com/getpaseo/paseo/pull/1257) by [@outofrange-consulting](https://github.com/outofrange-consulting))
+- iOS chat messages no longer hide inline links, URLs, or linked file paths ([#1257](https://github.com/prismosoft/codius-desktop/pull/1257) by [@outofrange-consulting](https://github.com/outofrange-consulting))
 
 ## 0.1.87 - 2026-05-30
 
 ### Added
 
-- Permission prompts from OpenCode subagents now surface in Paseo so you can approve or deny them
+- Permission prompts from OpenCode subagents now surface in Codius so you can approve or deny them
 
 ### Fixed
 
@@ -653,7 +653,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Refresh git diffs on demand with a new refresh button
 - Previews can open readable files outside the current workspace
 - Projects without an icon now show a colored icon instead of a grey placeholder
-- Auto-generated agent titles and worktree branch names now use your configured provider fallbacks ([#1219](https://github.com/getpaseo/paseo/pull/1219) by [@mcowger](https://github.com/mcowger))
+- Auto-generated agent titles and worktree branch names now use your configured provider fallbacks ([#1219](https://github.com/prismosoft/codius-desktop/pull/1219) by [@mcowger](https://github.com/mcowger))
 - Local dictation keeps its speech models out of the daemon, lowering its memory use
 
 ### Fixed
@@ -681,10 +681,10 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Improved
 
-- Copy an OpenCode resume command to continue the session outside Paseo
+- Copy an OpenCode resume command to continue the session outside Codius
 - Model selector lists every enabled provider, with a Retry button when one fails to load
 - Provider settings are easier to search and manage
-- Other agents connecting to Paseo via MCP see the same providers, models, and modes as the app ([#1198](https://github.com/getpaseo/paseo/pull/1198))
+- Other agents connecting to Codius via MCP see the same providers, models, and modes as the app ([#1198](https://github.com/prismosoft/codius-desktop/pull/1198))
 - OpenCode Edit tool calls render as inline diffs
 - Typing a slash command shows the best match first
 - Daemon starts faster on workspaces with many git folders
@@ -696,10 +696,10 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Fixed
 
-- Allow selecting text in the chat on mobile ([#1153](https://github.com/getpaseo/paseo/pull/1153) by [@muzhi1991](https://github.com/muzhi1991))
-- Submitting a Pi question no longer looks like a second prompt opened ([#1188](https://github.com/getpaseo/paseo/pull/1188) by [@yuruiz](https://github.com/yuruiz))
-- Daemon memory leak from unbounded workspace git caches ([#1200](https://github.com/getpaseo/paseo/pull/1200))
-- Provider diagnostics include the command override binary path ([#1191](https://github.com/getpaseo/paseo/pull/1191))
+- Allow selecting text in the chat on mobile ([#1153](https://github.com/prismosoft/codius-desktop/pull/1153) by [@muzhi1991](https://github.com/muzhi1991))
+- Submitting a Pi question no longer looks like a second prompt opened ([#1188](https://github.com/prismosoft/codius-desktop/pull/1188) by [@yuruiz](https://github.com/yuruiz))
+- Daemon memory leak from unbounded workspace git caches ([#1200](https://github.com/prismosoft/codius-desktop/pull/1200))
+- Provider diagnostics include the command override binary path ([#1191](https://github.com/prismosoft/codius-desktop/pull/1191))
 - OpenCode MCP servers connect correctly when the daemon binds to wildcard addresses
 - Tool calls from MCP servers that return non-spec output no longer fail validation
 
@@ -715,29 +715,29 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- **Rewind chat or files from any user message** ([#1154](https://github.com/getpaseo/paseo/pull/1154))
-- **See the cumulative cost of an agent session** ([#1163](https://github.com/getpaseo/paseo/pull/1163))
-- **Drop files onto the terminal to insert their paths** ([#1173](https://github.com/getpaseo/paseo/pull/1173))
-- **Tap a file path in the terminal to open it in the workspace preview** ([#1174](https://github.com/getpaseo/paseo/pull/1174))
-- **Approve OpenCode permissions for the whole session** ([#1168](https://github.com/getpaseo/paseo/pull/1168))
-- **Workspace scripts now appear on the mobile header** ([#1093](https://github.com/getpaseo/paseo/pull/1093) by [@ayhanmalkoc](https://github.com/ayhanmalkoc))
+- **Rewind chat or files from any user message** ([#1154](https://github.com/prismosoft/codius-desktop/pull/1154))
+- **See the cumulative cost of an agent session** ([#1163](https://github.com/prismosoft/codius-desktop/pull/1163))
+- **Drop files onto the terminal to insert their paths** ([#1173](https://github.com/prismosoft/codius-desktop/pull/1173))
+- **Tap a file path in the terminal to open it in the workspace preview** ([#1174](https://github.com/prismosoft/codius-desktop/pull/1174))
+- **Approve OpenCode permissions for the whole session** ([#1168](https://github.com/prismosoft/codius-desktop/pull/1168))
+- **Workspace scripts now appear on the mobile header** ([#1093](https://github.com/prismosoft/codius-desktop/pull/1093) by [@ayhanmalkoc](https://github.com/ayhanmalkoc))
 - Devin CLI in the ACP provider catalog (by [@Alcimerio](https://github.com/Alcimerio))
 - OpenCode agents show their mode colors
 
 ### Improved
 
 - Mobile terminal keyboard hides when you open a sidebar
-- Tool activity for read, write, and OpenCode tools renders more consistently ([#1171](https://github.com/getpaseo/paseo/pull/1171))
+- Tool activity for read, write, and OpenCode tools renders more consistently ([#1171](https://github.com/prismosoft/codius-desktop/pull/1171))
 - Compact workspace header actions are tidier
-- Settings latency readouts are easier to scan ([#1170](https://github.com/getpaseo/paseo/pull/1170))
-- Pull request merge is available as soon as GitHub reports the PR is ready ([#1172](https://github.com/getpaseo/paseo/pull/1172))
+- Settings latency readouts are easier to scan ([#1170](https://github.com/prismosoft/codius-desktop/pull/1170))
+- Pull request merge is available as soon as GitHub reports the PR is ready ([#1172](https://github.com/prismosoft/codius-desktop/pull/1172))
 
 ### Fixed
 
 - Mobile slash command autocomplete no longer flickers or mis-layers
-- Interrupting an OpenCode agent returns it to idle instead of showing an error ([#1169](https://github.com/getpaseo/paseo/pull/1169))
-- Provider model selection per workspace is honored ([#1167](https://github.com/getpaseo/paseo/pull/1167))
-- Draft composer keeps the permission mode you selected ([#1175](https://github.com/getpaseo/paseo/pull/1175))
+- Interrupting an OpenCode agent returns it to idle instead of showing an error ([#1169](https://github.com/prismosoft/codius-desktop/pull/1169))
+- Provider model selection per workspace is honored ([#1167](https://github.com/prismosoft/codius-desktop/pull/1167))
+- Draft composer keeps the permission mode you selected ([#1175](https://github.com/prismosoft/codius-desktop/pull/1175))
 - Terminal color queries no longer return malformed replies
 - File links in chat no longer crash when a message contains a bare '%' (by [@Elliotwu-7](https://github.com/Elliotwu-7))
 
@@ -745,13 +745,13 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- **Paseo can now be installed as a web app from supported browsers** ([#1144](https://github.com/getpaseo/paseo/pull/1144))
-- **Pi extension dialogs now appear as Paseo permission prompts** ([#1134](https://github.com/getpaseo/paseo/pull/1134) by [@yuruiz](https://github.com/yuruiz))
+- **Codius can now be installed as a web app from supported browsers** ([#1144](https://github.com/prismosoft/codius-desktop/pull/1144))
+- **Pi extension dialogs now appear as Codius permission prompts** ([#1134](https://github.com/prismosoft/codius-desktop/pull/1134) by [@yuruiz](https://github.com/yuruiz))
 - Added community links and a home button to the sidebar
 
 ### Improved
 
-- **Mobile terminals load faster and restore existing output more smoothly** ([#1147](https://github.com/getpaseo/paseo/pull/1147))
+- **Mobile terminals load faster and restore existing output more smoothly** ([#1147](https://github.com/prismosoft/codius-desktop/pull/1147))
 - Copying assistant messages preserves formatting
 - Agent metadata fallback failures now log each provider attempt for easier debugging
 
@@ -762,7 +762,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Terminal panes no longer flicker during resize
 - OpenCode MCP servers are injected once instead of being connected twice
 - Import session no longer shows empty sessions
-- Worktree archive status no longer reports false unpushed commits ([#1158](https://github.com/getpaseo/paseo/pull/1158))
+- Worktree archive status no longer reports false unpushed commits ([#1158](https://github.com/prismosoft/codius-desktop/pull/1158))
 - The `/exit`, `/quit`, and `/q` slash command aliases now show as one row
 - Shortcut chord badges are readable in light mode
 - Segmented controls show their track under every segment
@@ -780,44 +780,44 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 - **Pi has been revamped with first-class support**
   - Runs through your installed Pi CLI, so your Pi extensions and configuration carry over
-  - Pi agents can call Paseo tools when you have the Pi MCP extension installed
+  - Pi agents can call Codius tools when you have the Pi MCP extension installed
   - Import a Pi session you started in the terminal
   - Copy Pi's resume command from any agent to continue the session in your terminal
   - Windows: Pi sessions match correctly across symlinked and junctioned workspace paths
 - **New home screen with quick tiles for adding a project, importing a session, setting up providers, and pairing a device**
 - **Create an agent directly into a fresh worktree that auto-archives when the run finishes**
 - **Set a custom system prompt that applies to every agent you start**
-- **Rename workspaces, terminals, and agent tabs** ([#531](https://github.com/getpaseo/paseo/pull/531))
-- **DeepSeek TUI in the ACP provider catalog** ([#1096](https://github.com/getpaseo/paseo/pull/1096))
+- **Rename workspaces, terminals, and agent tabs** ([#531](https://github.com/prismosoft/codius-desktop/pull/531))
+- **DeepSeek TUI in the ACP provider catalog** ([#1096](https://github.com/prismosoft/codius-desktop/pull/1096))
 - **Kiro CLI in the ACP provider catalog** (by [@huhusmang](https://github.com/huhusmang))
-- Catalog providers show their icons in the model picker ([#1098](https://github.com/getpaseo/paseo/pull/1098))
-- Custom environment variables passed when creating an agent now reach the agent process ([#1112](https://github.com/getpaseo/paseo/pull/1112))
-- NixOS module supports the public TLS option for self-hosted relays ([#1106](https://github.com/getpaseo/paseo/pull/1106) by [@yzx9](https://github.com/yzx9))
+- Catalog providers show their icons in the model picker ([#1098](https://github.com/prismosoft/codius-desktop/pull/1098))
+- Custom environment variables passed when creating an agent now reach the agent process ([#1112](https://github.com/prismosoft/codius-desktop/pull/1112))
+- NixOS module supports the public TLS option for self-hosted relays ([#1106](https://github.com/prismosoft/codius-desktop/pull/1106) by [@yzx9](https://github.com/yzx9))
 
 ### Improved
 
 - **Stale host connections recover automatically without a manual refresh**
-- Paseo opens to the workspace you were on last time you used it ([#1101](https://github.com/getpaseo/paseo/pull/1101))
+- Codius opens to the workspace you were on last time you used it ([#1101](https://github.com/prismosoft/codius-desktop/pull/1101))
 - Workspaces remember which editor you opened them in
 - Outdated daemons now suggest an upgrade when they receive a command they don't understand
 - Voice mode is hidden while an agent is running
-- Agent file-link tooltips show the full resolved file path ([#1088](https://github.com/getpaseo/paseo/pull/1088))
-- Workspace git status refreshes less aggressively in the background ([#1102](https://github.com/getpaseo/paseo/pull/1102))
+- Agent file-link tooltips show the full resolved file path ([#1088](https://github.com/prismosoft/codius-desktop/pull/1088))
+- Workspace git status refreshes less aggressively in the background ([#1102](https://github.com/prismosoft/codius-desktop/pull/1102))
 
 ### Fixed
 
-- macOS desktop no longer freezes after the display wakes from sleep ([#745](https://github.com/getpaseo/paseo/pull/745))
-- Windows: Codex picks up the Microsoft Store install correctly ([#1020](https://github.com/getpaseo/paseo/pull/1020) by [@32r4](https://github.com/32r4))
-- Workspace selection survives a daemon restart ([#1111](https://github.com/getpaseo/paseo/pull/1111))
-- Cursor agents wait for slash commands to load before listing them ([#1099](https://github.com/getpaseo/paseo/pull/1099) by [@chrisbanes](https://github.com/chrisbanes))
+- macOS desktop no longer freezes after the display wakes from sleep ([#745](https://github.com/prismosoft/codius-desktop/pull/745))
+- Windows: Codex picks up the Microsoft Store install correctly ([#1020](https://github.com/prismosoft/codius-desktop/pull/1020) by [@32r4](https://github.com/32r4))
+- Workspace selection survives a daemon restart ([#1111](https://github.com/prismosoft/codius-desktop/pull/1111))
+- Cursor agents wait for slash commands to load before listing them ([#1099](https://github.com/prismosoft/codius-desktop/pull/1099) by [@chrisbanes](https://github.com/chrisbanes))
 - Codex sub-agents keep running through transient child process errors (by [@xy-plus](https://github.com/xy-plus))
 - iPad terminals send Ctrl+C correctly from a hardware keyboard (by [@samatar26](https://github.com/samatar26))
 - Git filenames with non-ASCII characters render correctly (by [@samatar26](https://github.com/samatar26))
 - Paste shortcuts work on Dvorak keyboard layouts (by [@qin-nz](https://github.com/qin-nz))
 - Claude file links resolve correctly for projects whose paths need SDK encoding
-- Duplicate Claude result text no longer appears in chat ([#1095](https://github.com/getpaseo/paseo/pull/1095))
-- Dynamic UI styles no longer leak CSS rules across the page ([#1103](https://github.com/getpaseo/paseo/pull/1103))
-- Relay handshakes reject sessions that try to change encryption keys mid-flight ([#1037](https://github.com/getpaseo/paseo/pull/1037) by [@joaosa](https://github.com/joaosa))
+- Duplicate Claude result text no longer appears in chat ([#1095](https://github.com/prismosoft/codius-desktop/pull/1095))
+- Dynamic UI styles no longer leak CSS rules across the page ([#1103](https://github.com/prismosoft/codius-desktop/pull/1103))
+- Relay handshakes reject sessions that try to change encryption keys mid-flight ([#1037](https://github.com/prismosoft/codius-desktop/pull/1037) by [@joaosa](https://github.com/joaosa))
 
 ## 0.1.78 - 2026-05-18
 
@@ -838,43 +838,43 @@ _This release only fixes an Android issue — desktop users don't need to update
 - **Slash commands to end and restart an agent**
 - **Syntax highlighting for code blocks in chat**
 - **Copy button on code blocks in chat**
-- **Configurable terminal scrollback** ([#1021](https://github.com/getpaseo/paseo/pull/1021) by [@32r4](https://github.com/32r4))
+- **Configurable terminal scrollback** ([#1021](https://github.com/prismosoft/codius-desktop/pull/1021) by [@32r4](https://github.com/32r4))
 - Assistant file links open at a specific line range when one is included
-- Mode icons appear in the agent status menu ([#1059](https://github.com/getpaseo/paseo/pull/1059) by [@32r4](https://github.com/32r4))
-- MCP exposes schedule update, logs, and run-once tools ([#1032](https://github.com/getpaseo/paseo/pull/1032) by [@skevetter](https://github.com/skevetter))
-- Self-hosted relays can use a different TLS setting for the public endpoint ([#1045](https://github.com/getpaseo/paseo/pull/1045) by [@yzx9](https://github.com/yzx9))
+- Mode icons appear in the agent status menu ([#1059](https://github.com/prismosoft/codius-desktop/pull/1059) by [@32r4](https://github.com/32r4))
+- MCP exposes schedule update, logs, and run-once tools ([#1032](https://github.com/prismosoft/codius-desktop/pull/1032) by [@skevetter](https://github.com/skevetter))
+- Self-hosted relays can use a different TLS setting for the public endpoint ([#1045](https://github.com/prismosoft/codius-desktop/pull/1045) by [@yzx9](https://github.com/yzx9))
 
 ### Improved
 
 - User messages now have a distinct bubble fill for clearer chat hierarchy
 - Closing a tab returns to its parent tab
-- Diff rows show the full file path on hover ([#1061](https://github.com/getpaseo/paseo/pull/1061) by [@Myriad-Dreamin](https://github.com/Myriad-Dreamin))
-- The CLI shows the remote daemon host when `ls` cannot connect ([#1043](https://github.com/getpaseo/paseo/pull/1043) by [@mturac](https://github.com/mturac))
-- Nix install of the daemon is smaller ([#966](https://github.com/getpaseo/paseo/pull/966) by [@ixxie](https://github.com/ixxie))
-- Nix install honors home-manager profile paths when inheriting the user PATH ([#1040](https://github.com/getpaseo/paseo/pull/1040) by [@ixxie](https://github.com/ixxie))
+- Diff rows show the full file path on hover ([#1061](https://github.com/prismosoft/codius-desktop/pull/1061) by [@Myriad-Dreamin](https://github.com/Myriad-Dreamin))
+- The CLI shows the remote daemon host when `ls` cannot connect ([#1043](https://github.com/prismosoft/codius-desktop/pull/1043) by [@mturac](https://github.com/mturac))
+- Nix install of the daemon is smaller ([#966](https://github.com/prismosoft/codius-desktop/pull/966) by [@ixxie](https://github.com/ixxie))
+- Nix install honors home-manager profile paths when inheriting the user PATH ([#1040](https://github.com/prismosoft/codius-desktop/pull/1040) by [@ixxie](https://github.com/ixxie))
 
 ### Fixed
 
 - OpenCode probes no longer create empty sessions
 - OpenCode custom commands no longer hang
 - OpenCode session imports succeed across more environments
-- Native diff rows expand correctly ([#940](https://github.com/getpaseo/paseo/pull/940) by [@bolasblack](https://github.com/bolasblack))
-- Mobile sidebar interactions work correctly on web ([#900](https://github.com/getpaseo/paseo/pull/900) by [@nikuscs](https://github.com/nikuscs))
-- Mobile web drag gestures fire reliably ([#1048](https://github.com/getpaseo/paseo/pull/1048) by [@nikuscs](https://github.com/nikuscs))
-- Mobile web drag-and-drop activates correctly ([#1048](https://github.com/getpaseo/paseo/pull/1048) by [@nikuscs](https://github.com/nikuscs))
-- iOS Safari no longer zooms when focusing the composer ([#1048](https://github.com/getpaseo/paseo/pull/1048) by [@nikuscs](https://github.com/nikuscs))
-- Enter behavior in the mobile web composer is consistent ([#1048](https://github.com/getpaseo/paseo/pull/1048) by [@nikuscs](https://github.com/nikuscs))
+- Native diff rows expand correctly ([#940](https://github.com/prismosoft/codius-desktop/pull/940) by [@bolasblack](https://github.com/bolasblack))
+- Mobile sidebar interactions work correctly on web ([#900](https://github.com/prismosoft/codius-desktop/pull/900) by [@nikuscs](https://github.com/nikuscs))
+- Mobile web drag gestures fire reliably ([#1048](https://github.com/prismosoft/codius-desktop/pull/1048) by [@nikuscs](https://github.com/nikuscs))
+- Mobile web drag-and-drop activates correctly ([#1048](https://github.com/prismosoft/codius-desktop/pull/1048) by [@nikuscs](https://github.com/nikuscs))
+- iOS Safari no longer zooms when focusing the composer ([#1048](https://github.com/prismosoft/codius-desktop/pull/1048) by [@nikuscs](https://github.com/nikuscs))
+- Enter behavior in the mobile web composer is consistent ([#1048](https://github.com/prismosoft/codius-desktop/pull/1048) by [@nikuscs](https://github.com/nikuscs))
 - Composer no longer flickers when resizing with long prompts
 - Inline code links in assistant messages open the correct file
-- Host switcher popover is wide enough to show host names ([#981](https://github.com/getpaseo/paseo/pull/981) by [@kongjiadongyuan](https://github.com/kongjiadongyuan))
-- Windows: importing existing sessions matches paths correctly ([#1012](https://github.com/getpaseo/paseo/pull/1012) by [@kj1534](https://github.com/kj1534))
+- Host switcher popover is wide enough to show host names ([#981](https://github.com/prismosoft/codius-desktop/pull/981) by [@kongjiadongyuan](https://github.com/kongjiadongyuan))
+- Windows: importing existing sessions matches paths correctly ([#1012](https://github.com/prismosoft/codius-desktop/pull/1012) by [@kj1534](https://github.com/kj1534))
 
 ## 0.1.76 - 2026-05-15
 
 ### Added
 
 - **Chat timestamps and turn durations** Every message shows when it was sent, and each turn surfaces how long the agent took
-- **Auto Review permission mode for Claude Code and Codex** Agents stop after each assistant turn for review instead of running unattended ([#928](https://github.com/getpaseo/paseo/pull/928), [#963](https://github.com/getpaseo/paseo/pull/963) by [@bolasblack](https://github.com/bolasblack))
+- **Auto Review permission mode for Claude Code and Codex** Agents stop after each assistant turn for review instead of running unattended ([#928](https://github.com/prismosoft/codius-desktop/pull/928), [#963](https://github.com/prismosoft/codius-desktop/pull/963) by [@bolasblack](https://github.com/bolasblack))
 - Surface Codex's context compaction events and the `/compact` command in chat
 - Optional auto-archive for worktrees once their PR merges
 - Paste a GitHub PR or issue URL into the composer to attach it as context
@@ -885,20 +885,20 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Claude Code now picks up models from `~/.claude/settings.json` so custom model lists show up in the model picker
 - Local Claude Code settings (`.claude/settings.local.json`) apply per workspace
 - Diagnostics for generic ACP providers surface in the model picker
-- Allow setting fast mode for Paseo subagents ([#909](https://github.com/getpaseo/paseo/pull/909), [#910](https://github.com/getpaseo/paseo/pull/910) by [@kongjiadongyuan](https://github.com/kongjiadongyuan))
+- Allow setting fast mode for Codius subagents ([#909](https://github.com/prismosoft/codius-desktop/pull/909), [#910](https://github.com/prismosoft/codius-desktop/pull/910) by [@kongjiadongyuan](https://github.com/kongjiadongyuan))
 
 ### Improved
 
 - Surface Claude error messages in chat instead of ending the turn silently
 - Workspace checkout picker auto-selects when a single PR is attached
-- New workspace flow honors the currently checked-out branch when branching off ([#909](https://github.com/getpaseo/paseo/pull/908) by [@sbtobb](https://github.com/sbtobb))
-- OpenCode models from console subscription providers now appear in the model picker ([#917](https://github.com/getpaseo/paseo/pull/917) by [@t2o2](https://github.com/t2o2))
-- Cursor model picker reflects the models advertised by the Cursor ACP client ([#958](https://github.com/getpaseo/paseo/pull/958) by [@chrisbanes](https://github.com/chrisbanes))
+- New workspace flow honors the currently checked-out branch when branching off ([#909](https://github.com/prismosoft/codius-desktop/pull/908) by [@sbtobb](https://github.com/sbtobb))
+- OpenCode models from console subscription providers now appear in the model picker ([#917](https://github.com/prismosoft/codius-desktop/pull/917) by [@t2o2](https://github.com/t2o2))
+- Cursor model picker reflects the models advertised by the Cursor ACP client ([#958](https://github.com/prismosoft/codius-desktop/pull/958) by [@chrisbanes](https://github.com/chrisbanes))
 
 ### Fixed
 
-- iPad hardware Enter submits the composer ([#919](https://github.com/getpaseo/paseo/pull/919) by [@kongjiadongyuan](https://github.com/kongjiadongyuan))
-- PR status falls back to a non-checks query for fine-grained GitHub tokens ([#932](https://github.com/getpaseo/paseo/pull/932) by [@32r4](https://github.com/32r4))
+- iPad hardware Enter submits the composer ([#919](https://github.com/prismosoft/codius-desktop/pull/919) by [@kongjiadongyuan](https://github.com/kongjiadongyuan))
+- PR status falls back to a non-checks query for fine-grained GitHub tokens ([#932](https://github.com/prismosoft/codius-desktop/pull/932) by [@32r4](https://github.com/32r4))
 - ACP errors display as readable text instead of `[object Object]`
 - OpenCode no longer hangs on retry when the upstream provider stalls
 - Worktree ahead count is correct when the upstream branch has been deleted
@@ -913,90 +913,90 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Relay E2EE reconnects cleanly under racing connect/disconnect
 - Workspace kind stays in sync with project kind after reconfiguration
 - zsh integration files install with usable runtime modes
-- MCP worktree cache refreshes after create and archive ([#911](https://github.com/getpaseo/paseo/pull/911) by [@kongjiadongyuan](https://github.com/kongjiadongyuan))
+- MCP worktree cache refreshes after create and archive ([#911](https://github.com/prismosoft/codius-desktop/pull/911) by [@kongjiadongyuan](https://github.com/kongjiadongyuan))
 
 ## 0.1.75 - 2026-05-12
 
 ### Added
 
-- Set the speech-to-text language used by dictation and voice mode from settings ([#941](https://github.com/getpaseo/paseo/pull/941))
+- Set the speech-to-text language used by dictation and voice mode from settings ([#941](https://github.com/prismosoft/codius-desktop/pull/941))
 
 ### Fixed
 
-- Codex resume failures now surface as explicit errors instead of leaving the agent silently stuck ([#947](https://github.com/getpaseo/paseo/pull/947))
-- Custom providers extending Codex now route correctly when they set a custom `OPENAI_BASE_URL` ([#915](https://github.com/getpaseo/paseo/pull/915))
-- Fixed Copilot's **Allow All** mode (renamed from Autopilot) ([#935](https://github.com/getpaseo/paseo/pull/935))
-- Desktop: daemon startup no longer fails when a stale PID file is left next to a still-running daemon ([#913](https://github.com/getpaseo/paseo/pull/913) by [@biaoma-ty](https://github.com/biaoma-ty))
-- iPhone HEIC photos now attach correctly from the image picker ([#934](https://github.com/getpaseo/paseo/pull/934))
-- Scheduled agents now archive automatically after each run ([#945](https://github.com/getpaseo/paseo/pull/945))
-- Windows: Codex command summaries trim `pwsh`, `powershell`, or `cmd` wrappers ([#931](https://github.com/getpaseo/paseo/pull/931) by [@32r4](https://github.com/32r4))
-- iPad: settings sidebar and main sidebar respect the top safe area in wide layouts ([#922](https://github.com/getpaseo/paseo/pull/922), [#937](https://github.com/getpaseo/paseo/pull/937) by [@kongjiadongyuan](https://github.com/kongjiadongyuan))
+- Codex resume failures now surface as explicit errors instead of leaving the agent silently stuck ([#947](https://github.com/prismosoft/codius-desktop/pull/947))
+- Custom providers extending Codex now route correctly when they set a custom `OPENAI_BASE_URL` ([#915](https://github.com/prismosoft/codius-desktop/pull/915))
+- Fixed Copilot's **Allow All** mode (renamed from Autopilot) ([#935](https://github.com/prismosoft/codius-desktop/pull/935))
+- Desktop: daemon startup no longer fails when a stale PID file is left next to a still-running daemon ([#913](https://github.com/prismosoft/codius-desktop/pull/913) by [@biaoma-ty](https://github.com/biaoma-ty))
+- iPhone HEIC photos now attach correctly from the image picker ([#934](https://github.com/prismosoft/codius-desktop/pull/934))
+- Scheduled agents now archive automatically after each run ([#945](https://github.com/prismosoft/codius-desktop/pull/945))
+- Windows: Codex command summaries trim `pwsh`, `powershell`, or `cmd` wrappers ([#931](https://github.com/prismosoft/codius-desktop/pull/931) by [@32r4](https://github.com/32r4))
+- iPad: settings sidebar and main sidebar respect the top safe area in wide layouts ([#922](https://github.com/prismosoft/codius-desktop/pull/922), [#937](https://github.com/prismosoft/codius-desktop/pull/937) by [@kongjiadongyuan](https://github.com/kongjiadongyuan))
 
 ## 0.1.74 - 2026-05-11
 
 ### Fixed
 
-- **OpenCode agent turns no longer stall** Paseo now follows OpenCode's global event stream, so turns stream reliably without falling back to fragile recovery paths ([#916](https://github.com/getpaseo/paseo/pull/916))
+- **OpenCode agent turns no longer stall** Codius now follows OpenCode's global event stream, so turns stream reliably without falling back to fragile recovery paths ([#916](https://github.com/prismosoft/codius-desktop/pull/916))
 
 ## 0.1.73 - 2026-05-10
 
 ### Fixed
 
-- **OpenCode agents work again on OpenCode 1.14.42+** ([#895](https://github.com/getpaseo/paseo/pull/895), [#902](https://github.com/getpaseo/paseo/pull/902), [#904](https://github.com/getpaseo/paseo/pull/904) by [@atomlink-ye](https://github.com/atomlink-ye), [@plutofog](https://github.com/plutofog))
-- Web: opening a workspace no longer hangs in browsers without `crypto.randomUUID` ([#858](https://github.com/getpaseo/paseo/pull/858) by [@cokekitten](https://github.com/cokekitten))
-- Codex sub-agent child tool calls now report a final failure state instead of staying as "running" ([#899](https://github.com/getpaseo/paseo/pull/899))
-- Old relay pairing URLs without an explicit TLS flag work again ([#896](https://github.com/getpaseo/paseo/pull/896))
-- macOS: the tab-jump shortcut no longer collides with system shortcuts ([#859](https://github.com/getpaseo/paseo/pull/859) by [@nikuscs](https://github.com/nikuscs))
-- Web: the composer no longer triggers a bottom-sheet keyboard on desktop browsers ([#898](https://github.com/getpaseo/paseo/pull/898) by [@nikuscs](https://github.com/nikuscs))
-- Windows: git operations no longer flash a console window on each invocation ([#897](https://github.com/getpaseo/paseo/pull/897))
-- File explorer no longer follows symlinks outside the workspace root ([#847](https://github.com/getpaseo/paseo/pull/847) by [@joaosa](https://github.com/joaosa))
-- Desktop only opens external URLs via http(s) and mailto schemes ([#845](https://github.com/getpaseo/paseo/pull/845) by [@joaosa](https://github.com/joaosa))
-- MCP debug request logs now redact request bodies ([#842](https://github.com/getpaseo/paseo/pull/842) by [@joaosa](https://github.com/joaosa))
+- **OpenCode agents work again on OpenCode 1.14.42+** ([#895](https://github.com/prismosoft/codius-desktop/pull/895), [#902](https://github.com/prismosoft/codius-desktop/pull/902), [#904](https://github.com/prismosoft/codius-desktop/pull/904) by [@atomlink-ye](https://github.com/atomlink-ye), [@plutofog](https://github.com/plutofog))
+- Web: opening a workspace no longer hangs in browsers without `crypto.randomUUID` ([#858](https://github.com/prismosoft/codius-desktop/pull/858) by [@cokekitten](https://github.com/cokekitten))
+- Codex sub-agent child tool calls now report a final failure state instead of staying as "running" ([#899](https://github.com/prismosoft/codius-desktop/pull/899))
+- Old relay pairing URLs without an explicit TLS flag work again ([#896](https://github.com/prismosoft/codius-desktop/pull/896))
+- macOS: the tab-jump shortcut no longer collides with system shortcuts ([#859](https://github.com/prismosoft/codius-desktop/pull/859) by [@nikuscs](https://github.com/nikuscs))
+- Web: the composer no longer triggers a bottom-sheet keyboard on desktop browsers ([#898](https://github.com/prismosoft/codius-desktop/pull/898) by [@nikuscs](https://github.com/nikuscs))
+- Windows: git operations no longer flash a console window on each invocation ([#897](https://github.com/prismosoft/codius-desktop/pull/897))
+- File explorer no longer follows symlinks outside the workspace root ([#847](https://github.com/prismosoft/codius-desktop/pull/847) by [@joaosa](https://github.com/joaosa))
+- Desktop only opens external URLs via http(s) and mailto schemes ([#845](https://github.com/prismosoft/codius-desktop/pull/845) by [@joaosa](https://github.com/joaosa))
+- MCP debug request logs now redact request bodies ([#842](https://github.com/prismosoft/codius-desktop/pull/842) by [@joaosa](https://github.com/joaosa))
 
 ## 0.1.72 - 2026-05-10
 
 ### Fixed
 
-- **Codex approval prompts no longer hang** Fixes a regression introduced in 0.1.70 where Codex agents would wait forever on command and file approvals — the prompt never reached the app and the agent stayed stuck in "running" ([#866](https://github.com/getpaseo/paseo/pull/866), [#869](https://github.com/getpaseo/paseo/pull/869))
-- **Windows: daemon no longer crashes when Codex emits non-JSON output** Localized stdout lines from the Codex CLI are now ignored instead of taking down the daemon worker ([#866](https://github.com/getpaseo/paseo/pull/866))
-- Drag-and-drop images onto the new workspace screen now works ([#850](https://github.com/getpaseo/paseo/pull/850))
-- Archiving a worktree from the toolbar redirects you immediately instead of leaving you on the dead screen for a beat ([#852](https://github.com/getpaseo/paseo/pull/852))
-- Pi-backed sessions now shut down cleanly when you close them, releasing extension resources on the Pi side ([#863](https://github.com/getpaseo/paseo/pull/863))
+- **Codex approval prompts no longer hang** Fixes a regression introduced in 0.1.70 where Codex agents would wait forever on command and file approvals — the prompt never reached the app and the agent stayed stuck in "running" ([#866](https://github.com/prismosoft/codius-desktop/pull/866), [#869](https://github.com/prismosoft/codius-desktop/pull/869))
+- **Windows: daemon no longer crashes when Codex emits non-JSON output** Localized stdout lines from the Codex CLI are now ignored instead of taking down the daemon worker ([#866](https://github.com/prismosoft/codius-desktop/pull/866))
+- Drag-and-drop images onto the new workspace screen now works ([#850](https://github.com/prismosoft/codius-desktop/pull/850))
+- Archiving a worktree from the toolbar redirects you immediately instead of leaving you on the dead screen for a beat ([#852](https://github.com/prismosoft/codius-desktop/pull/852))
+- Pi-backed sessions now shut down cleanly when you close them, releasing extension resources on the Pi side ([#863](https://github.com/prismosoft/codius-desktop/pull/863))
 
 ## 0.1.71 - 2026-05-09
 
 ### Added
 
-- **Import existing Claude, Codex, and OpenCode sessions** into Paseo — pick up a conversation you started in the terminal and keep going from the app, with the full timeline ([#766](https://github.com/getpaseo/paseo/pull/766), [#833](https://github.com/getpaseo/paseo/pull/833))
-- **Subagents now appear in a collapsible section above the composer** so you can jump into agents your main agent spawned ([#532](https://github.com/getpaseo/paseo/pull/532))
-- Merge a pull request directly from the checkout pane ([#814](https://github.com/getpaseo/paseo/pull/814))
-- Customize the per-project prompts Paseo uses to auto-generate agent titles, branch names, commit messages, and pull request descriptions ([#836](https://github.com/getpaseo/paseo/pull/836))
-- Open an empty workspace without typing a prompt first ([#834](https://github.com/getpaseo/paseo/pull/834))
-- Project settings are now grouped with inline links to the relevant docs ([#837](https://github.com/getpaseo/paseo/pull/837))
+- **Import existing Claude, Codex, and OpenCode sessions** into Codius — pick up a conversation you started in the terminal and keep going from the app, with the full timeline ([#766](https://github.com/prismosoft/codius-desktop/pull/766), [#833](https://github.com/prismosoft/codius-desktop/pull/833))
+- **Subagents now appear in a collapsible section above the composer** so you can jump into agents your main agent spawned ([#532](https://github.com/prismosoft/codius-desktop/pull/532))
+- Merge a pull request directly from the checkout pane ([#814](https://github.com/prismosoft/codius-desktop/pull/814))
+- Customize the per-project prompts Codius uses to auto-generate agent titles, branch names, commit messages, and pull request descriptions ([#836](https://github.com/prismosoft/codius-desktop/pull/836))
+- Open an empty workspace without typing a prompt first ([#834](https://github.com/prismosoft/codius-desktop/pull/834))
+- Project settings are now grouped with inline links to the relevant docs ([#837](https://github.com/prismosoft/codius-desktop/pull/837))
 - Rich context menu on desktop — copy link, copy image, and spellcheck suggestions
-- Archiving a Codex-backed agent now archives the underlying native Codex thread too ([#827](https://github.com/getpaseo/paseo/pull/827) by [@32r4](https://github.com/32r4))
+- Archiving a Codex-backed agent now archives the underlying native Codex thread too ([#827](https://github.com/prismosoft/codius-desktop/pull/827) by [@32r4](https://github.com/32r4))
 
 ### Improved
 
-- Opening a workspace auto-focuses the agent that needs your attention ([#828](https://github.com/getpaseo/paseo/pull/828))
+- Opening a workspace auto-focuses the agent that needs your attention ([#828](https://github.com/prismosoft/codius-desktop/pull/828))
 - An unattended agent that spawns a sub-agent on a different provider via MCP now starts the sub-agent in unattended mode too
 
 ### Fixed
 
-- iOS project picker now submits the typed path ([#831](https://github.com/getpaseo/paseo/pull/831))
-- System messages and chat mentions routed to multiple agents now reach every recipient consistently ([#830](https://github.com/getpaseo/paseo/pull/830))
+- iOS project picker now submits the typed path ([#831](https://github.com/prismosoft/codius-desktop/pull/831))
+- System messages and chat mentions routed to multiple agents now reach every recipient consistently ([#830](https://github.com/prismosoft/codius-desktop/pull/830))
 - Clicking a Markdown link in agent output no longer reloads the desktop app on top of opening the link
 - macOS desktop tab-jump shortcuts now use Cmd+Option+1-9, avoiding conflicts with Option-based international keyboard characters such as `@`
 
 ### Security
 
-- Local state files (daemon keypair, stored credentials, persisted config) are now readable only by the owning user ([#825](https://github.com/getpaseo/paseo/pull/825) by [@joaosa](https://github.com/joaosa))
+- Local state files (daemon keypair, stored credentials, persisted config) are now readable only by the owning user ([#825](https://github.com/prismosoft/codius-desktop/pull/825) by [@joaosa](https://github.com/joaosa))
 
 ## 0.1.70 - 2026-05-08
 
 ### Breaking
 
-- **Claude agents now require `claude` on your PATH** Install Claude Code globally (`npm install -g @anthropic-ai/claude-code`) before running a Claude agent — Paseo no longer ships a bundled fallback binary. Same posture as Codex and OpenCode, and shrinks the desktop install by ~210 MB per platform
+- **Claude agents now require `claude` on your PATH** Install Claude Code globally (`npm install -g @anthropic-ai/claude-code`) before running a Claude agent — Codius no longer ships a bundled fallback binary. Same posture as Codex and OpenCode, and shrinks the desktop install by ~210 MB per platform
 
 ### Added
 
@@ -1004,10 +1004,10 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Codex `/goal` slash command — set or update the goal mid-turn while a Codex agent is running
 - Claude's Sonnet 4.6 1M context model is now selectable in the model picker
 - Detect GitHub issue and PR URLs pasted into the composer search
-- `paseo worktree create` CLI command, with parity to the MCP `create_worktree` tool
-- `paseo schedule update` to edit a schedule in place without recreating it
-- `paseo schedule run-once` for cron-style triggers, plus `--mode` on `schedule` and `loop`. Background runs now default to unattended mode
-- Projects settings now lists workspaces from any remote — GitLab, Gitea, Bitbucket, self-hosted, and SSH-style URLs, not just GitHub ([#681](https://github.com/getpaseo/paseo/pull/681) by [@krumpyzoid](https://github.com/krumpyzoid))
+- `codius worktree create` CLI command, with parity to the MCP `create_worktree` tool
+- `codius schedule update` to edit a schedule in place without recreating it
+- `codius schedule run-once` for cron-style triggers, plus `--mode` on `schedule` and `loop`. Background runs now default to unattended mode
+- Projects settings now lists workspaces from any remote — GitLab, Gitea, Bitbucket, self-hosted, and SSH-style URLs, not just GitHub ([#681](https://github.com/prismosoft/codius-desktop/pull/681) by [@krumpyzoid](https://github.com/krumpyzoid))
 
 ### Improved
 
@@ -1025,12 +1025,12 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 - **Claude agent: daemon no longer crashes mid-turn** when the underlying SDK fires a stray control message after the connection has been torn down
 - **Windows:** Terminals start reliably and shut down cleanly without leaving stuck processes behind
-- **Linux:** Workspace file watchers no longer storm with events on busy working trees, fixing CPU spikes on large repos ([#794](https://github.com/getpaseo/paseo/pull/794) by [@312223105](https://github.com/312223105))
-- ACP-based agents launch terminal shell commands reliably ([#793](https://github.com/getpaseo/paseo/pull/793) by [@ebg1223](https://github.com/ebg1223))
-- Checkout shortstat now counts untracked files ([#608](https://github.com/getpaseo/paseo/issues/608), [#762](https://github.com/getpaseo/paseo/pull/762) by [@somus](https://github.com/somus))
-- Relay endpoints on port 443 use TLS automatically ([#774](https://github.com/getpaseo/paseo/pull/774) by [@caoer](https://github.com/caoer))
+- **Linux:** Workspace file watchers no longer storm with events on busy working trees, fixing CPU spikes on large repos ([#794](https://github.com/prismosoft/codius-desktop/pull/794) by [@312223105](https://github.com/312223105))
+- ACP-based agents launch terminal shell commands reliably ([#793](https://github.com/prismosoft/codius-desktop/pull/793) by [@ebg1223](https://github.com/ebg1223))
+- Checkout shortstat now counts untracked files ([#608](https://github.com/prismosoft/codius-desktop/issues/608), [#762](https://github.com/prismosoft/codius-desktop/pull/762) by [@somus](https://github.com/somus))
+- Relay endpoints on port 443 use TLS automatically ([#774](https://github.com/prismosoft/codius-desktop/pull/774) by [@caoer](https://github.com/caoer))
 - Desktop CLI passthrough TTY handling — interactive commands now behave correctly when launched from the desktop app
-- The CLI honors the `PASEO_PASSWORD` environment variable for password-protected daemons
+- The CLI honors the `CODIUS_PASSWORD` environment variable for password-protected daemons
 - Daemon shutdown terminates all child processes cleanly using tree-kill
 - Agent spawn paths handle missing executables and unusual install layouts more reliably
 - OpenCode now forwards provider retry errors instead of silently swallowing them
@@ -1043,19 +1043,19 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Browser pane reload focus and devtools handling
 - MCP terminal capture now includes scrollback
 - Worktree branches no longer get renamed when an agent is created against an existing worktree from MCP
-- Creating an agent in a subdirectory of a registered workspace now runs in that subdirectory instead of jumping up to the parent ([#551](https://github.com/getpaseo/paseo/issues/551))
+- Creating an agent in a subdirectory of a registered workspace now runs in that subdirectory instead of jumping up to the parent ([#551](https://github.com/prismosoft/codius-desktop/issues/551))
 - Non-GitHub project display names are derived from the remote owner/repo instead of the local path
-- Desktop IPC wrapped in shared mutation/query hooks, fixing stale state and intermittent failures ([#761](https://github.com/getpaseo/paseo/issues/761))
-- `paseo schedule create --host` now requires `--cwd` to avoid running schedules in the wrong directory
-- `paseo schedule create --every` runs once immediately by default, then on the configured interval
+- Desktop IPC wrapped in shared mutation/query hooks, fixing stale state and intermittent failures ([#761](https://github.com/prismosoft/codius-desktop/issues/761))
+- `codius schedule create --host` now requires `--cwd` to avoid running schedules in the wrong directory
+- `codius schedule create --every` runs once immediately by default, then on the configured interval
 - MCP `create_agent` validates the requested mode and refuses silent cross-provider inheritance
 
 ## 0.1.69 - 2026-05-05
 
 ### Fixed
 
-- Paseo now recovers automatically when an internal daemon process crashes — your agents stay connected instead of getting stuck and you don't have to restart anything
-- Answering an interactive question from a Claude agent now reaches Claude correctly instead of being dropped ([#760](https://github.com/getpaseo/paseo/pull/760) by [@somus](https://github.com/somus))
+- Codius now recovers automatically when an internal daemon process crashes — your agents stay connected instead of getting stuck and you don't have to restart anything
+- Answering an interactive question from a Claude agent now reaches Claude correctly instead of being dropped ([#760](https://github.com/prismosoft/codius-desktop/pull/760) by [@somus](https://github.com/somus))
 
 ## 0.1.68 - 2026-05-05
 
@@ -1085,15 +1085,15 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- **In-app browser** — open a real web browser in any workspace to test your app ([#670](https://github.com/getpaseo/paseo/pull/670) by [@jasonkneen](https://github.com/jasonkneen))
-- Inline review comments in the git diff pane. Tap a line number to start a comment ([#530](https://github.com/getpaseo/paseo/pull/530))
-- Sub-agent activity is now shown for Codex, OpenCode, and Claude ([#672](https://github.com/getpaseo/paseo/pull/672), [#658](https://github.com/getpaseo/paseo/pull/658) by [@thisisryanswift](https://github.com/thisisryanswift))
+- **In-app browser** — open a real web browser in any workspace to test your app ([#670](https://github.com/prismosoft/codius-desktop/pull/670) by [@jasonkneen](https://github.com/jasonkneen))
+- Inline review comments in the git diff pane. Tap a line number to start a comment ([#530](https://github.com/prismosoft/codius-desktop/pull/530))
+- Sub-agent activity is now shown for Codex, OpenCode, and Claude ([#672](https://github.com/prismosoft/codius-desktop/pull/672), [#658](https://github.com/prismosoft/codius-desktop/pull/658) by [@thisisryanswift](https://github.com/thisisryanswift))
 - Pull and push your branch in one step from the git actions menu in the changes pane
-- Resume existing agent sessions with `paseo import --provider <name> <id>` ([#632](https://github.com/getpaseo/paseo/pull/632))
-- Password authentication and SSL support for daemon connections ([#635](https://github.com/getpaseo/paseo/pull/635))
-- Connect to a daemon via relay using a pairing offer URL from the CLI ([#639](https://github.com/getpaseo/paseo/pull/639))
+- Resume existing agent sessions with `codius import --provider <name> <id>` ([#632](https://github.com/prismosoft/codius-desktop/pull/632))
+- Password authentication and SSL support for daemon connections ([#635](https://github.com/prismosoft/codius-desktop/pull/635))
+- Connect to a daemon via relay using a pairing offer URL from the CLI ([#639](https://github.com/prismosoft/codius-desktop/pull/639))
 - **Windows:** Native ARM64 builds are now available
-- Bundled Paseo skills now refresh automatically on desktop app launch
+- Bundled Codius skills now refresh automatically on desktop app launch
 
 ### Improved
 
@@ -1105,27 +1105,27 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Fixed
 
-- **Apple Silicon Mac:** The desktop update pipeline now publishes manifests atomically, closing a race that could install the Intel build on Apple Silicon Macs and cause 100%+ renderer CPU usage. Affected users will self-heal — electron-updater's Rosetta detection migrates back to arm64 on the next update poll ([#555](https://github.com/getpaseo/paseo/issues/555))
-- **Linux:** `.deb` and `.rpm` packages now show as `Paseo` in the dock and process list instead of `Paseo.bin`. `--no-sandbox` is now scoped to AppImage only, matching VS Code's sandbox handling ([#602](https://github.com/getpaseo/paseo/issues/602))
-- **Windows:** Git diff commands no longer break on paths with special characters ([#629](https://github.com/getpaseo/paseo/pull/629))
-- Cursor CLI and other ACP custom providers launch reliably ([#628](https://github.com/getpaseo/paseo/pull/628))
-- Daemon stays up when WebSocket clients disconnect mid-stream, and crashes now write a fatal log entry instead of disappearing silently ([#613](https://github.com/getpaseo/paseo/pull/613) by [@yuruiz](https://github.com/yuruiz))
-- Long agent timelines reconnect cleanly over the relay instead of looping through disconnects while catching up ([#657](https://github.com/getpaseo/paseo/pull/657) by [@fireblue](https://github.com/fireblue))
+- **Apple Silicon Mac:** The desktop update pipeline now publishes manifests atomically, closing a race that could install the Intel build on Apple Silicon Macs and cause 100%+ renderer CPU usage. Affected users will self-heal — electron-updater's Rosetta detection migrates back to arm64 on the next update poll ([#555](https://github.com/prismosoft/codius-desktop/issues/555))
+- **Linux:** `.deb` and `.rpm` packages now show as `Codius` in the dock and process list instead of `Codius.bin`. `--no-sandbox` is now scoped to AppImage only, matching VS Code's sandbox handling ([#602](https://github.com/prismosoft/codius-desktop/issues/602))
+- **Windows:** Git diff commands no longer break on paths with special characters ([#629](https://github.com/prismosoft/codius-desktop/pull/629))
+- Cursor CLI and other ACP custom providers launch reliably ([#628](https://github.com/prismosoft/codius-desktop/pull/628))
+- Daemon stays up when WebSocket clients disconnect mid-stream, and crashes now write a fatal log entry instead of disappearing silently ([#613](https://github.com/prismosoft/codius-desktop/pull/613) by [@yuruiz](https://github.com/yuruiz))
+- Long agent timelines reconnect cleanly over the relay instead of looping through disconnects while catching up ([#657](https://github.com/prismosoft/codius-desktop/pull/657) by [@fireblue](https://github.com/fireblue))
 - Agent timelines refresh with smaller catch-up requests when you reopen an agent
 - Terminal snapshots flush reliably before clients reconnect
 - Workspace reconnects avoid unnecessary refresh work when the focused workspace is already current
 - Voice dictation keeps recording when the agent tab loses focus
-- OpenCode mode picker now lists agents available in every mode ([#606](https://github.com/getpaseo/paseo/pull/606) by [@thisisryanswift](https://github.com/thisisryanswift))
+- OpenCode mode picker now lists agents available in every mode ([#606](https://github.com/prismosoft/codius-desktop/pull/606) by [@thisisryanswift](https://github.com/thisisryanswift))
 - Codex plan approval panels no longer duplicate
 - Imported agents display the correct title immediately
 - OpenCode surfaces invalid mode/model errors instead of hanging
-- Archived worktrees stay hidden without flashing back into the list ([#640](https://github.com/getpaseo/paseo/pull/640))
+- Archived worktrees stay hidden without flashing back into the list ([#640](https://github.com/prismosoft/codius-desktop/pull/640))
 - Web dropdown menus no longer resize unexpectedly
 - The visible changes pane keeps in sync with the working tree diff
 - Tool detail rows on the timeline are selectable again
-- `paseo.json` parse errors in setup, teardown, and terminal actions now surface a clear error instead of failing silently
+- `codius.json` parse errors in setup, teardown, and terminal actions now surface a clear error instead of failing silently
 - Diff gutter line numbers were shifted one row out of alignment in some cases on web
-- Streamed agent output reconciles cleanly when the timeline hydrates mid-turn ([#663](https://github.com/getpaseo/paseo/pull/663))
+- Streamed agent output reconciles cleanly when the timeline hydrates mid-turn ([#663](https://github.com/prismosoft/codius-desktop/pull/663))
 - Images in assistant messages show a loading spinner while they load and an "Image unavailable" fallback if they fail, instead of a blank space
 - Isolated bottom sheet modals close and re-open without getting stuck
 
@@ -1133,42 +1133,42 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- OpenCode now has a Full Access mode that auto-approves tool calls ([#595](https://github.com/getpaseo/paseo/pull/595) by [@tmih06](https://github.com/tmih06))
-- OpenCode supports executable slash commands ([#597](https://github.com/getpaseo/paseo/pull/597) by [@tmih06](https://github.com/tmih06))
+- OpenCode now has a Full Access mode that auto-approves tool calls ([#595](https://github.com/prismosoft/codius-desktop/pull/595) by [@tmih06](https://github.com/tmih06))
+- OpenCode supports executable slash commands ([#597](https://github.com/prismosoft/codius-desktop/pull/597) by [@tmih06](https://github.com/tmih06))
 
 ### Improved
 
-- `@`-mention stays responsive on very large projects ([#600](https://github.com/getpaseo/paseo/pull/600) by [@yuruiz](https://github.com/yuruiz))
+- `@`-mention stays responsive on very large projects ([#600](https://github.com/prismosoft/codius-desktop/pull/600) by [@yuruiz](https://github.com/yuruiz))
 
 ### Fixed
 
-- Workspaces still load when `paseo.json` has a parse error
+- Workspaces still load when `codius.json` has a parse error
 
 ## 0.1.63 - 2026-04-28
 
 ### Added
 
-- Project settings page with a built-in `paseo.json` editor
+- Project settings page with a built-in `codius.json` editor
 - Cold start restores your last open workspace
 - Tool call badges have a button to open the referenced file directly
-- Open the current branch on GitHub from a workspace's open menu ([#583](https://github.com/getpaseo/paseo/pull/583) by [@Myriad-Dreamin](https://github.com/Myriad-Dreamin))
+- Open the current branch on GitHub from a workspace's open menu ([#583](https://github.com/prismosoft/codius-desktop/pull/583) by [@Myriad-Dreamin](https://github.com/Myriad-Dreamin))
 - Enable or disable providers from Settings without editing config files
-- Paseo prompts you to configure a worktree setup script when one is missing
+- Codius prompts you to configure a worktree setup script when one is missing
 - Choose whether the daemon shuts down when you close the desktop app
 
 ### Improved
 
 - Provider settings and model selection have been redesigned
-- Voice mode transcription endpoint is configurable for OpenAI-compatible providers ([#570](https://github.com/getpaseo/paseo/pull/570) by [@yuruiz](https://github.com/yuruiz))
+- Voice mode transcription endpoint is configurable for OpenAI-compatible providers ([#570](https://github.com/prismosoft/codius-desktop/pull/570) by [@yuruiz](https://github.com/yuruiz))
 - Adding a project no longer waits for GitHub PR status to load
 - Startup splash screen is cleaner — just the logo with a subtle shimmer
-- `paseo.json` setup and teardown accept a single command string, not just an array
+- `codius.json` setup and teardown accept a single command string, not just an array
 - Archiving a worktree is instant instead of waiting for the backend to confirm
 - Agent timelines and git diff lists no longer jump around while loading or streaming
 
 ### Fixed
 
-- `paseo loop run` and `paseo run` now respect the `--provider` and `--model` flags ([#594](https://github.com/getpaseo/paseo/pull/594) by [@VincenzoRocchi](https://github.com/VincenzoRocchi))
+- `codius loop run` and `codius run` now respect the `--provider` and `--model` flags ([#594](https://github.com/prismosoft/codius-desktop/pull/594) by [@VincenzoRocchi](https://github.com/VincenzoRocchi))
 - Pi provider shows up when only DeepSeek or other non-OpenAI/Anthropic/OpenRouter API keys are set
 - Custom models from `additionalModels` and `profileModels` are honored when picking a default for new agents
 - File preview line numbers stay on one line past line 99
@@ -1201,15 +1201,15 @@ _This release only fixes an Android issue — desktop users don't need to update
 ### Fixed
 
 - Pull request status resolves correctly for PRs opened from forks
-- Installing the paseo CLI from the macOS desktop app now works in packaged builds
+- Installing the codius CLI from the macOS desktop app now works in packaged builds
 - Agents launched from the desktop app no longer inherit Electron-only environment variables
 
 ## 0.1.61 - 2026-04-23
 
 ### Added
 
-- `additionalModels` option in provider config lets you add or relabel models without replacing the full list — entries merge with runtime-discovered models (ACP) or your static `models` list. See the [Providers docs](https://paseo.sh/docs/providers)
-- New [Providers docs page](https://paseo.sh/docs/providers) covering first-class providers and every custom provider config pattern in one place
+- `additionalModels` option in provider config lets you add or relabel models without replacing the full list — entries merge with runtime-discovered models (ACP) or your static `models` list. See the [Providers docs](https://codius.ai/docs/providers)
+- New [Providers docs page](https://codius.ai/docs/providers) covering first-class providers and every custom provider config pattern in one place
 
 ### Improved
 
@@ -1221,7 +1221,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- Scripts and services per worktree — define named commands in `paseo.json`, and long-running services get supervised with their own ports and nice proxy URLs like `http://web.my-app.localhost:6767`. See the [worktrees guide](https://paseo.sh/docs/worktrees)
+- Scripts and services per worktree — define named commands in `codius.json`, and long-running services get supervised with their own ports and nice proxy URLs like `http://web.my-app.localhost:6767`. See the [worktrees guide](https://codius.ai/docs/worktrees)
 - Launch scripts and services for a worktree directly from the workspace header
 - New Setup tab in every workspace showing setup, teardown, and script progress live
 - GitHub checks and PR reviews in the explorer sidebar, with a hover card for the full breakdown
@@ -1246,7 +1246,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Keyboard shortcuts keep working while Settings is open
 - Escape reliably interrupts the active agent
 - Checking out a pull request from a fork lands on an owner-prefixed branch so multiple forks don't collide
-- `paseo ls` defaults to active agents; pass `-a` to include archived
+- `codius ls` defaults to active agents; pass `-a` to include archived
 - GitHub branch and PR picker loads faster — queries are deferred until the picker opens
 
 ### Fixed
@@ -1256,7 +1256,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Replacing a running agent cleans up the previous one without leaving it behind
 - Agent notifications no longer get swallowed by a backgrounded focused client
 - Removed workspace folders disappear from the workspace list again
-- Codex keeps fast mode after you approve a plan ([#526](https://github.com/getpaseo/paseo/pull/526) by [@therainisme](https://github.com/therainisme))
+- Codex keeps fast mode after you approve a plan ([#526](https://github.com/prismosoft/codius-desktop/pull/526) by [@therainisme](https://github.com/therainisme))
 - Workspace tab focus is preserved across page refreshes
 - Settings screen no longer pushes its header down with extra spacing
 - Branch switcher title no longer overflows on narrow rows
@@ -1280,27 +1280,27 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- Markdown files render as formatted markdown in the file pane ([#427](https://github.com/getpaseo/paseo/pull/427) by [@aaronflorey](https://github.com/aaronflorey))
+- Markdown files render as formatted markdown in the file pane ([#427](https://github.com/prismosoft/codius-desktop/pull/427) by [@aaronflorey](https://github.com/aaronflorey))
 - Cmd+L (Ctrl+L on Windows/Linux) focuses the agent message input
-- Provider models refresh on a freshness TTL; Settings shows last-updated time and any fetch errors ([#426](https://github.com/getpaseo/paseo/pull/426))
+- Provider models refresh on a freshness TTL; Settings shows last-updated time and any fetch errors ([#426](https://github.com/prismosoft/codius-desktop/pull/426))
 - `disallowedTools` option in provider config to block specific tools from an agent
 
 ### Improved
 
-- Windows: agents launch reliably from npm `.cmd` shims, paths with spaces, and JSON config args — fixes `spawn EINVAL` startup errors ([#454](https://github.com/getpaseo/paseo/pull/454))
-- OpenCode permission prompts include the requesting tool's context ([#398](https://github.com/getpaseo/paseo/pull/398) by [@aaronflorey](https://github.com/aaronflorey))
-- OpenCode todo and compaction events render in the timeline ([#429](https://github.com/getpaseo/paseo/pull/429) by [@aaronflorey](https://github.com/aaronflorey))
-- OpenCode sessions archive cleanly when closed ([#408](https://github.com/getpaseo/paseo/pull/408) by [@aaronflorey](https://github.com/aaronflorey))
-- OpenCode slash commands recover from SSE timeouts ([#407](https://github.com/getpaseo/paseo/pull/407) by [@aaronflorey](https://github.com/aaronflorey))
-- Paseo MCP tools work against archived agents, matching the CLI ([#423](https://github.com/getpaseo/paseo/pull/423))
-- Native scrollbars match the active theme across all web views ([#399](https://github.com/getpaseo/paseo/pull/399) by [@ethersh](https://github.com/ethersh))
+- Windows: agents launch reliably from npm `.cmd` shims, paths with spaces, and JSON config args — fixes `spawn EINVAL` startup errors ([#454](https://github.com/prismosoft/codius-desktop/pull/454))
+- OpenCode permission prompts include the requesting tool's context ([#398](https://github.com/prismosoft/codius-desktop/pull/398) by [@aaronflorey](https://github.com/aaronflorey))
+- OpenCode todo and compaction events render in the timeline ([#429](https://github.com/prismosoft/codius-desktop/pull/429) by [@aaronflorey](https://github.com/aaronflorey))
+- OpenCode sessions archive cleanly when closed ([#408](https://github.com/prismosoft/codius-desktop/pull/408) by [@aaronflorey](https://github.com/aaronflorey))
+- OpenCode slash commands recover from SSE timeouts ([#407](https://github.com/prismosoft/codius-desktop/pull/407) by [@aaronflorey](https://github.com/aaronflorey))
+- Codius MCP tools work against archived agents, matching the CLI ([#423](https://github.com/prismosoft/codius-desktop/pull/423))
+- Native scrollbars match the active theme across all web views ([#399](https://github.com/prismosoft/codius-desktop/pull/399) by [@ethersh](https://github.com/ethersh))
 
 ### Fixed
 
-- Code file previews can be selected and copied on iOS ([#447](https://github.com/getpaseo/paseo/pull/447) by [@muzhi1991](https://github.com/muzhi1991))
-- File preview no longer shows stale content when reopening the same file ([#411](https://github.com/getpaseo/paseo/pull/411) by [@muzhi1991](https://github.com/muzhi1991))
-- File explorer reinitialises when the client reconnects after a page refresh ([#442](https://github.com/getpaseo/paseo/pull/442) by [@1996fanrui](https://github.com/1996fanrui))
-- Generic ACP providers no longer receive duplicated command arguments ([#444](https://github.com/getpaseo/paseo/pull/444) by [@edvardchen](https://github.com/edvardchen))
+- Code file previews can be selected and copied on iOS ([#447](https://github.com/prismosoft/codius-desktop/pull/447) by [@muzhi1991](https://github.com/muzhi1991))
+- File preview no longer shows stale content when reopening the same file ([#411](https://github.com/prismosoft/codius-desktop/pull/411) by [@muzhi1991](https://github.com/muzhi1991))
+- File explorer reinitialises when the client reconnects after a page refresh ([#442](https://github.com/prismosoft/codius-desktop/pull/442) by [@1996fanrui](https://github.com/1996fanrui))
+- Generic ACP providers no longer receive duplicated command arguments ([#444](https://github.com/prismosoft/codius-desktop/pull/444) by [@edvardchen](https://github.com/edvardchen))
 - Workspace headers no longer show a branch icon for non-git workspaces
 - Branch switcher layout is stable on mobile
 - Model names no longer truncate mid-word in the picker rows
@@ -1318,8 +1318,8 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- Provider profiles — define custom providers in your Paseo config that appear alongside built-ins. Override a built-in's binary, env, or models, or create entirely new providers. See the [configuration guide](https://github.com/getpaseo/paseo/blob/main/docs/custom-providers.md)
-- ACP agent support — add any ACP-compatible agent to Paseo with `extends: "acp"` in your provider config. No code changes needed
+- Provider profiles — define custom providers in your Codius config that appear alongside built-ins. Override a built-in's binary, env, or models, or create entirely new providers. See the [configuration guide](https://github.com/prismosoft/codius-desktop/blob/main/docs/custom-providers.md)
+- ACP agent support — add any ACP-compatible agent to Codius with `extends: "acp"` in your provider config. No code changes needed
 - Choose provider and model when creating scheduled agents
 - Max reasoning effort option for Opus 4.6 models
 - Cmd+, (Ctrl+, on Windows/Linux) opens settings
@@ -1347,8 +1347,8 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Improved
 
-- Paseo tools are no longer injected into agents by default — opt in from Settings when you need agent-to-agent orchestration
-- Agent provider and mode are now resolved server-side, so CLI commands like `paseo run` use consistent defaults without client-side lookups
+- Codius tools are no longer injected into agents by default — opt in from Settings when you need agent-to-agent orchestration
+- Agent provider and mode are now resolved server-side, so CLI commands like `codius run` use consistent defaults without client-side lookups
 
 ### Fixed
 
@@ -1360,10 +1360,10 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- Agents get Paseo tools automatically — every new agent gets access to terminals, schedules, worktrees, and other agents through MCP. Toggle it off in Settings under "Inject Paseo tools"
+- Agents get Codius tools automatically — every new agent gets access to terminals, schedules, worktrees, and other agents through MCP. Toggle it off in Settings under "Inject Codius tools"
 - Git pull — pull remote changes directly from the workspace header. Promoted to the primary action when your branch is behind origin
 - Child agent notifications — parent agents are automatically notified when a child agent finishes, errors, or needs permission approval
-- Agent reload — `paseo agent reload` restarts an agent's underlying process from the CLI
+- Agent reload — `codius agent reload` restarts an agent's underlying process from the CLI
 - Middle-click to close tabs on desktop
 - Keyboard shortcut to cycle themes
 
@@ -1372,7 +1372,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Unavailable git actions now explain why in a toast instead of being silently greyed out
 - Streaming markdown on mobile renders significantly faster
 - Sidebar, branch switcher, and agent panel no longer re-render unnecessarily — noticeable on large workspaces
-- Paseo tool calls in agent timelines show the Paseo logo and human-readable names
+- Codius tool calls in agent timelines show the Codius logo and human-readable names
 - Relay and pairing URLs are stripped from daemon logs
 
 ### Fixed
@@ -1423,7 +1423,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 ### Added
 
 - Context window meter — see how much of the context window your agent has used, with color thresholds at 70% and 90%. Works with Claude Code, Codex, and OpenCode
-- Open in editor — jump from any workspace straight into Cursor, VS Code, Zed, or your file manager. Paseo remembers your choice
+- Open in editor — jump from any workspace straight into Cursor, VS Code, Zed, or your file manager. Codius remembers your choice
 - Side-by-side diffs — toggle between unified and split-column diff views, with a whitespace visibility option
 - Spoken messages — when using voice mode, agent speech now appears as regular messages in the conversation instead of raw tool output
 - Plan actions — plan cards now show the actions your agent supports (e.g. "Implement", "Deny") instead of generic accept/reject buttons
@@ -1473,7 +1473,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Fixed
 
-- Desktop app now resolves the user's full login shell environment at startup, fixing tools like `codex`, `node`, `bun`, and `direnv` not being found when Paseo is launched from Finder or Dock. Terminals spawned by Paseo now inherit the same PATH and environment variables as a normal terminal session. Approach adapted from VS Code's battle-tested shell environment resolution
+- Desktop app now resolves the user's full login shell environment at startup, fixing tools like `codex`, `node`, `bun`, and `direnv` not being found when Codius is launched from Finder or Dock. Terminals spawned by Codius now inherit the same PATH and environment variables as a normal terminal session. Approach adapted from VS Code's battle-tested shell environment resolution
 - Input field on running agent screens now correctly receives keyboard focus
 - Mobile model selector alignment and sizing
 
@@ -1501,14 +1501,14 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 - Pi (pi.dev) agent provider — connect Pi as a new agent type with thinking levels and tool call support
 - Copilot agent provider re-enabled after ACP compatibility fixes
-- `paseo .` and `paseo <path>` open the desktop app with the given project, similar to `code .`
+- `codius .` and `codius <path>` open the desktop app with the given project, similar to `code .`
 - Provider-declared features system — providers can expose dynamic toggles and selects that the app renders automatically. First consumer: Codex fast mode
 - Codex plan mode — start agents in plan-only mode with a dedicated plan card UI for reviewing proposed changes before execution
 - OpenCode custom agents and slash commands — user-defined agents from opencode.json now appear in the mode picker, and slash commands accept optional arguments
-- Desktop Integrations settings — install the Paseo CLI and orchestration skills directly from the app without touching the terminal
+- Desktop Integrations settings — install the Codius CLI and orchestration skills directly from the app without touching the terminal
 - Daemon status dialog in desktop settings for quick health checks
 - Auto-restart daemon on version mismatch — the desktop app detects when the running daemon is outdated and restarts it automatically
-- Setup hint and paseo.sh link on the mobile welcome screen so new App Store users know what to do next
+- Setup hint and codius.ai link on the mobile welcome screen so new App Store users know what to do next
 
 ### Improved
 
@@ -1609,7 +1609,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- **Terminal management from the CLI** — new `paseo terminal` command group lets you list, create, and interact with workspace terminals without leaving your terminal
+- **Terminal management from the CLI** — new `codius terminal` command group lets you list, create, and interact with workspace terminals without leaving your terminal
 - **Material file icons in the explorer** — the file explorer tree now shows language-specific icons (TypeScript, JSON, Markdown, etc.) so you can spot files at a glance
 
 ### Fixed
@@ -1668,8 +1668,8 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- Added `paseo archive` as a top-level alias for `paseo agent archive`
-- Added the `PASEO_AGENT_ID` environment variable for Claude and Codex agents
+- Added `codius archive` as a top-level alias for `codius agent archive`
+- Added the `CODIUS_AGENT_ID` environment variable for Claude and Codex agents
 - Added a redesigned command autocomplete with a detail card and dropdown styling
 - Linked Android download surfaces to the Google Play Store
 
@@ -1684,7 +1684,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Fixed
 
-- Fixed `paseo send --no-wait` not taking effect
+- Fixed `codius send --no-wait` not taking effect
 - Fixed stale abort results contaminating replacement turns after an interrupt
 - Fixed Claude interrupt handling and autonomous wake reliability
 - Fixed nested Claude Code session detection and provider availability checks
@@ -1807,7 +1807,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Improved
 
-- Improved desktop runtime behavior on Windows by suppressing console windows and defaulting app data to `~/.paseo`
+- Improved desktop runtime behavior on Windows by suppressing console windows and defaulting app data to `~/.codius`
 - Added a Discord link to the website navigation
 
 ### Fixed
@@ -1912,11 +1912,11 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- Update the Paseo desktop app and local daemon directly from Settings
+- Update the Codius desktop app and local daemon directly from Settings
 - Microphone and notification permission controls in Settings
 - Thinking/reasoning mode — agents can use extended thinking when the provider supports it
 - Autonomous run mode — let agents keep working without manual approval at each step
-- `paseo wait` now shows a snapshot of recent agent activity while you wait
+- `codius wait` now shows a snapshot of recent agent activity while you wait
 
 ### Improved
 

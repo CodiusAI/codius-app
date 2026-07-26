@@ -108,7 +108,7 @@ test.describe("Settings host page", () => {
     const updateCard = page.getByTestId("host-page-update-card");
     await expect(updateCard).toBeVisible();
     await expect(updateCard).toContainText(
-      "This daemon is managed by Paseo Desktop. Update Paseo Desktop on the host.",
+      "This daemon is managed by Codius Desktop. Update Codius Desktop on the host.",
     );
     await expect(page.getByTestId("host-page-update-button")).toBeDisabled();
   });
@@ -170,7 +170,7 @@ test.describe("Settings host page", () => {
     // from get_desktop_settings) bypasses the desktop bootstrap flow so only
     // the sidebar's status query runs against the seeded test daemon.
     await page.addInitScript((localServerId) => {
-      (window as unknown as { paseoDesktop: unknown }).paseoDesktop = {
+      (window as unknown as { codiusDesktop: unknown }).codiusDesktop = {
         platform: "darwin",
         invoke: async (command: string) => {
           if (command === "desktop_daemon_status") {

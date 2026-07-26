@@ -92,7 +92,7 @@ For async elements, use `extendedWaitUntil`:
 
 Two reusable flows handle Expo dev client screens after launch:
 
-- `flows/launch.yaml` — handles dev launcher, dismisses dev menu, asserts "Welcome to Paseo"
+- `flows/launch.yaml` — handles dev launcher, dismisses dev menu, asserts "Welcome to Codius"
 - `flows/dev-client.yaml` — same but without asserting a particular app route
 
 ### Reach the composer
@@ -100,7 +100,7 @@ Two reusable flows handle Expo dev client screens after launch:
 `flows/land-in-chat.yaml` is the canonical "get into a chat" primitive. It `clearState`s, runs `launch.yaml`, taps the welcome screen's direct-connection option, types `127.0.0.1:6767`, submits, and waits for `message-input-root`. Compose any composer-level fixture on top of it:
 
 ```yaml
-appId: sh.paseo
+appId: sh.codius
 ---
 - runFlow: flows/land-in-chat.yaml
 # ...your scenario here, starting from a ready composer
@@ -135,7 +135,7 @@ New workspace scenarios should compose the reusable subflows in `packages/app/ma
 - `new-workspace-select-codex-gpt54.yaml`
 - `new-workspace-submit-and-assert-created.yaml`
 
-The workspace-create shell scripts render those subflows into a temp directory before running Maestro, which keeps nested `runFlow` paths and `${PASEO_MAESTRO_*}` placeholders working together.
+The workspace-create shell scripts render those subflows into a temp directory before running Maestro, which keeps nested `runFlow` paths and `${CODIUS_MAESTRO_*}` placeholders working together.
 
 ### Inputs that Maestro types into
 
@@ -203,13 +203,13 @@ done
 Voice mode uses the custom `expo-two-way-audio` Android module, so incoming calls and other system audio owners must be tested with emulator/system commands, not a JS-only test. To verify that voice resume handles denied audio focus without crashing:
 
 ```bash
-adb shell am start -n sh.paseo/.MainActivity
-# Start voice mode in an existing composer, then background Paseo with Home.
+adb shell am start -n sh.codius/.MainActivity
+# Start voice mode in an existing composer, then background Codius with Home.
 adb emu gsm call 5551234
-# Foreground Paseo while the call is still ringing.
+# Foreground Codius while the call is still ringing.
 ```
 
-Expected result: Paseo does not throw `RuntimeException: Audio focus request failed`; native audio reports an interruption and voice mode stops or pauses coherently.
+Expected result: Codius does not throw `RuntimeException: Audio focus request failed`; native audio reports an interruption and voice mode stops or pauses coherently.
 
 ## Unistyles + Reanimated
 
@@ -291,4 +291,4 @@ xcrun simctl ui booted appearance dark     # set dark
 xcrun simctl ui booted appearance light    # set light
 ```
 
-Expo dev server logs are in the tmux pane running `npm run dev`. Daemon logs are at `$PASEO_HOME/daemon.log` (see [development.md](development.md)).
+Expo dev server logs are in the tmux pane running `npm run dev`. Daemon logs are at `$CODIUS_HOME/daemon.log` (see [development.md](development.md)).

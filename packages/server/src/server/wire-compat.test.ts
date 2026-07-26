@@ -2,7 +2,7 @@ import pino from "pino";
 import { z } from "zod";
 import { describe, expect, test } from "vitest";
 
-import { CLIENT_CAPS } from "@getpaseo/protocol/client-capabilities";
+import { CLIENT_CAPS } from "@codius-ai/protocol/client-capabilities";
 import {
   AgentSnapshotPayloadSchema,
   AgentTimelineItemPayloadSchema,
@@ -12,11 +12,11 @@ import {
   SessionOutboundMessageSchema,
   type SessionOutboundMessage,
   WSHelloMessageSchema,
-} from "@getpaseo/protocol/messages";
+} from "@codius-ai/protocol/messages";
 import { Session, type SessionOptions } from "./session.js";
 import { createProviderSnapshotManagerStub } from "./test-utils/session-stubs.js";
 import type { AgentTimelineRow } from "./agent/agent-manager.js";
-import { handleCreatePaseoWorktreeRequest } from "./worktree-session.js";
+import { handleCreateCodiusWorktreeRequest } from "./worktree-session.js";
 import { createPersistedProjectRecord } from "./workspace-registry.js";
 
 const LegacyTimelineEntryPayloadSchema = z.object({
@@ -246,7 +246,7 @@ function createSessionForWireCompatTest(options?: {
     logger: pino({ level: "silent" }),
     downloadTokenStore: {} as SessionOptions["downloadTokenStore"],
     pushTokenStore: {} as SessionOptions["pushTokenStore"],
-    paseoHome: "/tmp/paseo-home",
+    codiusHome: "/tmp/codius-home",
     agentManager: new InMemoryAgentManager(rows) as unknown as SessionOptions["agentManager"],
     agentStorage: new EmptyAgentStorage() as unknown as SessionOptions["agentStorage"],
     projectRegistry: new EmptyProjectRegistry() as unknown as SessionOptions["projectRegistry"],
@@ -564,7 +564,7 @@ describe("wire compatibility", () => {
     const workflow = new InMemoryWorktreeWorkflow();
 
     const dependencies = {
-      paseoHome: "/tmp/paseo-home",
+      codiusHome: "/tmp/codius-home",
       describeWorkspaceRecord: async () =>
         ({
           id: "ws-1",
@@ -581,11 +581,11 @@ describe("wire compatibility", () => {
         }) as never,
       emit() {},
       sessionLogger: pino({ level: "silent" }),
-      createPaseoWorktreeWorkflow: workflow.create.bind(workflow),
+      createCodiusWorktreeWorkflow: workflow.create.bind(workflow),
     };
 
     const legacyRequest = SessionInboundMessageSchema.parse({
-      type: "create_paseo_worktree_request",
+      type: "create_codius_worktree_request",
       requestId: "req-legacy",
       cwd: "/tmp/repo",
       worktreeSlug: "legacy-worktree",
@@ -596,13 +596,13 @@ describe("wire compatibility", () => {
           mimeType: "application/github-issue",
           number: 55,
           title: "Improve startup error details",
-          url: "https://github.com/getpaseo/paseo/issues/55",
+          url: "https://github.com/prismosoft/codius-desktop/issues/55",
         },
       ],
     });
 
     const newRequest = SessionInboundMessageSchema.parse({
-      type: "create_paseo_worktree_request",
+      type: "create_codius_worktree_request",
       requestId: "req-new",
       cwd: "/tmp/repo",
       worktreeSlug: "legacy-worktree",
@@ -614,21 +614,21 @@ describe("wire compatibility", () => {
             mimeType: "application/github-issue",
             number: 55,
             title: "Improve startup error details",
-            url: "https://github.com/getpaseo/paseo/issues/55",
+            url: "https://github.com/prismosoft/codius-desktop/issues/55",
           },
         ],
       },
     });
 
-    if (legacyRequest.type !== "create_paseo_worktree_request") {
+    if (legacyRequest.type !== "create_codius_worktree_request") {
       throw new Error("Expected legacy worktree request");
     }
-    if (newRequest.type !== "create_paseo_worktree_request") {
+    if (newRequest.type !== "create_codius_worktree_request") {
       throw new Error("Expected new worktree request");
     }
 
-    await handleCreatePaseoWorktreeRequest(dependencies, legacyRequest);
-    await handleCreatePaseoWorktreeRequest(dependencies, newRequest);
+    await handleCreateCodiusWorktreeRequest(dependencies, legacyRequest);
+    await handleCreateCodiusWorktreeRequest(dependencies, newRequest);
 
     expect(workflow.capturedInputs).toHaveLength(2);
     expect(workflow.capturedInputs[0]).toEqual(workflow.capturedInputs[1]);
@@ -643,7 +643,7 @@ describe("wire compatibility", () => {
             mimeType: "application/github-issue",
             number: 55,
             title: "Improve startup error details",
-            url: "https://github.com/getpaseo/paseo/issues/55",
+            url: "https://github.com/prismosoft/codius-desktop/issues/55",
           },
         ],
       },
@@ -651,7 +651,7 @@ describe("wire compatibility", () => {
       action: undefined,
       githubPrNumber: undefined,
       runSetup: false,
-      paseoHome: "/tmp/paseo-home",
+      codiusHome: "/tmp/codius-home",
     });
   });
 });

@@ -7,7 +7,7 @@ import {
   WorkspaceProjectDescriptorPayloadSchema,
   type AgentSnapshotPayload,
   type WorkspaceDescriptorPayload,
-} from "@getpaseo/protocol/messages";
+} from "@codius-ai/protocol/messages";
 import {
   normalizeEmptyProjectDescriptor,
   normalizeWorkspaceDescriptor,
@@ -20,12 +20,12 @@ import {
 import type { StreamItem } from "@/types/stream";
 import { normalizeAgentSnapshot } from "@/utils/agent-snapshots";
 
-const STORAGE_KEY = "@paseo:replica-cache";
+const STORAGE_KEY = "@codius:replica-cache";
 const CACHE_VERSION = 1;
 const PERSIST_DELAY_MS = 750;
 const MAX_TIMELINE_ITEMS = 50;
 const MAX_CACHE_BYTES = 1024 * 1024;
-const DATE_TAG = "__paseoDate";
+const DATE_TAG = "__codiusDate";
 
 const StoredAgentSchema = z.object({
   snapshot: AgentSnapshotPayloadSchema,

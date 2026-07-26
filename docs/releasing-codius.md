@@ -40,4 +40,4 @@ The workflow's **unsigned** manual option is intended only for testing the packa
 - No Runware API key or internal routing identifier may be present in the desktop source, packaged ASAR, environment templates, or logs.
 - Codius inference credentials belong to the user's Codius account/CLI credential store.
 - Browser automation remains opt-in and must clearly warn that the agent can access the Codius browser profile's authenticated sessions.
-- Preserve Paseo's AGPL-3.0 license, modification notices, source offer, and upstream attribution in every distributed build.
+- Preserve Codius's AGPL-3.0 license, modification notices, source offer, and upstream attribution in every distributed build.

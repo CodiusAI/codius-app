@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { QueryClient } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { CheckoutStatusUpdate } from "@getpaseo/protocol/messages";
+import type { CheckoutStatusUpdate } from "@codius-ai/protocol/messages";
 import {
   checkoutCommitsQueryKey,
   checkoutPrStatusQueryKey,
@@ -36,7 +36,7 @@ function checkoutStatus(overrides: Partial<CheckoutStatusPayload> = {}): Checkou
     error: null,
     requestId: "checkout-status-1",
     isGit: true,
-    isPaseoOwnedWorktree: false,
+    isCodiusOwnedWorktree: false,
     repoRoot: cwd,
     currentBranch: "main",
     isDirty: false,
@@ -45,7 +45,7 @@ function checkoutStatus(overrides: Partial<CheckoutStatusPayload> = {}): Checkou
     aheadOfOrigin: 0,
     behindOfOrigin: 0,
     hasRemote: true,
-    remoteUrl: "git@github.com:getpaseo/paseo.git",
+    remoteUrl: "git@github.com:prismosoft/codius-desktop.git",
     ...overrides,
   } as CheckoutStatusPayload;
 }
@@ -55,7 +55,7 @@ function prStatus(overrides: Partial<CheckoutPrStatusPayload> = {}): CheckoutPrS
     cwd,
     status: {
       forge: "github",
-      url: "https://github.com/getpaseo/paseo/pull/42",
+      url: "https://github.com/prismosoft/codius-desktop/pull/42",
       title: "My PR",
       state: "open",
       baseRefName: "main",

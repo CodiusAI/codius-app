@@ -127,7 +127,7 @@ exports.default = async function afterPack(context) {
 };
 
 async function smokeUnpackedAppIfRequested(appOutDir) {
-  if (process.env.CODIUS_DESKTOP_SMOKE !== "1" && process.env.PASEO_DESKTOP_SMOKE !== "1") {
+  if (process.env.CODIUS_DESKTOP_SMOKE !== "1") {
     return;
   }
 

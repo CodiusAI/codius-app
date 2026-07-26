@@ -3,20 +3,20 @@
 import assert from "node:assert";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { createTestPaseoDaemon } from "../../server/src/server/test-utils/paseo-daemon.ts";
-import { runLocalPaseo } from "./helpers/local-cli.ts";
+import { createTestCodiusDaemon } from "../../server/src/server/test-utils/codius-daemon.ts";
+import { runLocalCodius } from "./helpers/local-cli.ts";
 
 console.log("=== Daemon Status Auth ===\n");
 
 const CORRECT_PASSWORD_HASH = "$2b$12$GMhF7pN4QnMlHOQXOqjd1OitKWPSmAO3FwB0PHzKtcZR/sAMryz76";
 
-const daemon = await createTestPaseoDaemon({
+const daemon = await createTestCodiusDaemon({
   auth: { password: CORRECT_PASSWORD_HASH },
 });
 
 try {
   await writeFile(
-    join(daemon.paseoHome, "paseo.pid"),
+    join(daemon.codiusHome, "codius.pid"),
     `${JSON.stringify(
       {
         pid: process.pid,
@@ -32,10 +32,10 @@ try {
 
   {
     console.log("Test 1: status reports password requirement without marking daemon unreachable");
-    const result = await runLocalPaseo(["daemon", "status", "--json"], {
-      PASEO_HOME: daemon.paseoHome,
-      PASEO_HOST: "",
-      PASEO_PASSWORD: "",
+    const result = await runLocalCodius(["daemon", "status", "--json"], {
+      CODIUS_HOME: daemon.codiusHome,
+      CODIUS_HOST: "",
+      CODIUS_PASSWORD: "",
     });
 
     assert.strictEqual(result.exitCode, 0, "status should still succeed");
@@ -52,10 +52,10 @@ try {
 
   {
     console.log("Test 2: status reports rejected supplied password separately");
-    const result = await runLocalPaseo(["daemon", "status", "--json"], {
-      PASEO_HOME: daemon.paseoHome,
-      PASEO_HOST: "",
-      PASEO_PASSWORD: "wrong-secret",
+    const result = await runLocalCodius(["daemon", "status", "--json"], {
+      CODIUS_HOME: daemon.codiusHome,
+      CODIUS_HOST: "",
+      CODIUS_PASSWORD: "wrong-secret",
     });
 
     assert.strictEqual(result.exitCode, 0, "status should still succeed");
@@ -70,10 +70,10 @@ try {
 
   {
     console.log("Test 3: status reaches the same daemon when password is supplied");
-    const result = await runLocalPaseo(["daemon", "status", "--json"], {
-      PASEO_HOME: daemon.paseoHome,
-      PASEO_HOST: "",
-      PASEO_PASSWORD: "shared-secret",
+    const result = await runLocalCodius(["daemon", "status", "--json"], {
+      CODIUS_HOME: daemon.codiusHome,
+      CODIUS_HOST: "",
+      CODIUS_PASSWORD: "shared-secret",
     });
 
     assert.strictEqual(result.exitCode, 0, "status should succeed with password");

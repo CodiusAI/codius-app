@@ -73,7 +73,7 @@ describe("opencode agent commands E2E", () => {
     const state = await ctx.client.waitForFinish(agent.id, 30_000);
 
     expect(state.status).toBe("idle");
-    expect(state.lastMessage).toContain("PASEO_SKILL_OK");
+    expect(state.lastMessage).toContain("CODIUS_SKILL_OK");
   }, 30_000);
 
   test("sendMessage executes a slash command with arguments", async () => {
@@ -90,7 +90,7 @@ describe("opencode agent commands E2E", () => {
     const state = await ctx.client.waitForFinish(agent.id, 30_000);
 
     expect(state.status).toBe("idle");
-    expect(state.lastMessage).toContain("PASEO_SKILL_OK");
+    expect(state.lastMessage).toContain("CODIUS_SKILL_OK");
   }, 30_000);
 
   test("sendMessage keeps unknown slash input as plain prompt text", async () => {

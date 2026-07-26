@@ -40,7 +40,7 @@ function useOverviewSummary(summary: OverviewSummary): string {
       [summary.readFileCount, "toolCallGroup.readFiles"],
       [summary.searchCount, "toolCallGroup.searches"],
       [summary.otherToolCount, "toolCallGroup.otherTools"],
-      [summary.paseoCallCount, "toolCallGroup.paseoCalls"],
+      [summary.codiusCallCount, "toolCallGroup.codiusCalls"],
     ] as const;
     for (const [count, key] of entries) {
       if (count > 0) {
