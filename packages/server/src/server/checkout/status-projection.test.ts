@@ -49,8 +49,8 @@ describe("checkout status projection", () => {
     const payload = normalizeCheckoutPrStatusPayload(
       {
         number: 993,
-        repoOwner: "codius-ai",
-        repoName: "codius",
+        repoOwner: "prismosoft",
+        repoName: "codius-desktop",
         url: "https://github.com/prismosoft/codius-desktop/pull/993",
         title: "Auto-merge UX",
         state: "open",
