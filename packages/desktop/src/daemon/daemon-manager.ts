@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { app, ipcMain, powerMonitor } from "electron";
 import log from "electron-log/main";
-import { resolvePaseoHome, spawnProcess } from "@getpaseo/server";
+import { resolveCodiusHome, spawnProcess } from "@codius-ai/server";
 import {
   copyAttachmentFileToManagedStorage,
   deleteManagedAttachmentFile,
@@ -121,17 +121,17 @@ function parseDesktopDaemonStopReason(
 // Utilities
 // ---------------------------------------------------------------------------
 
-function getPaseoHome(): string {
-  return resolvePaseoHome(process.env);
+function getCodiusHome(): string {
+  return resolveCodiusHome(process.env);
 }
 
 function logFilePath(): string {
-  return path.join(getPaseoHome(), DAEMON_LOG_FILENAME);
+  return path.join(getCodiusHome(), DAEMON_LOG_FILENAME);
 }
 
 export function isDesktopManagedDaemonRunningSync(): boolean {
   try {
-    const raw = readFileSync(path.join(getPaseoHome(), "paseo.pid"), "utf-8");
+    const raw = readFileSync(path.join(getCodiusHome(), "codius.pid"), "utf-8");
     const lock = JSON.parse(raw) as { pid?: unknown; desktopManaged?: unknown };
     if (lock.desktopManaged !== true) return false;
     if (typeof lock.pid !== "number" || !Number.isInteger(lock.pid)) return false;
@@ -261,7 +261,7 @@ function resolveDesktopAppVersion(): string {
 // ---------------------------------------------------------------------------
 
 export async function resolveDesktopDaemonStatus(): Promise<DesktopDaemonStatus> {
-  const home = getPaseoHome();
+  const home = getCodiusHome();
 
   try {
     const payload = (await runExternalCliJsonCommand(["daemon", "status", "--json"])) as Record<
@@ -418,9 +418,9 @@ async function startDaemon(): Promise<DesktopDaemonStatus> {
     envMode: "internal",
     env: invocation.env,
     envOverlay: {
-      PASEO_DESKTOP_MANAGED: "1",
-      PASEO_CLI: getBundledCliShimPath(),
-      PASEO_WEB_UI_ENABLED: "false",
+      CODIUS_DESKTOP_MANAGED: "1",
+      CODIUS_CLI: getBundledCliShimPath(),
+      CODIUS_WEB_UI_ENABLED: "false",
     },
     stdio: ["ignore", "ignore", "ignore"],
   });
@@ -634,7 +634,7 @@ export function registerDaemonManager(): void {
   const handlers = createDaemonCommandHandlers();
 
   ipcMain.handle(
-    "paseo:invoke",
+    "codius:invoke",
     async (_event, command: string, args?: Record<string, unknown>) => {
       const handler = handlers[command];
       if (!handler) {

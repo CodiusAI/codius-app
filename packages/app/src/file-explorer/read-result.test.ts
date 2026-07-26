@@ -1,4 +1,4 @@
-import type { FileReadResult } from "@getpaseo/client/internal/daemon-client";
+import type { FileReadResult } from "@codius-ai/client/internal/daemon-client";
 import { describe, expect, it } from "vitest";
 import { explorerFileFromReadResult } from "./read-result";
 

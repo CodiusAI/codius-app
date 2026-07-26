@@ -6,11 +6,11 @@ import pino from "pino";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { WebSocket } from "ws";
 
-import { createPaseoDaemon, parseListenString, type PaseoDaemonConfig } from "./bootstrap.js";
+import { createCodiusDaemon, parseListenString, type CodiusDaemonConfig } from "./bootstrap.js";
 import { AgentManagerShuttingDownError } from "./agent/agent-manager.js";
 import { hashDaemonPassword } from "./auth.js";
 import { generateLocalPairingOffer } from "./pairing-offer.js";
-import { createTestPaseoDaemon } from "./test-utils/paseo-daemon.js";
+import { createTestCodiusDaemon } from "./test-utils/codius-daemon.js";
 import { createTestAgentClients } from "./test-utils/fake-agent-client.js";
 import { isPlatform } from "../test-utils/platform.js";
 import { findFreePort } from "./service-proxy.js";
@@ -32,13 +32,13 @@ type WebSocketProbeResult =
   | { status: "connected" }
   | { status: "rejected"; statusCode: number | null };
 
-describe("paseo daemon bootstrap", () => {
+describe("codius daemon bootstrap", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
   test("starts and serves health endpoint", async () => {
-    const daemonHandle = await createTestPaseoDaemon({
+    const daemonHandle = await createTestCodiusDaemon({
       openai: { stt: { apiKey: "test-openai-api-key" }, tts: { apiKey: "test-openai-api-key" } },
       speech: {
         providers: {
@@ -95,7 +95,7 @@ describe("paseo daemon bootstrap", () => {
       throw new Error("Expected upstream TCP address");
     }
 
-    const daemonHandle = await createTestPaseoDaemon({
+    const daemonHandle = await createTestCodiusDaemon({
       auth: { password: hashDaemonPassword("secret") },
     });
     try {
@@ -128,7 +128,7 @@ describe("paseo daemon bootstrap", () => {
   });
 
   test("configured public service namespace misses never reach daemon APIs", async () => {
-    const daemonHandle = await createTestPaseoDaemon({
+    const daemonHandle = await createTestCodiusDaemon({
       serviceProxy: {
         publicBaseUrl: "https://services.example.com",
         standaloneListen: null,
@@ -157,29 +157,29 @@ describe("paseo daemon bootstrap", () => {
       throw new Error("Expected occupied TCP address");
     }
 
-    const paseoHomeRoot = await mkdtemp(path.join(os.tmpdir(), "paseo-standalone-rollback-"));
-    const paseoHome = path.join(paseoHomeRoot, ".paseo");
-    const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
-    await mkdir(paseoHome, { recursive: true });
-    const config: PaseoDaemonConfig = {
+    const codiusHomeRoot = await mkdtemp(path.join(os.tmpdir(), "codius-standalone-rollback-"));
+    const codiusHome = path.join(codiusHomeRoot, ".codius");
+    const staticDir = await mkdtemp(path.join(os.tmpdir(), "codius-static-"));
+    await mkdir(codiusHome, { recursive: true });
+    const config: CodiusDaemonConfig = {
       listen: "127.0.0.1:0",
-      paseoHome,
+      codiusHome,
       corsAllowedOrigins: [],
       hostnames: true,
       mcpEnabled: false,
       staticDir,
       mcpDebug: false,
       agentClients: createTestAgentClients(),
-      agentStoragePath: path.join(paseoHome, "agents"),
+      agentStoragePath: path.join(codiusHome, "agents"),
       relayEnabled: false,
-      appBaseUrl: "https://app.paseo.sh",
+      appBaseUrl: "https://app.codius.ai",
       openai: undefined,
       speech: undefined,
       serviceProxy: {
         standaloneListen: `127.0.0.1:${address.port}`,
       },
     };
-    const daemon = await createPaseoDaemon(config, pino({ level: "silent" }));
+    const daemon = await createCodiusDaemon(config, pino({ level: "silent" }));
 
     try {
       await expect(daemon.start()).rejects.toThrow();
@@ -187,13 +187,13 @@ describe("paseo daemon bootstrap", () => {
     } finally {
       await daemon.stop().catch(() => undefined);
       await new Promise<void>((resolve) => occupiedServer.close(() => resolve()));
-      await rm(paseoHomeRoot, { recursive: true, force: true });
+      await rm(codiusHomeRoot, { recursive: true, force: true });
       await rm(staticDir, { recursive: true, force: true });
     }
   });
 
   test("local service namespace misses never reach daemon APIs", async () => {
-    const daemonHandle = await createTestPaseoDaemon({
+    const daemonHandle = await createTestCodiusDaemon({
       auth: { password: hashDaemonPassword("secret") },
     });
     try {
@@ -210,7 +210,7 @@ describe("paseo daemon bootstrap", () => {
   });
 
   test("daemon websocket still upgrades when service proxy upgrade handler is mounted", async () => {
-    const daemonHandle = await createTestPaseoDaemon();
+    const daemonHandle = await createTestCodiusDaemon();
     const ws = new WebSocket(`ws://127.0.0.1:${daemonHandle.port}/ws`);
     try {
       await new Promise<void>((resolve, reject) => {
@@ -246,7 +246,7 @@ describe("paseo daemon bootstrap", () => {
       throw new Error("Expected upstream TCP address");
     }
 
-    const daemonHandle = await createTestPaseoDaemon({
+    const daemonHandle = await createTestCodiusDaemon({
       serviceProxy: { standaloneListen: `127.0.0.1:${standalonePort}` },
     });
     try {
@@ -288,27 +288,27 @@ describe("paseo daemon bootstrap", () => {
     });
     await new Promise<void>((resolve) => occupiedMain.listen(mainPort, "127.0.0.1", resolve));
 
-    const paseoHomeRoot = await mkdtemp(path.join(os.tmpdir(), "paseo-main-rollback-"));
-    const paseoHome = path.join(paseoHomeRoot, ".paseo");
-    const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
-    await mkdir(paseoHome, { recursive: true });
-    const config: PaseoDaemonConfig = {
+    const codiusHomeRoot = await mkdtemp(path.join(os.tmpdir(), "codius-main-rollback-"));
+    const codiusHome = path.join(codiusHomeRoot, ".codius");
+    const staticDir = await mkdtemp(path.join(os.tmpdir(), "codius-static-"));
+    await mkdir(codiusHome, { recursive: true });
+    const config: CodiusDaemonConfig = {
       listen: `127.0.0.1:${mainPort}`,
-      paseoHome,
+      codiusHome,
       corsAllowedOrigins: [],
       hostnames: true,
       mcpEnabled: false,
       staticDir,
       mcpDebug: false,
       agentClients: createTestAgentClients(),
-      agentStoragePath: path.join(paseoHome, "agents"),
+      agentStoragePath: path.join(codiusHome, "agents"),
       relayEnabled: false,
-      appBaseUrl: "https://app.paseo.sh",
+      appBaseUrl: "https://app.codius.ai",
       openai: undefined,
       speech: undefined,
       serviceProxy: { standaloneListen: `127.0.0.1:${standalonePort}` },
     };
-    const daemon = await createPaseoDaemon(config, pino({ level: "silent" }));
+    const daemon = await createCodiusDaemon(config, pino({ level: "silent" }));
 
     try {
       await expect(daemon.start()).rejects.toThrow();
@@ -316,7 +316,7 @@ describe("paseo daemon bootstrap", () => {
     } finally {
       await daemon.stop().catch(() => undefined);
       await new Promise<void>((resolve) => occupiedMain.close(() => resolve()));
-      await rm(paseoHomeRoot, { recursive: true, force: true });
+      await rm(codiusHomeRoot, { recursive: true, force: true });
       await rm(staticDir, { recursive: true, force: true });
     }
   });
@@ -331,7 +331,7 @@ describe("paseo daemon bootstrap", () => {
         },
       },
     );
-    const daemonHandle = await createTestPaseoDaemon({
+    const daemonHandle = await createTestCodiusDaemon({
       logger,
       mcpDebug: true,
     });
@@ -369,23 +369,23 @@ describe("paseo daemon bootstrap", () => {
   });
 
   test("starts when OpenAI speech provider is configured without credentials", async () => {
-    const paseoHomeRoot = await mkdtemp(path.join(os.tmpdir(), "paseo-openai-config-"));
-    const paseoHome = path.join(paseoHomeRoot, ".paseo");
-    const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
-    await mkdir(paseoHome, { recursive: true });
+    const codiusHomeRoot = await mkdtemp(path.join(os.tmpdir(), "codius-openai-config-"));
+    const codiusHome = path.join(codiusHomeRoot, ".codius");
+    const staticDir = await mkdtemp(path.join(os.tmpdir(), "codius-static-"));
+    await mkdir(codiusHome, { recursive: true });
 
-    const config: PaseoDaemonConfig = {
+    const config: CodiusDaemonConfig = {
       listen: "127.0.0.1:0",
-      paseoHome,
+      codiusHome,
       corsAllowedOrigins: [],
       hostnames: true,
       mcpEnabled: false,
       staticDir,
       mcpDebug: false,
       agentClients: createTestAgentClients(),
-      agentStoragePath: path.join(paseoHome, "agents"),
+      agentStoragePath: path.join(codiusHome, "agents"),
       relayEnabled: false,
-      appBaseUrl: "https://app.paseo.sh",
+      appBaseUrl: "https://app.codius.ai",
       openai: undefined,
       speech: {
         providers: {
@@ -397,7 +397,7 @@ describe("paseo daemon bootstrap", () => {
     };
 
     try {
-      const daemon = await createPaseoDaemon(config, pino({ level: "silent" }));
+      const daemon = await createCodiusDaemon(config, pino({ level: "silent" }));
       try {
         await daemon.start();
         expect(daemon.getListenTarget()).toBeDefined();
@@ -406,7 +406,7 @@ describe("paseo daemon bootstrap", () => {
         await daemon.stop();
       }
     } finally {
-      await rm(paseoHomeRoot, { recursive: true, force: true });
+      await rm(codiusHomeRoot, { recursive: true, force: true });
       await rm(staticDir, { recursive: true, force: true });
     }
   });
@@ -422,7 +422,7 @@ describe("paseo daemon bootstrap", () => {
       vi.fn(() => fetchGate),
     );
 
-    const daemonHandle = await createTestPaseoDaemon({
+    const daemonHandle = await createTestCodiusDaemon({
       speech: {
         providers: {
           dictationStt: { provider: "local", explicit: true, enabled: true },
@@ -431,7 +431,7 @@ describe("paseo daemon bootstrap", () => {
           voiceTts: { provider: "local", explicit: true, enabled: false },
         },
         local: {
-          modelsDir: path.join(os.tmpdir(), `paseo-missing-models-${Date.now()}`),
+          modelsDir: path.join(os.tmpdir(), `codius-missing-models-${Date.now()}`),
           models: {
             dictationStt: "parakeet-tdt-0.6b-v2-int8",
             voiceStt: "parakeet-tdt-0.6b-v2-int8",
@@ -482,19 +482,19 @@ describe("paseo daemon bootstrap", () => {
     // A Windows drive path like C:\daemon must NOT be silently parsed as TCP
     // (split(":") would yield host="C" and port="\\daemon" which is nonsensical).
     expect(() => parseListenString(String.raw`C:\daemon`)).toThrow();
-    expect(() => parseListenString(String.raw`D:\Users\foo\.paseo\daemon.sock`)).toThrow();
+    expect(() => parseListenString(String.raw`D:\Users\foo\.codius\daemon.sock`)).toThrow();
     // Single-letter "host" with no valid port is not a valid listen string
     expect(() => parseListenString(String.raw`C:\some\path`)).toThrow();
   });
 
   test("parses Windows named pipes as managed IPC listen targets", () => {
-    expect(parseListenString(String.raw`\\.\pipe\paseo-managed-test`)).toEqual({
+    expect(parseListenString(String.raw`\\.\pipe\codius-managed-test`)).toEqual({
       type: "pipe",
-      path: String.raw`\\.\pipe\paseo-managed-test`,
+      path: String.raw`\\.\pipe\codius-managed-test`,
     });
-    expect(parseListenString(`pipe://${String.raw`\\.\pipe\paseo-managed-test`}`)).toEqual({
+    expect(parseListenString(`pipe://${String.raw`\\.\pipe\codius-managed-test`}`)).toEqual({
       type: "pipe",
-      path: String.raw`\\.\pipe\paseo-managed-test`,
+      path: String.raw`\\.\pipe\codius-managed-test`,
     });
   });
 
@@ -502,50 +502,50 @@ describe("paseo daemon bootstrap", () => {
   test.skipIf(isPlatform("win32"))(
     "generates a relay pairing offer for unix socket listeners",
     async () => {
-      const paseoHomeRoot = await mkdtemp(path.join(os.tmpdir(), "paseo-socket-relay-"));
-      const paseoHome = path.join(paseoHomeRoot, ".paseo");
-      const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
-      const socketPath = path.join(paseoHomeRoot, "run", "paseo.sock");
+      const codiusHomeRoot = await mkdtemp(path.join(os.tmpdir(), "codius-socket-relay-"));
+      const codiusHome = path.join(codiusHomeRoot, ".codius");
+      const staticDir = await mkdtemp(path.join(os.tmpdir(), "codius-static-"));
+      const socketPath = path.join(codiusHomeRoot, "run", "codius.sock");
       await mkdir(path.dirname(socketPath), { recursive: true });
-      await mkdir(paseoHome, { recursive: true });
+      await mkdir(codiusHome, { recursive: true });
       const logger = pino({ level: "silent" });
 
-      const config: PaseoDaemonConfig = {
+      const config: CodiusDaemonConfig = {
         listen: socketPath,
-        paseoHome,
+        codiusHome,
         corsAllowedOrigins: [],
         hostnames: true,
         mcpEnabled: false,
         staticDir,
         mcpDebug: false,
         agentClients: createTestAgentClients(),
-        agentStoragePath: path.join(paseoHome, "agents"),
+        agentStoragePath: path.join(codiusHome, "agents"),
         relayEnabled: true,
         relayEndpoint: "127.0.0.1:9",
         relayPublicEndpoint: "127.0.0.1:9",
-        appBaseUrl: "https://app.paseo.sh",
+        appBaseUrl: "https://app.codius.ai",
         openai: undefined,
         speech: undefined,
       };
 
-      const daemon = await createPaseoDaemon(config, logger);
+      const daemon = await createCodiusDaemon(config, logger);
 
       try {
         await daemon.start();
         const pairing = await generateLocalPairingOffer({
-          paseoHome,
+          codiusHome,
           relayEnabled: true,
           relayEndpoint: "127.0.0.1:9",
           relayPublicEndpoint: "127.0.0.1:9",
-          appBaseUrl: "https://app.paseo.sh",
+          appBaseUrl: "https://app.codius.ai",
           includeQr: false,
         });
         expect(pairing.relayEnabled).toBe(true);
-        expect(pairing.url?.startsWith("https://app.paseo.sh/#offer=")).toBe(true);
+        expect(pairing.url?.startsWith("https://app.codius.ai/#offer=")).toBe(true);
       } finally {
         await daemon.stop().catch(() => undefined);
         await daemon.agentManager.flush().catch(() => undefined);
-        await rm(paseoHomeRoot, { recursive: true, force: true });
+        await rm(codiusHomeRoot, { recursive: true, force: true });
         await rm(staticDir, { recursive: true, force: true });
       }
     },
@@ -580,11 +580,11 @@ function holdAgentClose(): HeldAgentClose {
 
 async function beginDaemonShutdownWithAgentClosing(): Promise<BlockedDaemonShutdown> {
   const heldAgentClose = holdAgentClose();
-  const daemonHandle = await createTestPaseoDaemon({
+  const daemonHandle = await createTestCodiusDaemon({
     cleanup: false,
     agentClients: createTestAgentClients({ closeSession: heldAgentClose.closeSession }),
   });
-  const agentCwd = await mkdtemp(path.join(os.tmpdir(), "paseo-shutdown-agent-"));
+  const agentCwd = await mkdtemp(path.join(os.tmpdir(), "codius-shutdown-agent-"));
   await daemonHandle.daemon.agentManager.createAgent(
     {
       provider: "codex",
@@ -623,7 +623,7 @@ async function beginDaemonShutdownWithAgentClosing(): Promise<BlockedDaemonShutd
       await stopPromise;
       await daemonHandle.daemon.agentManager.flush().catch(() => undefined);
       await Promise.all([
-        rm(path.dirname(daemonHandle.paseoHome), { recursive: true, force: true }),
+        rm(path.dirname(daemonHandle.codiusHome), { recursive: true, force: true }),
         rm(daemonHandle.staticDir, { recursive: true, force: true }),
         rm(agentCwd, { recursive: true, force: true }),
       ]);

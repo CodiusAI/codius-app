@@ -10,8 +10,8 @@ import {
   SquareTerminal,
   Wrench,
 } from "lucide-react-native";
-import type { ToolCallDetail } from "@getpaseo/protocol/agent-types";
-import { PaseoLogo } from "@/components/icons/paseo-logo";
+import type { ToolCallDetail } from "@codius-ai/protocol/agent-types";
+import { CodiusLogo } from "@/components/icons/codius-logo";
 import { resolveToolCallIconName, type ToolCallIcon } from "./tool-call-icon-name";
 
 export type ToolCallIconComponent = ComponentType<{ size?: number; color?: string }>;
@@ -26,7 +26,7 @@ const ICON_COMPONENTS: Record<ToolCallIcon, ToolCallIconComponent> = {
   sparkles: Sparkles,
   brain: Brain,
   mic_vocal: MicVocal,
-  paseo: PaseoLogo,
+  codius: CodiusLogo,
 };
 
 export function componentForToolCallIcon(name: ToolCallIcon): ToolCallIconComponent {

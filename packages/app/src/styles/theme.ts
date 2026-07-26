@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import { darkHighlightColors, lightHighlightColors } from "@getpaseo/highlight";
+import { darkHighlightColors, lightHighlightColors } from "@codius-ai/highlight";
 
 export const baseColors = {
   // Base colors
@@ -324,8 +324,8 @@ function buildDarkSemanticColors(tint: DarkThemeConfig) {
 // Dark tint definitions
 // ---------------------------------------------------------------------------
 
-// Paseo — subtle teal-green tint (default)
-const paseoDarkColors = buildDarkSemanticColors({
+// Codius — subtle teal-green tint (default)
+const codiusDarkColors = buildDarkSemanticColors({
   surface0: "#181B1A",
   surface1: "#1E2120",
   surface2: "#272A29",
@@ -571,7 +571,7 @@ function buildDarkTheme(semanticColors: ReturnType<typeof buildDarkSemanticColor
   } as const;
 }
 
-export const darkTheme = buildDarkTheme(paseoDarkColors);
+export const darkTheme = buildDarkTheme(codiusDarkColors);
 export const darkZincTheme = buildDarkTheme(zincDarkColors);
 export const darkMidnightTheme = buildDarkTheme(midnightDarkColors);
 export const darkClaudeTheme = buildDarkTheme(claudeDarkColors);

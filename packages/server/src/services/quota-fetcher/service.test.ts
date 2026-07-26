@@ -956,8 +956,8 @@ describe("usage bars escalate as they fill", () => {
   let codexHome: string;
 
   beforeEach(() => {
-    claudeHome = mkdtempSync(join(tmpdir(), "paseo-tone-claude-"));
-    codexHome = mkdtempSync(join(tmpdir(), "paseo-tone-codex-"));
+    claudeHome = mkdtempSync(join(tmpdir(), "codius-tone-claude-"));
+    codexHome = mkdtempSync(join(tmpdir(), "codius-tone-codex-"));
   });
 
   afterEach(() => {

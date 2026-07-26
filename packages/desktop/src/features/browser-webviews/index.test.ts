@@ -1,13 +1,13 @@
 import { describe, expect, test } from "vitest";
-import { PASEO_BROWSER_PROFILE_PARTITION } from "../browser-profile.js";
+import { CODIUS_BROWSER_PROFILE_PARTITION } from "../browser-profile.js";
 import {
-  getPaseoBrowserIdForWebContents,
-  getPaseoBrowserWorkspaceId,
-  isPaseoBrowserWebviewAttach,
-  preparePaseoBrowserWebContents,
-  registerAttachedPaseoBrowser,
-  unregisterPaseoBrowser,
-  unregisterPaseoBrowserFromHost,
+  getCodiusBrowserIdForWebContents,
+  getCodiusBrowserWorkspaceId,
+  isCodiusBrowserWebviewAttach,
+  prepareCodiusBrowserWebContents,
+  registerAttachedCodiusBrowser,
+  unregisterCodiusBrowser,
+  unregisterCodiusBrowserFromHost,
 } from "./index.js";
 
 class FakeRenderer {
@@ -51,19 +51,19 @@ class FakeBrowserGuest {
 describe("browser webview attachment", () => {
   test("accepts only allowed URLs on the shared profile partition", () => {
     expect(
-      isPaseoBrowserWebviewAttach({
+      isCodiusBrowserWebviewAttach({
         src: "https://example.com",
-        partition: PASEO_BROWSER_PROFILE_PARTITION,
+        partition: CODIUS_BROWSER_PROFILE_PARTITION,
       }),
     ).toBe(true);
     expect(
-      isPaseoBrowserWebviewAttach({
+      isCodiusBrowserWebviewAttach({
         src: "https://example.com",
-        partition: "persist:paseo-browser-tab-a",
+        partition: "persist:codius-browser-tab-a",
       }),
     ).toBe(false);
     expect(
-      isPaseoBrowserWebviewAttach({ src: "https://example.com", partition: "persist:foreign" }),
+      isCodiusBrowserWebviewAttach({ src: "https://example.com", partition: "persist:foreign" }),
     ).toBe(false);
   });
 
@@ -72,7 +72,7 @@ describe("browser webview attachment", () => {
     const renderer = new FakeRenderer(1);
     const guest = new FakeBrowserGuest(101, renderer, profileSession);
 
-    const registered = registerAttachedPaseoBrowser({
+    const registered = registerAttachedCodiusBrowser({
       browserId: "browser-a",
       workspaceId: "workspace-a",
       webContentsId: guest.id,
@@ -82,9 +82,9 @@ describe("browser webview attachment", () => {
     });
 
     expect(registered).toBe(true);
-    expect(getPaseoBrowserIdForWebContents(guest)).toBe("browser-a");
-    expect(getPaseoBrowserWorkspaceId("browser-a")).toBe("workspace-a");
-    unregisterPaseoBrowser("browser-a");
+    expect(getCodiusBrowserIdForWebContents(guest)).toBe("browser-a");
+    expect(getCodiusBrowserWorkspaceId("browser-a")).toBe("workspace-a");
+    unregisterCodiusBrowser("browser-a");
   });
 
   test("rejects a guest hosted by another renderer", () => {
@@ -93,7 +93,7 @@ describe("browser webview attachment", () => {
     const claimant = new FakeRenderer(2);
     const guest = new FakeBrowserGuest(201, owner, profileSession);
 
-    const registered = registerAttachedPaseoBrowser({
+    const registered = registerAttachedCodiusBrowser({
       browserId: "browser-rejected-owner",
       workspaceId: "workspace-a",
       webContentsId: guest.id,
@@ -103,7 +103,7 @@ describe("browser webview attachment", () => {
     });
 
     expect(registered).toBe(false);
-    expect(getPaseoBrowserIdForWebContents(guest)).toBeNull();
+    expect(getCodiusBrowserIdForWebContents(guest)).toBeNull();
   });
 
   test("rejects a guest outside the shared profile", () => {
@@ -111,7 +111,7 @@ describe("browser webview attachment", () => {
     const renderer = new FakeRenderer(1);
     const guest = new FakeBrowserGuest(301, renderer, {});
 
-    const registered = registerAttachedPaseoBrowser({
+    const registered = registerAttachedCodiusBrowser({
       browserId: "browser-rejected-profile",
       workspaceId: "workspace-a",
       webContentsId: guest.id,
@@ -121,7 +121,7 @@ describe("browser webview attachment", () => {
     });
 
     expect(registered).toBe(false);
-    expect(getPaseoBrowserIdForWebContents(guest)).toBeNull();
+    expect(getCodiusBrowserIdForWebContents(guest)).toBeNull();
   });
 
   test("concurrent windows cannot swap browser identities", () => {
@@ -135,7 +135,7 @@ describe("browser webview attachment", () => {
       [secondGuest.id, secondGuest],
     ]);
 
-    registerAttachedPaseoBrowser({
+    registerAttachedCodiusBrowser({
       browserId: "browser-second",
       workspaceId: "workspace-second",
       webContentsId: secondGuest.id,
@@ -143,7 +143,7 @@ describe("browser webview attachment", () => {
       profileSession,
       findWebContents: (id) => guests.get(id) ?? null,
     });
-    registerAttachedPaseoBrowser({
+    registerAttachedCodiusBrowser({
       browserId: "browser-first",
       workspaceId: "workspace-first",
       webContentsId: firstGuest.id,
@@ -152,10 +152,10 @@ describe("browser webview attachment", () => {
       findWebContents: (id) => guests.get(id) ?? null,
     });
 
-    expect(getPaseoBrowserIdForWebContents(firstGuest)).toBe("browser-first");
-    expect(getPaseoBrowserIdForWebContents(secondGuest)).toBe("browser-second");
-    unregisterPaseoBrowser("browser-first");
-    unregisterPaseoBrowser("browser-second");
+    expect(getCodiusBrowserIdForWebContents(firstGuest)).toBe("browser-first");
+    expect(getCodiusBrowserIdForWebContents(secondGuest)).toBe("browser-second");
+    unregisterCodiusBrowser("browser-first");
+    unregisterCodiusBrowser("browser-second");
   });
 
   test("unregisters the same browser only from its requesting host", () => {
@@ -169,7 +169,7 @@ describe("browser webview attachment", () => {
       [firstRenderer, firstGuest],
       [secondRenderer, secondGuest],
     ] as const) {
-      registerAttachedPaseoBrowser({
+      registerAttachedCodiusBrowser({
         browserId: "browser-shared-hosts",
         workspaceId: "workspace-shared",
         webContentsId: guest.id,
@@ -179,20 +179,20 @@ describe("browser webview attachment", () => {
       });
     }
 
-    unregisterPaseoBrowserFromHost(firstRenderer.id, "browser-shared-hosts");
+    unregisterCodiusBrowserFromHost(firstRenderer.id, "browser-shared-hosts");
 
-    expect(getPaseoBrowserIdForWebContents(firstGuest)).toBeNull();
-    expect(getPaseoBrowserIdForWebContents(secondGuest)).toBe("browser-shared-hosts");
-    expect(getPaseoBrowserWorkspaceId("browser-shared-hosts")).toBe("workspace-shared");
-    unregisterPaseoBrowser("browser-shared-hosts");
+    expect(getCodiusBrowserIdForWebContents(firstGuest)).toBeNull();
+    expect(getCodiusBrowserIdForWebContents(secondGuest)).toBe("browser-shared-hosts");
+    expect(getCodiusBrowserWorkspaceId("browser-shared-hosts")).toBe("workspace-shared");
+    unregisterCodiusBrowser("browser-shared-hosts");
   });
 
   test("prepares throttling once and removes registration when the guest is destroyed", () => {
     const profileSession = {};
     const renderer = new FakeRenderer(31);
     const guest = new FakeBrowserGuest(601, renderer, profileSession);
-    preparePaseoBrowserWebContents(guest);
-    registerAttachedPaseoBrowser({
+    prepareCodiusBrowserWebContents(guest);
+    registerAttachedCodiusBrowser({
       browserId: "browser-cleanup",
       workspaceId: "workspace-cleanup",
       webContentsId: guest.id,
@@ -202,11 +202,11 @@ describe("browser webview attachment", () => {
     });
 
     expect(guest.backgroundThrottlingCalls).toEqual([false]);
-    expect(getPaseoBrowserIdForWebContents(guest)).toBe("browser-cleanup");
+    expect(getCodiusBrowserIdForWebContents(guest)).toBe("browser-cleanup");
 
     guest.destroy();
 
-    expect(getPaseoBrowserIdForWebContents(guest)).toBeNull();
+    expect(getCodiusBrowserIdForWebContents(guest)).toBeNull();
     expect(guest.backgroundThrottlingCalls).toEqual([false]);
   });
 });

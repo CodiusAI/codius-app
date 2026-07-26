@@ -1,5 +1,5 @@
 import { withUnistyles } from "react-native-unistyles";
-import type { AgentProvider } from "@getpaseo/protocol/agent-types";
+import type { AgentProvider } from "@codius-ai/protocol/agent-types";
 import { getProviderIcon } from "@/components/provider-icons";
 import type { CommandCenterIcon, CommandCenterIconProps } from "./contributions";
 

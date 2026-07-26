@@ -162,9 +162,9 @@ describe("resolveWorktreeCreationIntent", () => {
       number: 1790,
       baseRefName: "main",
       headRefName: "daemon-shutdown-diagnostics",
-      headOwnerLogin: "getpaseo",
-      headRepositorySshUrl: "git@github.com:getpaseo/paseo.git",
-      headRepositoryUrl: "https://github.com/getpaseo/paseo",
+      headOwnerLogin: "codius-ai",
+      headRepositorySshUrl: "git@github.com:prismosoft/codius-desktop.git",
+      headRepositoryUrl: "https://github.com/prismosoft/codius-desktop",
       isCrossRepository: false,
     });
 
@@ -189,8 +189,8 @@ describe("resolveWorktreeCreationIntent", () => {
       baseRefName: "main",
       headRefName: "main",
       headOwnerLogin: "therainisme",
-      headRepositorySshUrl: "git@github.com:therainisme/paseo.git",
-      headRepositoryUrl: "https://github.com/therainisme/paseo",
+      headRepositorySshUrl: "git@github.com:therainisme/codius.git",
+      headRepositoryUrl: "https://github.com/therainisme/codius",
       isCrossRepository: true,
     });
 
@@ -205,7 +205,7 @@ describe("resolveWorktreeCreationIntent", () => {
       checkoutRefs: [{ remoteName: "origin", remoteRef: "refs/pull/526/head" }],
       headRepositoryOwner: "therainisme",
       localBranchName: "therainisme/main",
-      pushRemoteUrl: "git@github.com:therainisme/paseo.git",
+      pushRemoteUrl: "git@github.com:therainisme/codius.git",
     });
     expect(deps.headRefLookups).toEqual([]);
   });

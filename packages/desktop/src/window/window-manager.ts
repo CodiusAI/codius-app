@@ -211,7 +211,7 @@ export function applyMacWindowControlsUpdate(input: {
 export function registerWindowManager(): void {
   const overlayStateByWindow = new WeakMap<BrowserWindow, WindowControlsOverlayState>();
 
-  ipcMain.handle("paseo:window:toggleMaximize", (event) => {
+  ipcMain.handle("codius:window:toggleMaximize", (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (!win) return;
     if (win.isMaximized()) {
@@ -221,17 +221,17 @@ export function registerWindowManager(): void {
     }
   });
 
-  ipcMain.handle("paseo:window:isFullscreen", (event) => {
+  ipcMain.handle("codius:window:isFullscreen", (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     return win?.isFullScreen() ?? false;
   });
 
-  ipcMain.handle("paseo:window:setFullscreen", (event, fullscreen: unknown) => {
+  ipcMain.handle("codius:window:setFullscreen", (event, fullscreen: unknown) => {
     if (typeof fullscreen !== "boolean") return;
     BrowserWindow.fromWebContents(event.sender)?.setFullScreen(fullscreen);
   });
 
-  ipcMain.handle("paseo:window:setBadgeCount", (_event, count?: unknown) => {
+  ipcMain.handle("codius:window:setBadgeCount", (_event, count?: unknown) => {
     if (process.platform === "darwin" || process.platform === "linux") {
       const badgeCount = readBadgeCount(count);
       try {
@@ -246,7 +246,7 @@ export function registerWindowManager(): void {
     }
   });
 
-  ipcMain.handle("paseo:window:updateWindowControls", (event, update?: unknown) => {
+  ipcMain.handle("codius:window:updateWindowControls", (event, update?: unknown) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     if (!win) {
       return;
@@ -285,7 +285,7 @@ export function setupWindowResizeEvents(win: BrowserWindow): void {
     if (win.isDestroyed() || win.webContents.isDestroyed()) {
       return;
     }
-    win.webContents.send("paseo:window:resized", {});
+    win.webContents.send("codius:window:resized", {});
   };
 
   win.on("resize", notifyResized);

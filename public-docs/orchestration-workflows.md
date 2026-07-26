@@ -1,6 +1,6 @@
 ---
 title: Common orchestration workflows
-description: Copyable prompts for delegating, parallelizing, reviewing, and continuing agent work with Paseo.
+description: Copyable prompts for delegating, parallelizing, reviewing, and continuing agent work with Codius.
 nav: Common workflows
 order: 31
 category: Orchestration
@@ -15,7 +15,7 @@ These examples are prompts for your main agent. Change the provider, model, task
 Keep a strong planner in the main chat and send implementation to a workhorse:
 
 ```text
-Stay as the orchestrator. Use Paseo to find the available Codex 5.6 model, then
+Stay as the orchestrator. Use Codius to find the available Codex 5.6 model, then
 create a worktree-isolated workspace and launch a subagent there. Ask it to
 implement the parser change and run the focused tests.
 ```
@@ -27,7 +27,7 @@ Ask the orchestrator to inspect providers first when you are unsure of the exact
 Read-only work can safely share one workspace:
 
 ```text
-Create three Paseo subagents in this workspace. Have one trace the request path,
+Create three Codius subagents in this workspace. Have one trace the request path,
 one inspect the tests, and one look for related regressions. Do not edit files.
 Synthesize their findings when all three report back.
 ```
@@ -39,7 +39,7 @@ Each worker appears in the Subagents track, and the orchestrator can keep workin
 Give each independent implementation its own worktree-isolated workspace:
 
 ```text
-Split these two issues between two Paseo subagents. Create a separate workspace
+Split these two issues between two Codius subagents. Create a separate workspace
 with worktree isolation from main for each issue, use the best available
 implementation model, and have each agent run the focused checks for its change.
 Summarize both diffs when done.
@@ -81,7 +81,7 @@ Cancel the UI worker's current turn, but keep the agent so I can redirect it.
 Use a heartbeat when the current agent should wake itself up, reassess the task, and continue working:
 
 ```text
-Use Paseo to create a heartbeat every 10 minutes. Continue this migration in
+Use Codius to create a heartbeat every 10 minutes. Continue this migration in
 small steps, run the focused checks after each step, and stop when the migration
 is complete or after two hours.
 ```

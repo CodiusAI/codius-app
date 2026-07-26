@@ -4,7 +4,7 @@ import {
   type ClientForgeLogicModule,
   type MergeCapability,
 } from "@/git/client-forge-module";
-import type { CheckoutPrMergeMethod } from "@getpaseo/protocol/messages";
+import type { CheckoutPrMergeMethod } from "@codius-ai/protocol/messages";
 import type { CheckStatus } from "@/git/pull-request-panel/check-status";
 
 const gitlabLineAnchor = (start: number, end?: number): string =>

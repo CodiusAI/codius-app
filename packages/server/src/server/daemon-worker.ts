@@ -1,34 +1,34 @@
 import { appendFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
-import { createPaseoDaemon } from "./bootstrap.js";
+import { createCodiusDaemon } from "./bootstrap.js";
 import { loadConfig } from "./config.js";
-import { resolvePaseoHome } from "./paseo-home.js";
+import { resolveCodiusHome } from "./codius-home.js";
 import { createRootLogger } from "./logger.js";
 import type { DaemonLifecycleIntent } from "./bootstrap.js";
 import { getProcessDiagnostics } from "./process-diagnostics.js";
 
-process.title = "Paseo Daemon";
+process.title = "Codius Daemon";
 
 type SupervisorLifecycleMessage =
   | {
-      type: "paseo:shutdown";
+      type: "codius:shutdown";
       reason: string;
     }
   | {
-      type: "paseo:ready";
+      type: "codius:ready";
       listen: string;
     }
   | {
-      type: "paseo:restart";
+      type: "codius:restart";
       reason?: string;
     };
 
 interface SupervisorHeartbeatMessage {
-  type: "paseo:supervisor-heartbeat";
+  type: "codius:supervisor-heartbeat";
 }
 
 interface BootstrapResult {
-  paseoHome: string;
+  codiusHome: string;
   logger: ReturnType<typeof createRootLogger>;
   config: ReturnType<typeof loadConfig>;
 }
@@ -46,12 +46,12 @@ function isPidAlive(pid: number): boolean {
 }
 
 function writeWorkerLifecycleLog(
-  paseoHome: string,
+  codiusHome: string,
   message: string,
   fields: Record<string, unknown> = {},
 ): void {
   try {
-    const logPath = path.join(paseoHome, "daemon.log");
+    const logPath = path.join(codiusHome, "daemon.log");
     mkdirSync(path.dirname(logPath), { recursive: true });
     appendFileSync(
       logPath,
@@ -72,10 +72,10 @@ function writeWorkerLifecycleLog(
 
 function bootstrapFromEnvironment(): BootstrapResult {
   try {
-    const paseoHome = resolvePaseoHome();
-    const config = loadConfig(paseoHome);
-    const logger = createRootLogger({ log: config.log }, { paseoHome, file: false });
-    return { paseoHome, logger, config };
+    const codiusHome = resolveCodiusHome();
+    const config = loadConfig(codiusHome);
+    const logger = createRootLogger({ log: config.log }, { codiusHome, file: false });
+    return { codiusHome, logger, config };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     process.stderr.write(`${message}\n`);
@@ -105,8 +105,8 @@ function applyCliFlagOverrides(config: ReturnType<typeof loadConfig>): void {
 }
 
 async function main() {
-  const { paseoHome, logger, config } = bootstrapFromEnvironment();
-  let daemon: Awaited<ReturnType<typeof createPaseoDaemon>> | null = null;
+  const { codiusHome, logger, config } = bootstrapFromEnvironment();
+  let daemon: Awaited<ReturnType<typeof createCodiusDaemon>> | null = null;
   let shutdownPromise: Promise<number> | null = null;
   let exitHookInstalled = false;
 
@@ -190,7 +190,7 @@ async function main() {
         { clientId: intent.clientId, requestId: intent.requestId, reason: intent.reason },
         "Shutdown requested via websocket",
       );
-      if (sendSupervisorLifecycleMessage({ type: "paseo:shutdown", reason: intent.reason })) {
+      if (sendSupervisorLifecycleMessage({ type: "codius:shutdown", reason: intent.reason })) {
         return;
       }
       beginShutdown("shutdown lifecycle intent", { reason: intent.reason });
@@ -203,7 +203,7 @@ async function main() {
     );
     if (
       sendSupervisorLifecycleMessage({
-        type: "paseo:restart",
+        type: "codius:restart",
         ...(intent.reason ? { reason: intent.reason } : {}),
       })
     ) {
@@ -229,7 +229,7 @@ async function main() {
       }
       supervisorExitRequested = true;
 
-      writeWorkerLifecycleLog(paseoHome, "Supervisor liveness lost; worker exiting", {
+      writeWorkerLifecycleLog(codiusHome, "Supervisor liveness lost; worker exiting", {
         reason,
         ...getProcessDiagnostics(),
         supervisorPid,
@@ -249,7 +249,7 @@ async function main() {
         typeof message === "object" &&
         message !== null &&
         "type" in message &&
-        (message as SupervisorHeartbeatMessage).type === "paseo:supervisor-heartbeat"
+        (message as SupervisorHeartbeatMessage).type === "codius:supervisor-heartbeat"
       ) {
         lastSupervisorHeartbeatAt = Date.now();
       }
@@ -279,7 +279,7 @@ async function main() {
   installSupervisorLivenessGuard();
 
   try {
-    daemon = await createPaseoDaemon(
+    daemon = await createCodiusDaemon(
       {
         ...config,
         onLifecycleIntent: handleLifecycleIntent,
@@ -301,7 +301,7 @@ async function main() {
     if (!listen) {
       throw new Error("Daemon did not expose a listen target after startup");
     }
-    sendSupervisorLifecycleMessage({ type: "paseo:ready", listen });
+    sendSupervisorLifecycleMessage({ type: "codius:ready", listen });
   } catch (err) {
     logger.fatal({ err }, "Daemon failed to start listening");
     throw err;

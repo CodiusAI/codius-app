@@ -60,11 +60,11 @@ async function configureRemote(input: {
 }
 
 export const createTempGitRepo = async (
-  prefix = "paseo-e2e-",
+  prefix = "codius-e2e-",
   options?: {
     withRemote?: boolean;
     originUrl?: string;
-    paseoConfig?: Record<string, unknown>;
+    codiusConfig?: Record<string, unknown>;
     files?: Array<{ path: string; content: string }>;
     branches?: string[];
   },
@@ -74,14 +74,14 @@ export const createTempGitRepo = async (
   const withRemote = options?.withRemote ?? false;
 
   execSync("git init -b main", { cwd: repoPath, stdio: "ignore" });
-  execSync('git config user.email "e2e@paseo.test"', { cwd: repoPath, stdio: "ignore" });
-  execSync('git config user.name "Paseo E2E"', { cwd: repoPath, stdio: "ignore" });
+  execSync('git config user.email "e2e@codius.test"', { cwd: repoPath, stdio: "ignore" });
+  execSync('git config user.name "Codius E2E"', { cwd: repoPath, stdio: "ignore" });
   execSync("git config commit.gpgsign false", { cwd: repoPath, stdio: "ignore" });
   await writeFile(path.join(repoPath, "README.md"), "# Temp Repo\n");
-  if (options?.paseoConfig) {
+  if (options?.codiusConfig) {
     await writeFile(
-      path.join(repoPath, "paseo.json"),
-      JSON.stringify(options.paseoConfig, null, 2),
+      path.join(repoPath, "codius.json"),
+      JSON.stringify(options.codiusConfig, null, 2),
     );
   }
   for (const file of options?.files ?? []) {
@@ -90,8 +90,8 @@ export const createTempGitRepo = async (
     await writeFile(filePath, file.content);
   }
   execSync("git add README.md", { cwd: repoPath, stdio: "ignore" });
-  if (options?.paseoConfig) {
-    execSync("git add paseo.json", { cwd: repoPath, stdio: "ignore" });
+  if (options?.codiusConfig) {
+    execSync("git add codius.json", { cwd: repoPath, stdio: "ignore" });
   }
   for (const file of options?.files ?? []) {
     execSync(`git add ${JSON.stringify(file.path)}`, { cwd: repoPath, stdio: "ignore" });
@@ -107,7 +107,7 @@ export const createTempGitRepo = async (
         stdio: "ignore",
       });
     }
-    const markerPath = `.paseo-e2e-${branch.replace(/[^a-zA-Z0-9._-]/g, "-")}.txt`;
+    const markerPath = `.codius-e2e-${branch.replace(/[^a-zA-Z0-9._-]/g, "-")}.txt`;
     await writeFile(path.join(repoPath, markerPath), `branch ${branch}\n`);
     execSync(`git add ${JSON.stringify(markerPath)}`, { cwd: repoPath, stdio: "ignore" });
     execSync(`git commit -m ${JSON.stringify(`Add ${branch} marker`)}`, {
@@ -143,7 +143,7 @@ export const createTempGitRepo = async (
  * A plain (non-git) directory opened as a project. The daemon shows its
  * basename as the project name, since there's no remote to group under.
  */
-export async function createTempDirectory(prefix = "paseo-e2e-dir-"): Promise<TempDirectory> {
+export async function createTempDirectory(prefix = "codius-e2e-dir-"): Promise<TempDirectory> {
   const dirPath = await mkdtemp(path.join(await resolveTempRoot(), prefix));
   await writeFile(path.join(dirPath, "README.md"), "# Temp Directory\n");
   return {

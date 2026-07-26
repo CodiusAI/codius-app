@@ -1,4 +1,4 @@
-import type { SessionInboundMessage, SessionOutboundMessage } from "@getpaseo/protocol/messages";
+import type { SessionInboundMessage, SessionOutboundMessage } from "@codius-ai/protocol/messages";
 import { getDesktopHost, type DesktopHostBridge } from "@/desktop/host";
 import {
   ensureResidentBrowserWebview as ensureResidentBrowserWebviewDefault,

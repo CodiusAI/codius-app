@@ -22,7 +22,7 @@ import type {
   FetchCatalogOptions,
 } from "../agent/agent-sdk-types.js";
 import type { AgentPermissionRequest, AgentPermissionResponse } from "../agent/agent-sdk-types.js";
-import { isLikelyExternalToolName } from "@getpaseo/protocol/tool-name-normalization";
+import { isLikelyExternalToolName } from "@codius-ai/protocol/tool-name-normalization";
 
 const TEST_CAPABILITIES: AgentCapabilityFlags = {
   supportsStreaming: true,
@@ -342,7 +342,7 @@ class FakeAgentSession implements AgentSession {
     this.onStartTurn = options.onStartTurn;
     this.historyPath = path.join(
       tmpdir(),
-      "paseo-fake-provider-history",
+      "codius-fake-provider-history",
       this.providerName,
       `${this.id}.jsonl`,
     );
@@ -936,15 +936,15 @@ class FakeAgentSession implements AgentSession {
     if (this.providerName === "codex" && fullName.startsWith("prompts:")) {
       const promptId = fullName.slice("prompts:".length);
       return {
-        text: `PASEO_OK ${args ?? ""}`.trim(),
-        timeline: [{ type: "assistant_message", text: `PASEO_OK ${promptId}` }],
+        text: `CODIUS_OK ${args ?? ""}`.trim(),
+        timeline: [{ type: "assistant_message", text: `CODIUS_OK ${promptId}` }],
         usage: { inputTokens: 1, outputTokens: 1 },
       };
     }
 
     return {
-      text: "PASEO_SKILL_OK",
-      timeline: [{ type: "assistant_message", text: "PASEO_SKILL_OK" }],
+      text: "CODIUS_SKILL_OK",
+      timeline: [{ type: "assistant_message", text: "CODIUS_SKILL_OK" }],
       usage: { inputTokens: 1, outputTokens: 1 },
     };
   }

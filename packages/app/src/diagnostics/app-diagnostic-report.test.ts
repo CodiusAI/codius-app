@@ -31,21 +31,21 @@ function makeHost(): HostProfile {
         daemonPublicKeyB64: "daemon-public-key-secret",
       },
       {
-        id: "socket:/tmp/paseo-secret.sock",
+        id: "socket:/tmp/codius-secret.sock",
         type: "directSocket",
-        path: "/tmp/paseo-secret.sock",
+        path: "/tmp/codius-secret.sock",
       },
       {
-        id: "pipe:\\\\.\\pipe\\paseo-secret",
+        id: "pipe:\\\\.\\pipe\\codius-secret",
         type: "directPipe",
-        path: "\\\\.\\pipe\\paseo-secret",
+        path: "\\\\.\\pipe\\codius-secret",
       },
     ],
   };
 }
 
 describe("app diagnostics report", () => {
-  test("reports whether the connected daemon is managed by Paseo Desktop", () => {
+  test("reports whether the connected daemon is managed by Codius Desktop", () => {
     const report = formatServerInfoSection({
       status: "server_info",
       serverId: "srv-desktop-managed",
@@ -91,7 +91,7 @@ describe("app diagnostics report", () => {
     expect(report).not.toContain("secret.example.test");
     expect(report).not.toContain("relay.secret.test");
     expect(report).not.toContain("daemon-public-key-secret");
-    expect(report).not.toContain("/tmp/paseo-secret.sock");
+    expect(report).not.toContain("/tmp/codius-secret.sock");
     expect(report).not.toContain("tcp-password");
   });
 
@@ -103,10 +103,10 @@ describe("app diagnostics report", () => {
         "secret.example.test:6767",
         "relay.secret.test:443",
         "daemon-public-key-secret",
-        "/tmp/paseo-secret.sock",
-        "\\\\.\\pipe\\paseo-secret",
+        "/tmp/codius-secret.sock",
+        "\\\\.\\pipe\\codius-secret",
         "password=tcp-password",
-        "paseo://pairing-secret",
+        "codius://pairing-secret",
       ].join("\n"),
       [host],
     );
@@ -114,8 +114,8 @@ describe("app diagnostics report", () => {
     expect(redacted).not.toContain("secret.example.test");
     expect(redacted).not.toContain("relay.secret.test");
     expect(redacted).not.toContain("daemon-public-key-secret");
-    expect(redacted).not.toContain("/tmp/paseo-secret.sock");
-    expect(redacted).not.toContain("\\\\.\\pipe\\paseo-secret");
+    expect(redacted).not.toContain("/tmp/codius-secret.sock");
+    expect(redacted).not.toContain("\\\\.\\pipe\\codius-secret");
     expect(redacted).not.toContain("tcp-password");
     expect(redacted).not.toContain("pairing-secret");
   });

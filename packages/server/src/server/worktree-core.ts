@@ -14,7 +14,7 @@ import {
   UnsupportedForgeCheckoutTargetError,
   type WorktreeCreationIntent,
 } from "./resolve-worktree-creation-intent.js";
-import type { ChangeRequestCheckoutSource, FirstAgentContext } from "@getpaseo/protocol/messages";
+import type { ChangeRequestCheckoutSource, FirstAgentContext } from "@codius-ai/protocol/messages";
 import type { WorkspaceGitService } from "./workspace-git-service.js";
 
 export interface CreateWorktreeCoreInput {
@@ -26,7 +26,7 @@ export interface CreateWorktreeCoreInput {
   checkoutSource?: ChangeRequestCheckoutSource;
   githubPrNumber?: number;
   firstAgentContext?: FirstAgentContext;
-  paseoHome?: string;
+  codiusHome?: string;
   worktreesRoot?: string;
   runSetup?: boolean;
 }
@@ -113,7 +113,7 @@ export async function createWorktreeCore(
   const existingWorktree = await resolveExistingWorktreeForSlug({
     slug: normalizedSlug,
     repoRoot,
-    paseoHome: input.paseoHome,
+    codiusHome: input.codiusHome,
     worktreesRoot: input.worktreesRoot,
   });
   if (existingWorktree) {
@@ -126,7 +126,7 @@ export async function createWorktreeCore(
       worktreeSlug: normalizedSlug,
       source: intent,
       runSetup: input.runSetup ?? true,
-      paseoHome: input.paseoHome,
+      codiusHome: input.codiusHome,
       worktreesRoot: input.worktreesRoot,
     }),
     intent,
@@ -165,7 +165,7 @@ async function resolveDefaultBranch(
 }
 
 export async function resolveWorktreeRepoRoot(
-  input: Pick<CreateWorktreeCoreInput, "cwd" | "paseoHome">,
+  input: Pick<CreateWorktreeCoreInput, "cwd" | "codiusHome">,
   workspaceGitService?: Pick<WorkspaceGitService, "resolveRepoRoot">,
 ): Promise<string> {
   if (!workspaceGitService) {

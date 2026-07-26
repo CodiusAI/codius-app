@@ -8,19 +8,19 @@ import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type { UserComposerAttachment } from "@/attachments/types";
 import type { ForgeSearchClient } from "@/git/use-forge-search-query";
-import type { ForgeSearchItem, ForgeSearchResponse } from "@getpaseo/protocol/messages";
+import type { ForgeSearchItem, ForgeSearchResponse } from "@codius-ai/protocol/messages";
 import { useComposerGithubAutoAttach } from "./auto-attach";
 
 type ForgeSearchPayload = ForgeSearchResponse["payload"];
 
-const remoteUrl = "git@github.com:acme/paseo.git";
+const remoteUrl = "git@github.com:acme/codius.git";
 const cwd = "/repo";
 
 const pr101: ForgeSearchItem = {
   kind: "change_request",
   number: 101,
   title: "Attach PR",
-  url: "https://github.com/acme/paseo/pull/101",
+  url: "https://github.com/acme/codius/pull/101",
   state: "open",
   body: null,
   labels: [],
@@ -32,7 +32,7 @@ const issue202: ForgeSearchItem = {
   kind: "issue",
   number: 202,
   title: "Attach issue",
-  url: "https://github.com/acme/paseo/issues/202",
+  url: "https://github.com/acme/codius/issues/202",
   state: "open",
   body: null,
   labels: [],
@@ -143,7 +143,7 @@ describe("useComposerGithubAutoAttach", () => {
     });
 
     act(() => {
-      result.current.setText("Please review https://github.com/acme/paseo/pull/101");
+      result.current.setText("Please review https://github.com/acme/codius/pull/101");
     });
     expect(result.current.isResolving).toBe(true);
     expect(onPullRequestDetected).toHaveBeenCalledTimes(1);
@@ -161,7 +161,7 @@ describe("useComposerGithubAutoAttach", () => {
     const { result } = renderHook(() => useHarness(client), { wrapper: createWrapper() });
 
     act(() => {
-      result.current.setText("Other repo https://github.com/other/paseo/pull/101");
+      result.current.setText("Other repo https://github.com/other/codius/pull/101");
     });
     await flushDebounce();
 
@@ -179,7 +179,7 @@ describe("useComposerGithubAutoAttach", () => {
     });
 
     act(() => {
-      result.current.setText("Already here https://github.com/acme/paseo/pull/101");
+      result.current.setText("Already here https://github.com/acme/codius/pull/101");
     });
     await flushDebounce();
 
@@ -199,7 +199,7 @@ describe("useComposerGithubAutoAttach", () => {
     act(() => {
       result.current.markGithubAttachmentRemoved(initialAttachments[0]);
       result.current.setAttachments([]);
-      result.current.setText("Re-pasted https://github.com/acme/paseo/pull/101");
+      result.current.setText("Re-pasted https://github.com/acme/codius/pull/101");
     });
     await flushDebounce();
 
@@ -215,7 +215,7 @@ describe("useComposerGithubAutoAttach", () => {
 
     act(() => {
       result.current.setText(
-        "Refs https://github.com/acme/paseo/pull/101 and https://github.com/acme/paseo/issues/202",
+        "Refs https://github.com/acme/codius/pull/101 and https://github.com/acme/codius/issues/202",
       );
     });
     await flushDebounce();
@@ -245,13 +245,13 @@ describe("useComposerGithubAutoAttach", () => {
 
     act(() => {
       result.current.setText(
-        "Refs https://github.com/acme/paseo/pull/101 and https://github.com/acme/paseo/pull/202",
+        "Refs https://github.com/acme/codius/pull/101 and https://github.com/acme/codius/pull/202",
       );
     });
     await flushDebounce();
 
     act(() => {
-      result.current.setText("Still https://github.com/acme/paseo/pull/202");
+      result.current.setText("Still https://github.com/acme/codius/pull/202");
     });
     await flushDebounce();
 
@@ -278,7 +278,7 @@ describe("useComposerGithubAutoAttach", () => {
     const { result } = renderHook(() => useHarness(client), { wrapper: createWrapper() });
 
     act(() => {
-      result.current.setText("Review https://github.com/acme/paseo/pull/101");
+      result.current.setText("Review https://github.com/acme/codius/pull/101");
     });
     await flushDebounce();
     act(() => {
@@ -298,7 +298,7 @@ describe("useComposerGithubAutoAttach", () => {
     const { result } = renderHook(() => useHarness(client), { wrapper: createWrapper() });
 
     act(() => {
-      result.current.setText("Review https://github.com/acme/paseo/pull/101");
+      result.current.setText("Review https://github.com/acme/codius/pull/101");
     });
     await flushDebounce();
 
@@ -326,7 +326,7 @@ describe("useComposerGithubAutoAttach", () => {
     const { result } = renderHook(() => useHarness(firstClient), { wrapper: createWrapper() });
 
     act(() => {
-      result.current.setText("Review https://github.com/acme/paseo/pull/101");
+      result.current.setText("Review https://github.com/acme/codius/pull/101");
     });
     await flushDebounce();
     act(() => {

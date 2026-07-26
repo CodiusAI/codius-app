@@ -14,7 +14,7 @@ async function createTempDir(prefix: string): Promise<string> {
 
 describe("file explorer service", () => {
   it("atomically writes an existing text file at the expected revision", async () => {
-    const root = await createTempDir("paseo-file-write-");
+    const root = await createTempDir("codius-file-write-");
     try {
       const filePath = path.join(root, "notes.txt");
       await writeFile(filePath, "before", "utf8");
@@ -40,7 +40,7 @@ describe("file explorer service", () => {
   it.skipIf(process.platform === "win32")(
     "preserves the original file permissions across atomic replacement",
     async () => {
-      const root = await createTempDir("paseo-file-mode-");
+      const root = await createTempDir("codius-file-mode-");
       try {
         const filePath = path.join(root, "script.sh");
         await writeFile(filePath, "before", "utf8");
@@ -66,7 +66,7 @@ describe("file explorer service", () => {
   );
 
   it("preserves a newer disk revision instead of overwriting it", async () => {
-    const root = await createTempDir("paseo-file-conflict-");
+    const root = await createTempDir("codius-file-conflict-");
     try {
       const filePath = path.join(root, "notes.txt");
       await writeFile(filePath, "newer on disk", "utf8");
@@ -88,7 +88,7 @@ describe("file explorer service", () => {
   });
 
   it("prefers the high-precision revision token over the display timestamp", async () => {
-    const root = await createTempDir("paseo-file-revision-");
+    const root = await createTempDir("codius-file-revision-");
     try {
       const filePath = path.join(root, "notes.txt");
       await writeFile(filePath, "on disk", "utf8");
@@ -112,7 +112,7 @@ describe("file explorer service", () => {
   });
 
   it("never creates a missing file through the write API", async () => {
-    const root = await createTempDir("paseo-file-missing-");
+    const root = await createTempDir("codius-file-missing-");
     try {
       const result = await writeExplorerFile({
         root,
@@ -128,7 +128,7 @@ describe("file explorer service", () => {
   });
 
   it("reads .ex files as text", async () => {
-    const root = await createTempDir("paseo-file-explorer-");
+    const root = await createTempDir("codius-file-explorer-");
 
     try {
       const filePath = path.join(root, "sample.ex");
@@ -150,7 +150,7 @@ describe("file explorer service", () => {
   });
 
   it("reads unknown extension text files as text", async () => {
-    const root = await createTempDir("paseo-file-explorer-");
+    const root = await createTempDir("codius-file-explorer-");
 
     try {
       const filePath = path.join(root, "notes.customext");
@@ -172,7 +172,7 @@ describe("file explorer service", () => {
   });
 
   it("classifies files with null bytes as binary", async () => {
-    const root = await createTempDir("paseo-file-explorer-");
+    const root = await createTempDir("codius-file-explorer-");
 
     try {
       const filePath = path.join(root, "blob.weird");
@@ -193,7 +193,7 @@ describe("file explorer service", () => {
   });
 
   it("expands a ~ prefix in relative paths against the user home directory", async () => {
-    const root = await createHomeTempDir(".paseo-file-explorer-home-");
+    const root = await createHomeTempDir(".codius-file-explorer-home-");
 
     try {
       const filePath = path.join(root, "sample.txt");
@@ -213,7 +213,7 @@ describe("file explorer service", () => {
   });
 
   it("allows home to be the scoped root for tilde file previews", async () => {
-    const root = await createHomeTempDir(".paseo-file-explorer-home-root-");
+    const root = await createHomeTempDir(".codius-file-explorer-home-root-");
 
     try {
       const filePath = path.join(root, "sample.txt");
@@ -234,7 +234,7 @@ describe("file explorer service", () => {
   });
 
   it("rejects ~-prefixed paths that resolve outside the workspace", async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), "paseo-file-explorer-outside-home-"));
+    const root = await mkdtemp(path.join(os.tmpdir(), "codius-file-explorer-outside-home-"));
 
     try {
       await expect(

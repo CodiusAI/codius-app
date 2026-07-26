@@ -10,9 +10,9 @@ describe("runCli", () => {
       createCliParseArgv({
         argv: [],
         cwd: process.cwd(),
-        nodeArgv: ["node", "paseo"],
+        nodeArgv: ["node", "codiusctl"],
       }),
-    ).toEqual(["node", "paseo", "onboard"]);
+    ).toEqual(["node", "codiusctl", "onboard"]);
   });
 
   it("preserves known CLI command argv", () => {
@@ -20,9 +20,9 @@ describe("runCli", () => {
       createCliParseArgv({
         argv: ["daemon", "set-password"],
         cwd: process.cwd(),
-        nodeArgv: ["node", "paseo"],
+        nodeArgv: ["node", "codiusctl"],
       }),
-    ).toEqual(["node", "paseo", "daemon", "set-password"]);
+    ).toEqual(["node", "codiusctl", "daemon", "set-password"]);
   });
 
   it("preserves the hooks command argv", () => {
@@ -30,13 +30,13 @@ describe("runCli", () => {
       createCliParseArgv({
         argv: ["hooks", "claude", "UserPromptSubmit"],
         cwd: process.cwd(),
-        nodeArgv: ["node", "paseo"],
+        nodeArgv: ["node", "codiusctl"],
       }),
-    ).toEqual(["node", "paseo", "hooks", "claude", "UserPromptSubmit"]);
+    ).toEqual(["node", "codiusctl", "hooks", "claude", "UserPromptSubmit"]);
   });
 
   it("classifies existing unknown directories as open-project invocations", () => {
-    const root = mkdtempSync(path.join(tmpdir(), "paseo-cli-run-"));
+    const root = mkdtempSync(path.join(tmpdir(), "codius-cli-run-"));
     const project = path.join(root, "project");
     mkdirSync(project);
 
@@ -45,7 +45,7 @@ describe("runCli", () => {
         createCliParseArgv({
           argv: ["project"],
           cwd: root,
-          nodeArgv: ["node", "paseo"],
+          nodeArgv: ["node", "codiusctl"],
         }),
       ).toEqual({
         kind: "open-project",

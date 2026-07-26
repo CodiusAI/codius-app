@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
 import {
-  clearPaseoBrowserProfile,
-  getLegacyPaseoBrowserProfileSession,
-  getPaseoBrowserProfileSessions,
-  listPaseoBrowserProfileGuests,
-  readLegacyPaseoBrowserIds,
+  clearCodiusBrowserProfile,
+  getLegacyCodiusBrowserProfileSession,
+  getCodiusBrowserProfileSessions,
+  listCodiusBrowserProfileGuests,
+  readLegacyCodiusBrowserIds,
 } from "./browser-profile.js";
 
 class FakeProfileSession {
@@ -65,7 +65,7 @@ class FakeWebContents extends FakeLiveGuest {
   }
 }
 
-describe("listPaseoBrowserProfileGuests", () => {
+describe("listCodiusBrowserProfileGuests", () => {
   test("returns every live webview and popup in the shared profile", () => {
     const profileSession = {};
     const firstWindowGuest = new FakeWebContents(1, profileSession, "webview");
@@ -74,7 +74,7 @@ describe("listPaseoBrowserProfileGuests", () => {
     const popupWindow = new FakeWebContents(4, profileSession, "window");
     const destroyedGuest = new FakeWebContents(5, profileSession, "webview", true);
 
-    const guests = listPaseoBrowserProfileGuests({
+    const guests = listCodiusBrowserProfileGuests({
       profileSession,
       webContents: [
         firstWindowGuest,
@@ -90,12 +90,18 @@ describe("listPaseoBrowserProfileGuests", () => {
 });
 
 describe("legacy browser profiles", () => {
-  test("uses the Codius profile and resolves old Paseo partitions for cleanup", () => {
+  test("uses the Codius profile and resolves old Codius partitions for cleanup", () => {
     const uuid = "123e4567-e89b-42d3-a456-426614174000";
     const fallbackId = "1700000000000-abcd";
-    const browserIds = readLegacyPaseoBrowserIds([uuid, fallbackId, uuid, "not-a-browser-id", 123]);
+    const browserIds = readLegacyCodiusBrowserIds([
+      uuid,
+      fallbackId,
+      uuid,
+      "not-a-browser-id",
+      123,
+    ]);
     const partitions: string[] = [];
-    const sessions = getPaseoBrowserProfileSessions(
+    const sessions = getCodiusBrowserProfileSessions(
       {
         fromPartition: (partition) => {
           partitions.push(partition);
@@ -107,9 +113,9 @@ describe("legacy browser profiles", () => {
 
     expect(partitions).toEqual([
       "persist:codius-browser",
-      "persist:paseo-browser",
-      `persist:paseo-browser-${uuid}`,
-      `persist:paseo-browser-${fallbackId}`,
+      "persist:codius-browser",
+      `persist:codius-browser-${uuid}`,
+      `persist:codius-browser-${fallbackId}`,
     ]);
     expect(sessions).toHaveLength(4);
   });
@@ -123,13 +129,13 @@ describe("legacy browser profiles", () => {
       },
     };
 
-    expect(getLegacyPaseoBrowserProfileSession(sessions, "1700000000000-abcd")).not.toBeNull();
-    expect(getLegacyPaseoBrowserProfileSession(sessions, "invalid")).toBeNull();
-    expect(partitions).toEqual(["persist:paseo-browser-1700000000000-abcd"]);
+    expect(getLegacyCodiusBrowserProfileSession(sessions, "1700000000000-abcd")).not.toBeNull();
+    expect(getLegacyCodiusBrowserProfileSession(sessions, "invalid")).toBeNull();
+    expect(partitions).toEqual(["persist:codius-browser-1700000000000-abcd"]);
   });
 });
 
-describe("clearPaseoBrowserProfile", () => {
+describe("clearCodiusBrowserProfile", () => {
   test("clears site data, HTTP cache, and auth before reloading live guests", async () => {
     const profile = new FakeProfileSession();
     const legacyProfile = new FakeProfileSession();
@@ -140,7 +146,7 @@ describe("clearPaseoBrowserProfile", () => {
     const firstGuest = new FakeLiveGuest(1);
     const secondGuest = new FakeLiveGuest(2);
 
-    const clearing = clearPaseoBrowserProfile({
+    const clearing = clearCodiusBrowserProfile({
       profileSessions: [profile, legacyProfile],
       listGuests: () => [firstGuest, secondGuest],
       logReloadError: () => {},
@@ -180,7 +186,7 @@ describe("clearPaseoBrowserProfile", () => {
     const failedGuest = new FakeLiveGuest(2, false, reloadError);
     const reloadErrors: Array<{ guestId: number; error: unknown }> = [];
 
-    await clearPaseoBrowserProfile({
+    await clearCodiusBrowserProfile({
       profileSessions: [profile],
       listGuests: () => [destroyedGuest, failedGuest],
       logReloadError: (guestId, error) => reloadErrors.push({ guestId, error }),
@@ -198,7 +204,7 @@ describe("clearPaseoBrowserProfile", () => {
     const guest = new FakeLiveGuest(1);
 
     await expect(
-      clearPaseoBrowserProfile({
+      clearCodiusBrowserProfile({
         profileSessions: [profile],
         listGuests: () => [guest],
         logReloadError: () => {},

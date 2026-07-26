@@ -17,9 +17,9 @@ import { createWorktree, type WorktreeConfig } from "../../utils/worktree.js";
 import type { ForgeService } from "../../../services/forge-service.js";
 import type { StoredAgentRecord } from "../agent/agent-storage.js";
 
-const CWD = "/tmp/paseo/worktrees/repo/branch";
-const PASEO_HOME = "/tmp/paseo";
-const WORKTREES_ROOT = "/tmp/paseo/worktrees/repo";
+const CWD = "/tmp/codius/worktrees/repo/branch";
+const CODIUS_HOME = "/tmp/codius";
+const WORKTREES_ROOT = "/tmp/codius/worktrees/repo";
 
 function createPullRequest(
   overrides?: Partial<NonNullable<WorkspaceGitRuntimeSnapshot["forge"]["pullRequest"]>>,
@@ -47,7 +47,7 @@ function createSnapshot(overrides?: {
       mainRepoRoot: "/tmp/repo",
       currentBranch: "feature",
       remoteUrl: "https://github.com/acme/repo.git",
-      isPaseoOwnedWorktree: true,
+      isCodiusOwnedWorktree: true,
       isDirty: false,
       baseRef: "main",
       aheadBehind: { ahead: 0, behind: 0 },
@@ -80,7 +80,7 @@ function createLogger(): Logger {
 function createHarness(overrides?: {
   autoArchiveAfterMerge?: boolean;
   getSnapshot?: () => Promise<WorkspaceGitRuntimeSnapshot | null>;
-  isPaseoOwnedWorktreeCwd?: ArchiveIfSafeDependencies["isPaseoOwnedWorktreeCwd"];
+  isCodiusOwnedWorktreeCwd?: ArchiveIfSafeDependencies["isCodiusOwnedWorktreeCwd"];
   archiveByScope?: ArchiveIfSafeDependencies["archiveByScope"];
   resolveWorkspaceIdAtPath?: ArchiveIfSafeDependencies["resolveWorkspaceIdAtPath"];
 }) {
@@ -94,7 +94,7 @@ function createHarness(overrides?: {
     getSnapshot,
   } as unknown as AutoArchiveArchiveOptions["workspaceGitService"];
   const options: AutoArchiveArchiveOptions = {
-    paseoHome: PASEO_HOME,
+    codiusHome: CODIUS_HOME,
     daemonConfigStore: {
       get: getConfig,
     } as unknown as AutoArchiveArchiveOptions["daemonConfigStore"],
@@ -122,19 +122,19 @@ function createHarness(overrides?: {
   const resolveWorkspaceIdAtPath = vi.fn(
     overrides?.resolveWorkspaceIdAtPath ?? (async () => "ws-auto-archive"),
   ) as unknown as ArchiveIfSafeDependencies["resolveWorkspaceIdAtPath"];
-  const isPaseoOwnedWorktreeCwd = vi.fn(
-    overrides?.isPaseoOwnedWorktreeCwd ??
+  const isCodiusOwnedWorktreeCwd = vi.fn(
+    overrides?.isCodiusOwnedWorktreeCwd ??
       (async () => ({
         allowed: true,
         repoRoot: "/tmp/repo",
         worktreeRoot: WORKTREES_ROOT,
         worktreePath: CWD,
       })),
-  ) as unknown as ArchiveIfSafeDependencies["isPaseoOwnedWorktreeCwd"];
+  ) as unknown as ArchiveIfSafeDependencies["isCodiusOwnedWorktreeCwd"];
   const deps: ArchiveIfSafeDependencies = {
     archiveByScope,
     resolveWorkspaceIdAtPath,
-    isPaseoOwnedWorktreeCwd,
+    isCodiusOwnedWorktreeCwd,
     killTerminalsForWorkspace: vi.fn(),
   };
   const log = createLogger();
@@ -178,11 +178,11 @@ function createGitRepo(): { tempDir: string; repoDir: string } {
   const repoDir = path.join(tempDir, "repo");
   mkdirSync(repoDir, { recursive: true });
   execFileSync("git", ["init", "-b", "main"], { cwd: repoDir, stdio: "pipe" });
-  execFileSync("git", ["config", "user.email", "test@getpaseo.local"], {
+  execFileSync("git", ["config", "user.email", "test@codius-ai.local"], {
     cwd: repoDir,
     stdio: "pipe",
   });
-  execFileSync("git", ["config", "user.name", "Paseo Test"], {
+  execFileSync("git", ["config", "user.name", "Codius Test"], {
     cwd: repoDir,
     stdio: "pipe",
   });
@@ -193,9 +193,9 @@ function createGitRepo(): { tempDir: string; repoDir: string } {
   return { tempDir, repoDir };
 }
 
-async function createPaseoOwnedWorktree(
+async function createCodiusOwnedWorktree(
   repoDir: string,
-  paseoHome: string,
+  codiusHome: string,
   worktreeSlug: string,
 ): Promise<WorktreeConfig> {
   return createWorktree({
@@ -207,7 +207,7 @@ async function createPaseoOwnedWorktree(
       branchName: worktreeSlug,
     },
     runSetup: false,
-    paseoHome,
+    codiusHome,
   });
 }
 
@@ -252,7 +252,7 @@ function createGitHubServiceStub(): ForgeService {
 }
 
 function createRealOutcomeHarness(input: {
-  paseoHome: string;
+  codiusHome: string;
   repoDir: string;
   worktreePath: string;
   activeWorkspaces: ActiveWorkspaceRef[];
@@ -265,7 +265,7 @@ function createRealOutcomeHarness(input: {
   vi.spyOn(logger, "error").mockImplementation(() => undefined);
 
   const options: AutoArchiveArchiveOptions = {
-    paseoHome: input.paseoHome,
+    codiusHome: input.codiusHome,
     daemonConfigStore: {
       get: () => ({ autoArchiveAfterMerge: true }),
     } as unknown as AutoArchiveArchiveOptions["daemonConfigStore"],
@@ -279,7 +279,7 @@ function createRealOutcomeHarness(input: {
             mainRepoRoot: input.repoDir,
             currentBranch: "feature",
             remoteUrl: "https://github.com/acme/repo.git",
-            isPaseoOwnedWorktree: true,
+            isCodiusOwnedWorktree: true,
             isDirty: false,
             baseRef: "main",
             aheadBehind: { ahead: 0, behind: 0 },
@@ -399,7 +399,7 @@ describe("archiveIfSafe", () => {
 
     await runArchiveIfSafe(harness);
 
-    expect(harness.deps.isPaseoOwnedWorktreeCwd).not.toHaveBeenCalled();
+    expect(harness.deps.isCodiusOwnedWorktreeCwd).not.toHaveBeenCalled();
     expect(harness.deps.archiveByScope).not.toHaveBeenCalled();
   });
 
@@ -410,7 +410,7 @@ describe("archiveIfSafe", () => {
 
     await runArchiveIfSafe(harness);
 
-    expect(harness.deps.isPaseoOwnedWorktreeCwd).not.toHaveBeenCalled();
+    expect(harness.deps.isCodiusOwnedWorktreeCwd).not.toHaveBeenCalled();
     expect(harness.deps.archiveByScope).not.toHaveBeenCalled();
   });
 
@@ -421,7 +421,7 @@ describe("archiveIfSafe", () => {
 
     await runArchiveIfSafe(harness);
 
-    expect(harness.deps.isPaseoOwnedWorktreeCwd).not.toHaveBeenCalled();
+    expect(harness.deps.isCodiusOwnedWorktreeCwd).not.toHaveBeenCalled();
     expect(harness.deps.archiveByScope).not.toHaveBeenCalled();
   });
 
@@ -436,15 +436,15 @@ describe("archiveIfSafe", () => {
     expect(harness.deps.archiveByScope).toHaveBeenCalledTimes(1);
   });
 
-  test("does nothing when the cwd is not a Paseo-owned worktree", async () => {
+  test("does nothing when the cwd is not a Codius-owned worktree", async () => {
     const harness = createHarness({
-      isPaseoOwnedWorktreeCwd: async () => ({ allowed: false, worktreePath: CWD }),
+      isCodiusOwnedWorktreeCwd: async () => ({ allowed: false, worktreePath: CWD }),
     });
 
     await runArchiveIfSafe(harness);
 
-    expect(harness.deps.isPaseoOwnedWorktreeCwd).toHaveBeenCalledWith(CWD, {
-      paseoHome: PASEO_HOME,
+    expect(harness.deps.isCodiusOwnedWorktreeCwd).toHaveBeenCalledWith(CWD, {
+      codiusHome: CODIUS_HOME,
     });
     expect(harness.deps.archiveByScope).not.toHaveBeenCalled();
   });
@@ -465,7 +465,7 @@ describe("archiveIfSafe", () => {
     expect(harness.inFlight.has(CWD)).toBe(false);
   });
 
-  test("archives a clean Paseo-owned worktree after merge", async () => {
+  test("archives a clean Codius-owned worktree after merge", async () => {
     const harness = createHarness();
 
     await runArchiveIfSafe(harness);
@@ -481,7 +481,7 @@ describe("archiveIfSafe", () => {
     expect(harness.deps.archiveByScope).toHaveBeenCalledTimes(1);
     expect(harness.deps.archiveByScope).toHaveBeenCalledWith(
       expect.objectContaining({
-        paseoHome: PASEO_HOME,
+        codiusHome: CODIUS_HOME,
         workspaceGitService: harness.options.workspaceGitService,
       }),
       {
@@ -519,14 +519,14 @@ describe("archiveIfSafe", () => {
 
   test("real outcome: keeps sibling workspace and directory on last reference", async () => {
     const { tempDir, repoDir } = createGitRepo();
-    const paseoHome = path.join(tempDir, ".paseo");
-    const worktree = await createPaseoOwnedWorktree(repoDir, paseoHome, "merged-with-sibling");
+    const codiusHome = path.join(tempDir, ".codius");
+    const worktree = await createCodiusOwnedWorktree(repoDir, codiusHome, "merged-with-sibling");
     const workspaceA = "ws-merged-with-sibling-a";
     const workspaceB = "ws-merged-with-sibling-b";
     const archivedWorkspaceIds = new Set<string>();
 
     const harness = createRealOutcomeHarness({
-      paseoHome,
+      codiusHome,
       repoDir,
       worktreePath: worktree.worktreePath,
       activeWorkspaces: [
@@ -551,13 +551,13 @@ describe("archiveIfSafe", () => {
 
   test("real outcome: removes directory when no sibling workspace remains", async () => {
     const { tempDir, repoDir } = createGitRepo();
-    const paseoHome = path.join(tempDir, ".paseo");
-    const worktree = await createPaseoOwnedWorktree(repoDir, paseoHome, "merged-last-ref");
+    const codiusHome = path.join(tempDir, ".codius");
+    const worktree = await createCodiusOwnedWorktree(repoDir, codiusHome, "merged-last-ref");
     const workspaceA = "ws-merged-last-ref";
     const archivedWorkspaceIds = new Set<string>();
 
     const harness = createRealOutcomeHarness({
-      paseoHome,
+      codiusHome,
       repoDir,
       worktreePath: worktree.worktreePath,
       activeWorkspaces: [{ workspaceId: workspaceA, cwd: worktree.worktreePath, kind: "worktree" }],

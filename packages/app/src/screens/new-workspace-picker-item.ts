@@ -1,5 +1,5 @@
-import type { CreatePaseoWorktreeInput } from "@getpaseo/client/internal/daemon-client";
-import type { ForgeSearchItem } from "@getpaseo/protocol/messages";
+import type { CreateCodiusWorktreeInput } from "@codius-ai/client/internal/daemon-client";
+import type { ForgeSearchItem } from "@codius-ai/protocol/messages";
 
 export type PickerItem =
   | { kind: "branch"; name: string }
@@ -9,7 +9,7 @@ export type PickerItem =
     };
 
 export type PickerCheckoutRequest = Pick<
-  CreatePaseoWorktreeInput,
+  CreateCodiusWorktreeInput,
   "action" | "refName" | "checkoutSource" | "githubPrNumber"
 >;
 

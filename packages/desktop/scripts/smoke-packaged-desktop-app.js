@@ -131,7 +131,7 @@ function shellQuoteCliArg(value) {
 function getTerminalHookSmokeCommand(marker) {
   if (process.platform === "win32") {
     const script = [
-      "& $env:PASEO_HOOK_CLI hooks codex Stop",
+      "& $env:CODIUS_HOOK_CLI hooks codex Stop",
       "if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }",
       `Write-Output '${marker}'`,
     ].join("; ");
@@ -139,7 +139,7 @@ function getTerminalHookSmokeCommand(marker) {
     return `powershell.exe -NoProfile -NonInteractive -EncodedCommand ${encodedScript}`;
   }
 
-  return `"$PASEO_HOOK_CLI" hooks codex Stop && echo ${marker}`;
+  return `"$CODIUS_HOOK_CLI" hooks codex Stop && echo ${marker}`;
 }
 
 function getShellCommand(script) {
@@ -162,18 +162,18 @@ function createDefaultDaemonEnv(extraEnv) {
     ...extraEnv,
   };
 
-  delete env.PASEO_HOME;
-  delete env.PASEO_LISTEN;
+  delete env.CODIUS_HOME;
+  delete env.CODIUS_LISTEN;
   return env;
 }
 
 function createIsolatedDesktopEnv({ home, listen, userData, cdpPort }) {
   return {
     ...process.env,
-    PASEO_HOME: home,
-    PASEO_LISTEN: listen,
-    PASEO_ELECTRON_USER_DATA_DIR: userData,
-    PASEO_ELECTRON_FLAGS: `--remote-debugging-address=127.0.0.1 --remote-debugging-port=${cdpPort}`,
+    CODIUS_HOME: home,
+    CODIUS_LISTEN: listen,
+    CODIUS_ELECTRON_USER_DATA_DIR: userData,
+    CODIUS_ELECTRON_FLAGS: `--remote-debugging-address=127.0.0.1 --remote-debugging-port=${cdpPort}`,
   };
 }
 
@@ -313,7 +313,7 @@ function formatLogs({ stdout, stderr, userData, daemonHome }) {
 }
 
 async function writeFailureArtifacts({ page, stdout, stderr, userData, daemonHome, error }) {
-  const artifactDir = process.env.PASEO_DESKTOP_SMOKE_ARTIFACT_DIR?.trim();
+  const artifactDir = process.env.CODIUS_DESKTOP_SMOKE_ARTIFACT_DIR?.trim();
   if (!artifactDir) {
     return;
   }
@@ -346,8 +346,8 @@ async function writeFailureArtifacts({ page, stdout, stderr, userData, daemonHom
         rootChildCount: document.querySelector("#root")?.childElementCount ?? 0,
         rootText: document.querySelector("#root")?.textContent?.trim().slice(0, 2_000) ?? "",
         bridgeKeys:
-          typeof window.paseoDesktop === "object" && window.paseoDesktop !== null
-            ? Object.keys(window.paseoDesktop)
+          typeof window.codiusDesktop === "object" && window.codiusDesktop !== null
+            ? Object.keys(window.codiusDesktop)
             : [],
       }))
       .catch((evaluationError) => ({ evaluationError: String(evaluationError) }));
@@ -490,8 +490,8 @@ async function assertPackagedRendererLoaded(page, deadline) {
   );
 
   const bridgeKeys = await page.evaluate(() =>
-    typeof window.paseoDesktop === "object" && window.paseoDesktop !== null
-      ? Object.keys(window.paseoDesktop)
+    typeof window.codiusDesktop === "object" && window.codiusDesktop !== null
+      ? Object.keys(window.codiusDesktop)
       : [],
   );
   const missingBridgeKeys = REQUIRED_DESKTOP_BRIDGE_KEYS.filter((key) => !bridgeKeys.includes(key));
@@ -516,7 +516,7 @@ async function waitForRendererStartedDaemon({
 
   while (Date.now() < deadline) {
     try {
-      lastStatus = await page.evaluate(() => window.paseoDesktop.invoke("desktop_daemon_status"));
+      lastStatus = await page.evaluate(() => window.codiusDesktop.invoke("desktop_daemon_status"));
       if (
         lastStatus?.status === "running" &&
         lastStatus.desktopManaged === true &&
@@ -649,8 +649,8 @@ async function smokeCliShim({ appPath, env }) {
 }
 
 async function smokeColdCliDaemonStart({ appPath }) {
-  const home = createTempDir("paseo-smoke-cli-daemon-home-");
-  const pidPath = path.join(home, "paseo.pid");
+  const home = createTempDir("codius-smoke-cli-daemon-home-");
+  const pidPath = path.join(home, "codius.pid");
   const port = await reserveLocalTcpPort();
   const listen = `127.0.0.1:${port}`;
   const env = createDefaultDaemonEnv();
@@ -723,8 +723,8 @@ function assertCleanDaemonStatusOutput(output) {
 }
 
 async function smokeCliTerminal({ appPath, env }) {
-  const cwd = createTempDir("paseo-smoke-terminal-cwd-");
-  const marker = `paseo-packaged-terminal-smoke-${Date.now()}`;
+  const cwd = createTempDir("codius-smoke-terminal-cwd-");
+  const marker = `codius-packaged-terminal-smoke-${Date.now()}`;
   const name = `packaged-smoke-${process.pid}-${Date.now()}`;
   let terminalId = null;
 
@@ -808,8 +808,8 @@ async function smokePackagedDesktopApp({ appPath }) {
   ensureLinuxSandboxPermissions(appPath);
   await smokeColdCliDaemonStart({ appPath });
 
-  const userData = createTempDir("paseo-smoke-user-data-");
-  const daemonHome = createTempDir("paseo-smoke-daemon-home-");
+  const userData = createTempDir("codius-smoke-user-data-");
+  const daemonHome = createTempDir("codius-smoke-daemon-home-");
   const daemonPort = await reserveLocalTcpPort();
   let cdpPort = await reserveLocalTcpPort();
   for (let attempt = 0; cdpPort === daemonPort && attempt < 10; attempt += 1) {

@@ -35,58 +35,42 @@ $env:EXPO_DEV_URL = "http://localhost:$($env:EXPO_PORT)"
 
 $RemoteDebuggingPort = if ($env:CODIUS_ELECTRON_REMOTE_DEBUGGING_PORT) {
     $env:CODIUS_ELECTRON_REMOTE_DEBUGGING_PORT
-} elseif ($env:PASEO_ELECTRON_REMOTE_DEBUGGING_PORT) {
-    $env:PASEO_ELECTRON_REMOTE_DEBUGGING_PORT
 } else {
     "9223"
 }
-$ExistingElectronFlags = if ($env:PASEO_ELECTRON_FLAGS) {
-    "$($env:PASEO_ELECTRON_FLAGS) "
+$ExistingElectronFlags = if ($env:CODIUS_ELECTRON_FLAGS) {
+    "$($env:CODIUS_ELECTRON_FLAGS) "
 } else {
     ""
 }
-$env:PASEO_ELECTRON_FLAGS = "$($ExistingElectronFlags)--remote-debugging-port=$RemoteDebuggingPort"
+$env:CODIUS_ELECTRON_FLAGS = "$($ExistingElectronFlags)--remote-debugging-port=$RemoteDebuggingPort"
 
 # Allow any origin in dev so Electron on random ports works.
 # SECURITY: wildcard CORS is unsafe in production — only acceptable here because
 # the daemon binds to localhost and this script is never used for production.
-$env:PASEO_CORS_ORIGINS = "*"
+$env:CODIUS_CORS_ORIGINS = "*"
 
 # Fully isolate the dev instance from a production Codius install so `npm run dev`
-# works while the installed app is open. PASEO_HOME remains an internal
-# compatibility variable, but CODIUS_HOME is the public source of truth.
+# works while the installed app is open.
 $DevStateDir = "$DesktopDir\.dev"
 if (-not $env:CODIUS_HOME) {
-    if ($env:PASEO_HOME) {
-        $env:CODIUS_HOME = $env:PASEO_HOME
-        $CodiusHomeManaged = $false
-    } else {
-        $env:CODIUS_HOME = "$DevStateDir\codius-home"
-        $CodiusHomeManaged = $true
-    }
+    $env:CODIUS_HOME = "$DevStateDir\codius-home"
+    $CodiusHomeManaged = $true
 } else {
     $CodiusHomeManaged = $false
 }
-$env:PASEO_HOME = $env:CODIUS_HOME
 
 if (-not $env:CODIUS_ELECTRON_USER_DATA_DIR) {
-    if ($env:PASEO_ELECTRON_USER_DATA_DIR) {
-        $env:CODIUS_ELECTRON_USER_DATA_DIR = $env:PASEO_ELECTRON_USER_DATA_DIR
-    } else {
-        $env:CODIUS_ELECTRON_USER_DATA_DIR = "$DevStateDir\user-data"
-    }
+    $env:CODIUS_ELECTRON_USER_DATA_DIR = "$DevStateDir\user-data"
 }
-$env:PASEO_ELECTRON_USER_DATA_DIR = $env:CODIUS_ELECTRON_USER_DATA_DIR
 New-Item -ItemType Directory -Force -Path $env:CODIUS_HOME, $env:CODIUS_ELECTRON_USER_DATA_DIR | Out-Null
 
 $DevDaemonPort = if ($env:CODIUS_DEV_DAEMON_PORT) {
     $env:CODIUS_DEV_DAEMON_PORT
-} elseif ($env:PASEO_DEV_DAEMON_PORT) {
-    $env:PASEO_DEV_DAEMON_PORT
 } else {
     "6788"
 }
-if (-not $env:PASEO_LISTEN) { $env:PASEO_LISTEN = "127.0.0.1:$DevDaemonPort" }
+if (-not $env:CODIUS_LISTEN) { $env:CODIUS_LISTEN = "127.0.0.1:$DevDaemonPort" }
 
 # Seed only the script-managed home. The daemon manager reads daemon.listen from
 # config.json, so the dev port and wildcard CORS must be recorded there.
@@ -122,7 +106,7 @@ Write-Host @"
 ======================================================
   Metro:       http://localhost:$($env:EXPO_PORT)
   CDP:         http://127.0.0.1:$RemoteDebuggingPort
-  Daemon:      $($env:PASEO_LISTEN) (isolated)
+  Daemon:      $($env:CODIUS_LISTEN) (isolated)
   CODIUS_HOME: $($env:CODIUS_HOME)
   userData:    $($env:CODIUS_ELECTRON_USER_DATA_DIR)
 ======================================================
@@ -133,5 +117,5 @@ concurrently `
     --kill-others `
     --names "metro,electron" `
     --prefix-colors "magenta,cyan" `
-    "cd `"$AppDir`" && cross-env PASEO_WEB_PLATFORM=electron npx expo start --port $($env:EXPO_PORT)" `
+    "cd `"$AppDir`" && cross-env CODIUS_WEB_PLATFORM=electron npx expo start --port $($env:EXPO_PORT)" `
     "npx wait-on tcp:$($env:EXPO_PORT) && npx electron `"$DesktopDir`""

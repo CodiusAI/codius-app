@@ -616,7 +616,7 @@ export const ja: TranslationResources = {
       },
       routes: {
         public: "リバースプロキシ",
-        paseo: "Memorable",
+        codius: "Memorable",
         direct: "直接接続",
       },
       states: {
@@ -727,7 +727,7 @@ export const ja: TranslationResources = {
           updateCurrent: "このブランチはすでに{{baseRef}}と最新の状態のため、更新は利用できません",
           mergePrNoGithub: "GitHubが接続されていないため、PRのマージは現在利用できません",
           archiveNotWorktree:
-            "このワークスペースはPaseoワークツリーとして作成されていないため、アーカイブはここでは利用できません",
+            "このワークスペースはCodiusワークツリーとして作成されていないため、アーカイブはここでは利用できません",
           mergePrNoForge: "{{brand}}が接続されていないため、{{noun}}のマージは現在利用できません",
           mergePrMissing: "プルリクエストがまだないため、PRのマージは利用できません",
           mergePrDraft: "プルリクエストがまだドラフトのため、PRのマージは利用できません",
@@ -898,7 +898,7 @@ export const ja: TranslationResources = {
       discord: "Discord",
       github: "GitHub Issueを作成",
       whatsNew: "新着情報",
-      version: "Paseo {{version}}",
+      version: "Codius {{version}}",
     },
     sections: {
       sessions: "履歴",
@@ -1012,7 +1012,7 @@ export const ja: TranslationResources = {
   },
   desktop: {
     quitting: {
-      title: "Paseoを終了中...",
+      title: "Codiusを終了中...",
       detail: "ローカルデーモンを停止中。",
     },
     daemon: {
@@ -1026,20 +1026,20 @@ export const ja: TranslationResources = {
       },
       management: {
         title: "組み込みデーモンを管理",
-        hint: "Paseoが組み込みデーモンを起動・停止できるようにする",
+        hint: "Codiusが組み込みデーモンを起動・停止できるようにする",
         pauseTitle: "組み込みデーモンを一時停止",
         pauseMessage:
           "これにより組み込みデーモンが即座に停止します。組み込みデーモンに接続されている実行中のエージェントとターミナルが停止されます。",
         pauseAndStop: "一時停止して停止",
         registrationFailed:
-          "組み込みデーモンは起動しましたが、Paseoがlocalhostの接続を保存できませんでした。デーモン管理をオフにしてから再度オンにするか、localhostを手動で追加してください。",
+          "組み込みデーモンは起動しましたが、Codiusがlocalhostの接続を保存できませんでした。デーモン管理をオフにしてから再度オンにするか、localhostを手動で追加してください。",
         pausedStopFailed:
-          "組み込みデーモン管理は一時停止されましたが、Paseoがデーモンを停止できませんでした。",
+          "組み込みデーモン管理は一時停止されましたが、Codiusがデーモンを停止できませんでした。",
         updateFailed: "組み込みデーモン管理を更新できません。",
       },
       keepRunning: {
         title: "終了後もデーモンを実行し続ける",
-        hint: "Paseoを終了してもデーモンは実行し続けます",
+        hint: "Codiusを終了してもデーモンは実行し続けます",
       },
       logs: {
         title: "ログファイル",
@@ -1054,7 +1054,7 @@ export const ja: TranslationResources = {
       fullStatus: {
         title: "詳細ステータス",
         modalTitle: "デーモンのステータス",
-        hint: "`paseo daemon status`を実行して出力を表示します",
+        hint: "`codius daemon status`を実行して出力を表示します",
         view: "ステータスを表示",
         copied: "ステータスをクリップボードにコピーしました。",
         fetchFailed: "デーモンのステータスの取得に失敗しました: {{message}}",
@@ -1107,7 +1107,7 @@ export const ja: TranslationResources = {
     },
     rosetta: {
       title: "Apple Siliconビルドをダウンロード",
-      runningIntel: "Apple Silicon上のRosettaでPaseoのIntelビルドを実行しています。",
+      runningIntel: "Apple Silicon上のRosettaでCodiusのIntelビルドを実行しています。",
       highCpu:
         "これにより高いCPU使用率が発生します。修正するにはApple Siliconビルドをダウンロードしてください。",
       download: "ダウンロード",
@@ -1150,7 +1150,7 @@ export const ja: TranslationResources = {
         microphone: "マイクのステータスはまだ確認されていません。",
       },
       testNotification: {
-        title: "Paseo通知テスト",
+        title: "Codius通知テスト",
         body: "これが見えれば、デスクトップ通知は機能しています。",
         notDelivered: "通知が届きませんでした。システム設定 > 通知を確認してください。",
         failed: "通知の送信に失敗しました。",
@@ -1159,7 +1159,7 @@ export const ja: TranslationResources = {
     integrations: {
       cli: {
         statusFailed: "CLIのインストール状態を確認できません。",
-        installFailed: "Paseo CLIをインストールできません。",
+        installFailed: "Codius CLIをインストールできません。",
       },
       skills: {
         statusFailed: "オーケストレーションスキルのステータスを確認できません。",
@@ -1171,7 +1171,7 @@ export const ja: TranslationResources = {
   },
   rootError: {
     kicker: "問題が発生しました",
-    title: "Paseo で問題が発生しました。",
+    title: "Codius で問題が発生しました。",
     body: "アプリを再読み込みするにはもう一度お試しください。繰り返し発生する場合は、以下の詳細を添えて報告してください。",
     details: "詳細",
   },
@@ -1265,7 +1265,7 @@ export const ja: TranslationResources = {
     },
   },
   onboarding: {
-    title: "Paseoへようこそ",
+    title: "Codiusへようこそ",
     subtitle: "始めるにはコンピューターに接続してください",
     actions: {
       settings: "設定",
@@ -1341,7 +1341,7 @@ export const ja: TranslationResources = {
     },
     direct: {
       title: "直接接続",
-      helper: "Paseoサーバーのアドレスを入力してください。",
+      helper: "Codiusサーバーのアドレスを入力してください。",
       fields: {
         host: "ホスト",
         port: "ポート",
@@ -1421,7 +1421,7 @@ export const ja: TranslationResources = {
       relayDisabled:
         "リレーが有効になっていません。デバイスをペアリングするにはリレーを有効にしてください。",
       unavailable: "ペアリングオファーが利用できません。",
-      hint: "スマートフォンのPaseoでこのQRコードをスキャンするか、以下のリンクをコピーしてください。",
+      hint: "スマートフォンのCodiusでこのQRコードをスキャンするか、以下のリンクをコピーしてください。",
       qrUnavailable: "QRコードが利用できません。",
       retry: "再試行",
       copy: "コピー",
@@ -1453,7 +1453,7 @@ export const ja: TranslationResources = {
   serviceUrl: {
     title: "サービスURLを開く",
     message: "{{url}}を開きますか？",
-    inPaseo: "Paseoで",
+    inCodius: "Codiusで",
     externalBrowser: "外部ブラウザ",
     dontAskAgain: "次回から確認しない",
   },
@@ -1548,9 +1548,9 @@ export const ja: TranslationResources = {
       one: "その他のツールを{{count}}回使用",
       other: "その他のツールを{{count}}回使用",
     },
-    paseoCalls: {
-      one: "Paseoを{{count}}回呼び出し",
-      other: "Paseoを{{count}}回呼び出し",
+    codiusCalls: {
+      one: "Codiusを{{count}}回呼び出し",
+      other: "Codiusを{{count}}回呼び出し",
     },
     and: "および",
   },
@@ -1654,7 +1654,7 @@ export const ja: TranslationResources = {
         description: "実行中のスクリプトからURLを開く場所",
         options: {
           ask: "確認する",
-          inApp: "Paseoで",
+          inApp: "Codiusで",
           external: "外部ブラウザ",
         },
       },
@@ -1732,7 +1732,7 @@ export const ja: TranslationResources = {
         label: "アプリの更新",
         readyToInstall: "インストール準備完了: {{version}}",
         installTitle: "デスクトップの更新をインストール",
-        installMessage: "このコンピューターのPaseoを更新します",
+        installMessage: "このコンピューターのCodiusを更新します",
         installConfirm: "更新をインストール",
         update: "更新",
         updateTo: "{{version}}に更新",
@@ -1866,11 +1866,11 @@ export const ja: TranslationResources = {
         title: "オーケストレーションスキル",
         description: "エージェントがCLI経由でオーケストレーションできるようにします。",
         updateAvailable: "更新が利用可能",
-        updateTitle: "Paseoスキルを更新しますか？",
+        updateTitle: "Codiusスキルを更新しますか？",
         updateFallback: "バンドルされたスキルをマシンに同期します。",
-        uninstallTitle: "Paseoスキルをアンインストールしますか？",
+        uninstallTitle: "Codiusスキルをアンインストールしますか？",
         uninstallMessage:
-          "~/.agents、~/.claude、~/.codexからすべてのPaseoオーケストレーションスキルを削除します。",
+          "~/.agents、~/.claude、~/.codexからすべてのCodiusオーケストレーションスキルを削除します。",
       },
       actions: {
         install: "インストール",
@@ -1925,9 +1925,9 @@ export const ja: TranslationResources = {
         title: "オーケストレーション",
         unavailable: "オーケストレーションを管理するにはこのホストに接続してください",
         enableTools: {
-          title: "Paseoツールを有効にする",
+          title: "Codiusツールを有効にする",
           hint: "エージェントがワークツリー、エージェント、スケジュールを管理できるようになります",
-          accessibilityLabel: "Paseoツールを有効にする",
+          accessibilityLabel: "Codiusツールを有効にする",
         },
         systemPrompt: {
           title: "システムプロンプト",
@@ -1995,15 +1995,15 @@ export const ja: TranslationResources = {
             "このホストは接続されていません。再起動する前にオンラインになるまでお待ちください。",
           offlineTitle: "ホストオフライン",
           offlineMessage:
-            "このホストはオフラインです。Paseoが自動再接続します。再起動は、ホストがオンラインに戻ってから行ってください。",
+            "このホストはオフラインです。Codiusが自動再接続します。再起動は、ホストがオンラインに戻ってから行ってください。",
           requestFailedTitle: "エラー",
           requestFailedMessage:
-            "再起動リクエストの送信に失敗しました。Paseoは自動的に再接続します。ホストがオンラインになったら再試行してください。",
+            "再起動リクエストの送信に失敗しました。Codiusは自動的に再接続します。ホストがオンラインになったら再試行してください。",
           dialogFailedMessage: "再起動確認ダイアログを開けませんでした。",
         },
         update: {
           desktopManagedHint:
-            "このデーモンはPaseo Desktopによって管理されています。ホスト上のPaseo Desktopを更新してください。",
+            "このデーモンはCodius Desktopによって管理されています。ホスト上のCodius Desktopを更新してください。",
           title: "デーモンを更新",
           hint: "デーモンを最新バージョンに更新して再起動します",
           confirm: "更新",
@@ -2124,14 +2124,14 @@ export const ja: TranslationResources = {
         reset: "リセット",
       },
       readFailures: {
-        invalidTitle: "paseo.jsonを解析できませんでした",
+        invalidTitle: "codius.jsonを解析できませんでした",
         invalidDescription: "ディスク上のファイルを修正してから再読み込みしてください。",
         missingTitle: "このホストにはこのプロジェクトがありません",
         missingWithHosts: "上で別のホストに切り替えるか、再読み込みしてください。",
         missingSingleHost: "選択したホストにはこのプロジェクトの記録がありません。",
-        transportTitle: "paseo.jsonを読み込めませんでした",
+        transportTitle: "codius.jsonを読み込めませんでした",
         transportFallback: "ホストが応答しませんでした。",
-        failedTitle: "paseo.jsonを読み込めませんでした",
+        failedTitle: "codius.jsonを読み込めませんでした",
         failedDescription: "再読み込みして再試行してください。",
       },
       worktree: {
@@ -2164,7 +2164,7 @@ export const ja: TranslationResources = {
         newScript: "新しいスクリプト",
         editScript: "{{name}}を編集",
         runAsService: "サービスとして実行",
-        serviceHint: "Paseoがプロセスを監督し、$PASEO_PORTを通じてポートを割り当てます",
+        serviceHint: "Codiusがプロセスを監督し、$CODIUS_PORTを通じてポートを割り当てます",
         actions: {
           add: "スクリプトを追加",
           edit: "編集",
@@ -2173,7 +2173,7 @@ export const ja: TranslationResources = {
       },
       metadata: {
         title: "メタデータ生成",
-        info: "Paseoがメタデータ生成に使うAIプロンプトへ追加する、プロジェクト固有の指示です。ブランチ名、コミット形式、PR形式など、チームの規約を反映するために使います。",
+        info: "Codiusがメタデータ生成に使うAIプロンプトへ追加する、プロジェクト固有の指示です。ブランチ名、コミット形式、PR形式など、チームの規約を反映するために使います。",
         branchName: "ブランチ名",
         branchNamePlaceholder: "ブランチ名は feat/ または fix/ で始め、個人ブランチは mb/ にする",
         commitMessage: "コミットメッセージ",
@@ -2183,8 +2183,8 @@ export const ja: TranslationResources = {
       },
       writeFailures: {
         staleTitle: "設定がディスク上で変更されました",
-        staleDescription: "保存する前に最新のpaseo.jsonを取得するために再読み込みしてください。",
-        failedTitle: "paseo.jsonを保存できませんでした",
+        staleDescription: "保存する前に最新のcodius.jsonを取得するために再読み込みしてください。",
+        failedTitle: "codius.jsonを保存できませんでした",
         failedDescription: "再試行するか、ディスクから最新バージョンを再読み込みしてください。",
       },
       actions: {

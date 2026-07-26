@@ -2,7 +2,7 @@ import type {
   AgentAttachment,
   ForgeSearchItem,
   UploadedFileAttachment,
-} from "@getpaseo/protocol/messages";
+} from "@codius-ai/protocol/messages";
 
 export type AttachmentStorageType = "web-indexeddb" | "desktop-file" | "native-file";
 

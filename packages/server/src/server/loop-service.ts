@@ -352,14 +352,14 @@ export class LoopService {
 
   constructor(
     private readonly options: {
-      paseoHome: string;
+      codiusHome: string;
       agentManager: LoopAgentManager;
       logger: Logger;
       createAgent: BoundCreateAgentCommand;
       ensureWorkspaceForCreate: EnsureWorkspaceForCreate;
     },
   ) {
-    this.storePath = path.join(options.paseoHome, "loops", "loops.json");
+    this.storePath = path.join(options.codiusHome, "loops", "loops.json");
     this.logger = options.logger.child({ module: "loop-service" });
   }
 

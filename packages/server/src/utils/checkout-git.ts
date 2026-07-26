@@ -2,7 +2,7 @@ import { resolve, dirname, basename } from "path";
 import { existsSync, realpathSync } from "fs";
 import { open as openFile, readFile, stat as statFile } from "fs/promises";
 import { TTLCache } from "@isaacs/ttlcache";
-import type { CheckoutCommit, CheckoutCommitFile } from "@getpaseo/protocol/messages";
+import type { CheckoutCommit, CheckoutCommitFile } from "@codius-ai/protocol/messages";
 import type { Logger } from "pino";
 import type { ParsedDiffFile } from "../server/utils/diff-highlighter.js";
 import { parseAndHighlightDiff } from "../server/utils/diff-highlighter.js";
@@ -22,8 +22,8 @@ import {
 } from "../services/forge-cli-command.js";
 import { parseGitRevParsePath, resolveGitRevParsePath } from "./git-rev-parse-path.js";
 import { runGitCommand } from "./run-git-command.js";
-import { isPaseoOwnedWorktreeCwd, resolvePaseoWorktreesBaseRoot } from "./worktree.js";
-import { type PaseoWorktreeMetadata, readPaseoWorktreeMetadata } from "./worktree-metadata.js";
+import { isCodiusOwnedWorktreeCwd, resolveCodiusWorktreesBaseRoot } from "./worktree.js";
+import { type CodiusWorktreeMetadata, readCodiusWorktreeMetadata } from "./worktree-metadata.js";
 const READ_ONLY_GIT_ENV = {
   GIT_OPTIONAL_LOCKS: "0",
   LC_ALL: "C",
@@ -725,7 +725,7 @@ export interface CheckoutStatus {
   isGit: false;
 }
 
-export interface CheckoutStatusGitNonPaseo {
+export interface CheckoutStatusGitNonCodius {
   isGit: true;
   repoRoot: string;
   mainRepoRoot: string | null;
@@ -737,10 +737,10 @@ export interface CheckoutStatusGitNonPaseo {
   behindOfOrigin: number | null;
   hasRemote: boolean;
   remoteUrl: string | null;
-  isPaseoOwnedWorktree: false;
+  isCodiusOwnedWorktree: false;
 }
 
-export interface CheckoutStatusGitPaseo {
+export interface CheckoutStatusGitCodius {
   isGit: true;
   repoRoot: string;
   mainRepoRoot: string;
@@ -752,10 +752,10 @@ export interface CheckoutStatusGitPaseo {
   behindOfOrigin: number | null;
   hasRemote: boolean;
   remoteUrl: string | null;
-  isPaseoOwnedWorktree: true;
+  isCodiusOwnedWorktree: true;
 }
 
-export type CheckoutStatusGit = CheckoutStatusGitNonPaseo | CheckoutStatusGitPaseo;
+export type CheckoutStatusGit = CheckoutStatusGitNonCodius | CheckoutStatusGitCodius;
 
 export type CheckoutStatusResult = CheckoutStatus | CheckoutStatusGit;
 
@@ -783,7 +783,7 @@ export interface MergeFromBaseOptions {
 }
 
 export interface CheckoutContext {
-  paseoHome?: string;
+  codiusHome?: string;
   worktreesRoot?: string;
   logger?: Pick<Logger, "trace" | "warn">;
   facts?: CheckoutSnapshotFacts | null;
@@ -800,7 +800,7 @@ export type CheckoutSnapshotFacts =
       remoteUrl: string | null;
       absoluteGitDir: string | null;
       gitCommonDir: string | null;
-      paseoWorktree: PaseoWorktreeForCwd;
+      codiusWorktree: CodiusWorktreeForCwd;
       storedBaseRef: string | null;
       resolvedBaseRef: string | null;
       mainRepoRoot: string | null;
@@ -938,17 +938,17 @@ async function getMainRepoRootFromCommonDir(
     envOverlay: READ_ONLY_GIT_ENV,
   });
   const worktrees = parseWorktreeList(worktreeOut);
-  const nonBareNonPaseo = worktrees.filter(
+  const nonBareNonCodius = worktrees.filter(
     (wt) =>
       !wt.isBare &&
-      !isPaseoWorktreePath(wt.path, {
-        paseoHome: context?.paseoHome,
+      !isCodiusWorktreePath(wt.path, {
+        codiusHome: context?.codiusHome,
         worktreesRoot: context?.worktreesRoot,
       }),
   );
-  const childrenOfBareRepo = nonBareNonPaseo.filter((wt) => isDescendantPath(wt.path, normalized));
+  const childrenOfBareRepo = nonBareNonCodius.filter((wt) => isDescendantPath(wt.path, normalized));
   const mainChild = childrenOfBareRepo.find((wt) => basename(wt.path) === "main");
-  return mainChild?.path ?? childrenOfBareRepo[0]?.path ?? nonBareNonPaseo[0]?.path ?? normalized;
+  return mainChild?.path ?? childrenOfBareRepo[0]?.path ?? nonBareNonCodius[0]?.path ?? normalized;
 }
 
 export interface GitWorktreeEntry {
@@ -957,15 +957,15 @@ export interface GitWorktreeEntry {
   isBare?: boolean;
 }
 
-/** Check whether a path is under Paseo's worktree root. */
-export function isPaseoWorktreePath(
+/** Check whether a path is under Codius's worktree root. */
+export function isCodiusWorktreePath(
   p: string,
-  options?: { paseoHome?: string; worktreesRoot?: string },
+  options?: { codiusHome?: string; worktreesRoot?: string },
 ): boolean {
-  if (options?.worktreesRoot || options?.paseoHome) {
-    return isDescendantPath(p, resolvePaseoWorktreesBaseRoot(options));
+  if (options?.worktreesRoot || options?.codiusHome) {
+    return isDescendantPath(p, resolveCodiusWorktreesBaseRoot(options));
   }
-  return /[/\\]\.paseo[/\\]worktrees[/\\]/.test(p);
+  return /[/\\]\.codius[/\\]worktrees[/\\]/.test(p);
 }
 
 /** True when `child` is strictly inside `parent` (handles both `/` and `\`). */
@@ -1048,42 +1048,42 @@ export async function renameCurrentBranch(
   return { previousBranch, currentBranch };
 }
 
-type PaseoWorktreeForCwd =
-  | { isPaseoOwnedWorktree: false }
-  | { isPaseoOwnedWorktree: true; worktreeRoot: string };
+type CodiusWorktreeForCwd =
+  | { isCodiusOwnedWorktree: false }
+  | { isCodiusOwnedWorktree: true; worktreeRoot: string };
 
-interface PaseoWorktreeLookupOptions {
+interface CodiusWorktreeLookupOptions {
   context?: CheckoutContext;
   knownWorktreeRoot?: string | null;
   knownGitCommonDir?: string | null;
 }
 
-async function getPaseoWorktreeForCwd(
+async function getCodiusWorktreeForCwd(
   cwd: string,
-  options: PaseoWorktreeLookupOptions = {},
-): Promise<PaseoWorktreeForCwd> {
+  options: CodiusWorktreeLookupOptions = {},
+): Promise<CodiusWorktreeForCwd> {
   // Fast-path reject: non-worktree paths do not need expensive ownership checks.
   if (!/[\\/]worktrees[\\/]/.test(cwd)) {
-    return { isPaseoOwnedWorktree: false };
+    return { isCodiusOwnedWorktree: false };
   }
 
-  const ownership = await isPaseoOwnedWorktreeCwd(cwd, {
-    paseoHome: options.context?.paseoHome,
+  const ownership = await isCodiusOwnedWorktreeCwd(cwd, {
+    codiusHome: options.context?.codiusHome,
     worktreesRoot: options.context?.worktreesRoot,
     knownGitCommonDir: options.knownGitCommonDir,
   });
   if (!ownership.allowed) {
-    return { isPaseoOwnedWorktree: false };
+    return { isCodiusOwnedWorktree: false };
   }
 
   return {
-    isPaseoOwnedWorktree: true,
+    isCodiusOwnedWorktree: true,
     worktreeRoot: options.knownWorktreeRoot ?? (await getWorktreeRoot(cwd, options.context)) ?? cwd,
   };
 }
 
-function readPaseoWorktreeBaseRef(worktreeRoot: string): string | null {
-  return readPaseoWorktreeMetadata(worktreeRoot)?.baseRefName ?? null;
+function readCodiusWorktreeBaseRef(worktreeRoot: string): string | null {
+  return readCodiusWorktreeMetadata(worktreeRoot)?.baseRefName ?? null;
 }
 
 async function getStoredBaseRefForCwd(
@@ -1093,12 +1093,12 @@ async function getStoredBaseRefForCwd(
   if (context?.facts?.isGit) {
     return context.facts.storedBaseRef;
   }
-  const paseoWorktree = await getPaseoWorktreeForCwd(cwd, { context });
-  if (!paseoWorktree.isPaseoOwnedWorktree) {
+  const codiusWorktree = await getCodiusWorktreeForCwd(cwd, { context });
+  if (!codiusWorktree.isCodiusOwnedWorktree) {
     return null;
   }
 
-  return readPaseoWorktreeBaseRef(paseoWorktree.worktreeRoot);
+  return readCodiusWorktreeBaseRef(codiusWorktree.worktreeRoot);
 }
 
 async function getResolvedBaseRefForCwd(
@@ -1551,7 +1551,7 @@ interface CheckoutInspectionContext {
   remoteUrl: string | null;
   absoluteGitDir: string | null;
   gitCommonDir: string | null;
-  paseoWorktree: PaseoWorktreeForCwd;
+  codiusWorktree: CodiusWorktreeForCwd;
 }
 
 async function inspectCheckoutContext(
@@ -1569,7 +1569,7 @@ async function inspectCheckoutContext(
     resolveAbsoluteGitDir(cwd),
     resolveGitCommonDir(cwd),
   ]);
-  const paseoWorktree = await getPaseoWorktreeForCwd(cwd, {
+  const codiusWorktree = await getCodiusWorktreeForCwd(cwd, {
     context,
     knownWorktreeRoot: root,
     knownGitCommonDir: gitCommonDir,
@@ -1581,7 +1581,7 @@ async function inspectCheckoutContext(
     remoteUrl,
     absoluteGitDir,
     gitCommonDir,
-    paseoWorktree,
+    codiusWorktree,
   };
 }
 
@@ -1646,7 +1646,7 @@ function buildPullRequestLookupTargetFromPushConfig(
 }
 
 function buildPullRequestLookupTargetFromMetadata(
-  metadata: PaseoWorktreeMetadata | null,
+  metadata: CodiusWorktreeMetadata | null,
 ): PullRequestStatusLookupTarget | null {
   const target = metadata?.changeRequestLookupTarget;
   if (!target) {
@@ -1660,7 +1660,7 @@ function buildPullRequestLookupTargetFromMetadata(
 
 function buildInitialPullRequestLookupTarget(input: {
   currentBranch: string | null;
-  metadata: PaseoWorktreeMetadata | null;
+  metadata: CodiusWorktreeMetadata | null;
   branchRemoteName: string | null;
   branchMergeRef: string | null;
   branchRemoteUrl: string | null;
@@ -1729,10 +1729,10 @@ export async function getCheckoutSnapshotFacts(
     return { isGit: false };
   }
 
-  const paseoWorktreeMetadata = inspected.paseoWorktree.isPaseoOwnedWorktree
-    ? readPaseoWorktreeMetadata(inspected.paseoWorktree.worktreeRoot)
+  const codiusWorktreeMetadata = inspected.codiusWorktree.isCodiusOwnedWorktree
+    ? readCodiusWorktreeMetadata(inspected.codiusWorktree.worktreeRoot)
     : null;
-  const storedBaseRef = paseoWorktreeMetadata?.baseRefName ?? null;
+  const storedBaseRef = codiusWorktreeMetadata?.baseRefName ?? null;
   const resolvedBaseRef = storedBaseRef ?? (await resolveBaseRef(cwd));
   const mainRepoRoot = await getMainRepoRootFromCommonDir(
     cwd,
@@ -1770,7 +1770,7 @@ export async function getCheckoutSnapshotFacts(
   }
   let pullRequestLookupTarget = buildInitialPullRequestLookupTarget({
     currentBranch: inspected.currentBranch,
-    metadata: paseoWorktreeMetadata,
+    metadata: codiusWorktreeMetadata,
     branchRemoteName,
     branchMergeRef,
     branchRemoteUrl,
@@ -1804,7 +1804,7 @@ export async function getCheckoutSnapshotFacts(
     remoteUrl: inspected.remoteUrl,
     absoluteGitDir: inspected.absoluteGitDir,
     gitCommonDir: inspected.gitCommonDir,
-    paseoWorktree: inspected.paseoWorktree,
+    codiusWorktree: inspected.codiusWorktree,
     storedBaseRef,
     resolvedBaseRef,
     mainRepoRoot,
@@ -1937,7 +1937,7 @@ export async function getCheckoutStatus(
   const worktreeRoot = facts.worktreeRoot;
   const currentBranch = facts.currentBranch;
   const remoteUrl = facts.remoteUrl;
-  const paseoWorktree = facts.paseoWorktree;
+  const codiusWorktree = facts.codiusWorktree;
   const isDirty = await isWorkingTreeDirty(cwd, context);
   const hasRemote = remoteUrl !== null;
   const baseRef = facts.resolvedBaseRef;
@@ -1954,7 +1954,7 @@ export async function getCheckoutStatus(
   const aheadOfOrigin = originAheadBehind?.ahead ?? null;
   const behindOfOrigin = originAheadBehind?.behind ?? null;
 
-  if (paseoWorktree.isPaseoOwnedWorktree && baseRef) {
+  if (codiusWorktree.isCodiusOwnedWorktree && baseRef) {
     return {
       isGit: true,
       repoRoot: worktreeRoot,
@@ -1967,7 +1967,7 @@ export async function getCheckoutStatus(
       behindOfOrigin,
       hasRemote,
       remoteUrl,
-      isPaseoOwnedWorktree: true,
+      isCodiusOwnedWorktree: true,
     };
   }
 
@@ -1984,7 +1984,7 @@ export async function getCheckoutStatus(
     behindOfOrigin,
     hasRemote,
     remoteUrl,
-    isPaseoOwnedWorktree: false,
+    isCodiusOwnedWorktree: false,
   };
 }
 

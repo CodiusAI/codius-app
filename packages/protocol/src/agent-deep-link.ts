@@ -35,10 +35,8 @@ export function parseAgentDeepLink(input: string): AgentDeepLinkTarget | null {
     return null;
   }
 
-  // Accept old links so existing bookmarks and notifications still open after
-  // upgrading from the upstream app, but only emit the Codius scheme.
   if (
-    (url.protocol !== "codius:" && url.protocol !== "paseo:") ||
+    url.protocol !== "codius:" ||
     url.hostname !== "h" ||
     url.username ||
     url.password ||

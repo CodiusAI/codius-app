@@ -4,8 +4,8 @@ import {
   type DesktopBrowserBridge,
 } from "@/desktop/host";
 
-const RESIDENT_BROWSER_HOST_ID = "paseo-browser-resident-webviews";
-const BROWSER_ID_ATTRIBUTE = "data-paseo-browser-id";
+const RESIDENT_BROWSER_HOST_ID = "codius-browser-resident-webviews";
+const BROWSER_ID_ATTRIBUTE = "data-codius-browser-id";
 const RESIDENT_VIEWPORT_WIDTH = 1280;
 const RESIDENT_VIEWPORT_HEIGHT = 800;
 

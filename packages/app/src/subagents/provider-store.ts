@@ -2,12 +2,12 @@ import type {
   AgentStreamEventPayload,
   ProviderSubagentDescriptorPayload,
   SessionOutboundMessage,
-} from "@getpaseo/protocol/messages";
-import type { DaemonClient } from "@getpaseo/client/internal/daemon-client";
+} from "@codius-ai/protocol/messages";
+import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
 import { create } from "zustand";
 import { applyStreamEvent } from "@/types/stream";
 import type { StreamItem } from "@/types/stream";
-import type { AgentLifecycleStatus } from "@getpaseo/protocol/agent-lifecycle";
+import type { AgentLifecycleStatus } from "@codius-ai/protocol/agent-lifecycle";
 
 type ProviderSubagentTimelineItem = Extract<
   Extract<SessionOutboundMessage, { type: "agent.provider_subagents.update" }>["payload"],

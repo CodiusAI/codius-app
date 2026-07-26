@@ -1,7 +1,7 @@
-import { createPaseoClient, type PaseoClient } from "@getpaseo/client";
+import { createCodiusClient, type CodiusClient } from "@codius-ai/client";
 
-export function createClient(url: string): PaseoClient {
-  return createPaseoClient({
+export function createClient(url: string): CodiusClient {
+  return createCodiusClient({
     url,
   });
 }

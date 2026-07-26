@@ -10,15 +10,15 @@ import {
   deriveAgentStateBucket,
   getWorkspaceStateBucketPriority,
   type WorkspaceStateBucket,
-} from "@getpaseo/protocol/agent-state-bucket";
-import { getParentAgentIdFromLabels } from "@getpaseo/protocol/agent-labels";
+} from "@codius-ai/protocol/agent-state-bucket";
+import { getParentAgentIdFromLabels } from "@codius-ai/protocol/agent-labels";
 import { SortablePager } from "./pagination/sortable-pager.js";
 import type { PersistedProjectRecord, PersistedWorkspaceRecord } from "./workspace-registry.js";
 import { resolveProjectDisplayName } from "./workspace-registry.js";
 import {
   deriveTerminalActivityStatusBucket,
   type TerminalActivity,
-} from "@getpaseo/protocol/terminal-activity";
+} from "@codius-ai/protocol/terminal-activity";
 
 const FETCH_WORKSPACES_SORT_KEYS = [
   "status_priority",

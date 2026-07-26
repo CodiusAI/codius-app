@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 type EditorTargetId = string;
 
-const PREFERRED_EDITOR_STORAGE_KEY = "@paseo:preferred-editor";
+const PREFERRED_EDITOR_STORAGE_KEY = "@codius:preferred-editor";
 const PREFERRED_EDITOR_QUERY_KEY = ["preferred-editor"];
 
 async function loadPreferredEditor(): Promise<EditorTargetId | null> {

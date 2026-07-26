@@ -4,42 +4,45 @@ import { buildWorkingDirectorySuggestions } from "./working-directory-suggestion
 describe("buildWorkingDirectorySuggestions", () => {
   it("returns de-duplicated recommendations when query is empty", () => {
     const results = buildWorkingDirectorySuggestions({
-      recommendedPaths: ["/Users/me/projects/paseo", "/Users/me/projects/paseo"],
+      recommendedPaths: ["/Users/me/projects/codius", "/Users/me/projects/codius"],
       serverPaths: ["/Users/me/projects/playground"],
       query: "",
     });
 
-    expect(results).toEqual(["/Users/me/projects/paseo"]);
+    expect(results).toEqual(["/Users/me/projects/codius"]);
   });
 
   it("keeps fuzzy recommendation matches before de-duplicated daemon suggestions", () => {
     const results = buildWorkingDirectorySuggestions({
-      recommendedPaths: ["/Users/me/projects/paseo-desktop", "/Users/me/documents"],
-      serverPaths: ["/Users/me/projects/paseo-plan", "/Users/me/projects/paseo-desktop"],
-      query: "pso",
+      recommendedPaths: ["/Users/me/projects/codius-desktop", "/Users/me/documents"],
+      serverPaths: ["/Users/me/projects/codius-plan", "/Users/me/projects/codius-desktop"],
+      query: "codius",
     });
 
-    expect(results).toEqual(["/Users/me/projects/paseo-desktop", "/Users/me/projects/paseo-plan"]);
+    expect(results).toEqual([
+      "/Users/me/projects/codius-desktop",
+      "/Users/me/projects/codius-plan",
+    ]);
   });
 
   it("does not reinterpret daemon-ranked suggestions", () => {
     const results = buildWorkingDirectorySuggestions({
       recommendedPaths: [],
-      serverPaths: ["/Users/me/projects/paseo-desktop"],
+      serverPaths: ["/Users/me/projects/codius-desktop"],
       query: "a-query-ranked-by-the-daemon",
     });
 
-    expect(results).toEqual(["/Users/me/projects/paseo-desktop"]);
+    expect(results).toEqual(["/Users/me/projects/codius-desktop"]);
   });
 
   it("leaves path-query semantics to the daemon", () => {
     const results = buildWorkingDirectorySuggestions({
       recommendedPaths: [
-        "/Users/me/archive/projects/paseo-desktop",
-        "/Users/me/projects/paseo-desktop",
+        "/Users/me/archive/projects/codius-desktop",
+        "/Users/me/projects/codius-desktop",
       ],
       serverPaths: [],
-      query: "~/projects/pso",
+      query: "~/projects/codius",
     });
 
     expect(results).toEqual([]);
@@ -47,13 +50,13 @@ describe("buildWorkingDirectorySuggestions", () => {
 
   it("treats '~' as an active query and includes daemon suggestions", () => {
     const results = buildWorkingDirectorySuggestions({
-      recommendedPaths: ["/Users/me/projects/paseo"],
+      recommendedPaths: ["/Users/me/projects/codius"],
       serverPaths: ["/Users/me/documents", "/Users/me/projects"],
       query: "~",
     });
 
     expect(results).toEqual([
-      "/Users/me/projects/paseo",
+      "/Users/me/projects/codius",
       "/Users/me/documents",
       "/Users/me/projects",
     ]);

@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 import { getElectronHost } from "@/desktop/electron/host";
 import type { BrowserKeyboardPolicy } from "@/keyboard/browser-shortcuts";
-import type { SessionInboundMessage, SessionOutboundMessage } from "@getpaseo/protocol/messages";
+import type { SessionInboundMessage, SessionOutboundMessage } from "@codius-ai/protocol/messages";
 
 type BrowserAutomationExecuteRequest = Extract<
   SessionOutboundMessage,
@@ -187,7 +187,7 @@ export interface DesktopHostBridge {
 
 declare global {
   interface Window {
-    paseoDesktop?: DesktopHostBridge;
+    codiusDesktop?: DesktopHostBridge;
   }
 }
 

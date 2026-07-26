@@ -1,4 +1,4 @@
-import { resolvePaseoHome } from "../src/server/paseo-home.js";
+import { resolveCodiusHome } from "../src/server/codius-home.js";
 import { createRootLogger } from "../src/server/logger.js";
 import {
   DEFAULT_LOCAL_STT_MODEL,
@@ -8,8 +8,8 @@ import {
 } from "../src/server/speech/providers/local/models.js";
 
 function parseArgs(argv: string[]): { modelsDir: string; modelIds: LocalSpeechModelId[] } {
-  const home = resolvePaseoHome();
-  let modelsDir = process.env.PASEO_LOCAL_MODELS_DIR || `${home}/models/local-speech`;
+  const home = resolveCodiusHome();
+  let modelsDir = process.env.CODIUS_LOCAL_MODELS_DIR || `${home}/models/local-speech`;
   const modelIds: LocalSpeechModelId[] = [];
 
   for (let i = 0; i < argv.length; i++) {

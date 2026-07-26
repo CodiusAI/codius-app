@@ -1,10 +1,10 @@
-import { getErrorMessage } from "@getpaseo/protocol/error-utils";
+import { getErrorMessage } from "@codius-ai/protocol/error-utils";
 import {
   daemonInstallOriginRuntime,
   validateDaemonInstallOrigin,
   type DaemonInstallOriginRuntime,
 } from "./install-origin.js";
-import { npmGlobalPaseoCli, type NpmGlobalPaseoCli } from "./npm-global-cli.js";
+import { npmGlobalCodiusCli, type NpmGlobalCodiusCli } from "./npm-global-cli.js";
 
 export type DaemonSelfUpdatePhase = "starting" | "downloading" | "installing" | "complete";
 
@@ -27,7 +27,7 @@ export interface DaemonSelfUpdateLogger {
 }
 
 export interface DaemonSelfUpdateRuntime {
-  npm: NpmGlobalPaseoCli;
+  npm: NpmGlobalCodiusCli;
   installOrigin: DaemonInstallOriginRuntime;
 }
 
@@ -39,12 +39,12 @@ export class DaemonSelfUpdateInProgressError extends Error {
 }
 
 const defaultRuntime: DaemonSelfUpdateRuntime = {
-  npm: npmGlobalPaseoCli,
+  npm: npmGlobalCodiusCli,
   installOrigin: daemonInstallOriginRuntime,
 };
 
 const DESKTOP_MANAGED_UPDATE_ERROR =
-  "This daemon is managed by Paseo Desktop. Update Paseo Desktop on the host.";
+  "This daemon is managed by Codius Desktop. Update Codius Desktop on the host.";
 
 export class DaemonSelfUpdater {
   private inProgress = false;

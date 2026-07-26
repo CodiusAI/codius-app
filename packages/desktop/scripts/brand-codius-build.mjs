@@ -9,17 +9,17 @@ const mainFile = path.join(desktopDir, "dist", "main.js");
 const replacements = [
   {
     name: "application protocol",
-    from: 'const APP_SCHEME = "paseo";',
+    from: 'const APP_SCHEME = "codius";',
     to: 'const APP_SCHEME = "codius";',
   },
   {
     name: "application name",
-    from: 'const APP_NAME = process.env.PASEO_TEST_APP_NAME?.trim() || "Paseo";',
-    to: 'const APP_NAME = process.env.CODIUS_TEST_APP_NAME?.trim() || process.env.PASEO_TEST_APP_NAME?.trim() || "Codius Desktop";',
+    from: 'const APP_NAME = process.env.CODIUS_TEST_APP_NAME?.trim() || "Codius";',
+    to: 'const APP_NAME = process.env.CODIUS_TEST_APP_NAME?.trim() || "Codius Desktop";',
   },
   {
     name: "development worktree user-data prefix",
-    from: "`Paseo-${devWorktreeName}`",
+    from: "`Codius-${devWorktreeName}`",
     to: "`Codius-${devWorktreeName}`",
   },
 ];

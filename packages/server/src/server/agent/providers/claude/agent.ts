@@ -131,7 +131,7 @@ export function normalizeClaudeAskUserQuestionRequestInput(
   }
 
   // Claude Code's AskUserQuestion schema says "Other" is host-provided, not a
-  // model-supplied option. Paseo's shared question UI uses allowOther for that
+  // model-supplied option. Codius's shared question UI uses allowOther for that
   // freeform answer path.
   return {
     ...input,
@@ -171,7 +171,7 @@ export function normalizeClaudeAskUserQuestionUpdatedInput(
 ): AgentMetadata {
   const fallback = isMetadata(fallbackInput) ? fallbackInput : {};
   const base = isMetadata(updatedInput) ? updatedInput : {};
-  // Paseo's shared question UI serializes answers by question header, but Claude's
+  // Codius's shared question UI serializes answers by question header, but Claude's
   // AskUserQuestion tool expects answer keys to match the full question text. Merge
   // the original request payload back in so provider callbacks that only return
   // `{ answers }` still satisfy Claude's full tool input schema.
@@ -4437,7 +4437,7 @@ class ClaudeAgentSession implements AgentSession {
     }
 
     const items: AgentTimelineItem[] = [];
-    // User SDK entries can arrive as multiple text blocks, but Paseo treats them as one message.
+    // User SDK entries can arrive as multiple text blocks, but Codius treats them as one message.
     const userTextParts: string[] = [];
     for (const block of content) {
       if (!isClaudeContentChunk(block)) {

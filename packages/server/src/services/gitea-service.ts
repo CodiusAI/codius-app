@@ -1,6 +1,6 @@
 import { z } from "zod";
 import pLimit from "p-limit";
-import { parseGitHubRemoteIdentity, parseGitRemoteLocation } from "@getpaseo/protocol/git-remote";
+import { parseGitHubRemoteIdentity, parseGitRemoteLocation } from "@codius-ai/protocol/git-remote";
 import { findExecutable } from "../executable-resolution/executable-resolution.js";
 import { runGitCommand } from "../utils/run-git-command.js";
 import { execCommand } from "../utils/spawn.js";
@@ -1020,7 +1020,7 @@ function redactTeaArgs(args: string[]): string[] {
 }
 
 /**
- * Probe whether a host is a Gitea instance Paseo can talk to. tea has no
+ * Probe whether a host is a Gitea instance Codius can talk to. tea has no
  * per-repo auth check (it keeps per-instance logins), so a configured tea login
  * for the host is the signal: it means tea both recognizes the host as Gitea and
  * holds a usable token for it. Mirrors the role of `glab auth status` for GitLab.
@@ -1169,7 +1169,7 @@ const inFlightFamilyProbes = new Map<string, Promise<GiteaFamilySoftware | null>
 
 /**
  * Resolve which Gitea-family forge id a host maps to for the open registry:
- * null when there is no usable `tea` login (Paseo cannot operate the host),
+ * null when there is no usable `tea` login (Codius cannot operate the host),
  * otherwise the detected software. Concurrent calls for the same host — the
  * gitea and forgejo registrations probing in parallel — share one probe so
  * detection runs once.

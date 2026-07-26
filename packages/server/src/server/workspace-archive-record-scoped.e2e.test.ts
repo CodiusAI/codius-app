@@ -15,7 +15,7 @@ import {
 // to a directory on disk. A directory can back multiple workspaces, so archiving
 // one must never tear down a sibling's agents/terminals, and must never delete a
 // directory another workspace still references. On-disk worktree removal is
-// derived from scope + last-reference + Paseo ownership; there is no caller-
+// derived from scope + last-reference + Codius ownership; there is no caller-
 // supplied disk flag.
 
 let ctx: DaemonTestContext;
@@ -42,11 +42,11 @@ function createGitRepo(): string {
   const tempRoot = makeTempDir("workspace-archive-repo-");
   const repoDir = path.join(tempRoot, "repo");
   execFileSync("git", ["init", "-b", "main", repoDir], { stdio: "pipe" });
-  execFileSync("git", ["config", "user.email", "test@getpaseo.local"], {
+  execFileSync("git", ["config", "user.email", "test@codius-ai.local"], {
     cwd: repoDir,
     stdio: "pipe",
   });
-  execFileSync("git", ["config", "user.name", "Paseo Test"], { cwd: repoDir, stdio: "pipe" });
+  execFileSync("git", ["config", "user.name", "Codius Test"], { cwd: repoDir, stdio: "pipe" });
   execFileSync("git", ["-c", "commit.gpgsign=false", "commit", "--allow-empty", "-m", "initial"], {
     cwd: repoDir,
     stdio: "pipe",
@@ -262,7 +262,7 @@ test("archiving the last reference to a worktree removes it from disk regardless
   expect(existsSync(keepDir)).toBe(true);
 
   // Last reference, deleteWorktreeFromDisk omitted (defaults ignored) → dir removed.
-  const keepArchive = await ctx.client.archivePaseoWorktree({ worktreePath: keepDir });
+  const keepArchive = await ctx.client.archiveCodiusWorktree({ worktreePath: keepDir });
   expect(keepArchive.success).toBe(true);
   await expect
     .poll(async () => (await activeWorkspaceIds()).has(keepWorkspace.id), {
@@ -289,7 +289,7 @@ test("archiving the last reference to a worktree removes it from disk regardless
 
   // Last reference on a fresh worktree still removes the directory without any
   // caller-supplied disk-deletion flag.
-  const deleteArchive = await ctx.client.archivePaseoWorktree({ worktreePath: deleteDir });
+  const deleteArchive = await ctx.client.archiveCodiusWorktree({ worktreePath: deleteDir });
   expect(deleteArchive.success).toBe(true);
   await expect
     .poll(async () => (await activeWorkspaceIds()).has(deleteWorkspace.id), {
@@ -322,7 +322,7 @@ test("worktree archive targets the explicit workspaceId when a directory backs m
   const localWorkspaceId = await createLocalWorkspace(worktreeDir, "local-sibling");
   expect(localWorkspaceId).not.toBe(worktreeWorkspace.id);
 
-  const archive = await ctx.client.archivePaseoWorktree({
+  const archive = await ctx.client.archiveCodiusWorktree({
     worktreePath: worktreeDir,
     workspaceId: localWorkspaceId,
   });
@@ -340,7 +340,7 @@ test("worktree archive targets the explicit workspaceId when a directory backs m
   expect(remaining.has(worktreeWorkspace.id)).toBe(true);
   expect(existsSync(worktreeDir)).toBe(true);
 
-  await ctx.client.archivePaseoWorktree({
+  await ctx.client.archiveCodiusWorktree({
     worktreePath: worktreeDir,
     workspaceId: worktreeWorkspace.id,
   });
@@ -370,7 +370,7 @@ test("keeps the worktree on disk when a sibling workspace still references it", 
 
   // Archive the worktree-backed workspace. It is NOT the last reference, so the
   // directory must survive regardless of the legacy disk flag.
-  const archive = await ctx.client.archivePaseoWorktree({
+  const archive = await ctx.client.archiveCodiusWorktree({
     worktreePath: worktreeDir,
   });
   expect(archive.success).toBe(true);

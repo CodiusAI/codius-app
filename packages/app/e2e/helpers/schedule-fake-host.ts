@@ -3,9 +3,9 @@ import { buildSeededHost } from "./daemon-registry";
 import { wsRoutePatternForPort } from "./daemon-port";
 import { type SeededWorkspace } from "./seed-client";
 
-const REGISTRY_KEY = "@paseo:daemon-registry";
-const SEED_NONCE_KEY = "@paseo:e2e-seed-nonce";
-const EXTRA_HOSTS_KEY = "@paseo:e2e-extra-hosts";
+const REGISTRY_KEY = "@codius:daemon-registry";
+const SEED_NONCE_KEY = "@codius:e2e-seed-nonce";
+const EXTRA_HOSTS_KEY = "@codius:e2e-extra-hosts";
 export const FAKE_HOST_MODEL_ID = "fake-host-model";
 export const FAKE_HOST_MODEL_LABEL = "Fake host model";
 export const FAKE_HOST_PROJECT_DISPLAY_NAME = "Fake host project";

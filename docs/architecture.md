@@ -1,8 +1,8 @@
 # Architecture
 
-Paseo is a client-server system for monitoring and controlling local AI coding agents. The daemon runs on your machine, manages agent processes, and streams their output in real time over WebSocket. Clients (mobile app, CLI, desktop app) connect to the daemon to observe and interact with agents.
+Codius is a client-server system for monitoring and controlling local AI coding agents. The daemon runs on your machine, manages agent processes, and streams their output in real time over WebSocket. Clients (mobile app, CLI, desktop app) connect to the daemon to observe and interact with agents.
 
-Your code never leaves your machine. Paseo is local-first.
+Your code never leaves your machine. Codius is local-first.
 
 ## System overview
 
@@ -43,7 +43,7 @@ Your code never leaves your machine. Paseo is local-first.
 
 ### `packages/server` — The daemon
 
-The heart of Paseo. A Node.js process that:
+The heart of Codius. A Node.js process that:
 
 - Listens for WebSocket connections from clients
 - Manages agent lifecycle (create, run, stop, resume, archive)
@@ -70,9 +70,9 @@ not retain non-Git directories.
 | `server/websocket-server.ts`    | WebSocket connection management, hello handshake, binary frame routing        |
 | `server/session.ts`             | Per-client session state, timeline subscriptions, terminal operations         |
 | `server/agent/agent-manager.ts` | Agent lifecycle state machine, timeline tracking, subscriber management       |
-| `server/agent/agent-storage.ts` | File-backed JSON persistence at `$PASEO_HOME/agents/`                         |
+| `server/agent/agent-storage.ts` | File-backed JSON persistence at `$CODIUS_HOME/agents/`                        |
 | `server/agent/tools/`           | Transport-neutral catalog for workspaces, agents, permissions, and automation |
-| `server/agent/mcp-server.ts`    | Thin MCP adapter that registers the Paseo tool catalog with the MCP SDK       |
+| `server/agent/mcp-server.ts`    | Thin MCP adapter that registers the Codius tool catalog with the MCP SDK      |
 | `server/agent/providers/`       | Provider adapters (see "Agent providers" below)                               |
 | `server/relay-transport.ts`     | Outbound relay connection with E2E encryption                                 |
 | `server/schedule/`              | Cron-based scheduled agents                                                   |
@@ -83,15 +83,15 @@ not retain non-Git directories.
 
 The source of truth for WebSocket messages, binary frame codecs, endpoint parsing,
 agent timeline types, provider config schemas, and other values shared by daemon
-and clients. Server, app, CLI, and `@getpaseo/client` all depend on this package;
+and clients. Server, app, CLI, and `@codius-ai/client` all depend on this package;
 it does not depend on the server.
 
 ### `packages/client` — Daemon client library and SDK facade
 
-Owns the low-level daemon WebSocket driver plus the higher-level `PaseoClient`
+Owns the low-level daemon WebSocket driver plus the higher-level `CodiusClient`
 facade. App and CLI may import the low-level driver from
-`@getpaseo/client/internal/daemon-client` during migration, while new SDK-shaped
-code imports from `@getpaseo/client`.
+`@codius-ai/client/internal/daemon-client` during migration, while new SDK-shaped
+code imports from `@codius-ai/client`.
 
 ### `packages/app` — Mobile + web client (Expo)
 
@@ -115,20 +115,20 @@ written order; a single oversized host is omitted rather than partially restored
 
 ### `packages/cli` — Command-line client
 
-Commander.js CLI with Docker-style commands. Common agent operations are also exposed at the top level (e.g. `paseo ls`, `paseo run`).
+Commander.js CLI with Docker-style commands. Common agent operations are also exposed at the top level (e.g. `codius ls`, `codius run`).
 
-- `paseo agent ls/run/import/attach/logs/stop/delete/send/inspect/wait/archive/reload/update/mode`
-- `paseo daemon start/stop/restart/status/pair/set-password`
-- `paseo chat ls/create/inspect/post/read/wait/delete`
-- `paseo terminal ls/create/capture/send-keys/kill`
-- `paseo loop run/ls/inspect/logs/stop`
-- `paseo schedule create/ls/inspect/update/pause/resume/run-once/logs/delete`
-- `paseo heartbeat create/update/delete`
-- `paseo workspace create/ls/archive`
-- `paseo permit allow/deny/ls`
-- `paseo provider ls/models`
-- hidden legacy `paseo worktree create/ls/archive` compatibility alias
-- `paseo speech …`
+- `codius agent ls/run/import/attach/logs/stop/delete/send/inspect/wait/archive/reload/update/mode`
+- `codiusctl daemon start/stop/restart/status/pair/set-password`
+- `codius chat ls/create/inspect/post/read/wait/delete`
+- `codius terminal ls/create/capture/send-keys/kill`
+- `codius loop run/ls/inspect/logs/stop`
+- `codius schedule create/ls/inspect/update/pause/resume/run-once/logs/delete`
+- `codius heartbeat create/update/delete`
+- `codius workspace create/ls/archive`
+- `codius permit allow/deny/ls`
+- `codius provider ls/models`
+- hidden legacy `codius worktree create/ls/archive` compatibility alias
+- `codius speech …`
 
 Communicates with the daemon via the same WebSocket protocol as the app.
 
@@ -140,11 +140,11 @@ Enables remote access when the daemon is behind a firewall.
 - Relay server is zero-knowledge — it routes encrypted bytes, cannot read content
 - Client and daemon channels with identical API (`createClientChannel`, `createDaemonChannel`)
 - Pairing via QR code transfers the daemon's public key to the client
-- Self-hosted relays opt into TLS with `daemon.relay.useTls` or `PASEO_RELAY_USE_TLS=true`; the public (client-facing) TLS setting can be overridden independently via `daemon.relay.publicUseTls` or `PASEO_RELAY_PUBLIC_USE_TLS`
+- Self-hosted relays opt into TLS with `daemon.relay.useTls` or `CODIUS_RELAY_USE_TLS=true`; the public (client-facing) TLS setting can be overridden independently via `daemon.relay.publicUseTls` or `CODIUS_RELAY_PUBLIC_USE_TLS`
 
 See [SECURITY.md](../SECURITY.md) for the full threat model.
 
-### Paseo Hub
+### Codius Hub
 
 The optional Hub relationship is daemon-outbound and does not use the relay. Its connection,
 authorization, ownership, persistence, and lifecycle contract is documented in [hub.md](hub.md).
@@ -157,24 +157,24 @@ Electron wrapper for macOS, Linux, and Windows.
 - Native file access for workspace integration
 - Same WebSocket client as mobile app
 
-**Multi-window (hybrid land-on model).** `createWindow()` in `main.ts` is reusable: `⌘⇧N`/File→New Window, relaunching the app (`second-instance`), and the sidebar "Open in new window" action each open a fresh `BrowserWindow`. Every window shows the full sidebar — there is no per-window project ownership or filtering. "Land on a project" is delivered by a per-`webContents` `PendingOpenProjectStore`: each window pulls its own pending project path on mount (`paseo:get-pending-open-project`) and runs the normal open-project flow, identical to a CLI `paseo <path>` launch.
+**Multi-window (hybrid land-on model).** `createWindow()` in `main.ts` is reusable: `⌘⇧N`/File→New Window, relaunching the app (`second-instance`), and the sidebar "Open in new window" action each open a fresh `BrowserWindow`. Every window shows the full sidebar — there is no per-window project ownership or filtering. "Land on a project" is delivered by a per-`webContents` `PendingOpenProjectStore`: each window pulls its own pending project path on mount (`codius:get-pending-open-project`) and runs the normal open-project flow, identical to a CLI `codius <path>` launch.
 
 > **Window-state v1 limitation:** only the _first_ window of a session restores and persists saved geometry (size/position/maximized). Windows opened via ⌘⇧N / second-instance / "Open in new window" open at the default size, OS-cascaded, and do not persist — this avoids every window stacking on the same restored bounds and fighting over the single window-state store. Lifting this needs per-window state keys.
 >
 > **In-app browser profile.** Every browser guest uses one stable persistent Electron session, so cookies, authentication, cache, and site storage are shared across tabs, workspaces, and desktop windows and survive tab or app closure. Browser identity is independent of that storage partition: after every `did-attach`, the renderer explicitly registers its browser id, workspace id, and current guest `WebContents` id, and main accepts the registration only when that guest belongs to the calling renderer and the shared profile. Registration is intentionally repeated because reparenting a retained `<webview>` can replace its guest without replacing the DOM element. Settings > General > Clear browser data is the sole profile-deletion path; it clears the shared session and reloads live guests without deleting saved tabs or URLs.
 >
-> **In-app browser window opens.** Ordinary link opens, including Shift-clicked links, become Paseo workspace tabs. Script-created opens with popup features or a named window target and POST-backed opens remain secured Electron child windows in the shared browser profile, preserving `window.opener`, `postMessage`, named-window reuse, request bodies, and `window.close()` for OAuth, payment, and similar popup protocols. Unsupported URL schemes are denied before either path.
+> **In-app browser window opens.** Ordinary link opens, including Shift-clicked links, become Codius workspace tabs. Script-created opens with popup features or a named window target and POST-backed opens remain secured Electron child windows in the shared browser profile, preserving `window.opener`, `postMessage`, named-window reuse, request bodies, and `window.close()` for OAuth, payment, and similar popup protocols. Unsupported URL schemes are denied before either path.
 >
 > **In-app browser ownership.** Each registered guest records its owning host window. The active browser is keyed by `(host window, workspace)`, and application-menu Reload / Force Reload resolve only within the window Electron supplies to the menu callback. A non-null active update must name a browser owned by that host; a null update clears only that host/workspace. Browser automation continues to target explicit browser ids returned by `browser_new_tab` or `browser_list_tabs`.
 >
-> **Browser keyboard boundary.** Guest pages receive renderer-published shortcuts first. `Cmd/Ctrl+L` and `Cmd/Ctrl+R` are explicit guest-shell reservations; ordinary Paseo shortcuts run only after the page declines them. The sandboxed guest preload runs in every frame so focused iframes use the same boundary, while Node integration remains disabled. Human guest input disables Electron's menu fallback for plain keys. Agent-generated keys use guest `sendInputEvent` with `skipIfUnhandled`, so an unhandled Enter stops at the guest instead of reaching the host composer. Main selects the preload; it exposes no APIs to guest pages.
+> **Browser keyboard boundary.** Guest pages receive renderer-published shortcuts first. `Cmd/Ctrl+L` and `Cmd/Ctrl+R` are explicit guest-shell reservations; ordinary Codius shortcuts run only after the page declines them. The sandboxed guest preload runs in every frame so focused iframes use the same boundary, while Node integration remains disabled. Human guest input disables Electron's menu fallback for plain keys. Agent-generated keys use guest `sendInputEvent` with `skipIfUnhandled`, so an unhandled Enter stops at the guest instead of reaching the host composer. Main selects the preload; it exposes no APIs to guest pages.
 
 ```text
 Human key -> guest WebContents
   |-- Cmd/Ctrl+T/L/R ----------> reserved browser-shell action
   `-- page keydown
         |-- page prevents ------> page owns it
-        `-- published shortcut -> guest preload -> IPC(browserId) -> Paseo resolver
+        `-- published shortcut -> guest preload -> IPC(browserId) -> Codius resolver
 
 Agent browser_keypress -> guest sendInputEvent(skipIfUnhandled)
   |-- guest handles ------------> page owns it
@@ -183,7 +183,7 @@ Agent browser_keypress -> guest sendInputEvent(skipIfUnhandled)
 
 ### `packages/website` — Marketing site
 
-TanStack Router + Cloudflare Workers. Serves paseo.sh.
+TanStack Router + Cloudflare Workers. Serves codius.ai.
 
 ## WebSocket protocol
 
@@ -286,7 +286,7 @@ initializing → idle ⇄ running
 - Timeline is append-only with epochs (each run starts a new epoch). Storage uses sequence numbers for client-side dedup; the default fetch page is 200 items
 - Timeline row `timestamp` values are canonical daemon-owned timestamps. Providers may supply original replay timestamps, but clients must not guess timestamp trust or hide time UI based on local clock heuristics.
 - Events stream to connected clients in real time; correctness is backed by authoritative timeline fetches and paged-to-completion catch-up.
-- Agent state persists to `$PASEO_HOME/agents/{cwd-with-dashes}/{agent-id}.json` (timeline rows live alongside the record). That storage path is derived from `cwd`, not from workspace id.
+- Agent state persists to `$CODIUS_HOME/agents/{cwd-with-dashes}/{agent-id}.json` (timeline rows live alongside the record). That storage path is derived from `cwd`, not from workspace id.
 
 ## Right-sidebar boundary: directory-backed vs workspace-owned
 
@@ -338,12 +338,12 @@ The built-in, user-facing providers are Claude Code, Codex, Copilot, OpenCode, P
 
 All providers:
 
-- Handle their own authentication (Paseo does not manage API keys)
+- Handle their own authentication (Codius does not manage API keys)
 - Support session resume via persistence handles
 - Map tool calls to a normalized `ToolCallDetail` type
 - Expose provider-specific modes (plan, default, full-access)
 
-Providers that can accept native tool definitions should set `supportsNativePaseoTools` and read `launchContext.paseoTools`. The daemon then passes the shared Paseo tool catalog directly and removes the internal Paseo MCP server from that provider launch config. Providers that only support MCP continue to receive the same tools through the MCP fallback at `/mcp/agents`.
+Providers that can accept native tool definitions should set `supportsNativeCodiusTools` and read `launchContext.codiusTools`. The daemon then passes the shared Codius tool catalog directly and removes the internal Codius MCP server from that provider launch config. Providers that only support MCP continue to receive the same tools through the MCP fallback at `/mcp/agents`.
 
 ## Data flow: running an agent
 
@@ -357,10 +357,10 @@ Providers that can accept native tool definitions should set `supportsNativePase
 
 ## Storage
 
-`$PASEO_HOME` defaults to `~/.paseo`. The most important files:
+`$CODIUS_HOME` defaults to `~/.codius`. The most important files:
 
 ```
-$PASEO_HOME/
+$CODIUS_HOME/
 ├── agents/{cwd-with-dashes}/{agent-id}.json   # Agent record + persisted timeline rows
 ├── projects/projects.json                      # Project registry
 ├── projects/workspaces.json                    # Workspace registry
@@ -370,12 +370,12 @@ $PASEO_HOME/
 ├── config.json                                 # Daemon config (mutable)
 ├── daemon-keypair.json                         # Daemon identity for relay/E2EE
 ├── push-tokens.json                            # Mobile push tokens
-├── paseo.sock / paseo.pid                      # Local IPC socket and pidfile
+├── codius.sock / codius.pid                      # Local IPC socket and pidfile
 └── daemon.log                                  # Daemon trace logs (rotated)
 ```
 
 ## Deployment models
 
-1. **Local daemon** (default): `paseo daemon start` on `127.0.0.1:6767`
+1. **Local daemon** (default): `codiusctl daemon start` on `127.0.0.1:6767`
 2. **Managed desktop**: Electron app spawns daemon as subprocess
 3. **Remote + relay**: Daemon behind firewall, relay bridges with E2E encryption

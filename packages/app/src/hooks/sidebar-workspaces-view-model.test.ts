@@ -243,19 +243,19 @@ describe("buildSidebarProjectsFromStructure", () => {
           projectKey: "project-1",
           hosts: [
             {
-              serverId: "relay:paseo-host",
+              serverId: "relay:codius-host",
               iconWorkingDir: "/repo/project-1",
               canCreateWorktree: true,
             },
           ],
-          workspaceKeys: ["relay:paseo-host:ws-main"],
+          workspaceKeys: ["relay:codius-host:ws-main"],
         }),
       ],
     });
 
     expect(projects[0]?.workspaces[0]).toMatchObject({
-      workspaceKey: "relay:paseo-host:ws-main",
-      serverId: "relay:paseo-host",
+      workspaceKey: "relay:codius-host:ws-main",
+      serverId: "relay:codius-host",
       workspaceId: "ws-main",
     });
   });
@@ -266,12 +266,20 @@ describe("shared sidebar workspace model", () => {
     const model = buildSidebarWorkspacePlacementModel({
       projects: [
         project({
-          projectKey: "getpaseo/paseo",
-          projectName: "getpaseo/paseo",
-          iconWorkingDir: "/repo/getpaseo/paseo",
+          projectKey: "prismosoft/codius-desktop",
+          projectName: "prismosoft/codius-desktop",
+          iconWorkingDir: "/repo/prismosoft/codius-desktop",
           hosts: [
-            { serverId: "host-a", iconWorkingDir: "/repo/getpaseo/paseo", canCreateWorktree: true },
-            { serverId: "host-b", iconWorkingDir: "/repo/getpaseo/paseo", canCreateWorktree: true },
+            {
+              serverId: "host-a",
+              iconWorkingDir: "/repo/prismosoft/codius-desktop",
+              canCreateWorktree: true,
+            },
+            {
+              serverId: "host-b",
+              iconWorkingDir: "/repo/prismosoft/codius-desktop",
+              canCreateWorktree: true,
+            },
           ],
           workspaceKeys: ["host-a:main", "host-b:feature"],
         }),
@@ -289,8 +297,8 @@ describe("shared sidebar workspace model", () => {
               workspace({
                 id: "main",
                 name: "main",
-                projectId: "getpaseo/paseo",
-                projectDisplayName: "getpaseo/paseo",
+                projectId: "prismosoft/codius-desktop",
+                projectDisplayName: "prismosoft/codius-desktop",
                 status: "done",
               }),
             ],
@@ -305,8 +313,8 @@ describe("shared sidebar workspace model", () => {
               workspace({
                 id: "feature",
                 name: "feature/status-flow",
-                projectId: "getpaseo/paseo",
-                projectDisplayName: "getpaseo/paseo",
+                projectId: "prismosoft/codius-desktop",
+                projectDisplayName: "prismosoft/codius-desktop",
                 status: "running",
                 statusEnteredAt: new Date("2026-06-10T00:00:00.000Z"),
               }),
@@ -322,10 +330,18 @@ describe("shared sidebar workspace model", () => {
     ]);
     expect(model.projects).toEqual([
       expect.objectContaining({
-        projectKey: "getpaseo/paseo",
+        projectKey: "prismosoft/codius-desktop",
         hosts: [
-          { serverId: "host-a", iconWorkingDir: "/repo/getpaseo/paseo", canCreateWorktree: true },
-          { serverId: "host-b", iconWorkingDir: "/repo/getpaseo/paseo", canCreateWorktree: true },
+          {
+            serverId: "host-a",
+            iconWorkingDir: "/repo/prismosoft/codius-desktop",
+            canCreateWorktree: true,
+          },
+          {
+            serverId: "host-b",
+            iconWorkingDir: "/repo/prismosoft/codius-desktop",
+            canCreateWorktree: true,
+          },
         ],
         workspaces: [
           expect.objectContaining({
@@ -351,7 +367,9 @@ describe("shared sidebar workspace model", () => {
       ["host-a:main", "done", "main"],
       ["host-b:feature", "running", "feature/status-flow"],
     ]);
-    expect(model.projectNamesByKey).toEqual(new Map([["getpaseo/paseo", "getpaseo/paseo"]]));
+    expect(model.projectNamesByKey).toEqual(
+      new Map([["prismosoft/codius-desktop", "prismosoft/codius-desktop"]]),
+    );
   });
 
   it("preserves unchanged row identities when another workspace updates", () => {
@@ -446,10 +464,10 @@ describe("shouldShowSidebarHostLabels", () => {
     const projects = buildSidebarProjectsFromStructure({
       projects: [
         project({
-          projectKey: "getpaseo/paseo",
+          projectKey: "prismosoft/codius-desktop",
           hosts: [
-            { serverId: "host-a", iconWorkingDir: "/repo/paseo", canCreateWorktree: true },
-            { serverId: "host-b", iconWorkingDir: "/repo/paseo", canCreateWorktree: true },
+            { serverId: "host-a", iconWorkingDir: "/repo/codius", canCreateWorktree: true },
+            { serverId: "host-b", iconWorkingDir: "/repo/codius", canCreateWorktree: true },
           ],
           workspaceKeys: ["host-a:main", "host-b:feature"],
         }),

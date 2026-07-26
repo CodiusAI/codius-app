@@ -89,8 +89,8 @@ describe("Add Project navigation", () => {
   it("restores the GitHub destination query and active parent when reopening a repository", () => {
     const repository = {
       id: "repo-1",
-      nameWithOwner: "getpaseo/paseo",
-      cloneUrl: "git@github.com:getpaseo/paseo.git",
+      nameWithOwner: "prismosoft/codius-desktop",
+      cloneUrl: "git@github.com:prismosoft/codius-desktop.git",
       description: null,
       visibility: "public",
       updatedAt: null,
@@ -149,39 +149,41 @@ describe("Add Project options", () => {
   });
 
   it("offers manual URL and protocol-specific owner/repo clone choices", () => {
-    expect(buildManualGithubRepositoryChoices("git@github.com:getpaseo/paseo.git")).toEqual([
+    expect(
+      buildManualGithubRepositoryChoices("git@github.com:prismosoft/codius-desktop.git"),
+    ).toEqual([
       expect.objectContaining({
-        id: "manual:git@github.com:getpaseo/paseo.git",
-        nameWithOwner: "getpaseo/paseo",
-        cloneUrl: "git@github.com:getpaseo/paseo.git",
+        id: "manual:git@github.com:prismosoft/codius-desktop.git",
+        nameWithOwner: "prismosoft/codius-desktop",
+        cloneUrl: "git@github.com:prismosoft/codius-desktop.git",
       }),
     ]);
-    expect(buildManualGithubRepositoryChoices("getpaseo/paseo")).toEqual([
-      expect.objectContaining({ cloneProtocol: "https", cloneUrl: "getpaseo/paseo" }),
-      expect.objectContaining({ cloneProtocol: "ssh", cloneUrl: "getpaseo/paseo" }),
+    expect(buildManualGithubRepositoryChoices("prismosoft/codius-desktop")).toEqual([
+      expect.objectContaining({ cloneProtocol: "https", cloneUrl: "prismosoft/codius-desktop" }),
+      expect.objectContaining({ cloneProtocol: "ssh", cloneUrl: "prismosoft/codius-desktop" }),
     ]);
-    expect(buildManualGithubRepositoryChoices("paseo")).toEqual([]);
+    expect(buildManualGithubRepositoryChoices("codius")).toEqual([]);
   });
 
   it("shows final clone paths while retaining parent paths as values", () => {
     expect(
       buildCloneLocationOptions({
         parents: ["~/dev", "~/workspace"],
-        repositoryName: "paseo",
-        existingPaths: ["~/workspace/paseo"],
+        repositoryName: "codius",
+        existingPaths: ["~/workspace/codius"],
       }),
     ).toEqual([
       {
         id: "~/dev",
         path: "~/dev",
-        displayPath: "~/dev/paseo",
+        displayPath: "~/dev/codius",
         secondaryText: "Parent directory: ~/dev",
         disabled: false,
       },
       {
         id: "~/workspace",
         path: "~/workspace",
-        displayPath: "~/workspace/paseo",
+        displayPath: "~/workspace/codius",
         secondaryText: "Already exists",
         disabled: true,
       },

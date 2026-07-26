@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 
-import type { ProjectCheckoutLitePayload } from "@getpaseo/protocol/messages";
+import type { ProjectCheckoutLitePayload } from "@codius-ai/protocol/messages";
 
 import { parseGitRevParsePath } from "../utils/git-rev-parse-path.js";
 import {

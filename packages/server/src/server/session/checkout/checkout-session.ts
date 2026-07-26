@@ -1,8 +1,8 @@
 import type pino from "pino";
 import { isAbsolute } from "node:path";
-import { getErrorMessage } from "@getpaseo/protocol/error-utils";
-import { getForgeDefinitionOrNeutral } from "@getpaseo/protocol/forge-manifest";
-import { validateBranchSlug } from "@getpaseo/protocol/branch-slug";
+import { getErrorMessage } from "@codius-ai/protocol/error-utils";
+import { getForgeDefinitionOrNeutral } from "@codius-ai/protocol/forge-manifest";
+import { validateBranchSlug } from "@codius-ai/protocol/branch-slug";
 import type {
   BranchSuggestionsRequest,
   CheckoutCommitsListRequest,
@@ -121,7 +121,7 @@ export interface CheckoutSessionOptions {
   github: ForgeService;
   checkoutDiffManager: CheckoutDiffSubscriber;
   gitMetadataGenerator: GitMetadataGenerator;
-  paseoHome: string;
+  codiusHome: string;
   worktreesRoot: string | undefined;
   logger: pino.Logger;
 }
@@ -137,7 +137,7 @@ export interface CheckoutSessionOptions {
  * workspace git observer streams branch changes through emitStatusUpdate().
  */
 export class CheckoutSession {
-  private static readonly PASEO_STASH_PREFIX = "paseo-auto-stash:";
+  private static readonly CODIUS_STASH_PREFIX = "codius-auto-stash:";
 
   private readonly host: CheckoutSessionHost;
   private readonly gitMutation: Pick<
@@ -148,7 +148,7 @@ export class CheckoutSession {
   private readonly github: ForgeService;
   private readonly checkoutDiffManager: CheckoutDiffSubscriber;
   private readonly gitMetadataGenerator: GitMetadataGenerator;
-  private readonly paseoHome: string;
+  private readonly codiusHome: string;
   private readonly worktreesRoot: string | undefined;
   private readonly logger: pino.Logger;
   private readonly diffSubscriptions = new Map<string, () => void>();
@@ -160,7 +160,7 @@ export class CheckoutSession {
     this.github = options.github;
     this.checkoutDiffManager = options.checkoutDiffManager;
     this.gitMetadataGenerator = options.gitMetadataGenerator;
-    this.paseoHome = options.paseoHome;
+    this.codiusHome = options.codiusHome;
     this.worktreesRoot = options.worktreesRoot;
     this.logger = options.logger;
   }
@@ -257,7 +257,7 @@ export class CheckoutSession {
           behindOfOrigin: null,
           hasRemote: false,
           remoteUrl: null,
-          isPaseoOwnedWorktree: false,
+          isCodiusOwnedWorktree: false,
           error: toCheckoutError(error),
           requestId,
         },
@@ -613,8 +613,8 @@ export class CheckoutSession {
     try {
       const branchLabel = msg.branch?.trim() ?? "";
       const message = branchLabel
-        ? `${CheckoutSession.PASEO_STASH_PREFIX} ${branchLabel}`
-        : `${CheckoutSession.PASEO_STASH_PREFIX} unnamed`;
+        ? `${CheckoutSession.CODIUS_STASH_PREFIX} ${branchLabel}`
+        : `${CheckoutSession.CODIUS_STASH_PREFIX} unnamed`;
       await execCommand("git", ["stash", "push", "--include-untracked", "-m", message], {
         cwd,
       });
@@ -658,9 +658,9 @@ export class CheckoutSession {
     msg: Extract<SessionInboundMessage, { type: "stash_list_request" }>,
   ): Promise<void> {
     const { cwd, requestId } = msg;
-    const paseoOnly = msg.paseoOnly !== false;
+    const codiusOnly = msg.codiusOnly !== false;
     try {
-      const entries = await this.workspaceGitService.listStashes(cwd, { paseoOnly });
+      const entries = await this.workspaceGitService.listStashes(cwd, { codiusOnly });
 
       this.host.emit({
         type: "stash_list_response",
@@ -748,7 +748,7 @@ export class CheckoutSession {
           baseRef,
           mode: msg.strategy === "squash" ? "squash" : "merge",
         },
-        { paseoHome: this.paseoHome, worktreesRoot: this.worktreesRoot },
+        { codiusHome: this.codiusHome, worktreesRoot: this.worktreesRoot },
       );
       await Promise.all([
         this.gitMutation.notifyGitMutation(mutatedCwd, "merge-to-base", { invalidateForge: true }),

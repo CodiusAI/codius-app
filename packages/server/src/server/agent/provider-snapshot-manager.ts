@@ -27,7 +27,7 @@ import {
   shutdownAgentClients,
   type ProviderDefinition,
 } from "./provider-registry.js";
-import { BUILTIN_PROVIDER_IDS } from "@getpaseo/protocol/provider-manifest";
+import { BUILTIN_PROVIDER_IDS } from "@codius-ai/protocol/provider-manifest";
 import { applyMutableProviderConfigToOverrides } from "../daemon-config-store.js";
 import {
   formatProviderDiagnostic,
@@ -37,8 +37,8 @@ import type { MutableDaemonConfig } from "../daemon-config-store.js";
 
 const DEFAULT_REFRESH_TIMEOUT_MS = 60_000;
 const DEFAULT_DIAGNOSTIC_TIMEOUT_MS = 120_000;
-const REFRESH_TIMEOUT_ENV_VAR = "PASEO_PROVIDER_REFRESH_TIMEOUT_MS";
-export const GLOBAL_PROVIDER_SNAPSHOT_KEY = "paseo:global";
+const REFRESH_TIMEOUT_ENV_VAR = "CODIUS_PROVIDER_REFRESH_TIMEOUT_MS";
+export const GLOBAL_PROVIDER_SNAPSHOT_KEY = "codius:global";
 
 // Provider refresh probes can be slow on cold starts (e.g. Copilot's first
 // `copilot --acp` invocation, OpenCode workspace probes with many MCP servers).

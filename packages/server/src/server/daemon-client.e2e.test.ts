@@ -12,7 +12,7 @@ import {
   type DaemonTestContext,
   DaemonClient,
 } from "./test-utils/index.js";
-import { createTestPaseoDaemon } from "./test-utils/paseo-daemon.js";
+import { createTestCodiusDaemon } from "./test-utils/codius-daemon.js";
 import { getFullAccessConfig, getAskModeConfig } from "./daemon-e2e/agent-configs.js";
 import { parsePcm16MonoWav, wordSimilarity } from "./test-utils/dictation-e2e.js";
 import type {
@@ -27,7 +27,7 @@ import type {
 const openaiApiKey = process.env.OPENAI_API_KEY ?? null;
 
 const localModelsDir =
-  process.env.PASEO_LOCAL_MODELS_DIR ?? path.join(homedir(), ".paseo", "models", "local-speech");
+  process.env.CODIUS_LOCAL_MODELS_DIR ?? path.join(homedir(), ".codius", "models", "local-speech");
 const testFileDir = path.dirname(fileURLToPath(import.meta.url));
 const appE2eFixturesDir = path.resolve(testFileDir, "../../../app/e2e/fixtures");
 
@@ -66,7 +66,7 @@ function tmpCwd(): string {
 }
 
 test("DaemonClient connects to a password-protected daemon", async () => {
-  const daemon = await createTestPaseoDaemon({
+  const daemon = await createTestCodiusDaemon({
     auth: { password: "$2b$12$GMhF7pN4QnMlHOQXOqjd1OitKWPSmAO3FwB0PHzKtcZR/sAMryz76" },
   });
   const client = new DaemonClient({
@@ -85,7 +85,7 @@ test("DaemonClient connects to a password-protected daemon", async () => {
 });
 
 test("DaemonClient surfaces password auth failures from WebSocket close reasons", async () => {
-  const daemon = await createTestPaseoDaemon({
+  const daemon = await createTestCodiusDaemon({
     auth: { password: "$2b$12$GMhF7pN4QnMlHOQXOqjd1OitKWPSmAO3FwB0PHzKtcZR/sAMryz76" },
   });
   const missingPasswordClient = new DaemonClient({
@@ -112,7 +112,7 @@ test("DaemonClient surfaces password auth failures from WebSocket close reasons"
 });
 
 test("createAgent without an initial prompt returns an idle snapshot", async () => {
-  const daemon = await createTestPaseoDaemon();
+  const daemon = await createTestCodiusDaemon();
   const client = new DaemonClient({
     url: `ws://127.0.0.1:${daemon.port}/ws`,
     appVersion: "0.1.82",
@@ -138,7 +138,7 @@ test("createAgent without an initial prompt returns an idle snapshot", async () 
 });
 
 test("DaemonClient uploads file bytes to daemon temp storage", async () => {
-  const daemon = await createTestPaseoDaemon();
+  const daemon = await createTestCodiusDaemon();
   const client = new DaemonClient({
     url: `ws://127.0.0.1:${daemon.port}/ws`,
     appVersion: "0.1.82",
@@ -164,7 +164,7 @@ test("DaemonClient uploads file bytes to daemon temp storage", async () => {
         fileName: "notes.txt",
         mimeType: "text/plain",
         size: 11,
-        path: path.join(daemon.paseoHome, "uploads", "upload_req-upload-e2e", "notes.txt"),
+        path: path.join(daemon.codiusHome, "uploads", "upload_req-upload-e2e", "notes.txt"),
       },
       error: null,
     });
@@ -176,7 +176,7 @@ test("DaemonClient uploads file bytes to daemon temp storage", async () => {
 });
 
 test("createAgent with background initialPrompt returns a running snapshot before turn completion", async () => {
-  const daemon = await createTestPaseoDaemon();
+  const daemon = await createTestCodiusDaemon();
   const client = new DaemonClient({
     url: `ws://127.0.0.1:${daemon.port}/ws`,
     appVersion: "0.1.82",
@@ -322,7 +322,7 @@ test("createAgent fails when the initial turn cannot start", async () => {
     startError: "Initial turn failed to start",
   });
 
-  const daemon = await createTestPaseoDaemon({
+  const daemon = await createTestCodiusDaemon({
     agentClients: { codex: testAgent },
   });
   const client = new DaemonClient({
@@ -360,7 +360,7 @@ function createUninterruptibleClient(): AgentClient {
 
 test("DaemonClient rejects a replacement prompt when cancellation is not acknowledged", async () => {
   const cwd = tmpCwd();
-  const daemon = await createTestPaseoDaemon({
+  const daemon = await createTestCodiusDaemon({
     agentClients: { codex: createUninterruptibleClient() },
   });
   const client = new DaemonClient({ url: `ws://127.0.0.1:${daemon.port}/ws` });
@@ -382,7 +382,7 @@ test("DaemonClient rejects a replacement prompt when cancellation is not acknowl
 
 test("DaemonClient rejects Stop when cancellation is not acknowledged", async () => {
   const cwd = tmpCwd();
-  const daemon = await createTestPaseoDaemon({
+  const daemon = await createTestCodiusDaemon({
     agentClients: { codex: createUninterruptibleClient() },
   });
   const client = new DaemonClient({ url: `ws://127.0.0.1:${daemon.port}/ws` });
@@ -897,9 +897,9 @@ test("update_agent persists unloaded title and labels across auto-unarchive", as
 }, 180000);
 
 test("returns home-scoped directory suggestions", async () => {
-  const insideHomeDir = mkdtempSync(path.join(homedir(), "paseo-dir-suggestion-"));
-  const rootBrowseDir = mkdtempSync(path.join(homedir(), "000-paseo-root-browse-"));
-  const outsideHomeDir = mkdtempSync(path.join(tmpdir(), "paseo-dir-suggestion-outside-"));
+  const insideHomeDir = mkdtempSync(path.join(homedir(), "codius-dir-suggestion-"));
+  const rootBrowseDir = mkdtempSync(path.join(homedir(), "000-codius-root-browse-"));
+  const outsideHomeDir = mkdtempSync(path.join(tmpdir(), "codius-dir-suggestion-outside-"));
 
   try {
     const insideQuery = path.basename(insideHomeDir);
@@ -936,7 +936,7 @@ test("returns home-scoped directory suggestions", async () => {
 }, 30000);
 
 test("returns typed relative suggestions within a requested directory", async () => {
-  const cwd = mkdtempSync(path.join(tmpdir(), "paseo-workspace-suggestion-"));
+  const cwd = mkdtempSync(path.join(tmpdir(), "codius-workspace-suggestion-"));
   const target = path.join(cwd, "src", "components", "message-renderer.tsx");
 
   try {
@@ -960,7 +960,7 @@ test("returns typed relative suggestions within a requested directory", async ()
 }, 30000);
 
 test("finds workspace files inside the OpenCode directory", async () => {
-  const cwd = mkdtempSync(path.join(tmpdir(), "paseo-opencode-suggestion-"));
+  const cwd = mkdtempSync(path.join(tmpdir(), "codius-opencode-suggestion-"));
   const target = path.join(
     cwd,
     ".opencode",
@@ -1018,7 +1018,7 @@ test("receives server_info on websocket connect", async () => {
 }, 15000);
 
 test("a Desktop-managed daemon does not advertise npm self-update", async () => {
-  const daemon = await createTestPaseoDaemon({ desktopManaged: true });
+  const daemon = await createTestCodiusDaemon({ desktopManaged: true });
   const client = new DaemonClient({
     url: `ws://127.0.0.1:${daemon.port}/ws`,
     clientId: `cid-desktop-managed-${randomUUID()}`,

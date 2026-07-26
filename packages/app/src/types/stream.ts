@@ -1,5 +1,5 @@
-import type { AgentProvider, ToolCallDetail } from "@getpaseo/protocol/agent-types";
-import type { AgentAttachment, AgentStreamEventPayload } from "@getpaseo/protocol/messages";
+import type { AgentProvider, ToolCallDetail } from "@codius-ai/protocol/agent-types";
+import type { AgentAttachment, AgentStreamEventPayload } from "@codius-ai/protocol/messages";
 import type { AttachmentMetadata } from "@/attachments/types";
 import { extractTaskEntriesFromToolCall } from "../utils/tool-call-parsers";
 import { splitMarkdownBlocks } from "@/utils/split-markdown-blocks";

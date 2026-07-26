@@ -10,34 +10,34 @@ import {
   buildStringCommandShellInvocation,
   createStringCommandShellEnv,
 } from "./string-command-shell.js";
-import { readPaseoConfigJson, resolvePaseoConfigPath } from "./paseo-config-file.js";
+import { readCodiusConfigJson, resolveCodiusConfigPath } from "./codius-config-file.js";
 export {
-  PaseoConfigRawSchema,
-  PaseoLifecycleCommandRawSchema,
-  PaseoScriptEntryRawSchema,
-  PaseoWorktreeConfigRawSchema,
-  PaseoConfigSchema,
-  type PaseoConfig,
-  type PaseoConfigRaw,
-} from "@getpaseo/protocol/paseo-config-schema";
-import { PaseoConfigSchema, type PaseoConfig } from "@getpaseo/protocol/paseo-config-schema";
+  CodiusConfigRawSchema,
+  CodiusLifecycleCommandRawSchema,
+  CodiusScriptEntryRawSchema,
+  CodiusWorktreeConfigRawSchema,
+  CodiusConfigSchema,
+  type CodiusConfig,
+  type CodiusConfigRaw,
+} from "@codius-ai/protocol/codius-config-schema";
+import { CodiusConfigSchema, type CodiusConfig } from "@codius-ai/protocol/codius-config-schema";
 import {
   normalizeBaseRefName,
-  type PaseoWorktreeChangeRequestLookupTarget,
-  readPaseoWorktreeMetadata,
-  readPaseoWorktreeRuntimePort,
-  writePaseoWorktreeMetadata,
-  writePaseoWorktreeRuntimeMetadata,
+  type CodiusWorktreeChangeRequestLookupTarget,
+  readCodiusWorktreeMetadata,
+  readCodiusWorktreeRuntimePort,
+  writeCodiusWorktreeMetadata,
+  writeCodiusWorktreeRuntimeMetadata,
 } from "./worktree-metadata.js";
 import { runGitCommand } from "./run-git-command.js";
 import { spawnProcess } from "./spawn.js";
-import { resolvePaseoHome } from "../server/paseo-home.js";
-import { createExternalProcessEnv } from "../server/paseo-env.js";
+import { resolveCodiusHome } from "../server/codius-home.js";
+import { createExternalProcessEnv } from "../server/codius-env.js";
 import { parseGitRevParsePath, resolveGitRevParsePath } from "./git-rev-parse-path.js";
-import { validateBranchSlug } from "@getpaseo/protocol/branch-slug";
+import { validateBranchSlug } from "@codius-ai/protocol/branch-slug";
 import { expandTilde, getRealpathAwareRelativePath, isPathInsideRoot } from "./path.js";
 
-export { slugify, validateBranchSlug } from "@getpaseo/protocol/branch-slug";
+export { slugify, validateBranchSlug } from "@codius-ai/protocol/branch-slug";
 
 const execFileAsync = promisify(execFile);
 const READ_ONLY_GIT_ENV = {
@@ -51,11 +51,11 @@ export interface WorktreeConfig {
 
 export interface WorktreeRuntimeEnv {
   [key: string]: string;
-  PASEO_SOURCE_CHECKOUT_PATH: string;
-  PASEO_ROOT_PATH: string;
-  PASEO_WORKTREE_PATH: string;
-  PASEO_BRANCH_NAME: string;
-  PASEO_WORKTREE_PORT: string;
+  CODIUS_SOURCE_CHECKOUT_PATH: string;
+  CODIUS_ROOT_PATH: string;
+  CODIUS_WORKTREE_PATH: string;
+  CODIUS_BRANCH_NAME: string;
+  CODIUS_WORKTREE_PORT: string;
 }
 
 export interface WorktreeSetupCommandResult {
@@ -141,26 +141,26 @@ export class WorktreeTeardownError extends Error {
   }
 }
 
-export interface PaseoWorktreeInfo {
+export interface CodiusWorktreeInfo {
   path: string;
   createdAt: string;
   branchName?: string;
   head?: string;
 }
 
-export interface PaseoWorktreeOwnership {
+export interface CodiusWorktreeOwnership {
   allowed: boolean;
   repoRoot?: string;
   worktreeRoot?: string;
   worktreePath?: string;
 }
 
-export interface PaseoWorktreeOwnershipOptions extends WorktreeRootOptions {
+export interface CodiusWorktreeOwnershipOptions extends WorktreeRootOptions {
   knownGitCommonDir?: string | null;
 }
 
 export interface WorktreeRootOptions {
-  paseoHome?: string;
+  codiusHome?: string;
   worktreesRoot?: string;
 }
 
@@ -201,14 +201,14 @@ export interface CreateWorktreeOptions {
   worktreeSlug: string;
   source: WorktreeSource;
   runSetup: boolean;
-  paseoHome?: string;
+  codiusHome?: string;
   worktreesRoot?: string;
 }
 
 interface ResolveExistingWorktreeForSlugOptions {
   slug: string;
   repoRoot: string;
-  paseoHome?: string;
+  codiusHome?: string;
   worktreesRoot?: string;
 }
 
@@ -244,47 +244,47 @@ export class InvalidGitBranchNameError extends Error {
   }
 }
 
-export type ReadPaseoConfigResult =
-  | { ok: true; config: PaseoConfig | null }
+export type ReadCodiusConfigResult =
+  | { ok: true; config: CodiusConfig | null }
   | { ok: false; configPath: string; error: unknown };
 
-export function readPaseoConfig(repoRoot: string): ReadPaseoConfigResult {
+export function readCodiusConfig(repoRoot: string): ReadCodiusConfigResult {
   try {
-    const json = readPaseoConfigJson(repoRoot);
+    const json = readCodiusConfigJson(repoRoot);
     if (json === null) {
       return { ok: true, config: null };
     }
-    return { ok: true, config: PaseoConfigSchema.parse(json) };
+    return { ok: true, config: CodiusConfigSchema.parse(json) };
   } catch (error) {
-    return { ok: false, configPath: resolvePaseoConfigPath(repoRoot), error };
+    return { ok: false, configPath: resolveCodiusConfigPath(repoRoot), error };
   }
 }
 
-export function paseoConfigParseError(failure: { configPath: string; error: unknown }): Error {
+export function codiusConfigParseError(failure: { configPath: string; error: unknown }): Error {
   const detail = failure.error instanceof Error ? failure.error.message : String(failure.error);
-  return new Error(`Failed to parse paseo.json at ${failure.configPath}: ${detail}`, {
+  return new Error(`Failed to parse codius.json at ${failure.configPath}: ${detail}`, {
     cause: failure.error,
   });
 }
 
-function readPaseoConfigOrThrow(repoRoot: string): PaseoConfig | null {
-  const result = readPaseoConfig(repoRoot);
+function readCodiusConfigOrThrow(repoRoot: string): CodiusConfig | null {
+  const result = readCodiusConfig(repoRoot);
   if (!result.ok) {
-    throw paseoConfigParseError(result);
+    throw codiusConfigParseError(result);
   }
   return result.config;
 }
 
 export function getWorktreeSetupCommands(repoRoot: string): string[] {
-  return readPaseoConfigOrThrow(repoRoot)?.worktree?.setup ?? [];
+  return readCodiusConfigOrThrow(repoRoot)?.worktree?.setup ?? [];
 }
 
 export function getWorktreeTeardownCommands(repoRoot: string): string[] {
-  return readPaseoConfigOrThrow(repoRoot)?.worktree?.teardown ?? [];
+  return readCodiusConfigOrThrow(repoRoot)?.worktree?.teardown ?? [];
 }
 
 export function getWorktreeTerminalSpecs(repoRoot: string): WorktreeTerminalConfig[] {
-  const terminals = readPaseoConfigOrThrow(repoRoot)?.worktree?.terminals;
+  const terminals = readCodiusConfigOrThrow(repoRoot)?.worktree?.terminals;
   if (!Array.isArray(terminals) || terminals.length === 0) {
     return [];
   }
@@ -317,7 +317,7 @@ export function getWorktreeTerminalSpecs(repoRoot: string): WorktreeTerminalConf
   return specs;
 }
 
-export function getScriptConfigs(config: PaseoConfig | null): Map<string, ScriptConfig> {
+export function getScriptConfigs(config: CodiusConfig | null): Map<string, ScriptConfig> {
   const scripts = config?.scripts;
   if (!scripts || typeof scripts !== "object") {
     return new Map();
@@ -622,7 +622,7 @@ export async function runWorktreeSetupCommands(options: {
   runtimeEnv?: WorktreeRuntimeEnv;
   onEvent?: (event: WorktreeSetupCommandProgressEvent) => void;
 }): Promise<WorktreeSetupCommandResult[]> {
-  // Read paseo.json from the worktree (it will have the same content as the source repo)
+  // Read codius.json from the worktree (it will have the same content as the source repo)
   const setupCommands = getWorktreeSetupCommands(options.worktreePath);
   if (setupCommands.length === 0) {
     return [];
@@ -702,12 +702,12 @@ export async function resolveWorktreeRuntimeEnv(options: {
   const branchName =
     options.branchName ?? (await resolveBranchNameForWorktreePath(options.worktreePath));
 
-  let worktreePort = readPaseoWorktreeRuntimePort(options.worktreePath);
+  let worktreePort = readCodiusWorktreeRuntimePort(options.worktreePath);
   if (worktreePort === null) {
     worktreePort = await getAvailablePort();
-    const metadata = readPaseoWorktreeMetadata(options.worktreePath);
+    const metadata = readCodiusWorktreeMetadata(options.worktreePath);
     if (metadata) {
-      writePaseoWorktreeRuntimeMetadata(options.worktreePath, { worktreePort });
+      writeCodiusWorktreeRuntimeMetadata(options.worktreePath, { worktreePort });
     }
   } else {
     await assertPortAvailable(worktreePort);
@@ -717,12 +717,12 @@ export async function resolveWorktreeRuntimeEnv(options: {
     // Source checkout path is the original git repo root (shared across worktrees), not the
     // worktree itself. This allows setup scripts to copy local files (e.g. .env) from the
     // source checkout.
-    PASEO_SOURCE_CHECKOUT_PATH: repoRootPath,
+    CODIUS_SOURCE_CHECKOUT_PATH: repoRootPath,
     // Backward-compatible alias.
-    PASEO_ROOT_PATH: repoRootPath,
-    PASEO_WORKTREE_PATH: options.worktreePath,
-    PASEO_BRANCH_NAME: branchName,
-    PASEO_WORKTREE_PORT: String(worktreePort),
+    CODIUS_ROOT_PATH: repoRootPath,
+    CODIUS_WORKTREE_PATH: options.worktreePath,
+    CODIUS_BRANCH_NAME: branchName,
+    CODIUS_WORKTREE_PORT: String(worktreePort),
   };
 }
 
@@ -745,19 +745,19 @@ export async function runWorktreeTeardownCommands(options: {
     options.repoRootPath ?? (await inferRepoRootPathFromWorktreePath(options.worktreePath));
   const branchName =
     options.branchName ?? (await resolveBranchNameForWorktreePath(options.worktreePath));
-  const worktreePort = readPaseoWorktreeRuntimePort(options.worktreePath);
+  const worktreePort = readCodiusWorktreeRuntimePort(options.worktreePath);
 
   const teardownEnv: NodeJS.ProcessEnv = createStringCommandShellEnv(
     createExternalProcessEnv(process.env, {
       // Source checkout path is the original git repo root (shared across worktrees), not the
       // worktree itself. This allows lifecycle scripts to copy or clean resources using paths
       // from the source checkout.
-      PASEO_SOURCE_CHECKOUT_PATH: repoRootPath,
+      CODIUS_SOURCE_CHECKOUT_PATH: repoRootPath,
       // Backward-compatible alias.
-      PASEO_ROOT_PATH: repoRootPath,
-      PASEO_WORKTREE_PATH: options.worktreePath,
-      PASEO_BRANCH_NAME: branchName,
-      ...(worktreePort !== null ? { PASEO_WORKTREE_PORT: String(worktreePort) } : {}),
+      CODIUS_ROOT_PATH: repoRootPath,
+      CODIUS_WORKTREE_PATH: options.worktreePath,
+      CODIUS_BRANCH_NAME: branchName,
+      ...(worktreePort !== null ? { CODIUS_WORKTREE_PORT: String(worktreePort) } : {}),
     }),
   );
 
@@ -780,12 +780,12 @@ export async function runWorktreeTeardownCommands(options: {
   return results;
 }
 
-export async function seedPaseoConfigFile(options: {
+export async function seedCodiusConfigFile(options: {
   sourceCwd: string;
   targetCwd: string;
 }): Promise<void> {
-  const sourceConfigPath = join(options.sourceCwd, "paseo.json");
-  const targetConfigPath = join(options.targetCwd, "paseo.json");
+  const sourceConfigPath = join(options.sourceCwd, "codius.json");
+  const targetConfigPath = join(options.targetCwd, "codius.json");
   try {
     await stat(targetConfigPath);
     return;
@@ -836,26 +836,26 @@ export async function deriveWorktreeProjectHash(cwd: string): Promise<string> {
   }
 }
 
-export function resolvePaseoWorktreesBaseRoot(options?: WorktreeRootOptions): string {
+export function resolveCodiusWorktreesBaseRoot(options?: WorktreeRootOptions): string {
   if (options?.worktreesRoot) {
     const expandedRoot = expandTilde(options.worktreesRoot);
     if (isAbsolute(expandedRoot)) {
       return resolve(expandedRoot);
     }
-    const home = options.paseoHome ? resolve(options.paseoHome) : resolvePaseoHome();
+    const home = options.codiusHome ? resolve(options.codiusHome) : resolveCodiusHome();
     return resolve(home, expandedRoot);
   }
 
-  const home = options?.paseoHome ? resolve(options.paseoHome) : resolvePaseoHome();
+  const home = options?.codiusHome ? resolve(options.codiusHome) : resolveCodiusHome();
   return join(home, "worktrees");
 }
 
-export async function getPaseoWorktreesRoot(
+export async function getCodiusWorktreesRoot(
   cwd: string,
-  paseoHome?: string,
+  codiusHome?: string,
   worktreesRoot?: string,
 ): Promise<string> {
-  const baseRoot = resolvePaseoWorktreesBaseRoot({ paseoHome, worktreesRoot });
+  const baseRoot = resolveCodiusWorktreesBaseRoot({ codiusHome, worktreesRoot });
   const projectHash = await deriveWorktreeProjectHash(cwd);
   return join(baseRoot, projectHash);
 }
@@ -863,10 +863,10 @@ export async function getPaseoWorktreesRoot(
 export async function computeWorktreePath(
   cwd: string,
   slug: string,
-  paseoHome?: string,
+  codiusHome?: string,
   worktreesRoot?: string,
 ): Promise<string> {
-  const projectWorktreesRoot = await getPaseoWorktreesRoot(cwd, paseoHome, worktreesRoot);
+  const projectWorktreesRoot = await getCodiusWorktreesRoot(cwd, codiusHome, worktreesRoot);
   return join(projectWorktreesRoot, slug);
 }
 
@@ -915,10 +915,10 @@ function resolveRepoRootFromGitCommonDir(commonDir: string): string {
     : normalizedCommonDir;
 }
 
-export async function isPaseoOwnedWorktreeCwd(
+export async function isCodiusOwnedWorktreeCwd(
   cwd: string,
-  options?: PaseoWorktreeOwnershipOptions,
-): Promise<PaseoWorktreeOwnership> {
+  options?: CodiusWorktreeOwnershipOptions,
+): Promise<CodiusWorktreeOwnership> {
   const resolvedCwd = normalizePathForOwnership(cwd);
 
   // repoRoot is best-effort: git may be unreachable from the worktree (e.g. a
@@ -936,11 +936,11 @@ export async function isPaseoOwnedWorktreeCwd(
     }
   }
 
-  const worktreesBaseRoot = resolvePaseoWorktreesBaseRoot(options);
+  const worktreesBaseRoot = resolveCodiusWorktreesBaseRoot(options);
   const relativePath = getRealpathAwareRelativePath(worktreesBaseRoot, resolvedCwd);
 
   // Ownership is defined by the path living under <worktrees-root>/<hash>/<slug>[/...].
-  // The <hash>/<slug> prefix is Paseo-private — nothing else writes there — so the
+  // The <hash>/<slug> prefix is Codius-private — nothing else writes there — so the
   // path shape alone is sufficient proof of ownership, even when git has already
   // forgotten about the worktree.
   if (relativePath === null) {
@@ -969,11 +969,11 @@ export async function isPaseoOwnedWorktreeCwd(
   };
 }
 
-type ParsedPaseoWorktreeInfo = Omit<PaseoWorktreeInfo, "createdAt">;
+type ParsedCodiusWorktreeInfo = Omit<CodiusWorktreeInfo, "createdAt">;
 
-function parseWorktreeList(output: string): ParsedPaseoWorktreeInfo[] {
-  const entries: ParsedPaseoWorktreeInfo[] = [];
-  let current: ParsedPaseoWorktreeInfo | null = null;
+function parseWorktreeList(output: string): ParsedCodiusWorktreeInfo[] {
+  const entries: ParsedCodiusWorktreeInfo[] = [];
+  let current: ParsedCodiusWorktreeInfo | null = null;
 
   for (const line of output.split("\n")) {
     if (line.startsWith("worktree ")) {
@@ -1020,16 +1020,16 @@ function resolveWorktreeCreatedAtIso(worktreePath: string): string {
   }
 }
 
-export async function listPaseoWorktrees({
+export async function listCodiusWorktrees({
   cwd,
-  paseoHome,
+  codiusHome,
   worktreesRoot,
 }: {
   cwd: string;
-  paseoHome?: string;
+  codiusHome?: string;
   worktreesRoot?: string;
-}): Promise<PaseoWorktreeInfo[]> {
-  const projectWorktreesRoot = await getPaseoWorktreesRoot(cwd, paseoHome, worktreesRoot);
+}): Promise<CodiusWorktreeInfo[]> {
+  const projectWorktreesRoot = await getCodiusWorktreesRoot(cwd, codiusHome, worktreesRoot);
   const { stdout } = await runGitCommand(["worktree", "list", "--porcelain"], {
     cwd,
     envOverlay: READ_ONLY_GIT_ENV,
@@ -1046,12 +1046,12 @@ export async function listPaseoWorktrees({
 export async function resolveExistingWorktreeForSlug({
   slug,
   repoRoot,
-  paseoHome,
+  codiusHome,
   worktreesRoot,
 }: ResolveExistingWorktreeForSlugOptions): Promise<WorktreeConfig | null> {
-  const worktrees = await listPaseoWorktrees({
+  const worktrees = await listCodiusWorktrees({
     cwd: repoRoot,
-    paseoHome,
+    codiusHome,
     worktreesRoot,
   });
   const slugSuffix = `${sep}${slug}`;
@@ -1075,25 +1075,25 @@ export async function resolveExistingWorktreeForSlug({
   };
 }
 
-export interface DeletePaseoWorktreeOptions {
+export interface DeleteCodiusWorktreeOptions {
   cwd: string | null;
   worktreePath?: string;
   teardownCwds?: string[];
   worktreeSlug?: string;
   worktreesRoot?: string;
-  paseoHome?: string;
+  codiusHome?: string;
   worktreesBaseRoot?: string;
 }
 
-export async function deletePaseoWorktree({
+export async function deleteCodiusWorktree({
   cwd,
   worktreePath,
   teardownCwds,
   worktreeSlug,
   worktreesRoot,
-  paseoHome,
+  codiusHome,
   worktreesBaseRoot,
-}: DeletePaseoWorktreeOptions): Promise<void> {
+}: DeleteCodiusWorktreeOptions): Promise<void> {
   if (!worktreePath && !worktreeSlug) {
     throw new Error("worktreePath or worktreeSlug is required");
   }
@@ -1105,15 +1105,15 @@ export async function deletePaseoWorktree({
   if (worktreesRoot) {
     resolvedWorktreesRoot = worktreesRoot;
   } else if (cwd) {
-    resolvedWorktreesRoot = await getPaseoWorktreesRoot(cwd, paseoHome, worktreesBaseRoot);
+    resolvedWorktreesRoot = await getCodiusWorktreesRoot(cwd, codiusHome, worktreesBaseRoot);
   } else {
-    throw new Error("cwd or worktreesRoot is required to delete a Paseo worktree");
+    throw new Error("cwd or worktreesRoot is required to delete a Codius worktree");
   }
 
   const requestedPath = worktreePath ?? join(resolvedWorktreesRoot, worktreeSlug!);
   const resolvedRequested = normalizePathForOwnership(requestedPath);
-  const ownership = await isPaseoOwnedWorktreeCwd(requestedPath, {
-    paseoHome,
+  const ownership = await isCodiusOwnedWorktreeCwd(requestedPath, {
+    codiusHome,
     worktreesRoot: worktreesBaseRoot,
   });
   const resolvedWorktree =
@@ -1124,7 +1124,7 @@ export async function deletePaseoWorktree({
     resolvedWorktree,
   );
   if (relativeWorktreePath === null || relativeWorktreePath === "") {
-    throw new Error("Refusing to delete non-Paseo worktree");
+    throw new Error("Refusing to delete non-Codius worktree");
   }
 
   if (await pathExists(resolvedWorktree)) {
@@ -1161,13 +1161,13 @@ export async function deletePaseoWorktree({
   }
 }
 
-export async function rollbackCreatedPaseoWorktree(
-  options: DeletePaseoWorktreeOptions,
+export async function rollbackCreatedCodiusWorktree(
+  options: DeleteCodiusWorktreeOptions,
   cause: unknown,
 ): Promise<never> {
   let cleanupError: unknown;
   try {
-    await deletePaseoWorktree(options);
+    await deleteCodiusWorktree(options);
   } catch (error) {
     cleanupError = error;
   }
@@ -1231,11 +1231,14 @@ export const createWorktree = async ({
   source,
   worktreeSlug,
   runSetup,
-  paseoHome,
+  codiusHome,
   worktreesRoot,
 }: CreateWorktreeOptions): Promise<WorktreeConfig> => {
   const sourcePlan = await resolveWorktreeSourcePlan({ cwd, source, desiredSlug: worktreeSlug });
-  let worktreePath = join(await getPaseoWorktreesRoot(cwd, paseoHome, worktreesRoot), worktreeSlug);
+  let worktreePath = join(
+    await getCodiusWorktreesRoot(cwd, codiusHome, worktreesRoot),
+    worktreeSlug,
+  );
   mkdirSync(dirname(worktreePath), { recursive: true });
 
   // Also handle worktree path collision
@@ -1268,14 +1271,14 @@ export const createWorktree = async ({
     });
   }
 
-  writePaseoWorktreeMetadata(worktreePath, {
+  writeCodiusWorktreeMetadata(worktreePath, {
     baseRefName: sourcePlan.metadataBaseRefName,
     ...(sourcePlan.changeRequestLookupTarget
       ? { changeRequestLookupTarget: sourcePlan.changeRequestLookupTarget }
       : {}),
   });
 
-  await seedPaseoConfigFile({ sourceCwd: cwd, targetCwd: worktreePath });
+  await seedCodiusConfigFile({ sourceCwd: cwd, targetCwd: worktreePath });
 
   if (runSetup) {
     await runWorktreeSetupCommands({
@@ -1300,7 +1303,7 @@ interface ResolveWorktreeSourcePlanOptions {
 interface WorktreeSourcePlan {
   branchName: string;
   metadataBaseRefName: string;
-  changeRequestLookupTarget?: PaseoWorktreeChangeRequestLookupTarget;
+  changeRequestLookupTarget?: CodiusWorktreeChangeRequestLookupTarget;
   addArguments: string[];
   pushRemote?: {
     name: string;
@@ -1383,7 +1386,7 @@ async function resolveWorktreeSourcePlan({
         : undefined;
       const remotePlan: Pick<WorktreeSourcePlan, "pushRemote" | "trackingRemote"> = {};
       if (source.pushRemoteUrl) {
-        const remoteName = `paseo-pr-${changeRequestNumber}`;
+        const remoteName = `codius-pr-${changeRequestNumber}`;
         remotePlan.pushRemote = {
           name: remoteName,
           url: source.pushRemoteUrl,
@@ -1394,7 +1397,7 @@ async function resolveWorktreeSourcePlan({
         const originUrl = await getWorktreeRemotePushUrl(cwd, "origin");
         if (originUrl) {
           remotePlan.pushRemote = {
-            name: `paseo-pr-${changeRequestNumber}`,
+            name: `codius-pr-${changeRequestNumber}`,
             url: originUrl,
             headRef: source.headRef,
             track: false,
@@ -1603,10 +1606,10 @@ async function validateExistingWorktreeBranchName(cwd: string, branchName: strin
 function normalizeRequiredBaseBranch(baseBranch: string): string {
   const normalizedBaseBranch = normalizeBaseRefName(baseBranch);
   if (!normalizedBaseBranch) {
-    throw new Error("Base branch is required when creating a Paseo worktree");
+    throw new Error("Base branch is required when creating a Codius worktree");
   }
   if (normalizedBaseBranch === "HEAD") {
-    throw new Error("Base branch cannot be HEAD when creating a Paseo worktree");
+    throw new Error("Base branch cannot be HEAD when creating a Codius worktree");
   }
   return normalizedBaseBranch;
 }

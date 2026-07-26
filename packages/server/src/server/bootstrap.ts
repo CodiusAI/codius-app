@@ -123,9 +123,9 @@ export async function fanOutReconciledWorkspaceUpdates(input: {
 
 import { VoiceAssistantWebSocketServer } from "./websocket-server.js";
 import { createGitHubService } from "../services/github-service.js";
-import { createPaseoWorktree as createRegisteredPaseoWorktree } from "./paseo-worktree-service.js";
+import { createCodiusWorktree as createRegisteredCodiusWorktree } from "./codius-worktree-service.js";
 import { createWorkspaceProvisioningService } from "./session/workspace-provisioning/workspace-provisioning-service.js";
-import { createPaseoWorktreeWorkflow } from "./worktree-session.js";
+import { createCodiusWorktreeWorkflow } from "./worktree-session.js";
 import { DownloadTokenStore } from "./file-download/token-store.js";
 import type { OpenAiSpeechProviderConfig } from "./speech/providers/openai/config.js";
 import type { LocalSpeechProviderConfig } from "./speech/providers/local/config.js";
@@ -136,10 +136,10 @@ import { AgentStorage } from "./agent/agent-storage.js";
 import { attachAgentStoragePersistence } from "./persistence-hooks.js";
 import { createAgentMcpServer } from "./agent/mcp-server.js";
 import {
-  createPaseoToolCatalog,
-  type PaseoToolHostDependencies,
-} from "./agent/tools/paseo-tools.js";
-import type { PaseoToolRuntimeContext } from "./agent/tools/types.js";
+  createCodiusToolCatalog,
+  type CodiusToolHostDependencies,
+} from "./agent/tools/codius-tools.js";
+import type { CodiusToolRuntimeContext } from "./agent/tools/types.js";
 import { ProviderSnapshotManager } from "./agent/provider-snapshot-manager.js";
 import { bootstrapWorkspaceRegistries } from "./workspace-registry-bootstrap.js";
 import { WorkspaceReconciliationService } from "./workspace-reconciliation-service.js";
@@ -171,7 +171,7 @@ import type { PushNotificationSender } from "./push/notifications.js";
 import { getOrCreateServerId } from "./server-id.js";
 import { resolveDaemonVersion } from "./daemon-version.js";
 import type { AgentClient, AgentProvider } from "./agent/agent-sdk-types.js";
-import type { FirstAgentContext, TerminalProfile } from "@getpaseo/protocol/messages";
+import type { FirstAgentContext, TerminalProfile } from "@codius-ai/protocol/messages";
 import type {
   AgentProviderRuntimeSettingsMap,
   ProviderOverride,
@@ -349,18 +349,18 @@ function summarizeAgentMcpDebugBody(body: unknown): Record<string, unknown> {
   };
 }
 
-export type PaseoOpenAIConfig = OpenAiSpeechProviderConfig;
-export type PaseoLocalSpeechConfig = LocalSpeechProviderConfig;
+export type CodiusOpenAIConfig = OpenAiSpeechProviderConfig;
+export type CodiusLocalSpeechConfig = LocalSpeechProviderConfig;
 
-export interface PaseoSpeechSttLanguages {
+export interface CodiusSpeechSttLanguages {
   dictation: string;
   voice: string;
 }
 
-export interface PaseoSpeechConfig {
+export interface CodiusSpeechConfig {
   providers: RequestedSpeechProviders;
-  sttLanguages?: PaseoSpeechSttLanguages;
-  local?: PaseoLocalSpeechConfig;
+  sttLanguages?: CodiusSpeechSttLanguages;
+  local?: CodiusLocalSpeechConfig;
 }
 
 export type DaemonLifecycleIntent =
@@ -377,9 +377,9 @@ export type DaemonLifecycleIntent =
       reason: string;
     };
 
-export interface PaseoDaemonConfig {
+export interface CodiusDaemonConfig {
   listen: string;
-  paseoHome: string;
+  codiusHome: string;
   daemonVersion?: string;
   desktopManaged?: boolean;
   worktreesRoot?: string;
@@ -414,8 +414,8 @@ export interface PaseoDaemonConfig {
   };
   appBaseUrl?: string;
   auth?: DaemonAuthConfig;
-  openai?: PaseoOpenAIConfig;
-  speech?: PaseoSpeechConfig;
+  openai?: CodiusOpenAIConfig;
+  speech?: CodiusSpeechConfig;
   voiceLlmProvider?: AgentProvider | null;
   voiceLlmProviderExplicit?: boolean;
   voiceLlmModel?: string | null;
@@ -436,8 +436,8 @@ export interface PaseoDaemonConfig {
   managedProcesses?: ManagedProcessRegistry;
 }
 
-export interface PaseoDaemon {
-  config: PaseoDaemonConfig;
+export interface CodiusDaemon {
+  config: CodiusDaemonConfig;
   agentManager: AgentManager;
   agentStorage: AgentStorage;
   terminalManager: TerminalManager;
@@ -449,7 +449,7 @@ export interface PaseoDaemon {
   getListenTarget(): ListenTarget | null;
 }
 
-export interface PaseoDaemonDependencies {
+export interface CodiusDaemonDependencies {
   hubRelationshipRemote?: HubRelationshipRemote;
   hubRelationshipClock?: HubRelationshipClock;
   hubRelationshipRetryPolicy?: HubRelationshipRetryPolicy;
@@ -457,7 +457,7 @@ export interface PaseoDaemonDependencies {
 }
 
 function createBootstrapManagedProcessRegistry(
-  config: Pick<PaseoDaemonConfig, "paseoHome" | "managedProcesses">,
+  config: Pick<CodiusDaemonConfig, "codiusHome" | "managedProcesses">,
   logger: Logger,
 ): ManagedProcessRegistry {
   if (config.managedProcesses) {
@@ -465,7 +465,7 @@ function createBootstrapManagedProcessRegistry(
   }
 
   return createManagedProcessRegistry({
-    paseoHome: config.paseoHome,
+    codiusHome: config.codiusHome,
     processTable: createSystemManagedProcessTable(),
     terminateProcess: terminateWithTreeKill,
     logger,
@@ -482,7 +482,7 @@ async function reconcileManagedProcessLedger(
   }
 }
 
-function mountWebUi(app: express.Application, config: PaseoDaemonConfig, logger: Logger): void {
+function mountWebUi(app: express.Application, config: CodiusDaemonConfig, logger: Logger): void {
   app.use(
     createWebUiMiddleware({
       enabled: config.webUi?.enabled ?? false,
@@ -493,11 +493,11 @@ function mountWebUi(app: express.Application, config: PaseoDaemonConfig, logger:
   );
 }
 
-function resolveExpressTrustProxySetting(config: PaseoDaemonConfig): true | string[] {
+function resolveExpressTrustProxySetting(config: CodiusDaemonConfig): true | string[] {
   return config.trustedProxies ?? ["loopback"];
 }
 
-function createInitialMutableDaemonConfig(config: PaseoDaemonConfig): MutableDaemonConfig {
+function createInitialMutableDaemonConfig(config: CodiusDaemonConfig): MutableDaemonConfig {
   const providers: MutableDaemonConfig["providers"] = Object.fromEntries(
     Object.entries(config.providerOverrides ?? {}).map(([providerId, override]) => {
       const providerConfig: MutableDaemonConfig["providers"][string] = {};
@@ -530,25 +530,25 @@ function createInitialMutableDaemonConfig(config: PaseoDaemonConfig): MutableDae
   return initialConfig;
 }
 
-export async function createPaseoDaemon(
-  config: PaseoDaemonConfig,
+export async function createCodiusDaemon(
+  config: CodiusDaemonConfig,
   rootLogger: Logger,
-  dependencies: PaseoDaemonDependencies = {},
-): Promise<PaseoDaemon> {
+  dependencies: CodiusDaemonDependencies = {},
+): Promise<CodiusDaemon> {
   const logger = rootLogger.child({ module: "bootstrap" });
   const bootstrapStart = performance.now();
   const elapsed = () => `${(performance.now() - bootstrapStart).toFixed(0)}ms`;
   const daemonVersion = config.daemonVersion ?? resolveDaemonVersion(import.meta.url);
   const daemonConfigStore = new DaemonConfigStore(
-    config.paseoHome,
+    config.codiusHome,
     createInitialMutableDaemonConfig(config),
     logger,
   );
   const browserToolsPolicy = new DaemonConfigBrowserToolsPolicy(daemonConfigStore);
   const browserToolsBroker = new BrowserToolsBroker({});
 
-  const serverId = getOrCreateServerId(config.paseoHome, { logger });
-  const daemonKeyPair = await loadOrCreateDaemonKeyPair(config.paseoHome, logger);
+  const serverId = getOrCreateServerId(config.codiusHome, { logger });
+  const daemonKeyPair = await loadOrCreateDaemonKeyPair(config.codiusHome, logger);
   const managedProcesses = createBootstrapManagedProcessRegistry(config, logger);
   // Reconcile the helper-process ledger in the background so it never blocks the
   // daemon from coming up; terminating a live leftover can take a few seconds.
@@ -641,8 +641,8 @@ export async function createPaseoDaemon(
   // CORS - allow same-origin + configured origins
   const allowedOrigins = new Set([
     ...config.corsAllowedOrigins,
-    // Packaged desktop renderers use the custom paseo:// protocol scheme.
-    "paseo://app",
+    // Packaged desktop renderers use the custom codius:// protocol scheme.
+    "codius://app",
     // For TCP, add localhost variants
     ...(listenTarget.type === "tcp"
       ? [
@@ -777,21 +777,21 @@ export async function createPaseoDaemon(
 
   const agentStorage = new AgentStorage(config.agentStoragePath, logger);
   const projectRegistry = new FileBackedProjectRegistry(
-    path.join(config.paseoHome, "projects", "projects.json"),
+    path.join(config.codiusHome, "projects", "projects.json"),
     logger,
   );
   workspaceRegistry = new FileBackedWorkspaceRegistry(
-    path.join(config.paseoHome, "projects", "workspaces.json"),
+    path.join(config.codiusHome, "projects", "workspaces.json"),
     logger,
   );
   const chatService = new FileBackedChatService({
-    paseoHome: config.paseoHome,
+    codiusHome: config.codiusHome,
     logger,
   });
   const github = createGitHubService();
   const workspaceGitService = new WorkspaceGitServiceImpl({
     logger,
-    paseoHome: config.paseoHome,
+    codiusHome: config.codiusHome,
     worktreesRoot: config.worktreesRoot,
     deps: {
       forgeOverrides: { github },
@@ -834,7 +834,7 @@ export async function createPaseoDaemon(
   await agentStorage.initialize();
   logger.info({ elapsed: elapsed() }, "Agent storage initialized");
   await bootstrapWorkspaceRegistries({
-    paseoHome: config.paseoHome,
+    codiusHome: config.codiusHome,
     agentStorage,
     projectRegistry,
     workspaceRegistry,
@@ -864,7 +864,7 @@ export async function createPaseoDaemon(
   logger.info({ elapsed: elapsed() }, "Chat service initialized");
   const checkoutDiffManager = new CheckoutDiffManager({
     logger,
-    paseoHome: config.paseoHome,
+    codiusHome: config.codiusHome,
     workspaceGitService,
   });
   const archiveWorkspaceRecordExternal = async (workspaceId: string) => {
@@ -907,7 +907,7 @@ export async function createPaseoDaemon(
         cwd: workspace.cwd,
         kind: workspace.kind,
         worktreeRoot: workspace.worktreeRoot,
-        isPaseoOwnedWorktree: workspace.isPaseoOwnedWorktree,
+        isCodiusOwnedWorktree: workspace.isCodiusOwnedWorktree,
         mainRepoRoot: workspace.mainRepoRoot,
       }));
   };
@@ -964,8 +964,8 @@ export async function createPaseoDaemon(
   });
 
   setupAutoArchiveOnMerge({
-    paseoHome: config.paseoHome,
-    paseoWorktreesBaseRoot: config.worktreesRoot,
+    codiusHome: config.codiusHome,
+    codiusWorktreesBaseRoot: config.worktreesRoot,
     daemonConfigStore,
     workspaceGitService,
     github,
@@ -981,16 +981,16 @@ export async function createPaseoDaemon(
     emitWorkspaceUpdatesForWorkspaceIds: emitWorkspaceUpdatesExternal,
   });
 
-  const createPaseoWorktreeForTools = async (
-    input: Parameters<typeof createPaseoWorktreeWorkflow>[1],
-    serviceOptions?: Parameters<typeof createPaseoWorktreeWorkflow>[2],
+  const createCodiusWorktreeForTools = async (
+    input: Parameters<typeof createCodiusWorktreeWorkflow>[1],
+    serviceOptions?: Parameters<typeof createCodiusWorktreeWorkflow>[2],
   ) => {
-    return createPaseoWorktreeWorkflow(
+    return createCodiusWorktreeWorkflow(
       {
-        paseoHome: config.paseoHome,
+        codiusHome: config.codiusHome,
         worktreesRoot: config.worktreesRoot,
-        createPaseoWorktree: async (workflowInput, workflowOptions) => {
-          return createRegisteredPaseoWorktree(workflowInput, {
+        createCodiusWorktree: async (workflowInput, workflowOptions) => {
+          return createRegisteredCodiusWorktree(workflowInput, {
             github,
             ...(workflowOptions?.resolveDefaultBranch
               ? {
@@ -1034,23 +1034,23 @@ export async function createPaseoDaemon(
     agentManager,
     agentStorage,
     logger,
-    paseoHome: config.paseoHome,
+    codiusHome: config.codiusHome,
     worktreesRoot: config.worktreesRoot,
     terminalManager,
     providerSnapshotManager,
-    createPaseoWorktree: createPaseoWorktreeForTools,
+    createCodiusWorktree: createCodiusWorktreeForTools,
     ensureWorkspaceForCreate: ensureWorkspaceForCreateAndBroadcastExternal,
   };
   const createAgent = (input: Parameters<typeof createAgentCommand>[1]) =>
     createAgentCommand(createAgentCommandDependencies, input);
   const hubAgentLifecycle = new CreateAgentLifecycleDispatch({
-    paseoHome: config.paseoHome,
+    codiusHome: config.codiusHome,
     worktreesRoot: config.worktreesRoot,
     agentManager,
     agentStorage,
     github,
     workspaceGitService,
-    createPaseoWorktreeWorkflow: createPaseoWorktreeForTools,
+    createCodiusWorktreeWorkflow: createCodiusWorktreeForTools,
     archiveAgentForClose: (agentId) =>
       archiveAgentCommand({ agentManager, agentStorage, logger }, agentId),
     findWorkspaceIdForCwd: findWorkspaceIdForCwdExternal,
@@ -1066,7 +1066,7 @@ export async function createPaseoDaemon(
     logger,
   });
   const hubRelationships = new HubRelationshipController({
-    paseoHome: config.paseoHome,
+    codiusHome: config.codiusHome,
     serverId,
     daemonPublicKey: daemonKeyPair.publicKeyB64,
     logger,
@@ -1096,7 +1096,7 @@ export async function createPaseoDaemon(
   });
 
   const loopService = new LoopService({
-    paseoHome: config.paseoHome,
+    codiusHome: config.codiusHome,
     logger,
     agentManager,
     createAgent,
@@ -1120,11 +1120,11 @@ export async function createPaseoDaemon(
     await emitWorkspaceUpdatesExternal([workspace.workspaceId]);
     return workspace;
   };
-  const createSchedulePaseoWorktreeExternal = async (input: {
+  const createScheduleCodiusWorktreeExternal = async (input: {
     cwd: string;
     firstAgentContext: FirstAgentContext;
   }) => {
-    const result = await createPaseoWorktreeForTools({
+    const result = await createCodiusWorktreeForTools({
       cwd: input.cwd,
       firstAgentContext: input.firstAgentContext,
     });
@@ -1134,8 +1134,8 @@ export async function createPaseoDaemon(
   const archiveScheduleWorkspaceExternal = async (workspaceId: string) => {
     await archiveByScope(
       {
-        paseoHome: config.paseoHome,
-        paseoWorktreesBaseRoot: config.worktreesRoot,
+        codiusHome: config.codiusHome,
+        codiusWorktreesBaseRoot: config.worktreesRoot,
         github,
         workspaceGitService,
         agentManager,
@@ -1163,13 +1163,13 @@ export async function createPaseoDaemon(
     );
   };
   const scheduleService = new ScheduleService({
-    paseoHome: config.paseoHome,
+    codiusHome: config.codiusHome,
     logger,
     agentManager,
     agentStorage,
     createAgent,
     createDirectoryWorkspace: createScheduleLocalWorkspaceExternal,
-    createPaseoWorktreeWorkspace: createSchedulePaseoWorktreeExternal,
+    createCodiusWorktreeWorkspace: createScheduleCodiusWorktreeExternal,
     archiveWorkspace: archiveScheduleWorkspaceExternal,
   });
   await scheduleService.start();
@@ -1226,8 +1226,8 @@ export async function createPaseoDaemon(
   logger.info({ elapsed: elapsed() }, "Preparing voice and MCP runtime");
 
   const createAgentToolHostDependencies = (
-    runtime: PaseoToolRuntimeContext,
-  ): PaseoToolHostDependencies => ({
+    runtime: CodiusToolRuntimeContext,
+  ): CodiusToolHostDependencies => ({
     agentManager,
     agentStorage,
     terminalManager,
@@ -1254,10 +1254,10 @@ export async function createPaseoDaemon(
     markWorkspaceArchiving: markWorkspaceArchivingExternal,
     clearWorkspaceArchiving: clearWorkspaceArchivingExternal,
     ensureWorkspaceForCreate: createAgentCommandDependencies.ensureWorkspaceForCreate,
-    createPaseoWorktree: createAgentCommandDependencies.createPaseoWorktree,
+    createCodiusWorktree: createAgentCommandDependencies.createCodiusWorktree,
     browserToolsEnabled: browserToolsPolicy.isEnabled(),
     browserToolsBroker,
-    paseoHome: config.paseoHome,
+    codiusHome: config.codiusHome,
     worktreesRoot: config.worktreesRoot,
     callerAgentId: runtime.callerAgentId,
     enableVoiceTools: runtime.enableVoiceTools,
@@ -1266,10 +1266,10 @@ export async function createPaseoDaemon(
     resolveCallerContext: (agentId) => wsServer?.resolveVoiceCallerContext(agentId) ?? null,
     logger,
   });
-  const createAgentToolCatalog = (runtime: PaseoToolRuntimeContext) =>
-    createPaseoToolCatalog(createAgentToolHostDependencies(runtime));
-  agentManager.setPaseoToolCatalogFactory(createAgentToolCatalog);
-  agentManager.setPaseoToolsEnabled(config.mcpInjectIntoAgents !== false);
+  const createAgentToolCatalog = (runtime: CodiusToolRuntimeContext) =>
+    createCodiusToolCatalog(createAgentToolHostDependencies(runtime));
+  agentManager.setCodiusToolCatalogFactory(createAgentToolCatalog);
+  agentManager.setCodiusToolsEnabled(config.mcpInjectIntoAgents !== false);
 
   const mcpEnabled = config.mcpEnabled ?? true;
   let agentMcpBaseUrl: string | null = null;
@@ -1433,20 +1433,20 @@ export async function createPaseoDaemon(
             const mcpBaseUrl = mcpEnabled ? createAgentMcpBaseUrl(boundListenTarget) : null;
             agentMcpBaseUrl = config.mcpInjectIntoAgents === false ? null : mcpBaseUrl;
             agentManager.setMcpBaseUrl(agentMcpBaseUrl);
-            agentManager.setPaseoToolsEnabled(config.mcpInjectIntoAgents !== false);
+            agentManager.setCodiusToolsEnabled(config.mcpInjectIntoAgents !== false);
             daemonConfigStore.onFieldChange("mcp.injectIntoAgents", (value) => {
               agentManager.setMcpBaseUrl(value ? mcpBaseUrl : null);
-              agentManager.setPaseoToolsEnabled(value !== false);
+              agentManager.setCodiusToolsEnabled(value !== false);
             });
             daemonConfigStore.onFieldChange("appendSystemPrompt", (value) => {
               agentManager.setAppendSystemPrompt(typeof value === "string" ? value : "");
             });
             const relayEnabled = config.relayEnabled ?? true;
-            const relayEndpoint = config.relayEndpoint ?? "relay.paseo.sh:443";
+            const relayEndpoint = config.relayEndpoint ?? "relay.codius.ai:443";
             const relayPublicEndpoint = config.relayPublicEndpoint ?? relayEndpoint;
-            const relayUseTls = config.relayUseTls ?? relayEndpoint === "relay.paseo.sh:443";
+            const relayUseTls = config.relayUseTls ?? relayEndpoint === "relay.codius.ai:443";
             const relayPublicUseTls = config.relayPublicUseTls ?? relayUseTls;
-            const appBaseUrl = config.appBaseUrl ?? "https://app.paseo.sh";
+            const appBaseUrl = config.appBaseUrl ?? "https://app.codius.ai";
 
             if (boundListenTarget.type === "tcp") {
               logger.info(
@@ -1479,7 +1479,7 @@ export async function createPaseoDaemon(
               agentManager,
               agentStorage,
               downloadTokenStore,
-              config.paseoHome,
+              config.codiusHome,
               daemonConfigStore,
               mcpBaseUrl,
               { allowedOrigins, hostnames: configuredHostnames },

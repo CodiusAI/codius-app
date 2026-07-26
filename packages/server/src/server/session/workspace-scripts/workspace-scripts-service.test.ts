@@ -54,7 +54,7 @@ function fakeGitService() {
     isGit: true,
     repoRoot: "/tmp/repo",
     currentBranch: "feature/scripts",
-    remoteUrl: "https://github.com/getpaseo/paseo.git",
+    remoteUrl: "https://github.com/prismosoft/codius-desktop.git",
     hasRemote: true,
   };
 
@@ -157,7 +157,7 @@ describe("buildSnapshot", () => {
     ).toEqual([]);
   });
 
-  test("returns no scripts for a workspace without a paseo.json", async () => {
+  test("returns no scripts for a workspace without a codius.json", async () => {
     const dir = mkdtempSync(join(tmpdir(), "workspace-scripts-"));
     tempDirs.push(dir);
     const { service } = buildService();
@@ -170,7 +170,7 @@ describe("buildSnapshot", () => {
     const directory = mkdtempSync(join(tmpdir(), "workspace-scripts-"));
     tempDirs.push(directory);
     writeFileSync(
-      join(directory, "paseo.json"),
+      join(directory, "codius.json"),
       JSON.stringify({ scripts: { app: { type: "service", command: "npm run app", port: 3000 } } }),
     );
     const project = {
@@ -265,7 +265,7 @@ describe("start", () => {
     expect(spawnCalls[0]).toMatchObject({
       repoRoot: "/tmp/repo",
       workspaceId: "ws-1",
-      projectSlug: "paseo",
+      projectSlug: "codius-desktop",
       branchName: "feature/scripts",
       scriptName: "app",
       daemonPort: 6767,
@@ -347,7 +347,7 @@ describe("start", () => {
     const directory = mkdtempSync(join(tmpdir(), "workspace-scripts-"));
     tempDirs.push(directory);
     writeFileSync(
-      join(directory, "paseo.json"),
+      join(directory, "codius.json"),
       JSON.stringify({ scripts: { app: { type: "service", command: "npm run app", port: 3000 } } }),
     );
     const project = {

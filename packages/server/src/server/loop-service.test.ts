@@ -59,7 +59,7 @@ const NO_UNATTENDED_LOOP_POLICY: Pick<ProviderSnapshotManager, "resolveCreateCon
 };
 
 interface TestLoopServiceOptions {
-  paseoHome: string;
+  codiusHome: string;
   agentManager: AgentManager;
   agentStorage: AgentStorage;
   logger: ReturnType<typeof createTestLogger>;
@@ -75,7 +75,7 @@ function createLoopService(options: TestLoopServiceOptions): LoopService {
   const ensureWorkspaceForCreate =
     options.ensureWorkspaceForCreate ?? (async () => "workspace-created-for-loop");
   return new LoopService({
-    paseoHome: options.paseoHome,
+    codiusHome: options.codiusHome,
     agentManager: options.agentManager,
     logger: options.logger,
     ensureWorkspaceForCreate,
@@ -305,13 +305,13 @@ class ScriptedAgentSession implements AgentSession {
 describe("LoopService", () => {
   const logger = createTestLogger();
   let tmpDir: string;
-  let paseoHome: string;
+  let codiusHome: string;
   let workspaceDir: string;
   let storage: AgentStorage;
 
   beforeEach(() => {
     tmpDir = realpathSync.native(mkdtempSync(path.join(os.tmpdir(), "loop-service-")));
-    paseoHome = path.join(tmpDir, "paseo-home");
+    codiusHome = path.join(tmpDir, "codius-home");
     workspaceDir = path.join(tmpDir, "workspace");
     storage = new AgentStorage(path.join(tmpDir, "agents"), logger);
     mkdirSync(workspaceDir, { recursive: true });
@@ -348,7 +348,7 @@ describe("LoopService", () => {
         logger,
       });
       const service = createLoopService({
-        paseoHome,
+        codiusHome,
         agentManager: manager,
         agentStorage: storage,
         logger,
@@ -378,7 +378,7 @@ describe("LoopService", () => {
       expect(finalLoop.iterations[1]?.status).toBe("succeeded");
       expect(finalLoop.iterations[0]?.verifyChecks[0]?.passed).toBe(false);
       expect(finalLoop.iterations[1]?.verifyChecks[0]?.passed).toBe(true);
-      expect(readFileSync(path.join(paseoHome, "loops", "loops.json"), "utf8")).toContain(loop.id);
+      expect(readFileSync(path.join(codiusHome, "loops", "loops.json"), "utf8")).toContain(loop.id);
     },
   );
 
@@ -405,7 +405,7 @@ describe("LoopService", () => {
       logger,
     });
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -468,7 +468,7 @@ describe("LoopService", () => {
       logger,
     });
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -513,7 +513,7 @@ describe("LoopService", () => {
     let ensureCalls = 0;
     const manager = new AgentManager({ registry: storage, logger });
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -552,7 +552,7 @@ describe("LoopService", () => {
       logger,
     });
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -605,7 +605,7 @@ describe("LoopService", () => {
       await archiveAgent(agentId);
     };
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -722,7 +722,7 @@ describe("LoopService", () => {
       logger,
     });
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -775,7 +775,7 @@ describe("LoopService", () => {
       logger,
     });
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -823,7 +823,7 @@ describe("LoopService", () => {
       logger,
     });
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -887,7 +887,7 @@ describe("LoopService", () => {
       logger,
     });
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -951,7 +951,7 @@ describe("LoopService", () => {
       logger,
     });
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -1001,7 +1001,7 @@ describe("LoopService", () => {
       return cancelAgentRun(agentId);
     };
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -1070,7 +1070,7 @@ describe("LoopService", () => {
       await closeAgent(agentId);
     };
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -1133,7 +1133,7 @@ describe("LoopService", () => {
       return { status: "refused" };
     };
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -1179,7 +1179,7 @@ describe("LoopService", () => {
       throw new Error("cancellation transport failed");
     };
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -1228,7 +1228,7 @@ describe("LoopService", () => {
       return createAgent(...args);
     };
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,
@@ -1283,7 +1283,7 @@ describe("LoopService", () => {
       logger,
     });
     const service = createLoopService({
-      paseoHome,
+      codiusHome,
       agentManager: manager,
       agentStorage: storage,
       logger,

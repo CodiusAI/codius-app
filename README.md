@@ -14,7 +14,7 @@
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/prismosoft/codius-desktop?style=flat-square" /></a>
 </p>
 
-Codius Desktop is an open-source desktop application derived from [Paseo](https://github.com/getpaseo/paseo). It preserves Paseo's local agent orchestration, worktrees, Git review, terminals, schedules, MCP integration, embedded browser, and visible browser automation while making **Codius CLI the first-run default provider**.
+Codius Desktop is an open-source visual workspace for local coding agents. It combines agent orchestration, worktrees, Git review, terminals, schedules, MCP integration, an embedded browser, and visible browser automation while making **Codius CLI the first-run default provider**.
 
 Users remain free to select Codex, Claude Code, GitHub Copilot, OpenCode, Pi, custom ACP agents, and other supported providers. Once a user selects another provider, Codius Desktop remembers that preference instead of forcing Codius again.
 
@@ -95,13 +95,13 @@ Override it with:
 CODIUS_HOME=/path/to/codius-home
 ```
 
-`PASEO_HOME` remains available as a compatibility fallback for inherited deployments, but new Codius installations use `CODIUS_HOME` and `~/.codius`.
+New Codius installations use `CODIUS_HOME` and `~/.codius`.
 
 On the first run, Desktop creates a private local configuration that:
 
 - registers `codius acp` as the Codius provider;
 - enables Codius as the fresh provider preference;
-- disables the upstream Paseo hosted relay;
+- keeps hosted relay access disabled by default;
 - allows the production and development Codius web origins;
 - retains all other built-in and custom providers.
 
@@ -184,7 +184,7 @@ CODIUS_API_KEY="codius_..." \
 npm run dev:desktop
 ```
 
-The primary packages remain structurally close to upstream to keep merges practical:
+The primary packages are:
 
 - `packages/server` — daemon and agent orchestration
 - `packages/app` — desktop/web/mobile-compatible application UI
@@ -192,7 +192,7 @@ The primary packages remain structurally close to upstream to keep merges practi
 - `packages/cli` — daemon-management CLI, publicly branded `codiusctl`
 - `packages/protocol` — shared provider and transport contracts
 
-Internal package scopes may retain `@getpaseo/*` names where changing them would create unnecessary upstream merge conflicts. Public product names, executables, application IDs, installers, documentation, endpoints, and assets are Codius-branded.
+All internal workspaces use the `@codius-ai/*` package scope. Public product names, executables, application IDs, installers, documentation, endpoints, and assets are Codius-branded.
 
 ## Release identity
 
@@ -208,13 +208,13 @@ Public releases from this repository use:
 
 Runware credentials, routing identifiers, and internal provider economics must remain in Codius server infrastructure. They must never be bundled into Desktop or Codius CLI.
 
-## Upstream and license
+## License
 
-Codius Desktop is based on Paseo and remains licensed under AGPL-3.0. Required copyright, source, and network-use notices must be preserved in distributed builds.
-
-Codius Desktop is maintained independently by Prismosoft and is not produced by or affiliated with the Paseo maintainers. Generic fixes should be contributed upstream when practical; Codius branding, default-provider behavior, account integration, and release infrastructure remain in this fork.
+Codius Desktop is licensed under AGPL-3.0. Required copyright, source, and network-use notices must be preserved in distributed builds.
 
 ## Related projects
 
 - [Codius](https://github.com/prismosoft/codius) — plans, dashboard, billing, metering, model catalog, and OpenAI-compatible API
 - [Codius CLI](https://github.com/prismosoft/codius-cli) — local coding agent and ACP provider used by default
+
+<sub>Upstream note: Codius Desktop began as a fork of [Paseo](https://github.com/getpaseo/paseo).</sub>

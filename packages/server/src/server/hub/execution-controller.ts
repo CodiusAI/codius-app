@@ -2,7 +2,7 @@ import { isAbsolute } from "node:path";
 import type {
   HubExecutionAgentCreateRequest,
   SessionOutboundMessage,
-} from "@getpaseo/protocol/messages";
+} from "@codius-ai/protocol/messages";
 
 import type { HubExecutionAgents, OwnedAgentEvent } from "./daemon-executions.js";
 

@@ -2,13 +2,13 @@ import type {
   AgentSnapshotPayload,
   AgentStreamEventPayload,
   CreateAgentWorktreeTarget,
-} from "@getpaseo/protocol/messages";
+} from "@codius-ai/protocol/messages";
 
 import type { AgentManager, AgentManagerEvent, ManagedAgent } from "../agent/agent-manager.js";
 import type { AgentStorage, StoredAgentRecord } from "../agent/agent-storage.js";
 import type { LifecycleRegistration } from "../agent/create-agent-lifecycle-dispatch.js";
 import type { BoundCreateAgentCommand } from "../agent/create-agent/create.js";
-import type { CreatePaseoWorktreeWorkflowResult } from "../worktree-session.js";
+import type { CreateCodiusWorktreeWorkflowResult } from "../worktree-session.js";
 import { buildStoredAgentPayload } from "../agent/agent-projections.js";
 import { serializeAgentSnapshot, serializeAgentStreamEvent } from "../messages.js";
 import { daemonExecutionKey, type DaemonAgentOwner } from "../agent/agent-owner.js";
@@ -49,10 +49,10 @@ interface DaemonExecutionsOptions {
   createAgent: BoundCreateAgentCommand;
   registerAutoArchive?: (input: {
     agentId: string;
-    createdWorktree: CreatePaseoWorktreeWorkflowResult | null;
+    createdWorktree: CreateCodiusWorktreeWorkflowResult | null;
   }) => LifecycleRegistration;
   cleanupFailedCreate?: (input: {
-    createdWorktree: CreatePaseoWorktreeWorkflowResult | null;
+    createdWorktree: CreateCodiusWorktreeWorkflowResult | null;
     createdAgentId: string | null;
   }) => Promise<void>;
 }
@@ -73,7 +73,7 @@ export class DaemonExecutions implements HubExecutionAgents {
   private authorityActive = true;
   private readonly registerAutoArchive: (input: {
     agentId: string;
-    createdWorktree: CreatePaseoWorktreeWorkflowResult | null;
+    createdWorktree: CreateCodiusWorktreeWorkflowResult | null;
   }) => LifecycleRegistration;
   private readonly cleanupFailedCreate: NonNullable<DaemonExecutionsOptions["cleanupFailedCreate"]>;
 
@@ -138,7 +138,7 @@ export class DaemonExecutions implements HubExecutionAgents {
     }
     this.requireAuthority(authorityGeneration);
 
-    let createdWorktree: CreatePaseoWorktreeWorkflowResult | null = null;
+    let createdWorktree: CreateCodiusWorktreeWorkflowResult | null = null;
     let createdAgentId: string | null = null;
     let autoArchiveRegistration: LifecycleRegistration = { cancel: async () => undefined };
     let result: Awaited<ReturnType<BoundCreateAgentCommand>>;
@@ -280,8 +280,8 @@ export class DaemonExecutions implements HubExecutionAgents {
 }
 
 function ownedCreatedWorktree(
-  worktree: CreatePaseoWorktreeWorkflowResult | null,
-): CreatePaseoWorktreeWorkflowResult | null {
+  worktree: CreateCodiusWorktreeWorkflowResult | null,
+): CreateCodiusWorktreeWorkflowResult | null {
   return worktree?.created === true ? worktree : null;
 }
 

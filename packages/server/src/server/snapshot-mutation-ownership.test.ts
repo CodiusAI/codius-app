@@ -5,7 +5,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { Session } from "./session.js";
 import type { SessionOptions } from "./session.js";
-import { createTestPaseoDaemon } from "./test-utils/paseo-daemon.js";
+import { createTestCodiusDaemon } from "./test-utils/codius-daemon.js";
 import { asInternals, createStub } from "./test-utils/class-mocks.js";
 import { createProviderSnapshotManagerStub } from "./test-utils/session-stubs.js";
 
@@ -25,7 +25,7 @@ describe("snapshot mutation ownership boundary", () => {
   });
 
   test("daemon live mutations write one durable snapshot through the manager-owned path", async () => {
-    const daemonHandle = await createTestPaseoDaemon();
+    const daemonHandle = await createTestCodiusDaemon();
     const cwd = mkdtempSync(path.join(os.tmpdir(), "snapshot-owner-live-"));
 
     try {
@@ -104,7 +104,7 @@ describe("snapshot mutation ownership boundary", () => {
         logger: createStub<SessionOptions["logger"]>(logger),
         downloadTokenStore: createStub<SessionOptions["downloadTokenStore"]>({}),
         pushTokenStore: createStub<SessionOptions["pushTokenStore"]>({}),
-        paseoHome: "/tmp/paseo-test",
+        codiusHome: "/tmp/codius-test",
         agentManager: createStub<SessionOptions["agentManager"]>({
           subscribe: () => () => {},
           listAgents: () => [],

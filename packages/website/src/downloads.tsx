@@ -1,7 +1,7 @@
 import * as React from "react";
 
 export function releaseBase(version: string) {
-  return `https://github.com/getpaseo/paseo/releases/download/v${version}`;
+  return `https://github.com/prismosoft/codius-desktop/releases/download/v${version}`;
 }
 
 export interface ReleaseAssetInfo {
@@ -15,20 +15,20 @@ export function downloadUrls(release: ReleaseAssetInfo) {
   const { version, linuxAppImageAsset, windowsX64Asset, windowsArm64Asset } = release;
   const base = releaseBase(version);
   return {
-    macAppleSilicon: `${base}/Paseo-${version}-arm64.dmg`,
-    macIntel: `${base}/Paseo-${version}-x64.dmg`,
+    macAppleSilicon: `${base}/Codius-${version}-arm64.dmg`,
+    macIntel: `${base}/Codius-${version}-x64.dmg`,
     linuxAppImage: `${base}/${linuxAppImageAsset}`,
-    linuxDeb: `${base}/Paseo-${version}-amd64.deb`,
-    linuxRpm: `${base}/Paseo-${version}-x86_64.rpm`,
-    windowsExeX64: `${base}/${windowsX64Asset ?? `Paseo-Setup-${version}.exe`}`,
+    linuxDeb: `${base}/Codius-${version}-amd64.deb`,
+    linuxRpm: `${base}/Codius-${version}-x86_64.rpm`,
+    windowsExeX64: `${base}/${windowsX64Asset ?? `Codius-Setup-${version}.exe`}`,
     windowsExeArm64: windowsArm64Asset ? `${base}/${windowsArm64Asset}` : null,
-    androidApk: `${base}/paseo-v${version}-android.apk`,
+    androidApk: `${base}/codius-v${version}-android.apk`,
   };
 }
 
-export const appStoreUrl = "https://apps.apple.com/app/paseo-pocket-engineer/id6758887924";
-export const playStoreUrl = "https://play.google.com/store/apps/details?id=sh.paseo";
-export const webAppUrl = "https://app.paseo.sh";
+export const appStoreUrl = "https://apps.apple.com/app/codius-pocket-engineer/id6758887924";
+export const playStoreUrl = "https://play.google.com/store/apps/details?id=sh.codius";
+export const webAppUrl = "https://app.codius.ai";
 
 type Platform = "mac-silicon" | "mac-intel" | "windows" | "linux";
 

@@ -18,7 +18,7 @@ import type {
   CreateAgentWorktreeTarget,
   SessionOutboundMessage,
 } from "../../messages.js";
-import { createPaseoDaemon, type PaseoDaemon, type PaseoDaemonConfig } from "../../bootstrap.js";
+import { createCodiusDaemon, type CodiusDaemon, type CodiusDaemonConfig } from "../../bootstrap.js";
 import type { WebSocketLike } from "../../websocket-server.js";
 import type {
   AgentClient,
@@ -448,10 +448,10 @@ const providerCatalog = {
 export class HubRelationshipHarness {
   private readonly clock = new TestRelationshipClock();
   private readonly remote = new InMemoryHubRelationships(() => this.captureRelationship());
-  private daemon: PaseoDaemon | null = null;
-  private config!: PaseoDaemonConfig;
+  private daemon: CodiusDaemon | null = null;
+  private config!: CodiusDaemonConfig;
   private root = "";
-  private paseoHome = "";
+  private codiusHome = "";
   private host = "";
   private readonly logs: string[] = [];
   private readonly providerPrompts: AgentPromptInput[] = [];
@@ -511,7 +511,7 @@ export class HubRelationshipHarness {
 
   async relationshipStateBecomes(expected: string | null): Promise<void> {
     const observed = deferred<void>();
-    const watcher = watch(this.paseoHome, () => {
+    const watcher = watch(this.codiusHome, () => {
       if ((this.relationshipFile()?.state ?? null) === expected) observed.resolve();
     });
     if ((this.relationshipFile()?.state ?? null) === expected) observed.resolve();
@@ -709,7 +709,7 @@ export class HubRelationshipHarness {
 
   async durableOwnedAgentIdsOnDisk(): Promise<string[]> {
     const storage = new AgentStorage(
-      path.join(this.paseoHome, "agents"),
+      path.join(this.codiusHome, "agents"),
       pino({ level: "silent" }),
     );
     return (await storage.list())
@@ -728,7 +728,7 @@ export class HubRelationshipHarness {
   }
 
   async hubExecutionIntentFiles(): Promise<string[]> {
-    const directory = path.join(this.paseoHome, "hub-executions");
+    const directory = path.join(this.codiusHome, "hub-executions");
     return existsSync(directory) ? readdir(directory) : [];
   }
 
@@ -805,7 +805,7 @@ export class HubRelationshipHarness {
         };
         try {
           const projectsWatcher = this.archiveWatchFiles.watchDirectory(
-            path.join(this.paseoHome, "projects"),
+            path.join(this.codiusHome, "projects"),
             observeCompletion,
           );
           watchers.push(projectsWatcher);
@@ -826,7 +826,7 @@ export class HubRelationshipHarness {
 
   private workspaceArchivedAt(workspaceId: string): string | null {
     const records = JSON.parse(
-      readFileSync(path.join(this.paseoHome, "projects", "workspaces.json"), "utf8"),
+      readFileSync(path.join(this.codiusHome, "projects", "workspaces.json"), "utf8"),
     ) as Array<{ workspaceId: string; archivedAt?: string | null }>;
     return records.find((workspace) => workspace.workspaceId === workspaceId)?.archivedAt ?? null;
   }
@@ -1057,7 +1057,7 @@ export class HubRelationshipHarness {
 
   async reconstructAndReplay(executionId = "execution-1") {
     const storage = new AgentStorage(
-      path.join(this.paseoHome, "agents"),
+      path.join(this.codiusHome, "agents"),
       pino({ level: "silent" }),
     );
     const manager = new AgentManager({
@@ -1076,7 +1076,7 @@ export class HubRelationshipHarness {
   async removeOwnedAgent(agentId: string) {
     await this.daemon!.agentStorage.remove(agentId);
     const storage = new AgentStorage(
-      path.join(this.paseoHome, "agents"),
+      path.join(this.codiusHome, "agents"),
       pino({ level: "silent" }),
     );
     return {
@@ -1122,22 +1122,22 @@ export class HubRelationshipHarness {
   }
 
   relationshipFile(): PersistedRelationship | null {
-    const file = path.join(this.paseoHome, "hub-relationship.json");
+    const file = path.join(this.codiusHome, "hub-relationship.json");
     if (!existsSync(file)) return null;
     return JSON.parse(readFileSync(file, "utf8")) as PersistedRelationship;
   }
 
   relationshipFileMode(): number {
-    return statSync(path.join(this.paseoHome, "hub-relationship.json")).mode & 0o777;
+    return statSync(path.join(this.codiusHome, "hub-relationship.json")).mode & 0o777;
   }
 
   async corruptRelationshipFile(contents = "{not-json"): Promise<void> {
     await this.stopDaemon();
-    await writeFile(path.join(this.paseoHome, "hub-relationship.json"), contents, "utf8");
+    await writeFile(path.join(this.codiusHome, "hub-relationship.json"), contents, "utf8");
   }
 
   async quarantinedRelationshipFiles(): Promise<string[]> {
-    return (await readdir(this.paseoHome)).filter((file) =>
+    return (await readdir(this.codiusHome)).filter((file) =>
       file.startsWith("hub-relationship.invalid-"),
     );
   }
@@ -1179,10 +1179,10 @@ export class HubRelationshipHarness {
   }
 
   private async createHome(): Promise<void> {
-    this.root = await mkdtemp(path.join(tmpdir(), "paseo-hub-relationship-"));
-    this.paseoHome = path.join(this.root, ".paseo");
+    this.root = await mkdtemp(path.join(tmpdir(), "codius-hub-relationship-"));
+    this.codiusHome = path.join(this.root, ".codius");
     const staticDir = path.join(this.root, "static");
-    await Promise.all([mkdir(this.paseoHome, { recursive: true }), mkdir(staticDir)]);
+    await Promise.all([mkdir(this.codiusHome, { recursive: true }), mkdir(staticDir)]);
     execFileSync("git", ["init", "-b", "main", this.root], { stdio: "ignore" });
     execFileSync("git", ["-C", this.root, "config", "user.email", "hub@test.invalid"]);
     execFileSync("git", ["-C", this.root, "config", "user.name", "Hub Test"]);
@@ -1191,7 +1191,7 @@ export class HubRelationshipHarness {
     });
     this.config = {
       listen: "0.0.0.0:0",
-      paseoHome: this.paseoHome,
+      codiusHome: this.codiusHome,
       corsAllowedOrigins: [],
       hostnames: true,
       mcpEnabled: false,
@@ -1201,10 +1201,10 @@ export class HubRelationshipHarness {
         ...createTestAgentClients(),
         codex: this.codex,
       },
-      agentStoragePath: path.join(this.paseoHome, "agents"),
+      agentStoragePath: path.join(this.codiusHome, "agents"),
       relayEnabled: false,
-      relayEndpoint: "relay.paseo.sh:443",
-      appBaseUrl: "https://app.paseo.sh",
+      relayEndpoint: "relay.codius.ai:443",
+      appBaseUrl: "https://app.codius.ai",
     };
   }
 
@@ -1215,7 +1215,7 @@ export class HubRelationshipHarness {
         done();
       },
     });
-    this.daemon = await createPaseoDaemon(this.config, pino({ level: "trace" }, destination), {
+    this.daemon = await createCodiusDaemon(this.config, pino({ level: "trace" }, destination), {
       hubRelationshipRemote: this.remote,
       hubRelationshipClock: this.clock,
       hubRelationshipRetryPolicy: this.clock,

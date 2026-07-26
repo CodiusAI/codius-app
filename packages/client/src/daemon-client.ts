@@ -1,6 +1,6 @@
 import type { z } from "zod";
-import { CLIENT_CAPS, type ClientCapability } from "@getpaseo/protocol/client-capabilities";
-import type { AgentAttentionNotificationPayload } from "@getpaseo/protocol/agent-attention-notification";
+import { CLIENT_CAPS, type ClientCapability } from "@codius-ai/protocol/client-capabilities";
+import type { AgentAttentionNotificationPayload } from "@codius-ai/protocol/agent-attention-notification";
 import {
   AgentCreateFailedStatusPayloadSchema,
   AgentCreatedStatusPayloadSchema,
@@ -14,15 +14,15 @@ import {
   DaemonUpdateResponseSchema,
   SessionInboundMessageSchema,
   type ServerInfoStatusPayload,
-} from "@getpaseo/protocol/messages";
-import { validateWSOutboundMessage } from "@getpaseo/protocol/validation/ws-outbound";
+} from "@codius-ai/protocol/messages";
+import { validateWSOutboundMessage } from "@codius-ai/protocol/validation/ws-outbound";
 import type {
   AgentStreamEventPayload,
   AgentSnapshotPayload,
   ProjectPlacementPayload,
   AgentPermissionResolvedMessage,
   CreateAgentRequestMessage,
-  CreatePaseoWorktreeRequest,
+  CreateCodiusWorktreeRequest,
   FileDownloadTokenResponse,
   FileUploadResponse,
   FileExplorerResponse,
@@ -60,8 +60,8 @@ import type {
   GitHubSearchResponse,
   GitHubSearchRequest,
   DirectorySuggestionsResponse,
-  PaseoWorktreeListResponse,
-  PaseoWorktreeArchiveResponse,
+  CodiusWorktreeListResponse,
+  CodiusWorktreeArchiveResponse,
   ProjectIconResponse,
   ProjectAddResponse,
   ProjectCreateDirectoryResponse,
@@ -95,11 +95,11 @@ import type {
   SessionInboundMessage,
   SessionOutboundMessage,
   SendAgentMessageRequest,
-  PaseoConfigRaw,
-  PaseoConfigRevision,
+  CodiusConfigRaw,
+  CodiusConfigRevision,
   WorkspaceCreateRequest,
   WorkspaceRecoveryState,
-} from "@getpaseo/protocol/messages";
+} from "@codius-ai/protocol/messages";
 import type {
   AgentPermissionRequest,
   AgentPermissionResponse,
@@ -107,10 +107,10 @@ import type {
   AgentProviderNotice,
   AgentProvider,
   AgentSessionConfig,
-} from "@getpaseo/protocol/agent-types";
-import type { MutableDaemonConfig, MutableDaemonConfigPatch } from "@getpaseo/protocol/messages";
-import { isRelayClientWebSocketUrl } from "@getpaseo/protocol/daemon-endpoints";
-import { terminalSubscriptionKey } from "@getpaseo/protocol/terminal-subscription-key";
+} from "@codius-ai/protocol/agent-types";
+import type { MutableDaemonConfig, MutableDaemonConfigPatch } from "@codius-ai/protocol/messages";
+import { isRelayClientWebSocketUrl } from "@codius-ai/protocol/daemon-endpoints";
+import { terminalSubscriptionKey } from "@codius-ai/protocol/terminal-subscription-key";
 import {
   asUint8Array,
   decodeFileTransferFrame,
@@ -119,7 +119,7 @@ import {
   FileTransferOpcode,
   TerminalStreamOpcode,
   type FileTransferFrame,
-} from "@getpaseo/protocol/binary-frames/index";
+} from "@codius-ai/protocol/binary-frames/index";
 import {
   createRelayE2eeTransportFactory,
   createWebSocketTransportFactory,
@@ -141,7 +141,7 @@ import { TerminalStreamRouter, type TerminalStreamEvent } from "./terminal-strea
 import type {
   BrowserAutomationExecuteRequest,
   BrowserAutomationExecuteResponse,
-} from "@getpaseo/protocol/browser-automation/rpc-schemas";
+} from "@codius-ai/protocol/browser-automation/rpc-schemas";
 
 export interface Logger {
   debug(obj: object, msg?: string): void;
@@ -356,8 +356,8 @@ export interface CreateAgentRequestOptions extends AgentConfigOverrides {
   labels?: Record<string, string>;
 }
 
-export interface CreatePaseoWorktreeInput extends Pick<
-  CreatePaseoWorktreeRequest,
+export interface CreateCodiusWorktreeInput extends Pick<
+  CreateCodiusWorktreeRequest,
   | "cwd"
   | "projectId"
   | "worktreeSlug"
@@ -398,11 +398,11 @@ type BranchSuggestionsPayload = BranchSuggestionsResponse["payload"];
 type ForgeSearchPayload = ForgeSearchResponse["payload"];
 type GitHubSearchPayload = GitHubSearchResponse["payload"];
 type DirectorySuggestionsPayload = DirectorySuggestionsResponse["payload"];
-type PaseoWorktreeListPayload = PaseoWorktreeListResponse["payload"];
-type PaseoWorktreeArchivePayload = PaseoWorktreeArchiveResponse["payload"];
-type CreatePaseoWorktreePayload = Extract<
+type CodiusWorktreeListPayload = CodiusWorktreeListResponse["payload"];
+type CodiusWorktreeArchivePayload = CodiusWorktreeArchiveResponse["payload"];
+type CreateCodiusWorktreePayload = Extract<
   SessionOutboundMessage,
-  { type: "create_paseo_worktree_response" }
+  { type: "create_codius_worktree_response" }
 >["payload"];
 type WorkspaceCreatePayload = Extract<
   SessionOutboundMessage,
@@ -457,8 +457,8 @@ type ListCommandsDraftConfig = Pick<
 >;
 export interface WriteProjectConfigInput {
   repoRoot: string;
-  config: PaseoConfigRaw;
-  expectedRevision: PaseoConfigRevision | null;
+  config: CodiusConfigRaw;
+  expectedRevision: CodiusConfigRevision | null;
   requestId?: string;
 }
 interface ListCommandsOptions {
@@ -1217,7 +1217,7 @@ export class DaemonClient {
     } else if (this.config.authHeader) {
       headers.Authorization = this.config.authHeader;
     }
-    const protocols = password ? [`paseo.bearer.${password}`] : undefined;
+    const protocols = password ? [`codius.bearer.${password}`] : undefined;
 
     try {
       // Reconnect can overlap with browser close/error delivery ordering.
@@ -3846,7 +3846,7 @@ export class DaemonClient {
 
   async stashList(
     cwd: string,
-    options?: { paseoOnly?: boolean },
+    options?: { codiusOnly?: boolean },
     requestId?: string,
   ): Promise<StashListPayload> {
     return this.sendCorrelatedSessionRequest({
@@ -3854,28 +3854,28 @@ export class DaemonClient {
       message: {
         type: "stash_list_request",
         cwd,
-        paseoOnly: options?.paseoOnly,
+        codiusOnly: options?.codiusOnly,
       },
       responseType: "stash_list_response",
     });
   }
 
-  async getPaseoWorktreeList(
+  async getCodiusWorktreeList(
     input: { cwd?: string; repoRoot?: string },
     requestId?: string,
-  ): Promise<PaseoWorktreeListPayload> {
+  ): Promise<CodiusWorktreeListPayload> {
     return this.sendCorrelatedSessionRequest({
       requestId,
       message: {
-        type: "paseo_worktree_list_request",
+        type: "codius_worktree_list_request",
         cwd: input.cwd,
         repoRoot: input.repoRoot,
       },
-      responseType: "paseo_worktree_list_response",
+      responseType: "codius_worktree_list_response",
     });
   }
 
-  async archivePaseoWorktree(
+  async archiveCodiusWorktree(
     input: {
       worktreePath?: string;
       repoRoot?: string;
@@ -3884,29 +3884,29 @@ export class DaemonClient {
       scope?: "workspace" | "worktree";
     },
     requestId?: string,
-  ): Promise<PaseoWorktreeArchivePayload> {
+  ): Promise<CodiusWorktreeArchivePayload> {
     return this.sendCorrelatedSessionRequest({
       requestId,
       message: {
-        type: "paseo_worktree_archive_request",
+        type: "codius_worktree_archive_request",
         worktreePath: input.worktreePath,
         repoRoot: input.repoRoot,
         branchName: input.branchName,
         ...(input.workspaceId !== undefined ? { workspaceId: input.workspaceId } : {}),
         ...(input.scope !== undefined ? { scope: input.scope } : {}),
       },
-      responseType: "paseo_worktree_archive_response",
+      responseType: "codius_worktree_archive_response",
     });
   }
 
-  async createPaseoWorktree(
-    input: CreatePaseoWorktreeInput,
+  async createCodiusWorktree(
+    input: CreateCodiusWorktreeInput,
     requestId?: string,
-  ): Promise<CreatePaseoWorktreePayload> {
+  ): Promise<CreateCodiusWorktreePayload> {
     return this.sendCorrelatedSessionRequest({
       requestId,
       message: {
-        type: "create_paseo_worktree_request",
+        type: "create_codius_worktree_request",
         cwd: input.cwd,
         ...(input.projectId !== undefined ? { projectId: input.projectId } : {}),
         worktreeSlug: input.worktreeSlug,
@@ -3918,7 +3918,7 @@ export class DaemonClient {
         ...(input.checkoutSource !== undefined ? { checkoutSource: input.checkoutSource } : {}),
         ...(input.githubPrNumber !== undefined ? { githubPrNumber: input.githubPrNumber } : {}),
       },
-      responseType: "create_paseo_worktree_response",
+      responseType: "create_codius_worktree_response",
     });
   }
 

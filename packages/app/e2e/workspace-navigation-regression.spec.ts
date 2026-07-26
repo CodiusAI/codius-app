@@ -45,14 +45,14 @@ type StartupPresentation = "splash" | "app";
 
 declare global {
   interface Window {
-    __paseoStartupPresentationTrace?: StartupPresentation[];
+    __codiusStartupPresentationTrace?: StartupPresentation[];
   }
 }
 
 async function observeStartupPresentation(page: Page): Promise<void> {
   await page.addInitScript(() => {
     const trace: StartupPresentation[] = [];
-    window.__paseoStartupPresentationTrace = trace;
+    window.__codiusStartupPresentationTrace = trace;
 
     document.addEventListener("DOMContentLoaded", () => {
       const recordPresentation = () => {
@@ -80,7 +80,7 @@ async function observeStartupPresentation(page: Page): Promise<void> {
 }
 
 async function getStartupPresentation(page: Page): Promise<StartupPresentation[]> {
-  return page.evaluate(() => window.__paseoStartupPresentationTrace?.slice() ?? []);
+  return page.evaluate(() => window.__codiusStartupPresentationTrace?.slice() ?? []);
 }
 
 async function expectNoLoadingWorkspacePane(
@@ -183,7 +183,7 @@ test.describe("Workspace navigation regression", () => {
 
     await page.evaluate((data) => {
       globalThis.dispatchEvent(
-        new CustomEvent("paseo:web-notification-click", {
+        new CustomEvent("codius:web-notification-click", {
           detail: { data: { ...data, reason: "finished" } },
           cancelable: true,
         }),
@@ -284,7 +284,7 @@ test.describe("Workspace navigation regression", () => {
       await ws.close({ code: 1008, reason: "Blocked cold offline workspace route test." });
     });
 
-    await page.goto(buildHostWorkspaceRoute(serverId, "/tmp/paseo-missing-workspace"));
+    await page.goto(buildHostWorkspaceRoute(serverId, "/tmp/codius-missing-workspace"));
 
     await expectHostConnectingOrOffline(page);
     await expectMenuButtonVisible(page);
@@ -464,7 +464,7 @@ test.describe("Workspace navigation regression", () => {
       await page.evaluate(
         ({ agentId, serverId: targetServerId, workspaceId }) => {
           globalThis.dispatchEvent(
-            new CustomEvent("paseo:web-notification-click", {
+            new CustomEvent("codius:web-notification-click", {
               detail: {
                 data: {
                   serverId: targetServerId,

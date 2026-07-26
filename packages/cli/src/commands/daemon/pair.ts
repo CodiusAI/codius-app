@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import { generateLocalPairingOffer, loadConfig, resolvePaseoHome } from "@getpaseo/server";
+import { generateLocalPairingOffer, loadConfig, resolveCodiusHome } from "@codius-ai/server";
 import { tryConnectToDaemon } from "../../utils/client.js";
 import { resolveLocalDaemonState, resolveTcpHostFromListen } from "./local-daemon.js";
 import { addJsonOption } from "../../utils/command-options.js";
@@ -14,7 +14,7 @@ const PAIRING_DAEMON_RPC_TIMEOUT_MS = 1500;
 
 export function pairCommand(): Command {
   return addJsonOption(new Command("pair").description("Print the daemon pairing QR code and link"))
-    .option("--home <path>", "Paseo home directory (default: ~/.paseo)")
+    .option("--home <path>", "Codius home directory (default: ~/.codius)")
     .action(async (_options: PairOptions, command: Command) => {
       await runPairCommand(command.optsWithGlobals());
     });
@@ -22,11 +22,11 @@ export function pairCommand(): Command {
 
 export async function runPairCommand(options: PairOptions): Promise<void> {
   if (options.home) {
-    process.env.PASEO_HOME = options.home;
+    process.env.CODIUS_HOME = options.home;
   }
 
-  const paseoHome = resolvePaseoHome();
-  const state = resolveLocalDaemonState({ home: paseoHome });
+  const codiusHome = resolveCodiusHome();
+  const state = resolveLocalDaemonState({ home: codiusHome });
   const host = resolveTcpHostFromListen(state.listen);
 
   // Try to get the pairing offer from the running daemon first.
@@ -57,9 +57,9 @@ export async function runPairCommand(options: PairOptions): Promise<void> {
   }
 
   // Fall back to local pairing offer generation.
-  const config = loadConfig(paseoHome);
+  const config = loadConfig(codiusHome);
   const pairing = await generateLocalPairingOffer({
-    paseoHome,
+    codiusHome,
     relayEnabled: config.relayEnabled,
     relayEndpoint: config.relayEndpoint,
     relayPublicEndpoint: config.relayPublicEndpoint,

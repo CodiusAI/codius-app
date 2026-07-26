@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import type { WorkspaceDescriptorPayload } from "@getpaseo/protocol/messages";
+import type { WorkspaceDescriptorPayload } from "@codius-ai/protocol/messages";
 import { normalizeAgentSnapshot } from "@/utils/agent-snapshots";
 import {
   normalizeEmptyProjectDescriptor,
@@ -27,12 +27,12 @@ class MemoryStorage implements ReplicaCacheStorage {
 function workspace(
   id = "workspace-1",
   projectId = "project-1",
-  workspaceDirectory = "/repo/paseo",
+  workspaceDirectory = "/repo/codius",
 ): WorkspaceDescriptorPayload {
   return {
     id,
     projectId,
-    projectDisplayName: "Paseo",
+    projectDisplayName: "Codius",
     projectRootPath: workspaceDirectory,
     workspaceDirectory,
     projectKind: "git",
@@ -47,7 +47,7 @@ function workspace(
   };
 }
 
-function agent(id: string, workspaceId = "workspace-1", cwd = "/repo/paseo") {
+function agent(id: string, workspaceId = "workspace-1", cwd = "/repo/codius") {
   return normalizeAgentSnapshot(
     {
       id,
@@ -245,7 +245,7 @@ describe("ReplicaCache", () => {
 
   it("drops malformed or unknown cache versions", async () => {
     const storage = new MemoryStorage();
-    storage.values.set("@paseo:replica-cache", JSON.stringify({ version: 999, hosts: [] }));
+    storage.values.set("@codius:replica-cache", JSON.stringify({ version: 999, hosts: [] }));
     const cache = new ReplicaCache(storage);
     cache.setHosts([SERVER_ID]);
 

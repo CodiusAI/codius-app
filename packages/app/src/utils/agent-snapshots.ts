@@ -1,6 +1,6 @@
-import type { AgentSnapshotPayload } from "@getpaseo/protocol/messages";
-import type { AgentPermissionRequest } from "@getpaseo/protocol/agent-types";
-import { getParentAgentIdFromLabels } from "@getpaseo/protocol/agent-labels";
+import type { AgentSnapshotPayload } from "@codius-ai/protocol/messages";
+import type { AgentPermissionRequest } from "@codius-ai/protocol/agent-types";
+import { getParentAgentIdFromLabels } from "@codius-ai/protocol/agent-labels";
 
 export function derivePendingPermissionKey(
   agentId: string,

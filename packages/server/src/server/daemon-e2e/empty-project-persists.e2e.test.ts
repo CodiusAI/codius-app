@@ -6,11 +6,11 @@ import path from "node:path";
 import { afterEach, expect, test } from "vitest";
 
 import { DaemonClient } from "../test-utils/daemon-client.js";
-import { createTestPaseoDaemon, type TestPaseoDaemon } from "../test-utils/paseo-daemon.js";
+import { createTestCodiusDaemon, type TestCodiusDaemon } from "../test-utils/codius-daemon.js";
 import { type PersistedProjectRecord } from "../workspace-registry.js";
 
 const cleanupPaths = new Set<string>();
-const cleanupDaemons = new Set<TestPaseoDaemon>();
+const cleanupDaemons = new Set<TestCodiusDaemon>();
 const cleanupClients = new Set<DaemonClient>();
 
 function restoreEnv(name: string, previous: string | undefined): void {
@@ -33,24 +33,24 @@ afterEach(async () => {
 });
 
 test("project.add creates a project without creating a workspace", async () => {
-  const previousSupervised = process.env.PASEO_SUPERVISED;
-  process.env.PASEO_SUPERVISED = "0";
+  const previousSupervised = process.env.CODIUS_SUPERVISED;
+  process.env.CODIUS_SUPERVISED = "0";
   try {
-    const repoRoot = realpathSync(mkdtempSync(path.join(os.tmpdir(), "paseo-add-project-repo-")));
-    const paseoHomeRoot = realpathSync(
-      mkdtempSync(path.join(os.tmpdir(), "paseo-add-project-home-")),
+    const repoRoot = realpathSync(mkdtempSync(path.join(os.tmpdir(), "codius-add-project-repo-")));
+    const codiusHomeRoot = realpathSync(
+      mkdtempSync(path.join(os.tmpdir(), "codius-add-project-home-")),
     );
     cleanupPaths.add(repoRoot);
-    cleanupPaths.add(paseoHomeRoot);
+    cleanupPaths.add(codiusHomeRoot);
 
     execSync("git init -b main", { cwd: repoRoot, stdio: "pipe" });
-    execSync("git config user.email 'test@getpaseo.dev'", { cwd: repoRoot, stdio: "pipe" });
-    execSync("git config user.name 'Paseo Test'", { cwd: repoRoot, stdio: "pipe" });
+    execSync("git config user.email 'test@codius-ai.dev'", { cwd: repoRoot, stdio: "pipe" });
+    execSync("git config user.name 'Codius Test'", { cwd: repoRoot, stdio: "pipe" });
     writeFileSync(path.join(repoRoot, "README.md"), "# repo\n", "utf8");
     execSync("git add README.md", { cwd: repoRoot, stdio: "pipe" });
     execSync("git -c commit.gpgSign=false commit -m 'initial'", { cwd: repoRoot, stdio: "pipe" });
 
-    const daemon = await createTestPaseoDaemon({ paseoHomeRoot, cleanup: false });
+    const daemon = await createTestCodiusDaemon({ codiusHomeRoot, cleanup: false });
     cleanupDaemons.add(daemon);
     const client = new DaemonClient({ url: `ws://127.0.0.1:${daemon.port}/ws` });
     cleanupClients.add(client);
@@ -78,32 +78,34 @@ test("project.add creates a project without creating a workspace", async () => {
       }),
     ]);
   } finally {
-    restoreEnv("PASEO_SUPERVISED", previousSupervised);
+    restoreEnv("CODIUS_SUPERVISED", previousSupervised);
   }
 }, 30_000);
 
 test("archiving the last workspace leaves the project parent with no workspaces", async () => {
-  const previousSupervised = process.env.PASEO_SUPERVISED;
-  process.env.PASEO_SUPERVISED = "0";
+  const previousSupervised = process.env.CODIUS_SUPERVISED;
+  process.env.CODIUS_SUPERVISED = "0";
   try {
-    const repoRoot = realpathSync(mkdtempSync(path.join(os.tmpdir(), "paseo-empty-project-repo-")));
-    const paseoHomeRoot = realpathSync(
-      mkdtempSync(path.join(os.tmpdir(), "paseo-empty-project-home-")),
+    const repoRoot = realpathSync(
+      mkdtempSync(path.join(os.tmpdir(), "codius-empty-project-repo-")),
+    );
+    const codiusHomeRoot = realpathSync(
+      mkdtempSync(path.join(os.tmpdir(), "codius-empty-project-home-")),
     );
     cleanupPaths.add(repoRoot);
-    cleanupPaths.add(paseoHomeRoot);
+    cleanupPaths.add(codiusHomeRoot);
 
     execSync("git init -b main", { cwd: repoRoot, stdio: "pipe" });
-    execSync("git config user.email 'test@getpaseo.dev'", { cwd: repoRoot, stdio: "pipe" });
-    execSync("git config user.name 'Paseo Test'", { cwd: repoRoot, stdio: "pipe" });
+    execSync("git config user.email 'test@codius-ai.dev'", { cwd: repoRoot, stdio: "pipe" });
+    execSync("git config user.name 'Codius Test'", { cwd: repoRoot, stdio: "pipe" });
     writeFileSync(path.join(repoRoot, "README.md"), "# repo\n", "utf8");
     execSync("git add README.md", { cwd: repoRoot, stdio: "pipe" });
     execSync("git -c commit.gpgSign=false commit -m 'initial'", { cwd: repoRoot, stdio: "pipe" });
 
-    const paseoHome = path.join(paseoHomeRoot, ".paseo");
-    const projectsPath = path.join(paseoHome, "projects", "projects.json");
+    const codiusHome = path.join(codiusHomeRoot, ".codius");
+    const projectsPath = path.join(codiusHome, "projects", "projects.json");
 
-    const daemon = await createTestPaseoDaemon({ paseoHomeRoot, cleanup: false });
+    const daemon = await createTestCodiusDaemon({ codiusHomeRoot, cleanup: false });
     cleanupDaemons.add(daemon);
     const client = new DaemonClient({ url: `ws://127.0.0.1:${daemon.port}/ws` });
     cleanupClients.add(client);
@@ -137,6 +139,6 @@ test("archiving the last workspace leaves the project parent with no workspaces"
       persistedProjects.find((project) => project.projectId === projectId)?.archivedAt,
     ).toBeNull();
   } finally {
-    restoreEnv("PASEO_SUPERVISED", previousSupervised);
+    restoreEnv("CODIUS_SUPERVISED", previousSupervised);
   }
 }, 30_000);

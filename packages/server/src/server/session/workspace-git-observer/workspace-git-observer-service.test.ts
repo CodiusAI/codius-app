@@ -268,7 +268,7 @@ describe("recordDescriptorState", () => {
     const titledMain = makeDescriptor({
       id: "ws1",
       workspaceDirectory: WS1,
-      name: "Paseo main",
+      name: "Codius main",
       currentBranch: "main",
     });
     h.service.syncObservers([titledMain]);

@@ -4,7 +4,7 @@ import { getDoc } from "~/docs";
 import { getLatestAndroidVersion } from "~/latest-release";
 import { buildLlmsTxt } from "~/llms";
 
-const CANONICAL_HOST = "paseo.sh";
+const CANONICAL_HOST = "codius.ai";
 
 interface WebsiteEnv {
   WEBSITE_CACHE?: KVNamespace;

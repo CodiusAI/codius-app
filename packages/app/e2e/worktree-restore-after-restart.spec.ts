@@ -52,10 +52,10 @@ test.describe("Worktree restore after daemon restart", () => {
     const nowIso = new Date().toISOString();
     await page.addInitScript(
       ({ host, preferences }) => {
-        localStorage.setItem("@paseo:e2e", "1");
-        localStorage.setItem("@paseo:daemon-registry", JSON.stringify([host]));
-        localStorage.removeItem("@paseo:settings");
-        localStorage.setItem("@paseo:create-agent-preferences", JSON.stringify(preferences));
+        localStorage.setItem("@codius:e2e", "1");
+        localStorage.setItem("@codius:daemon-registry", JSON.stringify([host]));
+        localStorage.removeItem("@codius:settings");
+        localStorage.setItem("@codius:create-agent-preferences", JSON.stringify(preferences));
       },
       {
         host: buildSeededHost({
@@ -72,7 +72,7 @@ test.describe("Worktree restore after daemon restart", () => {
   test("after archiving a worktree and restarting the daemon, History shows the worktree branch (not main) before any restore", async ({
     page,
   }) => {
-    // A paseo worktree is cut on its own branch named after the slug, and the
+    // A codius worktree is cut on its own branch named after the slug, and the
     // worktree workspace is displayed under the same name. These are the values
     // the History table cells must show after restore — never "main".
     const worktreeSlug = `restart-restore-${randomUUID().slice(0, 8)}`;

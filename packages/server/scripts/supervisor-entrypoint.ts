@@ -8,13 +8,13 @@ import {
   startPidLockHeartbeat,
   updatePidLock,
 } from "../src/server/pid-lock.js";
-import { resolvePaseoHome } from "../src/server/paseo-home.js";
+import { resolveCodiusHome } from "../src/server/codius-home.js";
 import { loadPersistedConfig } from "../src/server/persisted-config.js";
 import { runSupervisor } from "./supervisor.js";
 import { resolveSupervisorLogFile } from "./supervisor-log-config.js";
 import { applySherpaLoaderEnv } from "../src/server/speech/providers/local/sherpa/sherpa-runtime-env.js";
 
-process.title = "Paseo Supervisor";
+process.title = "Codius Supervisor";
 
 interface DaemonRunnerConfig {
   devMode: boolean;
@@ -76,9 +76,9 @@ function resolveWorkerExecArgv(workerEntry: string, devMode: boolean): string[] 
     "--heapsnapshot-near-heap-limit=3",
     "--max-old-space-size=3072",
     "--report-on-fatalerror",
-    "--report-directory=/tmp/paseo-reports",
+    "--report-directory=/tmp/codius-reports",
   ];
-  const inspectArg = process.env.PASEO_NODE_INSPECT ?? "--inspect";
+  const inspectArg = process.env.CODIUS_NODE_INSPECT ?? "--inspect";
   if (inspectArg !== "0" && inspectArg !== "false" && inspectArg !== "off") {
     devArgs.push(inspectArg);
   }
@@ -86,7 +86,7 @@ function resolveWorkerExecArgv(workerEntry: string, devMode: boolean): string[] 
 }
 
 function resolvePackagedNodeEntrypointRunnerPath(currentScriptPath: string): string | null {
-  const packageMarker = `${path.sep}node_modules${path.sep}@getpaseo${path.sep}server${path.sep}`;
+  const packageMarker = `${path.sep}node_modules${path.sep}@codius-ai${path.sep}server${path.sep}`;
   const markerIndex = currentScriptPath.lastIndexOf(packageMarker);
   if (markerIndex === -1) {
     return null;
@@ -109,12 +109,12 @@ async function main(): Promise<void> {
 
   applySherpaLoaderEnv(workerEnv);
 
-  const paseoHome = resolvePaseoHome(workerEnv);
-  const persistedConfig = loadPersistedConfig(paseoHome);
-  const supervisorLogFile = resolveSupervisorLogFile(paseoHome, persistedConfig, workerEnv);
+  const codiusHome = resolveCodiusHome(workerEnv);
+  const persistedConfig = loadPersistedConfig(codiusHome);
+  const supervisorLogFile = resolveSupervisorLogFile(codiusHome, persistedConfig, workerEnv);
 
   try {
-    await acquirePidLock(paseoHome, null, {
+    await acquirePidLock(codiusHome, null, {
       ownerPid: process.pid,
       reclaimStaleDesktopLock: config.reclaimStalePidLock,
     });
@@ -129,7 +129,7 @@ async function main(): Promise<void> {
 
   let lockReleased = false;
   let requestSupervisorShutdown: ((reason: string) => void) | null = null;
-  const stopLockHeartbeat = startPidLockHeartbeat(paseoHome, {
+  const stopLockHeartbeat = startPidLockHeartbeat(codiusHome, {
     ownerPid: process.pid,
     onError: (error) => {
       const message = error instanceof Error ? error.message : String(error);
@@ -145,7 +145,7 @@ async function main(): Promise<void> {
     }
     lockReleased = true;
     stopLockHeartbeat();
-    await releasePidLock(paseoHome, {
+    await releasePidLock(codiusHome, {
       ownerPid: process.pid,
     });
   };
@@ -175,7 +175,7 @@ async function main(): Promise<void> {
     restartOnCrash: true,
     logFile: supervisorLogFile,
     onWorkerReady: async ({ listen }) => {
-      await updatePidLock(paseoHome, { listen }, { ownerPid: process.pid });
+      await updatePidLock(codiusHome, { listen }, { ownerPid: process.pid });
     },
     onSupervisorExit: releaseLock,
   });

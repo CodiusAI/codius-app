@@ -1,6 +1,6 @@
 ---
 title: Schedules from the CLI
-description: Create and manage Paseo schedules with paseo schedule.
+description: Create and manage Codius schedules with codius schedule.
 nav: CLI
 order: 27
 category: Schedules
@@ -8,14 +8,14 @@ category: Schedules
 
 # Schedules from the CLI
 
-`paseo schedule` creates and manages new-agent [schedules](/docs/schedules) from your terminal, useful for headless boxes and scripts. Every run starts a fresh agent.
+`codius schedule` creates and manages new-agent [schedules](/docs/schedules) from your terminal, useful for headless boxes and scripts. Every run starts a fresh agent.
 
 ## Create
 
 Overnight refactor on Codex:
 
 ```bash
-paseo schedule create \
+codius schedule create \
   --every 30m \
   --name overnight-refactor \
   --provider codex/gpt-5.5 \
@@ -28,7 +28,7 @@ paseo schedule create \
 Long build babysitter on Claude:
 
 ```bash
-paseo schedule create \
+codius schedule create \
   --every 5m \
   --name build-watch \
   --provider claude/opus-4.7 \
@@ -40,7 +40,7 @@ paseo schedule create \
 Daily GitHub triage on GLM through OpenCode:
 
 ```bash
-paseo schedule create \
+codius schedule create \
   --cron "0 14 * * 1-5" \
   --timezone UTC \
   --run-now \
@@ -53,7 +53,7 @@ paseo schedule create \
 Morning triage at 9 AM in New York, including daylight saving time changes:
 
 ```bash
-paseo schedule create \
+codius schedule create \
   --cron "0 9 * * 1-5" \
   --timezone America/New_York \
   --name morning-triage \
@@ -64,10 +64,10 @@ paseo schedule create \
 
 ## Heartbeats
 
-Inside a running Paseo agent, create a heartbeat for that same conversation:
+Inside a running Codius agent, create a heartbeat for that same conversation:
 
 ```bash
-paseo heartbeat create \
+codius heartbeat create \
   --cron "*/20 * * * *" \
   --name heartbeat \
   "Check the current task state and continue with the next useful step."
@@ -76,25 +76,25 @@ paseo heartbeat create \
 The heartbeat interface is deliberately small:
 
 ```bash
-paseo heartbeat update <id> --cron "*/10 * * * *"
-paseo heartbeat delete <id>
+codius heartbeat update <id> --cron "*/10 * * * *"
+codius heartbeat delete <id>
 ```
 
-Updating a heartbeat changes only its cron cadence and optional time zone. Its target and prompt stay fixed. Heartbeat commands require `PASEO_AGENT_ID`, which Paseo sets inside agent sessions.
+Updating a heartbeat changes only its cron cadence and optional time zone. Its target and prompt stay fixed. Heartbeat commands require `CODIUS_AGENT_ID`, which Codius sets inside agent sessions.
 
 Heartbeats require a raw `--cron` expression. The `--every` presets below are available only for new-agent schedules.
 
 ## Manage
 
 ```bash
-paseo schedule ls
-paseo schedule inspect <id>
-paseo schedule logs <id>
-paseo schedule pause <id>
-paseo schedule resume <id>
-paseo schedule run-once <id>
-paseo schedule update <id> --every 10m --max-runs 6
-paseo schedule delete <id>
+codius schedule ls
+codius schedule inspect <id>
+codius schedule logs <id>
+codius schedule pause <id>
+codius schedule resume <id>
+codius schedule run-once <id>
+codius schedule update <id> --every 10m --max-runs 6
+codius schedule delete <id>
 ```
 
 ## Cadence

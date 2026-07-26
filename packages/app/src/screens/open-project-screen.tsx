@@ -4,7 +4,7 @@ import { View, Text, Pressable } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { useRouter } from "expo-router";
 import { FolderOpen, Inbox, Plug, Smartphone } from "lucide-react-native";
-import { PaseoLogo } from "@/components/icons/paseo-logo";
+import { CodiusLogo } from "@/components/icons/codius-logo";
 import { CommunityLinks } from "@/components/community-links";
 import { MenuHeader } from "@/components/headers/menu-header";
 import { useOpenAddProject } from "@/hooks/use-open-add-project";
@@ -92,7 +92,7 @@ export function OpenProjectScreen() {
       <View style={styles.content}>
         <TitlebarDragRegion />
         <View style={styles.logo}>
-          <PaseoLogo size={52} />
+          <CodiusLogo size={52} />
         </View>
         <View style={styles.tiles}>
           <HomeTile

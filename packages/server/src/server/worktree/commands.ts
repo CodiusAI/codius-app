@@ -1,6 +1,6 @@
 import { join } from "node:path";
 
-import { getPaseoWorktreesRoot, isPaseoOwnedWorktreeCwd } from "../../utils/worktree.js";
+import { getCodiusWorktreesRoot, isCodiusOwnedWorktreeCwd } from "../../utils/worktree.js";
 import {
   archiveByScope,
   resolveWorkspaceIdAtPath,
@@ -8,24 +8,24 @@ import {
   type ArchiveScope,
 } from "../workspace-archive-service.js";
 import type {
-  CreatePaseoWorktreeInput,
-  CreatePaseoWorktreeResult,
-} from "../paseo-worktree-service.js";
+  CreateCodiusWorktreeInput,
+  CreateCodiusWorktreeResult,
+} from "../codius-worktree-service.js";
 import { toWorktreeWireError, type WorktreeWireError } from "../worktree-errors.js";
 import type { WorkspaceGitService, WorkspaceGitWorktreeInfo } from "../workspace-git-service.js";
 
-export interface ListPaseoWorktreesCommandDependencies {
+export interface ListCodiusWorktreesCommandDependencies {
   workspaceGitService: Pick<WorkspaceGitService, "listWorktrees">;
 }
 
-export interface ListPaseoWorktreesCommandInput {
+export interface ListCodiusWorktreesCommandInput {
   cwd: string;
   reason?: string;
 }
 
-export async function listPaseoWorktreesCommand(
-  dependencies: ListPaseoWorktreesCommandDependencies,
-  input: ListPaseoWorktreesCommandInput,
+export async function listCodiusWorktreesCommand(
+  dependencies: ListCodiusWorktreesCommandDependencies,
+  input: ListCodiusWorktreesCommandInput,
 ): Promise<WorkspaceGitWorktreeInfo[]> {
   if (input.reason) {
     return dependencies.workspaceGitService.listWorktrees(input.cwd, { reason: input.reason });
@@ -33,27 +33,27 @@ export async function listPaseoWorktreesCommand(
   return dependencies.workspaceGitService.listWorktrees(input.cwd);
 }
 
-type CreatePaseoWorktreeWorkflow<Result extends CreatePaseoWorktreeResult> = (
-  input: CreatePaseoWorktreeInput,
+type CreateCodiusWorktreeWorkflow<Result extends CreateCodiusWorktreeResult> = (
+  input: CreateCodiusWorktreeInput,
 ) => Promise<Result>;
 
-export interface CreatePaseoWorktreeCommandDependencies<
-  Result extends CreatePaseoWorktreeResult = CreatePaseoWorktreeResult,
+export interface CreateCodiusWorktreeCommandDependencies<
+  Result extends CreateCodiusWorktreeResult = CreateCodiusWorktreeResult,
 > {
-  paseoHome?: string;
+  codiusHome?: string;
   worktreesRoot?: string;
-  createPaseoWorktreeWorkflow?: CreatePaseoWorktreeWorkflow<Result>;
+  createCodiusWorktreeWorkflow?: CreateCodiusWorktreeWorkflow<Result>;
 }
 
-export type CreatePaseoWorktreeCommandInput = Omit<
-  CreatePaseoWorktreeInput,
-  "paseoHome" | "runSetup"
+export type CreateCodiusWorktreeCommandInput = Omit<
+  CreateCodiusWorktreeInput,
+  "codiusHome" | "runSetup"
 > & {
-  paseoHome?: string;
+  codiusHome?: string;
   worktreesRoot?: string;
 };
 
-export type CreatePaseoWorktreeCommandResult<Result extends CreatePaseoWorktreeResult> =
+export type CreateCodiusWorktreeCommandResult<Result extends CreateCodiusWorktreeResult> =
   | {
       ok: true;
       createdWorktree: Result;
@@ -64,19 +64,19 @@ export type CreatePaseoWorktreeCommandResult<Result extends CreatePaseoWorktreeR
       cause: unknown;
     };
 
-export async function createPaseoWorktreeCommand<Result extends CreatePaseoWorktreeResult>(
-  dependencies: CreatePaseoWorktreeCommandDependencies<Result>,
-  input: CreatePaseoWorktreeCommandInput,
-): Promise<CreatePaseoWorktreeCommandResult<Result>> {
+export async function createCodiusWorktreeCommand<Result extends CreateCodiusWorktreeResult>(
+  dependencies: CreateCodiusWorktreeCommandDependencies<Result>,
+  input: CreateCodiusWorktreeCommandInput,
+): Promise<CreateCodiusWorktreeCommandResult<Result>> {
   try {
-    if (!dependencies.createPaseoWorktreeWorkflow) {
-      throw new Error("Paseo worktree service is not configured");
+    if (!dependencies.createCodiusWorktreeWorkflow) {
+      throw new Error("Codius worktree service is not configured");
     }
 
-    const createdWorktree = await dependencies.createPaseoWorktreeWorkflow({
+    const createdWorktree = await dependencies.createCodiusWorktreeWorkflow({
       ...input,
       runSetup: false,
-      paseoHome: input.paseoHome ?? dependencies.paseoHome,
+      codiusHome: input.codiusHome ?? dependencies.codiusHome,
       worktreesRoot: input.worktreesRoot ?? dependencies.worktreesRoot,
     });
     return { ok: true, createdWorktree };
@@ -124,9 +124,9 @@ export async function archiveCommand(
 ): Promise<ArchiveCommandResult> {
   const targetPath = await resolveArchiveTarget(dependencies, input);
   const scope = input.scope ?? "workspace";
-  const ownership = await isPaseoOwnedWorktreeCwd(targetPath, {
-    paseoHome: dependencies.paseoHome,
-    worktreesRoot: dependencies.paseoWorktreesBaseRoot,
+  const ownership = await isCodiusOwnedWorktreeCwd(targetPath, {
+    codiusHome: dependencies.codiusHome,
+    worktreesRoot: dependencies.codiusWorktreesBaseRoot,
   });
 
   if (scope === "worktree") {
@@ -134,7 +134,7 @@ export async function archiveCommand(
       return {
         ok: false,
         code: "NOT_ALLOWED",
-        message: "Worktree is not a Paseo-owned worktree",
+        message: "Worktree is not a Codius-owned worktree",
         removedAgents: [],
       };
     }
@@ -195,7 +195,7 @@ async function resolveArchiveTarget(
     const worktrees = await dependencies.workspaceGitService.listWorktrees(repoRoot);
     const match = worktrees.find((entry) => entry.branchName === input.branchName);
     if (!match) {
-      throw new Error(`Paseo worktree not found for branch ${input.branchName}`);
+      throw new Error(`Codius worktree not found for branch ${input.branchName}`);
     }
     return match.path;
   }
@@ -208,10 +208,10 @@ async function resolveWorktreeSlugPath(
   repoRoot: string,
   worktreeSlug: string,
 ): Promise<string> {
-  const worktreesRoot = await getPaseoWorktreesRoot(
+  const worktreesRoot = await getCodiusWorktreesRoot(
     repoRoot,
-    dependencies.paseoHome,
-    dependencies.paseoWorktreesBaseRoot,
+    dependencies.codiusHome,
+    dependencies.codiusWorktreesBaseRoot,
   );
   return join(worktreesRoot, worktreeSlug);
 }

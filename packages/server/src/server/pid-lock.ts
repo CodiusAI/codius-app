@@ -51,8 +51,8 @@ function isPidRunning(pid: number): boolean {
   }
 }
 
-function getPidFilePath(paseoHome: string): string {
-  return join(paseoHome, "paseo.pid");
+function getPidFilePath(codiusHome: string): string {
+  return join(codiusHome, "codius.pid");
 }
 
 async function isPidLockFresh(pidPath: string): Promise<boolean> {
@@ -105,7 +105,7 @@ function isSamePidLock(left: PidLockInfo, right: PidLockInfo): boolean {
 
 function createLockHeldError(lock: PidLockInfo): PidLockError {
   return new PidLockError(
-    `Another Paseo daemon is already running (PID ${lock.pid}, started ${lock.startedAt})`,
+    `Another Codius daemon is already running (PID ${lock.pid}, started ${lock.startedAt})`,
     lock,
   );
 }
@@ -156,7 +156,7 @@ async function writeNewPidLock(pidPath: string, lockInfo: PidLockInfo): Promise<
     const raceLock = await readPidLock(pidPath);
     if (raceLock) {
       throw new PidLockError(
-        `Another Paseo daemon is already running (PID ${raceLock.pid})`,
+        `Another Codius daemon is already running (PID ${raceLock.pid})`,
         raceLock,
       );
     }
@@ -167,15 +167,15 @@ async function writeNewPidLock(pidPath: string, lockInfo: PidLockInfo): Promise<
 }
 
 export async function acquirePidLock(
-  paseoHome: string,
+  codiusHome: string,
   listen: string | null,
   options?: AcquirePidLockOptions,
 ): Promise<void> {
-  const pidPath = getPidFilePath(paseoHome);
+  const pidPath = getPidFilePath(codiusHome);
 
-  // Ensure paseoHome directory exists
-  if (!existsSync(paseoHome)) {
-    await mkdir(paseoHome, { recursive: true });
+  // Ensure codiusHome directory exists
+  if (!existsSync(codiusHome)) {
+    await mkdir(codiusHome, { recursive: true });
   }
 
   // Try to read existing lock
@@ -198,17 +198,17 @@ export async function acquirePidLock(
     uid: process.getuid?.() ?? 0,
     listen,
     heartbeat: true,
-    ...(process.env.PASEO_DESKTOP_MANAGED === "1" ? { desktopManaged: true } : {}),
+    ...(process.env.CODIUS_DESKTOP_MANAGED === "1" ? { desktopManaged: true } : {}),
   };
 
   await writeNewPidLock(pidPath, lockInfo);
 }
 
 export async function refreshPidLock(
-  paseoHome: string,
+  codiusHome: string,
   options?: { ownerPid?: number },
 ): Promise<void> {
-  const pidPath = getPidFilePath(paseoHome);
+  const pidPath = getPidFilePath(codiusHome);
   const lockOwnerPid = resolveOwnerPid(options?.ownerPid);
   let fd;
   try {
@@ -263,7 +263,7 @@ async function readPidLockFromHandleWithRetry(fd: FileHandle): Promise<PidLockIn
 }
 
 export function startPidLockHeartbeat(
-  paseoHome: string,
+  codiusHome: string,
   options?: {
     ownerPid?: number;
     intervalMs?: number;
@@ -278,7 +278,7 @@ export function startPidLockHeartbeat(
       return;
     }
     refreshing = true;
-    refreshPidLock(paseoHome, { ownerPid: options?.ownerPid })
+    refreshPidLock(codiusHome, { ownerPid: options?.ownerPid })
       .catch((error) => {
         if (options?.onError) {
           options.onError(error);
@@ -297,11 +297,11 @@ export function startPidLockHeartbeat(
 }
 
 export async function updatePidLock(
-  paseoHome: string,
+  codiusHome: string,
   patch: { listen: string },
   options?: { ownerPid?: number },
 ): Promise<void> {
-  const pidPath = getPidFilePath(paseoHome);
+  const pidPath = getPidFilePath(codiusHome);
   const lockOwnerPid = resolveOwnerPid(options?.ownerPid);
   const fd = await open(pidPath, "r+");
   try {
@@ -328,10 +328,10 @@ export async function updatePidLock(
 }
 
 export async function releasePidLock(
-  paseoHome: string,
+  codiusHome: string,
   options?: { ownerPid?: number },
 ): Promise<void> {
-  const pidPath = getPidFilePath(paseoHome);
+  const pidPath = getPidFilePath(codiusHome);
   const lockOwnerPid = resolveOwnerPid(options?.ownerPid);
   try {
     // Only remove if it's our lock
@@ -345,15 +345,15 @@ export async function releasePidLock(
   }
 }
 
-export async function getPidLockInfo(paseoHome: string): Promise<PidLockInfo | null> {
-  const pidPath = getPidFilePath(paseoHome);
+export async function getPidLockInfo(codiusHome: string): Promise<PidLockInfo | null> {
+  const pidPath = getPidFilePath(codiusHome);
   return readPidLock(pidPath);
 }
 
 export async function isLocked(
-  paseoHome: string,
+  codiusHome: string,
 ): Promise<{ locked: boolean; info?: PidLockInfo }> {
-  const info = await getPidLockInfo(paseoHome);
+  const info = await getPidLockInfo(codiusHome);
   if (!info) {
     return { locked: false };
   }

@@ -7,7 +7,7 @@ import { getBundledCliShimPath } from "../integrations/cli-install";
 import { createDaemonCommandHandlers } from "./daemon-manager";
 
 const mocks = vi.hoisted(() => ({
-  paseoHome: "/tmp/paseo-desktop-daemon-manager-test-home",
+  codiusHome: "/tmp/codius-desktop-daemon-manager-test-home",
   settings: {
     releaseChannel: "stable",
     daemon: {
@@ -25,13 +25,13 @@ const mocks = vi.hoisted(() => ({
   spawnProcess: vi.fn(),
   logInfo: vi.fn(),
   logError: vi.fn(),
-  appLogPath: "/tmp/paseo-desktop-daemon-manager-test-main.log",
+  appLogPath: "/tmp/codius-desktop-daemon-manager-test-main.log",
   getElectronLogFile: vi.fn(),
 }));
 
 vi.mock("electron", () => ({
   app: {
-    getPath: vi.fn(() => "/tmp/paseo-user-data"),
+    getPath: vi.fn(() => "/tmp/codius-user-data"),
     getVersion: vi.fn(() => "1.2.3"),
     isPackaged: true,
   },
@@ -51,8 +51,8 @@ vi.mock("electron-log/main", () => ({
   },
 }));
 
-vi.mock("@getpaseo/server", () => ({
-  resolvePaseoHome: vi.fn(() => mocks.paseoHome),
+vi.mock("@codius-ai/server", () => ({
+  resolveCodiusHome: vi.fn(() => mocks.codiusHome),
   spawnProcess: mocks.spawnProcess,
 }));
 
@@ -121,12 +121,12 @@ describe("daemon-manager commands", () => {
     mocks.logError.mockReset();
     mocks.getElectronLogFile.mockReset();
     mocks.getElectronLogFile.mockReturnValue({ path: mocks.appLogPath });
-    rmSync(mocks.paseoHome, { recursive: true, force: true });
+    rmSync(mocks.codiusHome, { recursive: true, force: true });
     rmSync(mocks.appLogPath, { force: true });
   });
 
   afterEach(() => {
-    rmSync(mocks.paseoHome, { recursive: true, force: true });
+    rmSync(mocks.codiusHome, { recursive: true, force: true });
     rmSync(mocks.appLogPath, { force: true });
   });
 
@@ -159,7 +159,7 @@ describe("daemon-manager commands", () => {
       listen: null,
       hostname: null,
       pid: null,
-      home: mocks.paseoHome,
+      home: mocks.codiusHome,
       version: null,
       desktopManaged: false,
       error: null,
@@ -190,7 +190,7 @@ describe("daemon-manager commands", () => {
       listen: null,
       hostname: null,
       pid: null,
-      home: mocks.paseoHome,
+      home: mocks.codiusHome,
       version: null,
       desktopManaged: false,
       error: null,
@@ -268,7 +268,7 @@ describe("daemon-manager commands", () => {
       listen: null,
       hostname: null,
       pid: null,
-      home: mocks.paseoHome,
+      home: mocks.codiusHome,
       version: null,
       desktopManaged: false,
       error: null,
@@ -338,7 +338,7 @@ describe("daemon-manager commands", () => {
       listen: "127.0.0.1:6767",
       hostname: "dev-host",
       pid: null,
-      home: mocks.paseoHome,
+      home: mocks.codiusHome,
       version: "1.2.3",
       desktopManaged: true,
       error: null,
@@ -393,7 +393,7 @@ describe("daemon-manager commands", () => {
       listen: "127.0.0.1:6767",
       hostname: "dev-host",
       pid: 8888,
-      home: mocks.paseoHome,
+      home: mocks.codiusHome,
       version: "1.2.3",
       desktopManaged: true,
       error: null,
@@ -413,9 +413,9 @@ describe("daemon-manager commands", () => {
   });
 
   it("starts the managed daemon detached from desktop stdio and reports daemon log failures", async () => {
-    mkdirSync(mocks.paseoHome, { recursive: true });
+    mkdirSync(mocks.codiusHome, { recursive: true });
     writeFileSync(
-      `${mocks.paseoHome}/daemon.log`,
+      `${mocks.codiusHome}/daemon.log`,
       ["old log line", "recent daemon failure"].join("\n"),
     );
     mocks.runExternalCliJsonCommand.mockResolvedValue({
@@ -453,8 +453,8 @@ describe("daemon-manager commands", () => {
         detached: true,
         stdio: ["ignore", "ignore", "ignore"],
         envOverlay: expect.objectContaining({
-          PASEO_CLI: getBundledCliShimPath(),
-          PASEO_WEB_UI_ENABLED: "false",
+          CODIUS_CLI: getBundledCliShimPath(),
+          CODIUS_WEB_UI_ENABLED: "false",
         }),
       }),
     );

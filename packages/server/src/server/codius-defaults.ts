@@ -10,7 +10,7 @@ const CODIUS_DEFAULT_CONFIG = {
       allowedOrigins: ["https://codius.ai", "https://dev.codius.dev"],
     },
     relay: {
-      // Codius does not use Paseo's hosted relay. A Codius relay can be enabled
+      // Codius does not use Codius's hosted relay. A Codius relay can be enabled
       // explicitly after its own deployment and privacy policy are available.
       enabled: false,
     },
@@ -47,7 +47,7 @@ export function shouldSeedCodiusHomeDefaults(env: NodeJS.ProcessEnv): boolean {
   if (explicit === "1" || explicit === "true") return true;
   if (explicit === "0" || explicit === "false") return false;
 
-  // Most server tests create isolated PASEO_HOME directories and expect an
+  // Most server tests create isolated CODIUS_HOME directories and expect an
   // empty filesystem. Avoid introducing a product config into those unrelated
   // fixtures; the dedicated Codius test opts in explicitly.
   return env.NODE_ENV !== "test" && env.VITEST !== "true";
