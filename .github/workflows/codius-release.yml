@@ -47,7 +47,7 @@ jobs:
     env:
       CI: "1"
       ONNXRUNTIME_NODE_INSTALL: skip
-      CSC_IDENTITY_AUTO_DISCOVERY: ${{ (github.event_name == 'workflow_dispatch' && inputs.unsigned) && 'false' || 'true' }}
+      CSC_IDENTITY_AUTO_DISCOVERY: ${{ ((github.event_name == 'workflow_dispatch' && inputs.unsigned) || contains(github.ref_name, '-unsigned.')) && 'false' || 'true' }}
       CSC_LINK: ${{ secrets.CODIUS_CSC_LINK }}
       CSC_KEY_PASSWORD: ${{ secrets.CODIUS_CSC_KEY_PASSWORD }}
       APPLE_ID: ${{ secrets.CODIUS_APPLE_ID }}
