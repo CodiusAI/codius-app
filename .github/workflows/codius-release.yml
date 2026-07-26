@@ -87,6 +87,19 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
+      - name: Set desktop package version
+        shell: bash
+        env:
+          CODIUS_DESKTOP_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const packageJsonPath = 'packages/desktop/package.json';
+          const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+          packageJson.version = process.env.CODIUS_DESKTOP_VERSION;
+          fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
+          NODE
+
       - name: Build workspace dependencies
         run: |
           npm run build:server
@@ -101,8 +114,6 @@ jobs:
           npm run test --workspace=@getpaseo/desktop
 
       - name: Build Codius Desktop packages
-        env:
-          npm_config_version: ${{ steps.version.outputs.version }}
         run: npm run build:desktop -- --publish never
 
       - name: Verify public artifact names
