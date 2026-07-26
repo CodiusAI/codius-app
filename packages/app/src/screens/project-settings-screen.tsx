@@ -79,7 +79,7 @@ const METADATA_PROMPT_FIELDS: Record<MetadataPromptKey, MetadataPromptField> = {
   },
 };
 
-const WORKTREE_DOCS_URL = "https://paseo.sh/docs/worktrees";
+const WORKTREE_DOCS_URL = "https://codius.ai/docs/worktrees";
 
 type ReadProjectConfigData = Awaited<ReturnType<DaemonClient["readProjectConfig"]>>;
 

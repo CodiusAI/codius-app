@@ -17,8 +17,8 @@ import {
 } from "@/desktop/daemon/desktop-daemon";
 import { useCliInstall, useSkillsStatus } from "@/desktop/hooks/use-install-status";
 
-const CLI_DOCS_URL = "https://paseo.sh/docs/cli";
-const SKILLS_DOCS_URL = "https://paseo.sh/docs/skills";
+const CLI_DOCS_URL = "https://codius.ai/docs/cli";
+const SKILLS_DOCS_URL = "https://codius.ai/docs/skills";
 const OP_KIND_ORDER: Record<SkillOp["kind"], number> = { add: 0, update: 1, delete: 2 };
 const OP_KIND_LABEL_KEY: Record<SkillOp["kind"], string> = {
   add: "settings.integrations.operations.add",
