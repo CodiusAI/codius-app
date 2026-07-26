@@ -39,16 +39,21 @@ jobs:
           npm run build:app-deps
           npm run build:main --workspace=@getpaseo/desktop
       - run: npm run typecheck
-      - name: Protocol tests
-        run: npm run test --workspace=@getpaseo/protocol
-      - name: Server provider tests
-        run: npm run test --workspace=@getpaseo/server -- src/server/paseo-home.test.ts src/server/agent/provider-registry.test.ts
-      - name: Desktop tests
-        run: npm run test --workspace=@getpaseo/desktop
-      - name: App tests
-        run: npm run test --workspace=@getpaseo/app
-      - name: Daemon CLI tests
-        run: npm run test --workspace=@getpaseo/cli
+      # Focused Codius behaviour tests. The full workspace suites (protocol,
+      # server, desktop, app, cli) run in ci.yml; this job gates the
+      # Codius-specific contract so it stays fast and deterministic. Each step
+      # scopes vitest to the relevant files rather than re-running everything
+      # (npm run test:unit -- <files> => vitest run --exclude e2e <files>).
+      - name: Codius deep-link tests (protocol)
+        run: npm run test --workspace=@getpaseo/protocol -- src/agent-deep-link.test.ts
+      - name: Codius home + provider tests (server)
+        run: npm run test:unit --workspace=@getpaseo/server -- src/server/paseo-home.test.ts src/server/agent/provider-registry.test.ts
+      - name: Codius browser-profile + packaging tests (desktop)
+        run: npm run test --workspace=@getpaseo/desktop -- src/features/browser-profile.test.ts src/daemon/desktop-packaging.test.ts
+      - name: Codius default-provider preference tests (app)
+        run: npm run test --workspace=@getpaseo/app -- src/create-agent-preferences/preferences.test.ts
+      - name: Codius <-> CLI ACP integration (skips cleanly without codius on PATH)
+        run: npm run test:codius-acp --workspace=@getpaseo/desktop
       - name: Audit Codius product contract
         shell: bash
         run: |
