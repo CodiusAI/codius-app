@@ -1,174 +1,220 @@
 <p align="center">
-  <a href="https://codius.ai"><img src="assets/codius-logo.svg" alt="Codius" width="360" /></a>
+  <a href="https://codius.ai">
+    <img src="assets/codius-logo.svg" width="360" alt="Codius" />
+  </a>
 </p>
 
 <h1 align="center">Codius Desktop</h1>
-<p align="center"><strong>A local multi-agent coding workspace with Codius built in by default.</strong></p>
+
+<p align="center"><strong>A visual command center for Codius CLI and the coding agents you already use.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/prismosoft/codius-desktop/actions/workflows/codius-ci.yml"><img alt="Codius Desktop CI" src="https://img.shields.io/github/actions/workflow/status/prismosoft/codius-desktop/codius-ci.yml?branch=main&style=flat-square" /></a>
-  <a href="https://github.com/prismosoft/codius-desktop/releases"><img alt="Release" src="https://img.shields.io/github/v/release/prismosoft/codius-desktop?display_name=tag&style=flat-square" /></a>
+  <a href="https://github.com/prismosoft/codius-desktop/actions"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/prismosoft/codius-desktop/ci.yml?style=flat-square&branch=main" /></a>
+  <a href="https://github.com/prismosoft/codius-desktop/releases"><img alt="Release" src="https://img.shields.io/github/v/release/prismosoft/codius-desktop?style=flat-square" /></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/prismosoft/codius-desktop?style=flat-square" /></a>
 </p>
 
-Codius Desktop is derived from [Paseo](https://github.com/getpaseo/paseo). It preserves Paseo's workspaces, Git and worktrees, terminals, multi-agent orchestration, schedules, diffs, voice features, and visible inline browser while adding **Codius CLI as the first-party default provider**.
+Codius Desktop is an open-source desktop application derived from [Paseo](https://github.com/getpaseo/paseo). It preserves Paseo's local agent orchestration, worktrees, Git review, terminals, schedules, MCP integration, embedded browser, and visible browser automation while making **Codius CLI the first-run default provider**.
 
-## Architecture
+Users remain free to select Codex, Claude Code, GitHub Copilot, OpenCode, Pi, custom ACP agents, and other supported providers. Once a user selects another provider, Codius Desktop remembers that preference instead of forcing Codius again.
+
+## Product architecture
 
 ```text
+Codius Coding Plans
+        │
+        ▼
+Codius API — OpenAI-compatible inference
+        ▲
+        │
+Codius CLI — local coding agent and ACP server
+        ▲
+        │ Agent Client Protocol
+        │
 Codius Desktop
-  ├── workspaces, Git, worktrees and diffs
-  ├── terminal and process management
-  ├── inline browser and visible browser automation
-  ├── agent sessions, permissions and schedules
-  └── provider picker
-       ├── Codius — default
-       ├── Codex
-       ├── Claude Code
-       ├── GitHub Copilot
-       ├── OpenCode
-       ├── Pi / OMP
-       └── custom ACP providers
-               │
-               │ local ACP over stdio
-               ▼
-          codius acp
-               │
-               │ OpenAI-compatible HTTPS
-               ▼
-          Codius API
+Browser · Terminal · Git · Worktrees · Diffs · Schedules · Agents
 ```
 
-Codius Desktop does not contain model-infrastructure credentials. The Codius coding agent runs locally, and model requests go through the authenticated Codius API.
+Codius Desktop launches the default provider with:
 
-## What Codius adds
+```bash
+codius acp
+```
 
-- **Codius is selected for a fresh agent** when the CLI is available.
-- The Desktop launches Codius using `codius acp`.
-- A user's explicit choice of Codex, Claude Code, OpenCode, or another provider is remembered.
-- Codius uses its own application identity, deep links, browser profile, installers, update repository, and `~/.codius` data directory.
-- `codiusctl` is the optional Desktop daemon-management command. It is separate from the coding-agent command `codius`.
-- Legacy Paseo home and deep-link compatibility is retained where needed for migration and upstream maintainability.
+The desktop app receives streamed responses, reasoning events, model and mode discovery, permission requests, sessions, and MCP definitions over ACP. Local files, Git operations, terminals, and browser interaction stay on the user's machine.
 
-## Inline browser and automation
+## Features
 
-Browser tabs are embedded directly in the Desktop workspace. With browser tools enabled, the active agent can navigate, click, type, fill forms, upload workspace files, capture screenshots, inspect console messages, and verify multi-step application flows in the same browser tab the user can see.
+- **Codius by default:** A fresh install selects Codius CLI and its current Codius model catalog.
+- **Multi-provider:** Continue using Codex, Claude Code, Copilot, OpenCode, Pi, or custom ACP providers.
+- **Parallel agents:** Run isolated coding agents simultaneously in separate workspaces and worktrees.
+- **Inline browser:** Open development sites in browser panels beside chat, terminal, logs, and diffs.
+- **Visible browser automation:** Approved agents can navigate, click, type, fill forms, upload workspace files, inspect console/network output, and take screenshots in the same browser tab the user sees.
+- **Git workflow:** Review diffs, stage changes, commit, and continue to pull-request workflows.
+- **Schedules and loops:** Run repeatable agent tasks and orchestration flows.
+- **Local-first:** The daemon and coding agents run on infrastructure controlled by the user.
 
-Browser access is intentionally opt-in. A browser profile may contain authenticated sessions, so enable agent control only for providers and tasks you trust.
+## Codius environments
 
-## Endpoints
-
-| Environment | Website | Codius API |
-|---|---|---|
+| Environment | Website                  | OpenAI-compatible API          |
+| ----------- | ------------------------ | ------------------------------ |
 | Development | `https://dev.codius.dev` | `https://devapi.codius.dev/v1` |
-| Production | `https://codius.ai` | `https://api.codius.ai/v1` |
+| Production  | `https://codius.ai`      | `https://api.codius.ai/v1`     |
 
-## Prerequisites
+Codius CLI controls which model API environment it uses. Development and prerelease CLI builds default to the development endpoints; stable releases default to production.
 
-Install Codius CLI and connect a Codius account:
+## Requirements
+
+For the default provider, install Codius CLI and connect a Codius API key:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/prismosoft/codius-cli/dev/install | bash
 export CODIUS_API_KEY="codius_..."
+```
+
+Verify both the CLI and ACP server:
+
+```bash
 codius --version
 codius acp --help
 ```
 
-Other supported agent CLIs can be installed independently and selected from the provider picker.
+Other providers require their own local CLI, account, or API key.
 
-## Run from source
+## First launch
+
+Codius Desktop stores its daemon configuration, sessions, and workspace metadata under:
+
+```text
+~/.codius
+```
+
+Override it with:
+
+```bash
+CODIUS_HOME=/path/to/codius-home
+```
+
+`PASEO_HOME` remains available as a compatibility fallback for inherited deployments, but new Codius installations use `CODIUS_HOME` and `~/.codius`.
+
+On the first run, Desktop creates a private local configuration that:
+
+- registers `codius acp` as the Codius provider;
+- enables Codius as the fresh provider preference;
+- disables the upstream Paseo hosted relay;
+- allows the production and development Codius web origins;
+- retains all other built-in and custom providers.
+
+## Provider behavior
+
+The default selection logic is intentionally non-destructive:
+
+```text
+explicit task/provider selection
+        ↓
+saved user provider preference
+        ↓
+Codius first-run default
+```
+
+A user who chooses Claude Code, Codex, OpenCode, or another agent will continue with that provider on later launches. Codius is a default, not a lock-in mechanism.
+
+## Browser automation
+
+The embedded browser is visible inside the workspace. When browser tools are enabled for an agent, it can operate the active Codius browser profile while the user watches and can take over manually.
+
+Typical tasks include:
+
+- starting a local development server;
+- opening a branch-specific preview URL;
+- reproducing a UI bug;
+- completing a login or checkout test with an existing browser session;
+- inspecting console errors and network timing;
+- fixing code and retesting the same flow.
+
+Browser access should be enabled only for trusted agents because the Codius browser profile may contain authenticated sessions.
+
+## Desktop management CLI
+
+The desktop daemon-management command is named `codiusctl` so it does not conflict with the coding-agent command `codius`.
+
+```bash
+codiusctl status
+codiusctl run --provider codius "fix the failing tests"
+codiusctl ls
+codiusctl attach <agent-id>
+codiusctl send <agent-id> "also update the documentation"
+```
+
+Use `codius` for the coding agent itself and `codiusctl` for Desktop/daemon orchestration.
+
+## Development
 
 Requirements:
 
-- Node.js 22
+- Node.js matching the repository configuration
 - npm
-- Git
-- Codius CLI for the default provider
+- Codius CLI available on `PATH` for end-to-end provider tests
+
+Install and run:
 
 ```bash
 git clone https://github.com/prismosoft/codius-desktop.git
 cd codius-desktop
-npm ci
+npm install
+npm run dev
+```
+
+Useful commands:
+
+```bash
+npm run dev:server
+npm run dev:app
+npm run dev:desktop
+npm run build:server
+npm run typecheck
+npm test
+```
+
+Test the default ACP integration:
+
+```bash
+CODIUS_ENV=development \
+CODIUS_API_KEY="codius_..." \
 npm run dev:desktop
 ```
 
-Windows:
+The primary packages remain structurally close to upstream to keep merges practical:
 
-```powershell
-npm ci
-npm run dev:win:desktop
-```
+- `packages/server` — daemon and agent orchestration
+- `packages/app` — desktop/web/mobile-compatible application UI
+- `packages/desktop` — Electron host and packaging
+- `packages/cli` — daemon-management CLI, publicly branded `codiusctl`
+- `packages/protocol` — shared provider and transport contracts
 
-Development state is isolated from a production install. The Desktop daemon continues to accept inherited `PASEO_*` compatibility variables internally, while Codius-specific paths and public identities are used by the product layer.
+Internal package scopes may retain `@getpaseo/*` names where changing them would create unnecessary upstream merge conflicts. Public product names, executables, application IDs, installers, documentation, endpoints, and assets are Codius-branded.
 
-## First-run provider configuration
+## Release identity
 
-A Desktop-managed first launch seeds a Codius ACP provider equivalent to:
+Public releases from this repository use:
 
-```json
-{
-  "agents": {
-    "providers": {
-      "codius": {
-        "extends": "acp",
-        "label": "Codius",
-        "command": ["codius", "acp"],
-        "enabled": true
-      }
-    }
-  }
-}
-```
+- product: **Codius Desktop**;
+- repository: `prismosoft/codius-desktop`;
+- application ID: `ai.codius.desktop`;
+- deep-link protocol: `codius:`;
+- desktop management command: `codiusctl`;
+- coding agent command: `codius`;
+- data home: `~/.codius`.
 
-Normal home-path resolution does not overwrite or invent configuration. Existing user configuration always wins.
-
-## Other providers
-
-Codius Desktop retains Paseo's provider system. Codius being the default does not prevent users from using their own Codex, Claude Code, Copilot, OpenCode, Pi, OMP, or custom ACP setup. Requests are never silently moved between Codius and a personal third-party account.
-
-## Validation
-
-```bash
-npm run format:check
-npm run typecheck
-npm run test --workspace=@getpaseo/protocol
-npm run test --workspace=@getpaseo/server -- src/server/paseo-home.test.ts src/server/agent/provider-registry.test.ts
-npm run test --workspace=@getpaseo/desktop
-npm run test --workspace=@getpaseo/app
-npm run test --workspace=@getpaseo/cli
-npm run build:server
-npm run build:main --workspace=@getpaseo/desktop
-```
-
-Permanent checks are defined in `.github/workflows/codius-ci.yml`. Cross-platform release packaging is defined in `.github/workflows/codius-release.yml`; see [docs/releasing-codius.md](docs/releasing-codius.md).
-
-## Release artifacts
-
-Public builds use:
-
-- application ID: `ai.codius.desktop`
-- product name: **Codius Desktop**
-- executable: `codius-desktop`
-- deep-link scheme: `codius:`
-- Desktop controller: `codiusctl`
-- update repository: `prismosoft/codius-desktop`
-
-Stable macOS and Windows releases must be signed; macOS releases must also be notarized. The release guide lists the expected repository secrets.
-
-## Security and privacy
-
-- No infrastructure-provider key or internal routing secret belongs in the Desktop source or package.
-- Browser automation is opt-in and may access the browser profile's logged-in sessions.
-- File, terminal, and browser actions remain governed by local permission modes.
-- Review code and model-data handling before enabling unattended or full-access modes.
+Runware credentials, routing identifiers, and internal provider economics must remain in Codius server infrastructure. They must never be bundled into Desktop or Codius CLI.
 
 ## Upstream and license
 
-Codius Desktop is an independent modified version of Paseo. The covered work remains licensed under **AGPL-3.0-or-later**. Distributed binaries must include the corresponding source offer, license, notices, modification history, and required interactive legal notices. Codius is not produced by or affiliated with the Paseo maintainers.
+Codius Desktop is based on Paseo and remains licensed under AGPL-3.0. Required copyright, source, and network-use notices must be preserved in distributed builds.
 
-Generic fixes should be contributed upstream when practical. Internal `@getpaseo` package names and selected compatibility identifiers are intentionally retained to keep upstream synchronization feasible.
+Codius Desktop is maintained independently by Prismosoft and is not produced by or affiliated with the Paseo maintainers. Generic fixes should be contributed upstream when practical; Codius branding, default-provider behavior, account integration, and release infrastructure remain in this fork.
 
-Related repositories:
+## Related projects
 
-- [Codius](https://github.com/prismosoft/codius) — plans, accounts, billing, model catalog, and OpenAI-compatible API
-- [Codius CLI](https://github.com/prismosoft/codius-cli) — local coding agent and ACP server
+- [Codius](https://github.com/prismosoft/codius) — plans, dashboard, billing, metering, model catalog, and OpenAI-compatible API
+- [Codius CLI](https://github.com/prismosoft/codius-cli) — local coding agent and ACP provider used by default

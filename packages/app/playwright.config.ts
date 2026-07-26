@@ -1,5 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// Product first-run defaults deliberately disable the upstream hosted relay.
+// E2E owns an isolated relay fixture, so never seed production defaults into
+// the temporary daemon home created by global-setup.ts.
+process.env.CODIUS_SEED_DEFAULTS ??= "0";
+
 // E2E_METRO_PORT is set dynamically by global-setup.ts after finding a free port
 // This allows multiple test runs in parallel across different worktrees
 const baseURL =

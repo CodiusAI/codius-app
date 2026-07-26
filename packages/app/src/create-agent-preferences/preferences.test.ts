@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CreateAgentPreferencesService } from "./service";
 import {
+  DEFAULT_FORM_PREFERENCES,
   mergeCreateAgentSelectionPreferences,
   mergeProviderPreferences,
   parseFormPreferences,
@@ -8,6 +9,10 @@ import {
 import { FakeCreateAgentPreferenceStorage } from "./test-utils/fake-preference-storage";
 
 describe("create agent preferences", () => {
+  it("uses Codius as the first-run provider", () => {
+    expect(parseFormPreferences(undefined)).toEqual({ provider: "codius" });
+  });
+
   it("keeps the selected mode after saving model and thinking", async () => {
     const storage = new FakeCreateAgentPreferenceStorage();
     const preferences = new CreateAgentPreferencesService(storage);
@@ -114,8 +119,10 @@ describe("create agent preferences", () => {
     });
   });
 
-  it("loads invalid stored preferences as empty preferences", () => {
-    expect(parseFormPreferences({ providerPreferences: { codex: { mode: 42 } } })).toEqual({});
+  it("loads invalid stored preferences as the first-run defaults", () => {
+    expect(parseFormPreferences({ providerPreferences: { codex: { mode: 42 } } })).toEqual(
+      DEFAULT_FORM_PREFERENCES,
+    );
   });
 
   it("persists and reloads the workspace isolation choice", async () => {
@@ -127,8 +134,9 @@ describe("create agent preferences", () => {
     storage.finishOldestWrite();
     await save;
 
-    expect(storage.savedPreferences()).toEqual({ isolation: "worktree" });
+    expect(storage.savedPreferences()).toEqual({ provider: "codius", isolation: "worktree" });
     expect(await new CreateAgentPreferencesService(storage).load()).toEqual({
+      provider: "codius",
       isolation: "worktree",
     });
   });
@@ -138,6 +146,8 @@ describe("create agent preferences", () => {
   });
 
   it("rejects an unknown isolation value as invalid stored preferences", () => {
-    expect(parseFormPreferences({ provider: "codex", isolation: "sandbox" })).toEqual({});
+    expect(parseFormPreferences({ provider: "codex", isolation: "sandbox" })).toEqual(
+      DEFAULT_FORM_PREFERENCES,
+    );
   });
 });

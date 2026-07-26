@@ -6,15 +6,15 @@ Codius Desktop releases are built by `.github/workflows/codius-release.yml`.
 
 Production macOS and Windows builds require signing credentials. Configure these repository secrets before pushing a stable tag:
 
-| Secret | Purpose |
-|---|---|
-| `CODIUS_CSC_LINK` | macOS signing certificate (`.p12`) or supported electron-builder certificate reference |
-| `CODIUS_CSC_KEY_PASSWORD` | macOS signing certificate password |
-| `CODIUS_APPLE_ID` | Apple account used for notarization |
-| `CODIUS_APPLE_APP_SPECIFIC_PASSWORD` | App-specific password for notarization |
-| `CODIUS_APPLE_TEAM_ID` | Apple Developer team ID |
-| `CODIUS_WINDOWS_CSC_LINK` | Windows code-signing certificate/reference |
-| `CODIUS_WINDOWS_CSC_KEY_PASSWORD` | Windows signing certificate password |
+| Secret                               | Purpose                                                                                |
+| ------------------------------------ | -------------------------------------------------------------------------------------- |
+| `CODIUS_CSC_LINK`                    | macOS signing certificate (`.p12`) or supported electron-builder certificate reference |
+| `CODIUS_CSC_KEY_PASSWORD`            | macOS signing certificate password                                                     |
+| `CODIUS_APPLE_ID`                    | Apple account used for notarization                                                    |
+| `CODIUS_APPLE_APP_SPECIFIC_PASSWORD` | App-specific password for notarization                                                 |
+| `CODIUS_APPLE_TEAM_ID`               | Apple Developer team ID                                                                |
+| `CODIUS_WINDOWS_CSC_LINK`            | Windows code-signing certificate/reference                                             |
+| `CODIUS_WINDOWS_CSC_KEY_PASSWORD`    | Windows signing certificate password                                                   |
 
 The workflow's **unsigned** manual option is intended only for testing the packaging pipeline. Do not distribute an unsigned manual build as a stable production release.
 

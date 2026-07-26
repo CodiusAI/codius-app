@@ -24,19 +24,19 @@ function createFakeMacBundle(options: { includeHelper: boolean }): {
   root: string;
   shimPath: string;
 } {
-  const root = mkdtempSync(join(tmpdir(), "paseo-cli-shim-test-"));
-  const appPath = join(root, "Paseo.app");
+  const root = mkdtempSync(join(tmpdir(), "codius-cli-shim-test-"));
+  const appPath = join(root, "Codius Desktop.app");
   const contentsPath = join(appPath, "Contents");
   const resourcesPath = join(contentsPath, "Resources");
-  const shimPath = join(resourcesPath, "bin", "paseo");
-  const mainPath = join(contentsPath, "MacOS", "Paseo");
+  const shimPath = join(resourcesPath, "bin", "codiusctl");
+  const mainPath = join(contentsPath, "MacOS", "codius-desktop");
   const helperPath = join(
     contentsPath,
     "Frameworks",
-    "Paseo Helper.app",
+    "Codius Desktop Helper.app",
     "Contents",
     "MacOS",
-    "Paseo Helper",
+    "Codius Desktop Helper",
   );
 
   mkdirSync(dirname(shimPath), { recursive: true });
@@ -52,7 +52,7 @@ function createFakeMacBundle(options: { includeHelper: boolean }): {
       helperPath,
       [
         "#!/bin/sh",
-        'printf "helper env=%s/%s cli=%s\\n" "$ELECTRON_RUN_AS_NODE" "$PASEO_NODE_ENV" "$PASEO_CLI"',
+        'printf "helper env=%s/%s managed=%s/%s cli=%s/%s\\n" "$CODIUS_NODE_ENV" "$PASEO_NODE_ENV" "$CODIUS_DESKTOP_MANAGED" "$PASEO_DESKTOP_MANAGED" "$CODIUS_CLI" "$PASEO_CLI"',
         'printf "args=%s\\n" "$*"',
         "",
       ].join("\n"),
@@ -89,11 +89,11 @@ describe("desktop packaging", () => {
     expect(config).toContain("!node_modules/@getpaseo/server/dist/server/web-ui/**");
   });
 
-  it("registers Paseo agent links with the operating system", () => {
+  it("registers Codius agent links with the operating system", () => {
     const config = readFileSync(join(packageRoot, "electron-builder.yml"), "utf8");
 
-    expect(config).toContain("name: Paseo agent link");
-    expect(config).toContain("- paseo");
+    expect(config).toContain("name: Codius agent link");
+    expect(config).toContain("- codius");
   });
 
   // electron-builder packs production dependencies declared in package.json into
@@ -113,7 +113,7 @@ describe("desktop packaging", () => {
     }
   });
 
-  it("launches the packaged macOS CLI through Helper instead of the main app executable", () => {
+  it("launches packaged macOS codiusctl through Helper instead of the main app executable", () => {
     if (process.platform === "win32") return;
 
     const bundle = createFakeMacBundle({ includeHelper: true });
@@ -121,7 +121,9 @@ describe("desktop packaging", () => {
       const result = spawnSync(bundle.shimPath, ["--version"], { encoding: "utf8" });
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain(`helper env=1/production cli=${bundle.shimPath}`);
+      expect(result.stdout).toContain(
+        `helper env=production/production managed=1/1 cli=${bundle.shimPath}/${bundle.shimPath}`,
+      );
       expect(result.stdout).toContain("node-entrypoint-runner.js");
       expect(result.stdout).toContain("node-script");
       expect(result.stdout).toContain("@getpaseo/cli/dist/index.js");
@@ -132,7 +134,7 @@ describe("desktop packaging", () => {
     }
   });
 
-  it("fails packaged macOS CLI startup when Helper is missing", () => {
+  it("fails packaged macOS codiusctl startup when Helper is missing", () => {
     if (process.platform === "win32") return;
 
     const bundle = createFakeMacBundle({ includeHelper: false });
@@ -140,7 +142,7 @@ describe("desktop packaging", () => {
       const result = spawnSync(bundle.shimPath, ["--version"], { encoding: "utf8" });
 
       expect(result.status).toBe(1);
-      expect(result.stderr).toContain("Bundled Paseo Helper executable not found");
+      expect(result.stderr).toContain("Bundled Codius Desktop Helper executable not found");
       expect(result.stdout).not.toContain("main-executable");
     } finally {
       rmSync(bundle.root, { recursive: true, force: true });

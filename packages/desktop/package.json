@@ -2,27 +2,28 @@
   "name": "@getpaseo/desktop",
   "version": "0.2.0-beta.3",
   "private": true,
-  "description": "Paseo desktop app (Electron wrapper)",
-  "homepage": "https://paseo.sh",
+  "description": "Codius Desktop Electron application",
+  "homepage": "https://codius.ai",
   "license": "AGPL-3.0-or-later",
   "author": {
-    "name": "Mohamed Boudra",
-    "email": "hello@moboudra.com"
+    "name": "Prismosoft",
+    "email": "prismosoft@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/getpaseo/paseo.git"
+    "url": "https://github.com/prismosoft/codius-desktop.git"
   },
   "main": "dist/main.js",
   "scripts": {
     "build": "npm --prefix ../.. run build:server:clean && npm run build:main && electron-builder --config electron-builder.yml",
-    "build:main": "tsc -p tsconfig.json",
+    "build:main": "tsc -p tsconfig.json && node ./scripts/brand-codius-build.mjs",
     "capture-harness": "./capture-harness/run.sh",
     "dev": "./scripts/dev.sh",
     "dev:win": "powershell ./scripts/dev.ps1",
     "test:e2e:browser-tab-bridge": "npm run build:main && node ./scripts/browser-tab-bridge.e2e.mjs",
     "verify:electron-cdp": "node ./scripts/verify-electron-cdp.mjs",
     "test": "vitest run",
+    "test:codius-acp": "node ./scripts/codius-acp-integration.mjs",
     "typecheck": "tsgo --noEmit -p tsconfig.json"
   },
   "dependencies": {

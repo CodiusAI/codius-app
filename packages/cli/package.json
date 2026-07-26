@@ -1,9 +1,15 @@
 {
   "name": "@getpaseo/cli",
   "version": "0.2.0-beta.3",
-  "description": "Paseo CLI - control your AI coding agents from the command line",
+  "description": "Codius Desktop CLI - control local coding agents and the Codius daemon",
+  "homepage": "https://codius.ai",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prismosoft/codius-desktop.git"
+  },
   "bin": {
-    "paseo": "bin/paseo"
+    "codiusctl": "bin/paseo"
   },
   "files": [
     "bin",
@@ -21,7 +27,7 @@
     "prepack": "npm run build:clean",
     "typecheck": "tsgo --noEmit",
     "test": "npm run test:local",
-    "test:local": "tsx tests/run-all.ts",
+    "test:local": "node tests/run-all.mjs",
     "test:e2e": "npm run test:local",
     "test:e2e:lifecycle": "npx tsx tests/e2e/agent-lifecycle.test.ts"
   },

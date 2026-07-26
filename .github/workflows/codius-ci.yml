@@ -30,26 +30,35 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - run: npm run format:check
-      - run: npm run typecheck
-      - name: Protocol tests
-        run: npm run test --workspace=@getpaseo/protocol
-      - name: Server provider tests
-        run: npm run test --workspace=@getpaseo/server -- src/server/paseo-home.test.ts src/server/agent/provider-registry.test.ts
-      - name: Desktop tests
-        run: npm run test --workspace=@getpaseo/desktop
-      - name: App tests
-        run: npm run test --workspace=@getpaseo/app
-      - name: Daemon CLI tests
-        run: npm run test --workspace=@getpaseo/cli
-      - name: Build server and Electron main
+      # Workspace type declarations and app assets must be built before
+      # typecheck and the workspace test suites can resolve cross-package
+      # imports (e.g. @getpaseo/protocol/*, @getpaseo/client/internal/*).
+      - name: Build workspace dependencies
         run: |
           npm run build:server
+          npm run build:app-deps
           npm run build:main --workspace=@getpaseo/desktop
+      - run: npm run typecheck
+      # Focused Codius behaviour tests. The full workspace suites (protocol,
+      # server, desktop, app, cli) run in ci.yml; this job gates the
+      # Codius-specific contract so it stays fast and deterministic. Each step
+      # scopes vitest to the relevant files rather than re-running everything
+      # (npm run test:unit -- <files> => vitest run --exclude e2e <files>).
+      - name: Codius deep-link tests (protocol)
+        run: npm run test --workspace=@getpaseo/protocol -- src/agent-deep-link.test.ts
+      - name: Codius home + provider tests (server)
+        run: npm run test:unit --workspace=@getpaseo/server -- src/server/paseo-home.test.ts src/server/agent/provider-registry.test.ts
+      - name: Codius browser-profile + packaging tests (desktop)
+        run: npm run test --workspace=@getpaseo/desktop -- src/features/browser-profile.test.ts src/daemon/desktop-packaging.test.ts
+      - name: Codius default-provider preference tests (app)
+        run: npm run test --workspace=@getpaseo/app -- src/create-agent-preferences/preferences.test.ts
+      - name: Codius <-> CLI ACP integration (skips cleanly without codius on PATH)
+        run: npm run test:codius-acp --workspace=@getpaseo/desktop
       - name: Audit Codius product contract
         shell: bash
         run: |
           grep -q 'command: \["codius", "acp"\]' packages/server/src/server/codius-defaults.ts
-          grep -q 'allowedProviderMap.has("codius")' packages/app/src/provider-selection/resolve-agent-form.ts
+          grep -q 'DEFAULT_FORM_PREFERENCES: FormPreferences = { provider: "codius" }' packages/app/src/create-agent-preferences/preferences.ts
           grep -q 'ai.codius.desktop' packages/desktop/electron-builder.yml
           grep -q 'productName: Codius Desktop' packages/desktop/electron-builder.yml
           grep -q 'persist:codius-browser' packages/desktop/src/features/browser-profile.ts
