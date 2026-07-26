@@ -58,7 +58,7 @@ jobs:
         shell: bash
         run: |
           grep -q 'command: \["codius", "acp"\]' packages/server/src/server/codius-defaults.ts
-          grep -q 'allowedProviderMap.has("codius")' packages/app/src/provider-selection/resolve-agent-form.ts
+          grep -q 'DEFAULT_FORM_PREFERENCES: FormPreferences = { provider: "codius" }' packages/app/src/create-agent-preferences/preferences.ts
           grep -q 'ai.codius.desktop' packages/desktop/electron-builder.yml
           grep -q 'productName: Codius Desktop' packages/desktop/electron-builder.yml
           grep -q 'persist:codius-browser' packages/desktop/src/features/browser-profile.ts
