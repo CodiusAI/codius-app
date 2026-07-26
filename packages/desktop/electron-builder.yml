@@ -64,6 +64,8 @@ appImage:
   # electron-updater overwrites the file in place instead of renaming it to a new
   # versioned path. A rename would orphan the old binary and break shortcuts.
   artifactName: "Codius-Desktop-${arch}.${ext}"
+rpm:
+  packageName: codius-desktop
 win:
   artifactName: "Codius-Desktop-Setup-${version}-${arch}.${ext}"
   icon: assets/codius-icon.png
