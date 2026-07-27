@@ -127,6 +127,11 @@ export function buildSelectableProviderSelectorProviders(
 ): ProviderSelectorProvider[] {
   return (entries ?? [])
     .filter((entry) => entry.enabled)
+    .sort((left, right) => {
+      if (left.provider === "codius") return -1;
+      if (right.provider === "codius") return 1;
+      return 0;
+    })
     .map((entry) => {
       const label = entry.label ?? entry.provider;
       return {

@@ -43,8 +43,7 @@ const defaultRuntime: DaemonSelfUpdateRuntime = {
   installOrigin: daemonInstallOriginRuntime,
 };
 
-const DESKTOP_MANAGED_UPDATE_ERROR =
-  "This daemon is managed by Codius Desktop. Update Codius Desktop on the host.";
+const DESKTOP_MANAGED_UPDATE_ERROR = "This daemon is managed by Codius. Update Codius on the host.";
 
 export class DaemonSelfUpdater {
   private inProgress = false;

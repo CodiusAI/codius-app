@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// Cross-repo ACP integration check between Codius Desktop and the Codius CLI.
+// Cross-repo ACP integration check between Codius and the Codius CLI.
 //
 // It launches the Codius CLI exactly the way Desktop's built-in provider does
 // (the `["codius", "acp"]` command declared in
 // packages/server/src/server/codius-defaults.ts), speaks the real Agent Client
 // Protocol handshake over ndjson stdio, and asserts the Codius identity,
-// capabilities, authentication instructions, cancellation resilience, and clean
-// shutdown.
+// capabilities, authentication instructions, model discovery, cancellation
+// resilience, and clean shutdown.
 //
 // Behaviour:
 //   * The "missing binary produces a clear error" path is ALWAYS exercised, so
@@ -187,6 +187,22 @@ try {
   record(
     "advertises image + embedded prompt context",
     caps.promptCapabilities?.image === true && caps.promptCapabilities?.embeddedContext === true,
+  );
+
+  const session = await rpc("session/new", {
+    cwd: process.cwd(),
+    mcpServers: [],
+  });
+  const availableModels = session.result?.models?.availableModels ?? [];
+  const modelOptions =
+    session.result?.configOptions?.find(
+      (option) => option.category === "model" && option.type === "select",
+    )?.options ?? [];
+  const selectableModelCount = Math.max(availableModels.length, modelOptions.length);
+  record(
+    "session/new returns selectable models",
+    selectableModelCount > 0,
+    `models=${selectableModelCount}`,
   );
 
   // Cancellation for an unknown session must be handled without crashing.

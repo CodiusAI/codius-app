@@ -183,6 +183,25 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+      - name: Bundle Codius CLI for packaged smoke
+        if: matrix.os == 'ubuntu-latest' && steps.desktop_changes.outputs.desktop == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CODIUS_CLI_RELEASE: v1.18.4-codius.2
+        run: |
+          destination="packages/desktop/vendor/codius/linux-x64"
+          archive="$RUNNER_TEMP/codius-linux-x64.tar.gz"
+          mkdir -p "$destination"
+          gh release download "$CODIUS_CLI_RELEASE" \
+            --repo prismosoft/codius-cli \
+            --pattern "codius-linux-x64.tar.gz" \
+            --dir "$RUNNER_TEMP"
+          tar -xzf "$archive" -C "$destination"
+          chmod +x "$destination/codius"
+          "$destination/codius" --version
+          "$destination/codius" acp --help >/dev/null
+
       - name: Build and smoke unpacked desktop app
         if: matrix.os == 'ubuntu-latest' && steps.desktop_changes.outputs.desktop == 'true'
         run: npm run build:desktop -- --publish never --linux --x64 --dir

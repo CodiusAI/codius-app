@@ -6,7 +6,7 @@ const path = require("node:path");
 const { setTimeout: delay } = require("node:timers/promises");
 const { chromium } = require("playwright");
 
-const EXECUTABLE_NAME = "codius-desktop";
+const EXECUTABLE_NAME = "Codius";
 const SMOKE_TIMEOUT_MS = 60_000;
 const EXIT_TIMEOUT_MS = 10_000;
 const TERMINAL_CAPTURE_ATTEMPTS = 20;
@@ -61,6 +61,18 @@ function getCliShimPath(appPath) {
   }
 
   return path.join(appPath, "resources", "bin", "codiusctl");
+}
+
+function getCodiusProviderPath(appPath) {
+  if (process.platform === "darwin") {
+    return path.join(appPath, "Contents", "Resources", "bin", "codius");
+  }
+
+  if (process.platform === "win32") {
+    return path.join(appPath, "resources", "bin", "codius.exe");
+  }
+
+  return path.join(appPath, "resources", "bin", "codius");
 }
 
 function getMacMainExecutablePath(appPath) {
@@ -648,6 +660,25 @@ async function smokeCliShim({ appPath, env }) {
   assertCleanDaemonStatusOutput(`${result.stdout}\n${result.stderr}`);
 }
 
+function smokeCodiusProvider(appPath) {
+  const providerPath = getCodiusProviderPath(appPath);
+  assertExecutable(providerPath, "Bundled Codius provider");
+
+  for (const args of [["--version"], ["acp", "--help"]]) {
+    const result = spawnSync(providerPath, args, {
+      encoding: "utf8",
+      env: { ...process.env, CODIUS_ENV: "production" },
+    });
+    if (result.error || result.status !== 0) {
+      throw new Error(
+        `Bundled Codius provider failed: ${providerPath} ${args.join(" ")}\n${
+          result.stderr?.trim() || result.stdout?.trim() || result.error || "Unknown error"
+        }`,
+      );
+    }
+  }
+}
+
 async function smokeColdCliDaemonStart({ appPath }) {
   const home = createTempDir("codius-smoke-cli-daemon-home-");
   const pidPath = path.join(home, "codius.pid");
@@ -805,6 +836,7 @@ async function stopCliDaemon({ appPath, env }) {
 async function smokePackagedDesktopApp({ appPath }) {
   const executablePath = getExecutablePath(appPath);
   assertExecutable(executablePath, "Packaged app executable");
+  smokeCodiusProvider(appPath);
   ensureLinuxSandboxPermissions(appPath);
   await smokeColdCliDaemonStart({ appPath });
 
@@ -920,7 +952,7 @@ if (require.main === module) {
   const appIndex = process.argv.indexOf("--app");
   const appPath = appIndex >= 0 ? process.argv[appIndex + 1] : null;
   if (!appPath) {
-    process.stderr.write("Usage: node smoke-packaged-desktop-app.js --app <Codius Desktop.app>\n");
+    process.stderr.write("Usage: node smoke-packaged-desktop-app.js --app <Codius.app>\n");
     process.exit(2);
   }
 

@@ -15,7 +15,7 @@ const replacements = [
   {
     name: "application name",
     from: 'const APP_NAME = process.env.CODIUS_TEST_APP_NAME?.trim() || "Codius";',
-    to: 'const APP_NAME = process.env.CODIUS_TEST_APP_NAME?.trim() || "Codius Desktop";',
+    to: 'const APP_NAME = process.env.CODIUS_TEST_APP_NAME?.trim() || "Codius";',
   },
   {
     name: "development worktree user-data prefix",

@@ -43,7 +43,7 @@ export async function installCli(): Promise<InstallStatus> {
       "@echo off",
       `set "BUNDLED_CLI=${shimPath}"`,
       `if not exist "%BUNDLED_CLI%" (`,
-      `  echo Codius Desktop CLI not found at %BUNDLED_CLI% — is Codius Desktop installed? 1>&2`,
+      `  echo Codius CLI not found at %BUNDLED_CLI% — is Codius installed? 1>&2`,
       `  exit /b 1`,
       `)`,
       `call "%BUNDLED_CLI%" %*`,

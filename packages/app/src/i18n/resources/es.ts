@@ -2034,7 +2034,7 @@ export const es: TranslationResources = {
         },
         update: {
           desktopManagedHint:
-            "Este daemon está administrado por Codius Desktop. Actualiza Codius Desktop en el host.",
+            "Este daemon está administrado por Codius. Actualiza Codius en el host.",
           title: "Update daemon",
           hint: "Update the daemon to the latest version and restart it",
           confirm: "Update",

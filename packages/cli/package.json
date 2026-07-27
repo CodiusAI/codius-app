@@ -1,7 +1,7 @@
 {
   "name": "@codius-ai/cli",
   "version": "0.2.0-beta.3",
-  "description": "Codius Desktop CLI - control local coding agents and the Codius daemon",
+  "description": "Codius CLI - control local coding agents and the Codius daemon",
   "homepage": "https://codius.ai",
   "license": "AGPL-3.0-or-later",
   "repository": {

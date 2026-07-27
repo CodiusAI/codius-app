@@ -4,7 +4,7 @@
   </a>
 </p>
 
-<h1 align="center">Codius Desktop</h1>
+<h1 align="center">Codius</h1>
 
 <p align="center"><strong>A visual command center for Codius CLI and the coding agents you already use.</strong></p>
 
@@ -14,9 +14,9 @@
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/prismosoft/codius-desktop?style=flat-square" /></a>
 </p>
 
-Codius Desktop is an open-source visual workspace for local coding agents. It combines agent orchestration, worktrees, Git review, terminals, schedules, MCP integration, an embedded browser, and visible browser automation while making **Codius CLI the first-run default provider**.
+Codius is an open-source visual workspace for local coding agents. It combines agent orchestration, worktrees, Git review, terminals, schedules, MCP integration, an embedded browser, and visible browser automation while making **Codius CLI the first-run default provider**.
 
-Users remain free to select Codex, Claude Code, GitHub Copilot, OpenCode, Pi, custom ACP agents, and other supported providers. Once a user selects another provider, Codius Desktop remembers that preference instead of forcing Codius again.
+Users remain free to select Codex, Claude Code, GitHub Copilot, OpenCode, Pi, custom ACP agents, and other supported providers. Once a user selects another provider, Codius remembers that preference instead of forcing Codius again.
 
 ## Product architecture
 
@@ -31,11 +31,11 @@ Codius CLI — local coding agent and ACP server
         ▲
         │ Agent Client Protocol
         │
-Codius Desktop
+Codius
 Browser · Terminal · Git · Worktrees · Diffs · Schedules · Agents
 ```
 
-Codius Desktop launches the default provider with:
+Codius launches the default provider with:
 
 ```bash
 codius acp
@@ -83,7 +83,7 @@ Other providers require their own local CLI, account, or API key.
 
 ## First launch
 
-Codius Desktop stores its daemon configuration, sessions, and workspace metadata under:
+Codius stores its daemon configuration, sessions, and workspace metadata under:
 
 ```text
 ~/.codius
@@ -198,7 +198,7 @@ All internal workspaces use the `@codius-ai/*` package scope. Public product nam
 
 Public releases from this repository use:
 
-- product: **Codius Desktop**;
+- product: **Codius**;
 - repository: `prismosoft/codius-desktop`;
 - application ID: `ai.codius.desktop`;
 - deep-link protocol: `codius:`;
@@ -210,11 +210,11 @@ Runware credentials, routing identifiers, and internal provider economics must r
 
 ## License
 
-Codius Desktop is licensed under AGPL-3.0. Required copyright, source, and network-use notices must be preserved in distributed builds.
+Codius is licensed under AGPL-3.0. Required copyright, source, and network-use notices must be preserved in distributed builds.
 
 ## Related projects
 
 - [Codius](https://github.com/prismosoft/codius) — plans, dashboard, billing, metering, model catalog, and OpenAI-compatible API
 - [Codius CLI](https://github.com/prismosoft/codius-cli) — local coding agent and ACP provider used by default
 
-<sub>Upstream note: Codius Desktop began as a fork of [Paseo](https://github.com/getpaseo/paseo).</sub>
+<sub>Upstream note: Codius began as a fork of [Paseo](https://github.com/getpaseo/paseo).</sub>

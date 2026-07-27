@@ -70,7 +70,7 @@ function spawnDetached(command: string, args: string[]): void {
 
 function launchDesktop(args: string[]): void {
   if (process.env.CODIUS_DESKTOP_CLI === "1") {
-    throw new Error("Cannot open Codius Desktop while running in desktop CLI passthrough mode.");
+    throw new Error("Cannot open Codius while running in desktop CLI passthrough mode.");
   }
 
   const desktopApp = findDesktopApp();

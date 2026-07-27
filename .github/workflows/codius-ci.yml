@@ -1,4 +1,4 @@
-name: Codius Desktop CI
+name: Codius CI
 
 on:
   pull_request:
@@ -48,10 +48,10 @@ jobs:
         run: npm run test --workspace=@codius-ai/protocol -- src/agent-deep-link.test.ts
       - name: Codius home + provider tests (server)
         run: npm run test:unit --workspace=@codius-ai/server -- src/server/codius-home.test.ts src/server/agent/provider-registry.test.ts
-      - name: Codius browser-profile + packaging tests (desktop)
-        run: npm run test --workspace=@codius-ai/desktop -- src/features/browser-profile.test.ts src/daemon/desktop-packaging.test.ts
-      - name: Codius default-provider preference tests (app)
-        run: npm run test --workspace=@codius-ai/app -- src/create-agent-preferences/preferences.test.ts
+      - name: Codius provider packaging tests (desktop)
+        run: npm run test --workspace=@codius-ai/desktop -- src/features/browser-profile.test.ts src/daemon/bundled-codius-provider.test.ts src/daemon/daemon-manager.test.ts src/daemon/desktop-packaging.test.ts
+      - name: Codius default-provider tests (app)
+        run: npm run test --workspace=@codius-ai/app -- src/create-agent-preferences/preferences.test.ts src/provider-selection/provider-selection.test.ts
       - name: Codius <-> CLI ACP integration (skips cleanly without codius on PATH)
         run: npm run test:codius-acp --workspace=@codius-ai/desktop
       - name: Audit Codius product contract
@@ -60,7 +60,7 @@ jobs:
           grep -q 'command: \["codius", "acp"\]' packages/server/src/server/codius-defaults.ts
           grep -q 'DEFAULT_FORM_PREFERENCES: FormPreferences = { provider: "codius" }' packages/app/src/create-agent-preferences/preferences.ts
           grep -q 'ai.codius.desktop' packages/desktop/electron-builder.yml
-          grep -q 'productName: Codius Desktop' packages/desktop/electron-builder.yml
+          grep -q 'productName: Codius' packages/desktop/electron-builder.yml
           grep -q 'persist:codius-browser' packages/desktop/src/features/browser-profile.ts
           grep -q 'persist:codius-browser' packages/desktop/src/preload.ts
           grep -q 'codius:' packages/protocol/src/agent-deep-link.ts

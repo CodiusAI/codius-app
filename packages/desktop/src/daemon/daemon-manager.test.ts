@@ -1,10 +1,13 @@
 import { EventEmitter } from "node:events";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import path from "node:path";
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DEFAULT_DESKTOP_SETTINGS } from "../settings/desktop-settings";
 import { getBundledCliShimPath } from "../integrations/cli-install";
 import { createDaemonCommandHandlers } from "./daemon-manager";
+
+const originalResourcesPath = process.resourcesPath;
 
 const mocks = vi.hoisted(() => ({
   codiusHome: "/tmp/codius-desktop-daemon-manager-test-home",
@@ -111,11 +114,19 @@ function scheduleFailedStartup(child: MockChildProcess): void {
 
 describe("daemon-manager commands", () => {
   beforeEach(() => {
+    Object.defineProperty(process, "resourcesPath", {
+      configurable: true,
+      value: "/Applications/Codius.app/Contents/Resources",
+    });
     mocks.settings = DEFAULT_DESKTOP_SETTINGS;
     mocks.runExternalCliJsonCommand.mockReset();
     mocks.runExternalCliTextCommand.mockReset();
     mocks.createNodeEntrypointInvocation.mockReset();
-    mocks.createNodeEntrypointInvocation.mockReturnValue({ command: "node", args: [], env: {} });
+    mocks.createNodeEntrypointInvocation.mockReturnValue({
+      command: "node",
+      args: [],
+      env: {},
+    });
     mocks.spawnProcess.mockReset();
     mocks.logInfo.mockReset();
     mocks.logError.mockReset();
@@ -128,6 +139,13 @@ describe("daemon-manager commands", () => {
   afterEach(() => {
     rmSync(mocks.codiusHome, { recursive: true, force: true });
     rmSync(mocks.appLogPath, { force: true });
+  });
+
+  afterAll(() => {
+    Object.defineProperty(process, "resourcesPath", {
+      configurable: true,
+      value: originalResourcesPath,
+    });
   });
 
   it("refuses start and restart while built-in daemon management is disabled", async () => {
@@ -295,7 +313,10 @@ describe("daemon-manager commands", () => {
         listen: "127.0.0.1:6767",
         desktopManaged: true,
       })
-      .mockResolvedValueOnce({ action: "stopped", reason: "lifecycle_shutdown_rpc" })
+      .mockResolvedValueOnce({
+        action: "stopped",
+        reason: "lifecycle_shutdown_rpc",
+      })
       .mockResolvedValueOnce({
         localDaemon: "stopped",
         serverId: "",
@@ -454,7 +475,11 @@ describe("daemon-manager commands", () => {
         stdio: ["ignore", "ignore", "ignore"],
         envOverlay: expect.objectContaining({
           CODIUS_CLI: getBundledCliShimPath(),
+          CODIUS_ENV: "production",
           CODIUS_WEB_UI_ENABLED: "false",
+          PATH: expect.stringContaining(
+            path.join("/Applications/Codius.app/Contents/Resources", "bin"),
+          ),
         }),
       }),
     );

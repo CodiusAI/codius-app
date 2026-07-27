@@ -1,6 +1,6 @@
-# Releasing Codius Desktop
+# Releasing Codius
 
-Codius Desktop releases are built by `.github/workflows/codius-release.yml`.
+Codius releases are built by `.github/workflows/codius-release.yml`.
 
 ## Required repository secrets
 
@@ -16,11 +16,11 @@ Production macOS and Windows builds require signing credentials. Configure these
 | `CODIUS_WINDOWS_CSC_LINK`            | Windows code-signing certificate/reference                                             |
 | `CODIUS_WINDOWS_CSC_KEY_PASSWORD`    | Windows signing certificate password                                                   |
 
-The workflow's **unsigned** manual option is intended only for testing the packaging pipeline. Do not distribute an unsigned manual build as a stable production release.
+The workflow's **unsigned** manual option is intended only for testing the packaging pipeline. Unsigned prereleases disable macOS hardened runtime so ad-hoc-signed helper processes can launch correctly. Do not distribute an unsigned manual build as a stable production release.
 
 ## Stable release
 
-1. Confirm **Codius Desktop CI** is green on `main`.
+1. Confirm **Codius CI** is green on `main`.
 2. Confirm the matching Codius CLI release is available and that `codius acp` starts successfully.
 3. Confirm the production Codius API is available at `https://api.codius.ai/v1`.
 4. Create and push a signed SemVer tag:
@@ -28,11 +28,11 @@ The workflow's **unsigned** manual option is intended only for testing the packa
    ```bash
    git checkout main
    git pull --ff-only
-   git tag -s v1.0.0 -m "Codius Desktop 1.0.0"
+   git tag -s v1.0.0 -m "Codius 1.0.0"
    git push origin v1.0.0
    ```
 
-5. The release workflow synchronizes all workspace versions, validates source, builds Linux, Windows, Apple Silicon, and Intel macOS packages, verifies `Codius-Desktop-*` artifact names, and publishes them to GitHub Releases.
+5. The release workflow synchronizes all workspace versions, validates source, builds Linux, Windows, Apple Silicon, and Intel macOS packages, verifies `Codius-*` artifact names, and publishes them to GitHub Releases.
 6. Verify installation, update checks, deep links, `codiusctl`, `codius acp`, inline browser tabs, and browser automation on clean machines before announcement.
 
 ## Security checklist

@@ -1994,8 +1994,7 @@ export const en = {
           dialogFailedMessage: "Unable to open the restart confirmation dialog.",
         },
         update: {
-          desktopManagedHint:
-            "This daemon is managed by Codius Desktop. Update Codius Desktop on the host.",
+          desktopManagedHint: "This daemon is managed by Codius. Update Codius on the host.",
           title: "Update daemon",
           hint: "Update the daemon to the latest version and restart it",
           confirm: "Update",

@@ -176,6 +176,7 @@ export default {
           resizeMode: "contain",
           backgroundColor: "#ffffff",
           dark: {
+            image: "./assets/images/splash-icon-dark.png",
             backgroundColor: "#000000",
           },
         },

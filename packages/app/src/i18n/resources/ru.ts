@@ -2023,8 +2023,7 @@ export const ru: TranslationResources = {
           dialogFailedMessage: "Невозможно открыть диалоговое окно подтверждения перезапуска.",
         },
         update: {
-          desktopManagedHint:
-            "Этот демон управляется Codius Desktop. Обновите Codius Desktop на хосте.",
+          desktopManagedHint: "Этот демон управляется Codius. Обновите Codius на хосте.",
           title: "Update daemon",
           hint: "Update the daemon to the latest version and restart it",
           confirm: "Update",

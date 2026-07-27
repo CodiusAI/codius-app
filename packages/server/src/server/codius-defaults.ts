@@ -10,8 +10,8 @@ const CODIUS_DEFAULT_CONFIG = {
       allowedOrigins: ["https://codius.ai", "https://dev.codius.dev"],
     },
     relay: {
-      // Codius does not use Codius's hosted relay. A Codius relay can be enabled
-      // explicitly after its own deployment and privacy policy are available.
+      // Codius does not enable a hosted relay by default. One can be enabled
+      // explicitly after its deployment and privacy policy are available.
       enabled: false,
     },
   },
@@ -25,6 +25,9 @@ const CODIUS_DEFAULT_CONFIG = {
         label: "Codius",
         description: "Codius CLI with Codius coding plans and model routing",
         command: ["codius", "acp"],
+        env: {
+          CODIUS_ENV: "production",
+        },
         enabled: true,
         order: -100,
         params: {
