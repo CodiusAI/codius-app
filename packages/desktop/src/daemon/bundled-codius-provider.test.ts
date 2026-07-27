@@ -4,16 +4,16 @@ import { createBundledCodiusProviderEnv } from "./bundled-codius-provider";
 
 describe("bundled Codius provider environment", () => {
   it("prepends the packaged resource bin directory to PATH", () => {
+    const resourcesPath = "/Applications/Codius.app/Contents/Resources";
+
     expect(
       createBundledCodiusProviderEnv({
         isPackaged: true,
-        resourcesPath: "/Applications/Codius.app/Contents/Resources",
+        resourcesPath,
         env: { PATH: "/usr/local/bin:/usr/bin" },
       }),
     ).toEqual({
-      PATH: ["/Applications/Codius.app/Contents/Resources/bin", "/usr/local/bin:/usr/bin"].join(
-        path.delimiter,
-      ),
+      PATH: [path.join(resourcesPath, "bin"), "/usr/local/bin:/usr/bin"].join(path.delimiter),
     });
   });
 
