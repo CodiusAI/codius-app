@@ -13,7 +13,7 @@ describe("server config", () => {
     await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
   });
 
-  test("records when the daemon is managed by Codius Desktop", async () => {
+  test("records when the daemon is managed by Codius", async () => {
     const codiusHome = await mkdtemp(path.join(os.tmpdir(), "codius-config-desktop-managed-"));
     roots.push(codiusHome);
 

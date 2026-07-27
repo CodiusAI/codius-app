@@ -33,18 +33,16 @@ find_executable() {
 
 if [ -d "${MACOS_DIR}" ]; then
   APP_EXECUTABLE=$(find_executable \
-    "${RESOURCES_DIR}/../Frameworks/Codius Desktop Helper.app/Contents/MacOS/Codius Desktop Helper" \
-    "${RESOURCES_DIR}/../Frameworks/codius-desktop Helper.app/Contents/MacOS/codius-desktop Helper" \
+    "${RESOURCES_DIR}/../Frameworks/Codius Helper.app/Contents/MacOS/Codius Helper" \
   ) || {
-    echo "Bundled Codius Desktop Helper executable not found under ${RESOURCES_DIR}/../Frameworks" >&2
+    echo "Bundled Codius Helper executable not found under ${RESOURCES_DIR}/../Frameworks" >&2
     exit 1
   }
 else
   APP_EXECUTABLE=$(find_executable \
-    "${RESOURCES_DIR}/../codius-desktop" \
-    "${RESOURCES_DIR}/../Codius Desktop" \
+    "${RESOURCES_DIR}/../Codius" \
   ) || {
-    echo "Bundled Codius Desktop executable not found relative to ${RESOURCES_DIR}" >&2
+    echo "Bundled Codius executable not found relative to ${RESOURCES_DIR}" >&2
     exit 1
   }
 fi

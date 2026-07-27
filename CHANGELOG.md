@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.0-beta.4 - 2026-07-27
+
+### Added
+
+- Package the Codius CLI with the desktop app so the default Codius provider works without a separate CLI install
+
+### Improved
+
+- Put Codius first in the provider picker and keep it as the first-run default
+- Use the official Codius mark and the product name **Codius** across app surfaces and installers
+
+### Fixed
+
+- Validate real ACP model discovery during releases
+- Make unsigned macOS prerelease builds launch correctly without hardened-runtime signing conflicts
+
 ## 0.2.0-beta.3 - 2026-07-22
 
 ### Added
@@ -98,11 +114,11 @@
 
 > **Important update notice**
 >
-> If you installed Codius Desktop 0.1.108, you need to [download and reinstall Codius manually](https://codius.ai/download) to get this fix. The bug in 0.1.108 prevents its automatic updater from installing 0.1.109. Users on 0.1.107 or earlier can update normally.
+> If you installed Codius 0.1.108, you need to [download and reinstall Codius manually](https://codius.ai/download) to get this fix. The bug in 0.1.108 prevents its automatic updater from installing 0.1.109. Users on 0.1.107 or earlier can update normally.
 
 ### Fixed
 
-- Codius Desktop no longer gets stuck connecting or loses native window controls after updating ([#2111](https://github.com/prismosoft/codius-desktop/pull/2111) by [@cleiter](https://github.com/cleiter))
+- Codius no longer gets stuck connecting or loses native window controls after updating ([#2111](https://github.com/prismosoft/codius-desktop/pull/2111) by [@cleiter](https://github.com/cleiter))
 
 ## 0.1.108 - 2026-07-16
 
@@ -132,7 +148,7 @@
 - Background-agent updates now appear after the main reply ([#2058](https://github.com/prismosoft/codius-desktop/pull/2058) by [@1254087415](https://github.com/1254087415))
 - Codex subagents no longer disappear from the Subagents track ([#2068](https://github.com/prismosoft/codius-desktop/pull/2068))
 - Forked chats open ready to edit in their new tab ([#2038](https://github.com/prismosoft/codius-desktop/pull/2038))
-- Codius Desktop opens normally after an interrupted shutdown ([#1962](https://github.com/prismosoft/codius-desktop/pull/1962))
+- Codius opens normally after an interrupted shutdown ([#1962](https://github.com/prismosoft/codius-desktop/pull/1962))
 - Keyboard shortcuts now work with `-`, `=`, `;`, and `'` ([#2047](https://github.com/prismosoft/codius-desktop/pull/2047) by [@OnCloud125252](https://github.com/OnCloud125252))
 - Codebuddy Code models now appear in the model picker ([#1979](https://github.com/prismosoft/codius-desktop/pull/1979) by [@park0er](https://github.com/park0er))
 - Workspace search now includes OpenCode commands and workflows ([#2049](https://github.com/prismosoft/codius-desktop/pull/2049))

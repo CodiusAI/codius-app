@@ -108,7 +108,7 @@ test.describe("Settings host page", () => {
     const updateCard = page.getByTestId("host-page-update-card");
     await expect(updateCard).toBeVisible();
     await expect(updateCard).toContainText(
-      "This daemon is managed by Codius Desktop. Update Codius Desktop on the host.",
+      "This daemon is managed by Codius. Update Codius on the host.",
     );
     await expect(page.getByTestId("host-page-update-button")).toBeDisabled();
   });

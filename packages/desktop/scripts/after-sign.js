@@ -2,7 +2,7 @@ const path = require("node:path");
 
 const { smokePackagedDesktopApp } = require("./smoke-packaged-desktop-app.js");
 
-const APP_BUNDLE_NAME = "codius-desktop";
+const APP_BUNDLE_NAME = "Codius";
 
 exports.default = async function afterSign(context) {
   if (process.env.CODIUS_DESKTOP_SMOKE !== "1") {

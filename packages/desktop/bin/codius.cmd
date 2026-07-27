@@ -3,10 +3,9 @@ setlocal
 
 set "SCRIPT_DIR=%~dp0"
 set "RESOURCES_DIR=%SCRIPT_DIR%.."
-set "APP_EXECUTABLE=%RESOURCES_DIR%\..\codius-desktop.exe"
-if not exist "%APP_EXECUTABLE%" set "APP_EXECUTABLE=%RESOURCES_DIR%\..\Codius Desktop.exe"
+set "APP_EXECUTABLE=%RESOURCES_DIR%\..\Codius.exe"
 if not exist "%APP_EXECUTABLE%" (
-  echo Bundled Codius Desktop executable not found relative to %RESOURCES_DIR% 1>&2
+  echo Bundled Codius executable not found relative to %RESOURCES_DIR% 1>&2
   exit /b 1
 )
 

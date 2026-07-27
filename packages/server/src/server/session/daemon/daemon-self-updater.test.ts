@@ -108,7 +108,7 @@ describe("DaemonSelfUpdater", () => {
 
     expect(result).toEqual({
       success: false,
-      error: "This daemon is managed by Codius Desktop. Update Codius Desktop on the host.",
+      error: "This daemon is managed by Codius. Update Codius on the host.",
       newVersion: null,
     });
     expect(phases).toEqual([]);

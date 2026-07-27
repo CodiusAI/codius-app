@@ -390,7 +390,7 @@ npm run cli -- ls -a -g              # List all agents globally
 npm run cli -- ls -a -g --json       # Same, as JSON
 npm run cli -- inspect <id>          # Show detailed agent info
 npm run cli -- logs <id>             # View agent timeline
-npm run cli -- agent open <id>       # Focus an existing agent in Codius Desktop
+npm run cli -- agent open <id>       # Focus an existing agent in Codius
 npm run cli -- daemon status         # Check daemon status
 npm run cli -- clone owner/repo --dir ~/workspace # Clone GitHub repo and register project
 ```

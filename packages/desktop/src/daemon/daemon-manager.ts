@@ -34,6 +34,7 @@ import {
   sendLocalTransportMessage,
   closeLocalTransportSession,
 } from "./local-transport.js";
+import { createBundledCodiusProviderEnv } from "./bundled-codius-provider.js";
 import { createNodeEntrypointInvocation, resolveDaemonRunnerEntrypoint } from "./runtime-paths.js";
 import { runExternalCliJsonCommand, runExternalCliTextCommand } from "./cli/external.js";
 import {
@@ -418,8 +419,14 @@ async function startDaemon(): Promise<DesktopDaemonStatus> {
     envMode: "internal",
     env: invocation.env,
     envOverlay: {
+      ...createBundledCodiusProviderEnv({
+        isPackaged: app.isPackaged,
+        resourcesPath: process.resourcesPath,
+        env: invocation.env,
+      }),
       CODIUS_DESKTOP_MANAGED: "1",
       CODIUS_CLI: getBundledCliShimPath(),
+      CODIUS_ENV: "production",
       CODIUS_WEB_UI_ENABLED: "false",
     },
     stdio: ["ignore", "ignore", "ignore"],

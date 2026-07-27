@@ -1,7 +1,7 @@
 npmRebuild: false
 appId: ai.codius.desktop
-productName: Codius Desktop
-executableName: codius-desktop
+productName: Codius
+executableName: Codius
 protocols:
   - name: Codius agent link
     schemes:
@@ -32,7 +32,7 @@ publish:
   owner: prismosoft
   repo: codius-desktop
 mac:
-  artifactName: "Codius-Desktop-${version}-${arch}.${ext}"
+  artifactName: "Codius-${version}-${arch}.${ext}"
   category: public.app-category.developer-tools
   icon: assets/codius-icon.png
   hardenedRuntime: true
@@ -42,18 +42,22 @@ mac:
   extraResources:
     - from: bin/codius
       to: bin/codiusctl
+    - from: vendor/codius/darwin-${arch}/codius
+      to: bin/codius
   target:
     - dmg
     - zip
 linux:
   category: Development
   icon: assets/codius-icon.png
-  artifactName: "Codius-Desktop-${version}-${arch}.${ext}"
+  artifactName: "Codius-${version}-${arch}.${ext}"
   maintainer: "Prismosoft <prismosoft@gmail.com>"
   vendor: "Codius"
   extraResources:
     - from: bin/codius
       to: bin/codiusctl
+    - from: vendor/codius/linux-${arch}/codius
+      to: bin/codius
   target:
     - AppImage
     - deb
@@ -63,15 +67,17 @@ appImage:
   # Keep the AppImage filename stable across versions (no ${version}) so
   # electron-updater overwrites the file in place instead of renaming it to a new
   # versioned path. A rename would orphan the old binary and break shortcuts.
-  artifactName: "Codius-Desktop-${arch}.${ext}"
+  artifactName: "Codius-${arch}.${ext}"
 rpm:
   packageName: codius-desktop
 win:
-  artifactName: "Codius-Desktop-Setup-${version}-${arch}.${ext}"
+  artifactName: "Codius-Setup-${version}-${arch}.${ext}"
   icon: assets/codius-icon.png
   extraResources:
     - from: bin/codius.cmd
       to: bin/codiusctl.cmd
+    - from: vendor/codius/win32-${arch}/codius.exe
+      to: bin/codius.exe
   target:
     - target: nsis
       arch:

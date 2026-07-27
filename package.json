@@ -2,7 +2,7 @@
   "name": "codius-desktop",
   "version": "0.2.0-beta.3",
   "private": true,
-  "description": "Codius Desktop: a visual workspace for Codius CLI and local AI coding agents",
+  "description": "Codius: the open-source workspace for local AI coding agents",
   "keywords": [
     "acp",
     "browser-automation",

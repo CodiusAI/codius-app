@@ -110,6 +110,22 @@ describe("combined model selector data", () => {
     ).toEqual([]);
   });
 
+  it("places Codius first while preserving the relative order of other providers", () => {
+    const providers = buildSelectableProviderSelectorProviders([
+      snapshotEntry({ provider: "claude", label: "Claude" }),
+      snapshotEntry({ provider: "codex", label: "Codex" }),
+      snapshotEntry({ provider: "codius", label: "Codius" }),
+      snapshotEntry({ provider: "opencode", label: "OpenCode" }),
+    ]);
+
+    expect(providers.map((provider) => provider.id)).toEqual([
+      "codius",
+      "claude",
+      "codex",
+      "opencode",
+    ]);
+  });
+
   it("surfaces non-ready providers with their state-specific selection", () => {
     expect(
       buildSelectableProviderSelectorProviders([

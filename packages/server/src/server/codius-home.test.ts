@@ -29,6 +29,9 @@ describe.skipIf(process.platform === "win32")("Codius home permissions and defau
       expect(config.agents.providers.codius).toMatchObject({
         extends: "acp",
         command: ["codius", "acp"],
+        env: {
+          CODIUS_ENV: "production",
+        },
         enabled: true,
       });
     } finally {

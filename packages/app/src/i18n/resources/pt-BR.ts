@@ -2017,8 +2017,7 @@ export const ptBR: TranslationResources = {
           dialogFailedMessage: "Não foi possível abrir o diálogo de confirmação de reinício.",
         },
         update: {
-          desktopManagedHint:
-            "Este daemon é gerenciado pelo Codius Desktop. Atualize o Codius Desktop no host.",
+          desktopManagedHint: "Este daemon é gerenciado pelo Codius. Atualize o Codius no host.",
           title: "Atualizar daemon",
           hint: "Atualiza o daemon para a versão mais recente e o reinicia",
           confirm: "Atualizar",

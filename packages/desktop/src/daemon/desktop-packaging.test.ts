@@ -25,18 +25,18 @@ function createFakeMacBundle(options: { includeHelper: boolean }): {
   shimPath: string;
 } {
   const root = mkdtempSync(join(tmpdir(), "codius-cli-shim-test-"));
-  const appPath = join(root, "Codius Desktop.app");
+  const appPath = join(root, "Codius.app");
   const contentsPath = join(appPath, "Contents");
   const resourcesPath = join(contentsPath, "Resources");
   const shimPath = join(resourcesPath, "bin", "codiusctl");
-  const mainPath = join(contentsPath, "MacOS", "codius-desktop");
+  const mainPath = join(contentsPath, "MacOS", "Codius");
   const helperPath = join(
     contentsPath,
     "Frameworks",
-    "Codius Desktop Helper.app",
+    "Codius Helper.app",
     "Contents",
     "MacOS",
-    "Codius Desktop Helper",
+    "Codius Helper",
   );
 
   mkdirSync(dirname(shimPath), { recursive: true });
@@ -96,6 +96,16 @@ describe("desktop packaging", () => {
     expect(config).toContain("- codius");
   });
 
+  it("ships the Codius coding CLI for every packaged platform", () => {
+    const config = readFileSync(join(packageRoot, "electron-builder.yml"), "utf8");
+
+    expect(config).toContain("vendor/codius/darwin-${arch}/codius");
+    expect(config).toContain("vendor/codius/linux-${arch}/codius");
+    expect(config).toContain("vendor/codius/win32-${arch}/codius.exe");
+    expect(config.match(/to: bin\/codius$/gm)).toHaveLength(2);
+    expect(config).toContain("to: bin/codius.exe");
+  });
+
   // electron-builder packs production dependencies declared in package.json into
   // app.asar. Runtime code in runtime-paths.ts and bin/codius dynamically resolves
   // these workspace packages by string, so static analysis (TypeScript, Knip) cannot
@@ -140,7 +150,7 @@ describe("desktop packaging", () => {
       const result = spawnSync(bundle.shimPath, ["--version"], { encoding: "utf8" });
 
       expect(result.status).toBe(1);
-      expect(result.stderr).toContain("Bundled Codius Desktop Helper executable not found");
+      expect(result.stderr).toContain("Bundled Codius Helper executable not found");
       expect(result.stdout).not.toContain("main-executable");
     } finally {
       rmSync(bundle.root, { recursive: true, force: true });

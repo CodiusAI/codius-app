@@ -102,7 +102,7 @@ fs.writeFileSync(path, JSON.stringify(cfg, null, 2));
 
 Write-Host @"
 ======================================================
-  Codius Desktop Dev (Windows)
+  Codius Dev (Windows)
 ======================================================
   Metro:       http://localhost:$($env:EXPO_PORT)
   CDP:         http://127.0.0.1:$RemoteDebuggingPort

@@ -50,7 +50,7 @@ export function createCli(): Command {
 
   program
     .name("codiusctl")
-    .description("Codius Desktop CLI - control local coding agents and the Codius daemon")
+    .description("Codius CLI - control local coding agents and the Codius daemon")
     .version(VERSION, "-v, --version", "output the version number")
     // Global output options
     .option("-o, --format <format>", "output format: table, json, yaml", "table")

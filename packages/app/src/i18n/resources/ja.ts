@@ -2003,7 +2003,7 @@ export const ja: TranslationResources = {
         },
         update: {
           desktopManagedHint:
-            "このデーモンはCodius Desktopによって管理されています。ホスト上のCodius Desktopを更新してください。",
+            "このデーモンはCodiusによって管理されています。ホスト上のCodiusを更新してください。",
           title: "デーモンを更新",
           hint: "デーモンを最新バージョンに更新して再起動します",
           confirm: "更新",

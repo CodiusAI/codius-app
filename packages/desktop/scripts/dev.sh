@@ -31,7 +31,7 @@ export CODIUS_CORS_ORIGINS="${CODIUS_CORS_ORIGINS:-*}"
 npm run build:main
 
 echo "══════════════════════════════════════════════════════"
-echo "  Codius Desktop Dev"
+echo "  Codius Dev"
 echo "══════════════════════════════════════════════════════"
 echo "  Metro:      ${EXPO_DEV_URL}"
 echo "  CDP:        http://127.0.0.1:${REMOTE_DEBUGGING_PORT}"
