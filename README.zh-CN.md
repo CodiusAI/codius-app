@@ -11,11 +11,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/prismosoft/codius-desktop/stargazers">
-    <img src="https://img.shields.io/github/stars/prismosoft/codius-desktop?style=flat&logo=github" alt="GitHub stars">
+  <a href="https://github.com/CodiusAI/codius-app/stargazers">
+    <img src="https://img.shields.io/github/stars/CodiusAI/codius-app?style=flat&logo=github" alt="GitHub stars">
   </a>
-  <a href="https://github.com/prismosoft/codius-desktop/releases">
-    <img src="https://img.shields.io/github/v/release/prismosoft/codius-desktop?style=flat&logo=github" alt="GitHub release">
+  <a href="https://github.com/CodiusAI/codius-app/releases">
+    <img src="https://img.shields.io/github/v/release/CodiusAI/codius-app?style=flat&logo=github" alt="GitHub release">
   </a>
   <a href="https://x.com/moboudra">
     <img src="https://img.shields.io/badge/%40moboudra-555?logo=x" alt="X">
@@ -68,7 +68,7 @@ Codius 会运行一个名为 daemon 的本地服务，用来管理你的 coding 
 
 ### 桌面 app（推荐）
 
-从 [codius.ai/download](https://codius.ai/download) 或 [GitHub releases 页面](https://github.com/prismosoft/codius-desktop/releases)下载。打开 app 后 daemon 会自动启动，不需要再安装其他东西。
+从 [codius.ai/download](https://codius.ai/download) 或 [GitHub releases 页面](https://github.com/CodiusAI/codius-app/releases)下载。打开 app 后 daemon 会自动启动，不需要再安装其他东西。
 
 如果要从手机连接，在 Settings 中扫描显示的二维码。
 
@@ -111,7 +111,7 @@ codius --host workstation.local:6767 run "run the full test suite"
 Skills 会教你的 agent 使用 Codius 来编排其他 agents。
 
 ```bash
-npx skills add prismosoft/codius-desktop
+npx skills add CodiusAI/codius-app
 ```
 
 然后在任意 agent 对话中使用：
@@ -205,11 +205,11 @@ server {
 ---
 
 <p align="center">
-  <a href="https://star-history.com/#prismosoft/codius-desktop&Date">
+  <a href="https://star-history.com/#CodiusAI/codius-app&Date">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=prismosoft/codius-desktop&type=Date&theme=dark">
-      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=prismosoft/codius-desktop&type=Date">
-      <img src="https://api.star-history.com/svg?repos=prismosoft/codius-desktop&type=Date" alt="Star history chart for prismosoft/codius-desktop" width="600" style="max-width: 100%;">
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=CodiusAI/codius-app&type=Date&theme=dark">
+      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=CodiusAI/codius-app&type=Date">
+      <img src="https://api.star-history.com/svg?repos=CodiusAI/codius-app&type=Date" alt="Star history chart for CodiusAI/codius-app" width="600" style="max-width: 100%;">
     </picture>
   </a>
 </p>

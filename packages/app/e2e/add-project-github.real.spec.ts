@@ -37,9 +37,9 @@ test.describe("Add Project GitHub flow", () => {
       await openAddProjectFlow(page);
       await chooseAddProjectMethod(page, "github");
 
-      await addProjectFlowInput(page).fill("prismosoft/codius-desktop");
+      await addProjectFlowInput(page).fill("CodiusAI/codius-app");
       await expect(
-        addProjectFlow(page).getByText("prismosoft/codius-desktop", { exact: true }),
+        addProjectFlow(page).getByText("CodiusAI/codius-app", { exact: true }),
       ).toBeVisible({
         timeout: 30_000,
       });

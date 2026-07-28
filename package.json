@@ -14,7 +14,7 @@
   ],
   "homepage": "https://codius.ai",
   "bugs": {
-    "url": "https://github.com/prismosoft/codius-desktop/issues"
+    "url": "https://github.com/CodiusAI/codius-app/issues"
   },
   "license": "AGPL-3.0-or-later",
   "author": {
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/prismosoft/codius-desktop.git"
+    "url": "https://github.com/CodiusAI/codius-app.git"
   },
   "workspaces": [
     "packages/expo-two-way-audio",

@@ -2,25 +2,25 @@ import { describe, expect, it } from "vitest";
 
 import { extractGithubRefs, normalizeGithubRemote, parseGithubRef } from "./github-refs";
 
-const httpsRemote = "https://github.com/prismosoft/codius-desktop.git";
-const sshRemote = "git@github.com:prismosoft/codius-desktop.git";
+const httpsRemote = "https://github.com/CodiusAI/codius-app.git";
+const sshRemote = "git@github.com:CodiusAI/codius-app.git";
 
 describe("normalizeGithubRemote", () => {
   it.each([
     [
-      "https://github.com/prismosoft/codius-desktop",
+      "https://github.com/CodiusAI/codius-app",
       { owner: "prismosoft", repo: "codius-desktop", host: "github.com" },
     ],
     [
-      "https://github.com/prismosoft/codius-desktop.git",
+      "https://github.com/CodiusAI/codius-app.git",
       { owner: "prismosoft", repo: "codius-desktop", host: "github.com" },
     ],
     [
-      "git@github.com:prismosoft/codius-desktop.git",
+      "git@github.com:CodiusAI/codius-app.git",
       { owner: "prismosoft", repo: "codius-desktop", host: "github.com" },
     ],
     [
-      "ssh://git@github.com/prismosoft/codius-desktop.git",
+      "ssh://git@github.com/CodiusAI/codius-app.git",
       { owner: "prismosoft", repo: "codius-desktop", host: "github.com" },
     ],
   ])("extracts GitHub identity from %s", (remoteUrl, expected) => {
@@ -28,49 +28,47 @@ describe("normalizeGithubRemote", () => {
   });
 
   it("returns null for non-GitHub remotes and empty input", () => {
-    expect(normalizeGithubRemote("git@gitlab.com:prismosoft/codius-desktop.git")).toBeNull();
+    expect(normalizeGithubRemote("git@gitlab.com:CodiusAI/codius-app.git")).toBeNull();
     expect(normalizeGithubRemote(null)).toBeNull();
   });
 });
 
 describe("parseGithubRef", () => {
   it.each([
-    "https://github.com/prismosoft/codius-desktop/pull/994",
-    "https://github.com/prismosoft/codius-desktop/pull/994/",
-    "https://github.com/prismosoft/codius-desktop/pull/994/files",
-    "https://github.com/prismosoft/codius-desktop/pull/994?diff=split",
-    "https://github.com/prismosoft/codius-desktop/pull/994#discussion_r123",
+    "https://github.com/CodiusAI/codius-app/pull/994",
+    "https://github.com/CodiusAI/codius-app/pull/994/",
+    "https://github.com/CodiusAI/codius-app/pull/994/files",
+    "https://github.com/CodiusAI/codius-app/pull/994?diff=split",
+    "https://github.com/CodiusAI/codius-app/pull/994#discussion_r123",
   ])("parses a matching pull request URL: %s", (text) => {
     expect(parseGithubRef(text, httpsRemote)).toEqual({
       kind: "pull",
       number: 994,
       owner: "prismosoft",
       repo: "codius-desktop",
-      url: "https://github.com/prismosoft/codius-desktop/pull/994",
+      url: "https://github.com/CodiusAI/codius-app/pull/994",
     });
   });
 
   it("parses a matching issue URL", () => {
     expect(
-      parseGithubRef("https://github.com/prismosoft/codius-desktop/issues/456", httpsRemote),
+      parseGithubRef("https://github.com/CodiusAI/codius-app/issues/456", httpsRemote),
     ).toEqual({
       kind: "issues",
       number: 456,
       owner: "prismosoft",
       repo: "codius-desktop",
-      url: "https://github.com/prismosoft/codius-desktop/issues/456",
+      url: "https://github.com/CodiusAI/codius-app/issues/456",
     });
   });
 
   it("matches HTTPS pasted URLs against an SSH remote", () => {
-    expect(
-      parseGithubRef("https://github.com/prismosoft/codius-desktop/pull/994", sshRemote),
-    ).toEqual({
+    expect(parseGithubRef("https://github.com/CodiusAI/codius-app/pull/994", sshRemote)).toEqual({
       kind: "pull",
       number: 994,
       owner: "prismosoft",
       repo: "codius-desktop",
-      url: "https://github.com/prismosoft/codius-desktop/pull/994",
+      url: "https://github.com/CodiusAI/codius-app/pull/994",
     });
   });
 
@@ -82,20 +80,18 @@ describe("parseGithubRef", () => {
   it("returns null for non-GitHub remotes and empty text", () => {
     expect(
       parseGithubRef(
-        "https://github.com/prismosoft/codius-desktop/pull/994",
-        "git@gitlab.com:prismosoft/codius-desktop.git",
+        "https://github.com/CodiusAI/codius-app/pull/994",
+        "git@gitlab.com:CodiusAI/codius-app.git",
       ),
     ).toBeNull();
     expect(parseGithubRef("", httpsRemote)).toBeNull();
-    expect(
-      parseGithubRef("https://github.com/prismosoft/codius-desktop/pull/994", null),
-    ).toBeNull();
+    expect(parseGithubRef("https://github.com/CodiusAI/codius-app/pull/994", null)).toBeNull();
   });
 
   it("finds URLs embedded in text and markdown links", () => {
     expect(
       parseGithubRef(
-        "See:\n[the PR](https://github.com/prismosoft/codius-desktop/pull/994/files).",
+        "See:\n[the PR](https://github.com/CodiusAI/codius-app/pull/994/files).",
         httpsRemote,
       ),
     ).toEqual({
@@ -103,7 +99,7 @@ describe("parseGithubRef", () => {
       number: 994,
       owner: "prismosoft",
       repo: "codius-desktop",
-      url: "https://github.com/prismosoft/codius-desktop/pull/994",
+      url: "https://github.com/CodiusAI/codius-app/pull/994",
     });
   });
 });
@@ -111,9 +107,9 @@ describe("parseGithubRef", () => {
 describe("extractGithubRefs", () => {
   it("returns every matching ref deduped by kind and number", () => {
     const text = [
-      "https://github.com/prismosoft/codius-desktop/pull/994",
-      "https://github.com/prismosoft/codius-desktop/issues/456#issuecomment-1",
-      "https://github.com/prismosoft/codius-desktop/pull/994/files",
+      "https://github.com/CodiusAI/codius-app/pull/994",
+      "https://github.com/CodiusAI/codius-app/issues/456#issuecomment-1",
+      "https://github.com/CodiusAI/codius-app/pull/994/files",
       "https://github.com/other/codius/issues/1",
     ].join("\n");
 
@@ -123,22 +119,20 @@ describe("extractGithubRefs", () => {
         number: 994,
         owner: "prismosoft",
         repo: "codius-desktop",
-        url: "https://github.com/prismosoft/codius-desktop/pull/994",
+        url: "https://github.com/CodiusAI/codius-app/pull/994",
       },
       {
         kind: "issues",
         number: 456,
         owner: "prismosoft",
         repo: "codius-desktop",
-        url: "https://github.com/prismosoft/codius-desktop/issues/456",
+        url: "https://github.com/CodiusAI/codius-app/issues/456",
       },
     ]);
   });
 
   it("returns an empty array for empty text or null remote", () => {
     expect(extractGithubRefs("", httpsRemote)).toEqual([]);
-    expect(
-      extractGithubRefs("https://github.com/prismosoft/codius-desktop/pull/994", null),
-    ).toEqual([]);
+    expect(extractGithubRefs("https://github.com/CodiusAI/codius-app/pull/994", null)).toEqual([]);
   });
 });

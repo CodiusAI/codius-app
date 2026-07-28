@@ -30,7 +30,7 @@ docker run -d --name codius \
   -e CODIUS_PASSWORD=change-me \
   -v "$PWD/codius-home:/home/codius" \
   -v "$PWD:/workspace" \
-  ghcr.io/prismosoft/codius-desktop:latest
+  ghcr.io/CodiusAI/codius-app:latest
 ```
 
 Then open:
@@ -57,7 +57,7 @@ Minimal example:
 ```yaml
 services:
   codius:
-    image: ghcr.io/prismosoft/codius-desktop:latest
+    image: ghcr.io/CodiusAI/codius-app:latest
     restart: unless-stopped
     ports:
       - "6767:6767"
@@ -77,7 +77,7 @@ releases to third-party agent release cycles.
 Create a child image for the agents you use:
 
 ```Dockerfile
-FROM ghcr.io/prismosoft/codius-desktop:latest
+FROM ghcr.io/CodiusAI/codius-app:latest
 
 USER root
 RUN npm install -g @openai/codex @anthropic-ai/claude-code opencode-ai
@@ -204,9 +204,9 @@ docker build \
 
 The Docker workflow builds the image on pull requests and on `main` as a
 non-publishing check. Stable `vX.Y.Z` tag pushes publish
-`ghcr.io/prismosoft/codius-desktop:X.Y.Z` and `ghcr.io/prismosoft/codius-desktop:latest`. Beta tags
+`ghcr.io/CodiusAI/codius-app:X.Y.Z` and `ghcr.io/CodiusAI/codius-app:latest`. Beta tags
 publish only the exact prerelease tag, such as
-`ghcr.io/prismosoft/codius-desktop:0.1.102-beta.1`, and do not update `latest`.
+`ghcr.io/CodiusAI/codius-app:0.1.102-beta.1`, and do not update `latest`.
 
 To replace a Docker image in place without rebuilding desktop, APK, or EAS
 mobile release artifacts, dispatch the Docker workflow manually instead of

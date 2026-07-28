@@ -12,7 +12,7 @@ const renderDiscordIcon = (color: string) => <DiscordIcon color={color} size={14
 
 export function CommunityLinks() {
   const handleOpenGitHub = useCallback(() => {
-    void openExternalUrl("https://github.com/prismosoft/codius-desktop");
+    void openExternalUrl("https://github.com/CodiusAI/codius-app");
   }, []);
 
   const handleOpenSponsor = useCallback(() => {

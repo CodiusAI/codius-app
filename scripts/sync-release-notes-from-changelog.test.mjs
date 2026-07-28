@@ -28,7 +28,7 @@ test("updates an existing release body through the release id API", () => {
 
       if (
         args[0] === "api" &&
-        args[1] === "repos/prismosoft/codius-desktop/releases/tags/v0.1.60-beta.1"
+        args[1] === "repos/CodiusAI/codius-app/releases/tags/v0.1.60-beta.1"
       ) {
         return JSON.stringify({ id: 311163621 });
       }
@@ -44,7 +44,7 @@ test("updates an existing release body through the release id API", () => {
       throw new Error(`Unexpected gh call: ${command} ${args.join(" ")}`);
     };
 
-    syncReleaseNotes(["--repo", "prismosoft/codius-desktop", "--tag", "v0.1.60-beta.1"], {
+    syncReleaseNotes(["--repo", "CodiusAI/codius-app", "--tag", "v0.1.60-beta.1"], {
       execFileSync,
     });
 
@@ -59,7 +59,7 @@ test("updates an existing release body through the release id API", () => {
           call.args[0] === "api" &&
           call.args[1] === "-X" &&
           call.args[2] === "PATCH" &&
-          call.args[3] === "repos/prismosoft/codius-desktop/releases/311163621",
+          call.args[3] === "repos/CodiusAI/codius-app/releases/311163621",
       ),
       true,
       "existing releases should be patched by release id",
@@ -71,7 +71,7 @@ test("converts contributor profile links to mentions in synced release notes", (
   const changelogText = [
     "## 0.1.60-beta.1 - 2026-04-20",
     "",
-    "- Beta notes. ([#526](https://github.com/prismosoft/codius-desktop/pull/526) by [@therainisme](https://github.com/therainisme))",
+    "- Beta notes. ([#526](https://github.com/CodiusAI/codius-app/pull/526) by [@therainisme](https://github.com/therainisme))",
     "",
   ].join("\n");
 
@@ -81,7 +81,7 @@ test("converts contributor profile links to mentions in synced release notes", (
     const execFileSync = (command, args) => {
       if (
         args[0] === "api" &&
-        args[1] === "repos/prismosoft/codius-desktop/releases/tags/v0.1.60-beta.1"
+        args[1] === "repos/CodiusAI/codius-app/releases/tags/v0.1.60-beta.1"
       ) {
         return JSON.stringify({ id: 311163621 });
       }
@@ -96,7 +96,7 @@ test("converts contributor profile links to mentions in synced release notes", (
       throw new Error(`Unexpected gh call: ${command} ${args.join(" ")}`);
     };
 
-    syncReleaseNotes(["--repo", "prismosoft/codius-desktop", "--tag", "v0.1.60-beta.1"], {
+    syncReleaseNotes(["--repo", "CodiusAI/codius-app", "--tag", "v0.1.60-beta.1"], {
       execFileSync,
     });
 

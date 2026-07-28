@@ -12,7 +12,7 @@ Codius runs your coding agents on your machine and gives you a mobile, desktop, 
 
 ## Desktop app (recommended)
 
-Download from [codius.ai/download](https://codius.ai/download) or the [GitHub releases page](https://github.com/prismosoft/codius-desktop/releases). Open it and you're done.
+Download from [codius.ai/download](https://codius.ai/download) or the [GitHub releases page](https://github.com/CodiusAI/codius-app/releases). Open it and you're done.
 
 The desktop app bundles its own daemon and starts it automatically, no separate install required. On first launch you'll see a brief startup screen, then connect from your phone using **Settings → your host → Connections → Pair a device**.
 
@@ -41,7 +41,7 @@ docker run -d --name codius \
   -e CODIUS_PASSWORD=change-me \
   -v "$PWD/codius-home:/home/codius" \
   -v "$PWD:/workspace" \
-  ghcr.io/prismosoft/codius-desktop:latest
+  ghcr.io/CodiusAI/codius-app:latest
 ```
 
 Then open `http://localhost:6767`.
@@ -56,8 +56,8 @@ The image runs the daemon and serves the bundled web UI. It does not bundle agen
 - [Orchestration](/docs/orchestration), let one agent delegate work to other providers and models.
 - [CLI reference](/docs/cli), every command.
 - [Self-hosting the web UI](/docs/web-ui), serve the browser app from your own daemon.
-- [GitHub repo](https://github.com/prismosoft/codius-desktop)
-- [Report an issue](https://github.com/prismosoft/codius-desktop/issues)
+- [GitHub repo](https://github.com/CodiusAI/codius-app)
+- [Report an issue](https://github.com/CodiusAI/codius-app/issues)
 
 ## Prerequisites
 

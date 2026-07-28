@@ -54,7 +54,7 @@ function fakeGitService() {
     isGit: true,
     repoRoot: "/tmp/repo",
     currentBranch: "feature/scripts",
-    remoteUrl: "https://github.com/prismosoft/codius-desktop.git",
+    remoteUrl: "https://github.com/CodiusAI/codius-app.git",
     hasRemote: true,
   };
 

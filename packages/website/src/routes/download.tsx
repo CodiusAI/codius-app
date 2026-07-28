@@ -185,7 +185,7 @@ function Download() {
               <TerminalIcon className="h-5 w-5 text-foreground" />
               <span className="font-medium">Nix</span>
             </div>
-            <CodeBlock size="sm">nix run github:prismosoft/codius-desktop</CodeBlock>
+            <CodeBlock size="sm">nix run github:CodiusAI/codius-app</CodeBlock>
           </div>
         </div>
       </section>
@@ -193,7 +193,7 @@ function Download() {
       <p className="text-center text-xs text-muted-foreground mt-8">
         All releases are available on{" "}
         <a
-          href="https://github.com/prismosoft/codius-desktop/releases"
+          href="https://github.com/CodiusAI/codius-app/releases"
           target="_blank"
           rel="noopener noreferrer"
           className="underline hover:text-foreground transition-colors"

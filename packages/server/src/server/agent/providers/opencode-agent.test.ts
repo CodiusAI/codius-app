@@ -1023,7 +1023,7 @@ describe("OpenCode adapter context-window normalization", () => {
         mimeType: "application/github-issue",
         number: 55,
         title: "Improve startup error details",
-        url: "https://github.com/prismosoft/codius-desktop/issues/55",
+        url: "https://github.com/CodiusAI/codius-app/issues/55",
         body: "Issue body",
       },
     ]);

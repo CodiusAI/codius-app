@@ -37,10 +37,10 @@ describe("deriveProjectDisplayName", () => {
   it("shows owner/repo for GitHub remote keys", () => {
     expect(
       deriveProjectDisplayName({
-        projectKey: "remote:github.com/prismosoft/codius-desktop",
+        projectKey: "remote:github.com/CodiusAI/codius-app",
         projectName: "codius",
       }),
-    ).toBe("prismosoft/codius-desktop");
+    ).toBe("CodiusAI/codius-app");
   });
 
   it("shows remote path for non-GitHub remote keys", () => {
@@ -70,7 +70,7 @@ describe("groupAgents", () => {
     ];
 
     const { activeGroups } = groupAgents(agents, {
-      getRemoteUrl: () => "git@github.com:prismosoft/codius-desktop.git",
+      getRemoteUrl: () => "git@github.com:CodiusAI/codius-app.git",
     });
 
     expect(activeGroups).toHaveLength(1);

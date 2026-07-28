@@ -151,7 +151,7 @@ buildNpmPackage rec {
 
   meta = {
     description = "Codius desktop app (Electron wrapper)";
-    homepage = "https://github.com/prismosoft/codius-desktop";
+    homepage = "https://github.com/CodiusAI/codius-app";
     license = lib.licenses.agpl3Plus;
     mainProgram = "codius-desktop";
     platforms = lib.platforms.linux;

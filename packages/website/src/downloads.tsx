@@ -1,7 +1,7 @@
 import * as React from "react";
 
 export function releaseBase(version: string) {
-  return `https://github.com/prismosoft/codius-desktop/releases/download/v${version}`;
+  return `https://github.com/CodiusAI/codius-app/releases/download/v${version}`;
 }
 
 export interface ReleaseAssetInfo {

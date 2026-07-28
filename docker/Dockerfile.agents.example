@@ -5,7 +5,7 @@
 #
 # Then set `image: codius-with-agents` in docker/docker-compose.example.yml.
 
-FROM ghcr.io/prismosoft/codius-desktop:latest
+FROM ghcr.io/CodiusAI/codius-app:latest
 
 USER root
 RUN npm install -g \

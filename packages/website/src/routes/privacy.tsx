@@ -77,7 +77,7 @@ function Privacy() {
           <p>
             If you have questions about privacy, open an issue on{" "}
             <a
-              href="https://github.com/prismosoft/codius-desktop"
+              href="https://github.com/CodiusAI/codius-app"
               target="_blank"
               rel="noopener noreferrer"
               className="underline hover:text-white/90"

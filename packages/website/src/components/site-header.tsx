@@ -59,7 +59,7 @@ export function SiteHeader() {
           </svg>
         </a>
         <a
-          href="https://github.com/prismosoft/codius-desktop"
+          href="https://github.com/CodiusAI/codius-app"
           target="_blank"
           rel="noopener noreferrer"
           aria-label={stars ? `GitHub, ${stars} stars` : "GitHub"}

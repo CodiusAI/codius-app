@@ -36,7 +36,7 @@ const githubStatus: CheckoutPrStatus["github"] = {
 const baseStatus: CheckoutPrStatus = {
   forge: "github",
   number: 42,
-  url: "https://github.com/prismosoft/codius-desktop/pull/42",
+  url: "https://github.com/CodiusAI/codius-app/pull/42",
   title: "Wire PR pane data",
   state: "open",
   baseRefName: "main",
@@ -76,7 +76,7 @@ describe("mapPrPaneData", () => {
     const data = mapPrPaneData(
       status({
         number: undefined,
-        url: "https://github.com/prismosoft/codius-desktop/pull/1284",
+        url: "https://github.com/CodiusAI/codius-app/pull/1284",
       }),
       timeline({ prNumber: 1284 }),
     );
@@ -87,7 +87,7 @@ describe("mapPrPaneData", () => {
   it("returns null when status has no number and no parseable PR URL", () => {
     expect(
       mapPrPaneData(
-        status({ number: undefined, url: "https://github.com/prismosoft/codius-desktop" }),
+        status({ number: undefined, url: "https://github.com/CodiusAI/codius-app" }),
         null,
       ),
     ).toBeNull();
@@ -174,7 +174,7 @@ describe("mapPrPaneData", () => {
           {
             name: "server-tests",
             status: "failure",
-            url: "https://github.com/prismosoft/codius-desktop/actions/runs/456/job/789",
+            url: "https://github.com/CodiusAI/codius-app/actions/runs/456/job/789",
             checkRunId: 12345,
             workflowRunId: 456,
           },
@@ -188,7 +188,7 @@ describe("mapPrPaneData", () => {
         provider: "github",
         name: "server-tests",
         status: "failure",
-        url: "https://github.com/prismosoft/codius-desktop/actions/runs/456/job/789",
+        url: "https://github.com/CodiusAI/codius-app/actions/runs/456/job/789",
         detailRef: { checkRunId: 12345, workflowRunId: 456 },
       },
     ]);
@@ -257,7 +257,7 @@ describe("mapPrPaneData", () => {
             avatarUrl: "https://avatars.githubusercontent.com/u/3?v=4",
             body: "This should include line context.",
             createdAt: Date.UTC(2026, 0, 1, 11, 0, 0),
-            url: "https://github.com/prismosoft/codius-desktop/pull/42#discussion_r1",
+            url: "https://github.com/CodiusAI/codius-app/pull/42#discussion_r1",
             location: {
               path: "packages/app/src/git/pull-request-panel/data.ts",
               line: 24,
@@ -283,7 +283,7 @@ describe("mapPrPaneData", () => {
         avatarUrl: "https://avatars.githubusercontent.com/u/3?v=4",
         body: "This should include line context.",
         age: "1h ago",
-        url: "https://github.com/prismosoft/codius-desktop/pull/42#discussion_r1",
+        url: "https://github.com/CodiusAI/codius-app/pull/42#discussion_r1",
         location: {
           path: "packages/app/src/git/pull-request-panel/data.ts",
           line: 24,

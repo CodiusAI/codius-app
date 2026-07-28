@@ -14,7 +14,7 @@ A self-hosted daemon manages agent lifecycle, exposes a WebSocket API, and ships
 
 Codius supports every major coding agent: Claude Code, Codex, GitHub Copilot, OpenCode, Cursor, Gemini, Cline, Goose, Amp, Aider, and 30+ others. Each agent runs as its own process; Codius handles I/O, persistence, git worktree isolation, schedules, and skills.
 
-Distribution: native apps for Mac, Windows, Linux, iOS, and Android; web app; Homebrew; npm. Source: AGPL-3.0 at https://github.com/prismosoft/codius-desktop. Marketing site: https://codius.ai.
+Distribution: native apps for Mac, Windows, Linux, iOS, and Android; web app; Homebrew; npm. Source: AGPL-3.0 at https://github.com/CodiusAI/codius-app. Marketing site: https://codius.ai.
 `;
 
 function docLine(doc: Doc): string {
@@ -63,6 +63,6 @@ ${agents}
 - [Codius Cloud](${SITE_URL}/cloud): Waitlist for the hosted multi-user version of Codius.
 - [Blog](${SITE_URL}/blog): Updates and technical posts from the Codius team.
 - [Privacy](${SITE_URL}/privacy): Privacy policy.
-- [GitHub](https://github.com/prismosoft/codius-desktop): Source code, issues, and releases.
+- [GitHub](https://github.com/CodiusAI/codius-app): Source code, issues, and releases.
 `;
 }

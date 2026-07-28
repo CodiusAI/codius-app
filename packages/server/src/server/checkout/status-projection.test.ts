@@ -14,7 +14,7 @@ describe("checkout status projection", () => {
         number: 123,
         repoOwner: "internal-owner",
         repoName: "internal-repo",
-        url: "https://github.com/prismosoft/codius-desktop/pull/123",
+        url: "https://github.com/CodiusAI/codius-app/pull/123",
         title: "Ship PR pane",
         state: "open",
         baseRefName: "main",
@@ -26,7 +26,7 @@ describe("checkout status projection", () => {
           {
             name: "typecheck",
             status: "success",
-            url: "https://github.com/prismosoft/codius-desktop/actions/runs/1",
+            url: "https://github.com/CodiusAI/codius-app/actions/runs/1",
             workflow: "CI",
             duration: "1m 20s",
           },
@@ -51,7 +51,7 @@ describe("checkout status projection", () => {
         number: 993,
         repoOwner: "prismosoft",
         repoName: "codius-desktop",
-        url: "https://github.com/prismosoft/codius-desktop/pull/993",
+        url: "https://github.com/CodiusAI/codius-app/pull/993",
         title: "Auto-merge UX",
         state: "open",
         baseRefName: "main",
@@ -63,7 +63,7 @@ describe("checkout status projection", () => {
           {
             name: "server tests",
             status: "pending",
-            url: "https://github.com/prismosoft/codius-desktop/actions/runs/993",
+            url: "https://github.com/CodiusAI/codius-app/actions/runs/993",
             workflow: "CI",
           },
         ],
@@ -93,7 +93,7 @@ describe("checkout status projection", () => {
 
     expect(payload).toMatchObject({
       forge: "github",
-      projectPath: "prismosoft/codius-desktop",
+      projectPath: "CodiusAI/codius-app",
       number: 993,
       mergeable: "MERGEABLE",
       checksStatus: "pending",

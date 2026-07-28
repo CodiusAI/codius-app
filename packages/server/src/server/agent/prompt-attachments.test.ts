@@ -20,7 +20,7 @@ describe("prompt attachments", () => {
       mimeType: "application/github-issue",
       number: 55,
       title: "Issue",
-      url: "https://github.com/prismosoft/codius-desktop/issues/55",
+      url: "https://github.com/CodiusAI/codius-app/issues/55",
     };
 
     expect(
@@ -44,7 +44,7 @@ describe("prompt attachments", () => {
         mimeType: "application/github-pr",
         number: 123,
         title: "Fix race in worktree setup",
-        url: "https://github.com/prismosoft/codius-desktop/pull/123",
+        url: "https://github.com/CodiusAI/codius-app/pull/123",
         body: "PR body",
         baseRefName: "main",
         headRefName: "fix/worktree-race",
@@ -60,9 +60,9 @@ describe("prompt attachments", () => {
         forge: "gitlab",
         number: 123,
         title: "Fix race in worktree setup",
-        url: "https://gitlab.com/prismosoft/codius-desktop/-/merge_requests/123",
+        url: "https://gitlab.com/CodiusAI/codius-app/-/merge_requests/123",
         body: "MR body",
-        projectPath: "prismosoft/codius-desktop",
+        projectPath: "CodiusAI/codius-app",
         baseRefName: "main",
         headRefName: "fix/worktree-race",
       }),
@@ -131,7 +131,7 @@ describe("prompt attachments", () => {
         mimeType: "application/github-issue",
         number: 55,
         title: "Issue",
-        url: "https://github.com/prismosoft/codius-desktop/issues/55",
+        url: "https://github.com/CodiusAI/codius-app/issues/55",
       }),
     ).toContain("GitHub Issue #55: Issue");
   });
@@ -184,14 +184,14 @@ describe("prompt attachments", () => {
             mimeType: "application/github-pr",
             number: 123,
             title: "Fix worktree naming",
-            url: "https://github.com/prismosoft/codius-desktop/pull/123",
+            url: "https://github.com/CodiusAI/codius-app/pull/123",
             baseRefName: "main",
             headRefName: "fix/worktree-naming",
           },
         ],
       }),
     ).toBe(
-      "<user-prompt>\nInvestigate flaky test\n</user-prompt>\n\n<attachments>\nGitHub PR #123: Fix worktree naming\nhttps://github.com/prismosoft/codius-desktop/pull/123\nBase: main\nHead: fix/worktree-naming\n</attachments>",
+      "<user-prompt>\nInvestigate flaky test\n</user-prompt>\n\n<attachments>\nGitHub PR #123: Fix worktree naming\nhttps://github.com/CodiusAI/codius-app/pull/123\nBase: main\nHead: fix/worktree-naming\n</attachments>",
     );
   });
 });

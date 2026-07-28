@@ -76,7 +76,7 @@ function launchDesktop(args: string[]): void {
   const desktopApp = findDesktopApp();
   if (!desktopApp) {
     throw new Error(
-      "Codius desktop app not found. Install it from https://github.com/prismosoft/codius-desktop/releases",
+      "Codius desktop app not found. Install it from https://github.com/CodiusAI/codius-app/releases",
     );
   }
 

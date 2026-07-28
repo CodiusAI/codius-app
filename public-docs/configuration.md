@@ -53,7 +53,7 @@ Minimal example that configures listening address, hostnames, and MCP:
 
 Agent providers, both the first-class ones Codius ships with and custom entries you add under `agents.providers`, are documented on their own page.
 
-See [Providers](/docs/providers) for the mental model and [Supported providers](/docs/supported-providers) for the full list of agents Codius can launch. For pointing Claude at Anthropic-compatible endpoints (Z.AI, Alibaba/Qwen), multiple profiles, custom binaries, ACP agents, and the `additionalModels` merge behavior, see [Custom providers](/docs/custom-providers). The full field reference lives on GitHub at [docs/custom-providers.md](https://github.com/prismosoft/codius-desktop/blob/main/docs/custom-providers.md).
+See [Providers](/docs/providers) for the mental model and [Supported providers](/docs/supported-providers) for the full list of agents Codius can launch. For pointing Claude at Anthropic-compatible endpoints (Z.AI, Alibaba/Qwen), multiple profiles, custom binaries, ACP agents, and the `additionalModels` merge behavior, see [Custom providers](/docs/custom-providers). The full field reference lives on GitHub at [docs/custom-providers.md](https://github.com/CodiusAI/codius-app/blob/main/docs/custom-providers.md).
 
 ## Worktrees
 

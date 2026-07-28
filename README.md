@@ -11,8 +11,8 @@
 <p align="center"><strong>A visual command center for Codius CLI and the coding agents you already use.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/prismosoft/codius-desktop/actions/workflows/codius-ci.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/prismosoft/codius-desktop/codius-ci.yml?style=flat-square&branch=main" /></a>
-  <a href="https://github.com/prismosoft/codius-desktop/releases"><img alt="Release" src="https://img.shields.io/github/v/release/prismosoft/codius-desktop?include_prereleases&style=flat-square" /></a>
+  <a href="https://github.com/CodiusAI/codius-app/actions/workflows/codius-ci.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/CodiusAI/codius-app/codius-ci.yml?style=flat-square&branch=main" /></a>
+  <a href="https://github.com/CodiusAI/codius-app/releases"><img alt="Release" src="https://img.shields.io/github/v/release/CodiusAI/codius-app?include_prereleases&style=flat-square" /></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-AGPL--3.0-blue?style=flat-square" /></a>
 </p>
 
@@ -70,7 +70,7 @@ Codius CLI controls which model API environment it uses. Development and prerele
 For the default provider, install Codius CLI and connect a Codius API key:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/prismosoft/codius-cli/dev/install | bash
+curl -fsSL https://raw.githubusercontent.com/CodiusAI/codius-cli/dev/install | bash
 export CODIUS_API_KEY="codius_..."
 ```
 
@@ -161,7 +161,7 @@ Requirements:
 Install and run:
 
 ```bash
-git clone https://github.com/prismosoft/codius-desktop.git
+git clone https://github.com/CodiusAI/codius-app.git
 cd codius-desktop
 npm install
 npm run dev
@@ -201,7 +201,7 @@ All internal workspaces use the `@codius-ai/*` package scope. Public product nam
 Public releases from this repository use:
 
 - product: **Codius**;
-- repository: `prismosoft/codius-desktop`;
+- repository: `CodiusAI/codius-app`;
 - application ID: `ai.codius.desktop`;
 - deep-link protocol: `codius:`;
 - desktop management command: `codiusctl`;
@@ -216,7 +216,7 @@ Codius is licensed under AGPL-3.0. Required copyright, source, and network-use n
 
 ## Related projects
 
-- [Codius](https://github.com/prismosoft/codius) — plans, dashboard, billing, metering, model catalog, and OpenAI-compatible API
-- [Codius CLI](https://github.com/prismosoft/codius-cli) — local coding agent and ACP provider used by default
+- [Codius](https://github.com/CodiusAI/codius-platform) — plans, dashboard, billing, metering, model catalog, and OpenAI-compatible API
+- [Codius CLI](https://github.com/CodiusAI/codius-cli) — local coding agent and ACP provider used by default
 
 <sub>Upstream note: Codius began as a fork of [Paseo](https://github.com/getpaseo/paseo).</sub>

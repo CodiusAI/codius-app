@@ -301,7 +301,7 @@ function printNextSteps(pairingUrl: string | null, codiusHome: string, richUi: b
       ? "1. Open Codius and scan the QR code above, or paste the pairing link."
       : "1. Open Codius and connect to your daemon.",
     "2. Web app: https://app.codius.ai",
-    "3. Desktop app: https://github.com/prismosoft/codius-desktop/releases/latest",
+    "3. Desktop app: https://github.com/CodiusAI/codius-app/releases/latest",
     "4. Docs: https://codius.ai/docs",
     '5. Example: codiusctl run --output-schema schema.json "extract fields"',
   ];

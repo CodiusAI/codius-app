@@ -28,12 +28,12 @@ describe("GitHub repository search", () => {
         {
           id: " R_recent ",
           name: " codius ",
-          nameWithOwner: " prismosoft/codius-desktop ",
+          nameWithOwner: " CodiusAI/codius-app ",
           description: null,
           visibility: "PUBLIC",
           updatedAt: "2026-07-15T12:00:00Z",
-          sshUrl: " git@github.com:prismosoft/codius-desktop.git ",
-          url: "https://github.com/prismosoft/codius-desktop",
+          sshUrl: " git@github.com:CodiusAI/codius-app.git ",
+          url: "https://github.com/CodiusAI/codius-app",
         },
       ]),
       "ssh\n",
@@ -49,11 +49,11 @@ describe("GitHub repository search", () => {
       {
         id: "R_recent",
         name: "codius",
-        nameWithOwner: "prismosoft/codius-desktop",
+        nameWithOwner: "CodiusAI/codius-app",
         description: null,
         visibility: "public",
         updatedAt: "2026-07-15T12:00:00Z",
-        cloneUrl: "git@github.com:prismosoft/codius-desktop.git",
+        cloneUrl: "git@github.com:CodiusAI/codius-app.git",
       },
     ]);
     expect(runner.calls).toEqual([

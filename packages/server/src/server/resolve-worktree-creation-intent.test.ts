@@ -163,8 +163,8 @@ describe("resolveWorktreeCreationIntent", () => {
       baseRefName: "main",
       headRefName: "daemon-shutdown-diagnostics",
       headOwnerLogin: "codius-ai",
-      headRepositorySshUrl: "git@github.com:prismosoft/codius-desktop.git",
-      headRepositoryUrl: "https://github.com/prismosoft/codius-desktop",
+      headRepositorySshUrl: "git@github.com:CodiusAI/codius-app.git",
+      headRepositoryUrl: "https://github.com/CodiusAI/codius-app",
       isCrossRepository: false,
     });
 

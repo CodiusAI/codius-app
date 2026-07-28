@@ -11,7 +11,7 @@ docker run -d --name codius \
   -e CODIUS_PASSWORD=change-me \
   -v "$PWD/codius-home:/home/codius" \
   -v "$PWD:/workspace" \
-  ghcr.io/prismosoft/codius-desktop:latest
+  ghcr.io/CodiusAI/codius-app:latest
 ```
 
 Then open `http://localhost:6767`.
@@ -20,7 +20,7 @@ The base image intentionally does not bundle agent CLIs. Extend it with the
 agents you use:
 
 ```Dockerfile
-FROM ghcr.io/prismosoft/codius-desktop:latest
+FROM ghcr.io/CodiusAI/codius-app:latest
 
 USER root
 RUN npm install -g @openai/codex @anthropic-ai/claude-code

@@ -1168,7 +1168,7 @@ describe("ForgeService", () => {
           nodes: [
             {
               id: "IC_badge",
-              body: "![build](https://img.shields.io/github/actions/workflow/status/prismosoft/codius-desktop/ci.yml)",
+              body: "![build](https://img.shields.io/github/actions/workflow/status/CodiusAI/codius-app/ci.yml)",
               bodyHTML:
                 '<p><img alt="build" src="https://camo.githubusercontent.com/badge-signature" /></p>',
               url: "https://github.com/parentOwner/parentRepo/pull/42#issuecomment-5",
@@ -1196,7 +1196,7 @@ describe("ForgeService", () => {
     expect(timeline.items[0]).toMatchObject({
       kind: "comment",
       id: "IC_badge",
-      body: "![build](https://img.shields.io/github/actions/workflow/status/prismosoft/codius-desktop/ci.yml)",
+      body: "![build](https://img.shields.io/github/actions/workflow/status/CodiusAI/codius-app/ci.yml)",
     });
   });
 
@@ -2271,7 +2271,7 @@ describe("ForgeService", () => {
     const runner = createScriptedRunner([
       currentPullRequestJson({
         number: 993,
-        url: "https://github.com/prismosoft/codius-desktop/pull/993",
+        url: "https://github.com/CodiusAI/codius-app/pull/993",
         title: "Auto-merge UX",
         headRefName: "github-pr-auto-merge-ux",
         mergeable: "MERGEABLE",
@@ -2283,7 +2283,7 @@ describe("ForgeService", () => {
             workflowName: "CI",
             status: "IN_PROGRESS",
             conclusion: null,
-            detailsUrl: "https://github.com/prismosoft/codius-desktop/actions/runs/993",
+            detailsUrl: "https://github.com/CodiusAI/codius-app/actions/runs/993",
           },
         ],
       }),
@@ -2308,7 +2308,7 @@ describe("ForgeService", () => {
         {
           name: "server tests",
           status: "pending",
-          url: "https://github.com/prismosoft/codius-desktop/actions/runs/993",
+          url: "https://github.com/CodiusAI/codius-app/actions/runs/993",
           workflow: "CI",
         },
       ],
@@ -3183,7 +3183,7 @@ describe("ForgeService", () => {
 
     await service.searchIssuesAndPrs({
       cwd: "/repo",
-      query: "https://github.com/prismosoft/codius-desktop/pull/793",
+      query: "https://github.com/CodiusAI/codius-app/pull/793",
       limit: 5,
     });
 
@@ -3222,7 +3222,7 @@ describe("ForgeService", () => {
 
     await service.searchIssuesAndPrs({
       cwd: "/repo",
-      query: "https://gitlab.com/prismosoft/codius-desktop/issues/793",
+      query: "https://gitlab.com/CodiusAI/codius-app/issues/793",
       limit: 5,
     });
 
@@ -3231,7 +3231,7 @@ describe("ForgeService", () => {
         "issue",
         "list",
         "--search",
-        "https://gitlab.com/prismosoft/codius-desktop/issues/793",
+        "https://gitlab.com/CodiusAI/codius-app/issues/793",
         "--json",
         "number,title,url,state,body,labels,updatedAt",
         "--limit",
@@ -3241,7 +3241,7 @@ describe("ForgeService", () => {
         "pr",
         "list",
         "--search",
-        "https://gitlab.com/prismosoft/codius-desktop/issues/793",
+        "https://gitlab.com/CodiusAI/codius-app/issues/793",
         "--json",
         "number,title,url,state,body,labels,baseRefName,headRefName,updatedAt",
         "--limit",
@@ -3261,7 +3261,7 @@ describe("ForgeService", () => {
 
     await service.searchIssuesAndPrs({
       cwd: "/repo",
-      query: "https://github.acme.internal/prismosoft/codius-desktop/pull/793",
+      query: "https://github.acme.internal/CodiusAI/codius-app/pull/793",
       limit: 5,
     });
 

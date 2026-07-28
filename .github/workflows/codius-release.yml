@@ -123,7 +123,7 @@ jobs:
           esac
           mkdir -p "$destination" "$RUNNER_TEMP/codius-cli"
           gh release download "$CODIUS_CLI_RELEASE" \
-            --repo prismosoft/codius-cli \
+            --repo CodiusAI/codius-cli \
             --pattern "$asset" \
             --dir "$RUNNER_TEMP/codius-cli"
           if [[ "$asset" == *.zip ]]; then
@@ -152,7 +152,7 @@ jobs:
             $destination = "packages/desktop/vendor/codius/win32-$arch"
             New-Item -ItemType Directory -Force -Path $destination | Out-Null
             gh release download $env:CODIUS_CLI_RELEASE `
-              --repo prismosoft/codius-cli `
+              --repo CodiusAI/codius-cli `
               --pattern $asset `
               --dir $env:RUNNER_TEMP
             Expand-Archive -Path $download -DestinationPath $destination -Force
@@ -243,5 +243,5 @@ jobs:
           elif [[ "$tag" == *-* ]]; then
             prerelease="--prerelease"
           fi
-          gh release view "$tag" --repo prismosoft/codius-desktop >/dev/null 2>&1 || gh release create "$tag" --repo prismosoft/codius-desktop --title "Codius $tag" --generate-notes $prerelease
-          find release-assets -type f -print0 | xargs -0 gh release upload "$tag" --repo prismosoft/codius-desktop --clobber
+          gh release view "$tag" --repo CodiusAI/codius-app >/dev/null 2>&1 || gh release create "$tag" --repo CodiusAI/codius-app --title "Codius $tag" --generate-notes $prerelease
+          find release-assets -type f -print0 | xargs -0 gh release upload "$tag" --repo CodiusAI/codius-app --clobber

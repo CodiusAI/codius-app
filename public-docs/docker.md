@@ -10,7 +10,7 @@ category: Getting started
 
 The official Codius Docker image runs the daemon and serves the bundled browser UI from the same HTTP origin. It is meant for servers, dev boxes, NAS devices, homelab hosts, and other places where you want Codius running without the desktop app.
 
-Docker images follow the stable Codius release cadence. `ghcr.io/prismosoft/codius-desktop:latest` points at the latest stable release, not an arbitrary `main` build.
+Docker images follow the stable Codius release cadence. `ghcr.io/CodiusAI/codius-app:latest` points at the latest stable release, not an arbitrary `main` build.
 
 ```bash
 docker run -d --name codius \
@@ -18,7 +18,7 @@ docker run -d --name codius \
   -e CODIUS_PASSWORD=change-me \
   -v "$PWD/codius-home:/home/codius" \
   -v "$PWD:/workspace" \
-  ghcr.io/prismosoft/codius-desktop:latest
+  ghcr.io/CodiusAI/codius-app:latest
 ```
 
 Then open:
@@ -46,7 +46,7 @@ The image does not bundle agent CLIs such as Claude Code, Codex, OpenCode, Copil
 ```yaml
 services:
   codius:
-    image: ghcr.io/prismosoft/codius-desktop:latest
+    image: ghcr.io/CodiusAI/codius-app:latest
     container_name: codius
     restart: unless-stopped
     ports:
@@ -70,7 +70,7 @@ docker compose up -d
 Create a child image for the providers you want available:
 
 ```Dockerfile
-FROM ghcr.io/prismosoft/codius-desktop:latest
+FROM ghcr.io/CodiusAI/codius-app:latest
 
 USER root
 RUN npm install -g @openai/codex @anthropic-ai/claude-code opencode-ai

@@ -4,7 +4,7 @@
 # For any network-reachable deployment, change CODIUS_PASSWORD first.
 services:
   codius:
-    image: ghcr.io/prismosoft/codius-desktop:latest
+    image: ghcr.io/CodiusAI/codius-app:latest
     container_name: codius
     restart: unless-stopped
     ports:

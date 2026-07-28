@@ -15,8 +15,8 @@ import type { WorkspaceDescriptor } from "@/stores/session-store";
 function createWorkspaceDescriptor(input: Partial<WorkspaceDescriptor> = {}): WorkspaceDescriptor {
   return {
     id: "/repo/main",
-    projectId: "remote:github.com/prismosoft/codius-desktop",
-    projectDisplayName: "prismosoft/codius-desktop",
+    projectId: "remote:github.com/CodiusAI/codius-app",
+    projectDisplayName: "CodiusAI/codius-app",
     projectRootPath: "/repo/main",
     workspaceDirectory: "/repo/main",
     projectKind: "git",
@@ -42,7 +42,7 @@ describe("workspace source of truth consumption", () => {
     });
 
     expect(header.title).toBe("feat/workspace-sot");
-    expect(header.subtitle).toBe("prismosoft/codius-desktop");
+    expect(header.subtitle).toBe("CodiusAI/codius-app");
     expect(sidebarWorkspace.name).toBe(header.title);
     expect(sidebarWorkspace.statusBucket).toBe("running");
   });
@@ -104,7 +104,7 @@ describe("workspace source of truth consumption", () => {
     ).toEqual({
       kind: "ready",
       title: "feat/workspace-sot",
-      subtitle: "prismosoft/codius-desktop",
+      subtitle: "CodiusAI/codius-app",
       shouldShowSubtitle: true,
       isGitCheckout: false,
       currentBranchName: null,
@@ -144,7 +144,7 @@ describe("workspace source of truth consumption", () => {
     ).toEqual({
       kind: "ready",
       title: "feat/workspace-sot",
-      subtitle: "prismosoft/codius-desktop",
+      subtitle: "CodiusAI/codius-app",
       shouldShowSubtitle: true,
       isGitCheckout: true,
       currentBranchName: "feat/workspace-sot",
@@ -184,7 +184,7 @@ describe("workspace source of truth consumption", () => {
     ).toEqual({
       kind: "ready",
       title: "feat/workspace-sot",
-      subtitle: "prismosoft/codius-desktop",
+      subtitle: "CodiusAI/codius-app",
       shouldShowSubtitle: true,
       isGitCheckout: false,
       currentBranchName: null,

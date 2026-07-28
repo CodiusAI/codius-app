@@ -7,7 +7,7 @@
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
-    "url": "https://github.com/prismosoft/codius-desktop.git"
+    "url": "https://github.com/CodiusAI/codius-app.git"
   },
   "main": "index.ts",
   "scripts": {

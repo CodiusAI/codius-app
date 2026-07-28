@@ -194,7 +194,7 @@ jobs:
           archive="$RUNNER_TEMP/codius-linux-x64.tar.gz"
           mkdir -p "$destination"
           gh release download "$CODIUS_CLI_RELEASE" \
-            --repo prismosoft/codius-cli \
+            --repo CodiusAI/codius-cli \
             --pattern "codius-linux-x64.tar.gz" \
             --dir "$RUNNER_TEMP"
           tar -xzf "$archive" -C "$destination"

@@ -266,18 +266,18 @@ describe("shared sidebar workspace model", () => {
     const model = buildSidebarWorkspacePlacementModel({
       projects: [
         project({
-          projectKey: "prismosoft/codius-desktop",
-          projectName: "prismosoft/codius-desktop",
-          iconWorkingDir: "/repo/prismosoft/codius-desktop",
+          projectKey: "CodiusAI/codius-app",
+          projectName: "CodiusAI/codius-app",
+          iconWorkingDir: "/repo/CodiusAI/codius-app",
           hosts: [
             {
               serverId: "host-a",
-              iconWorkingDir: "/repo/prismosoft/codius-desktop",
+              iconWorkingDir: "/repo/CodiusAI/codius-app",
               canCreateWorktree: true,
             },
             {
               serverId: "host-b",
-              iconWorkingDir: "/repo/prismosoft/codius-desktop",
+              iconWorkingDir: "/repo/CodiusAI/codius-app",
               canCreateWorktree: true,
             },
           ],
@@ -297,8 +297,8 @@ describe("shared sidebar workspace model", () => {
               workspace({
                 id: "main",
                 name: "main",
-                projectId: "prismosoft/codius-desktop",
-                projectDisplayName: "prismosoft/codius-desktop",
+                projectId: "CodiusAI/codius-app",
+                projectDisplayName: "CodiusAI/codius-app",
                 status: "done",
               }),
             ],
@@ -313,8 +313,8 @@ describe("shared sidebar workspace model", () => {
               workspace({
                 id: "feature",
                 name: "feature/status-flow",
-                projectId: "prismosoft/codius-desktop",
-                projectDisplayName: "prismosoft/codius-desktop",
+                projectId: "CodiusAI/codius-app",
+                projectDisplayName: "CodiusAI/codius-app",
                 status: "running",
                 statusEnteredAt: new Date("2026-06-10T00:00:00.000Z"),
               }),
@@ -330,16 +330,16 @@ describe("shared sidebar workspace model", () => {
     ]);
     expect(model.projects).toEqual([
       expect.objectContaining({
-        projectKey: "prismosoft/codius-desktop",
+        projectKey: "CodiusAI/codius-app",
         hosts: [
           {
             serverId: "host-a",
-            iconWorkingDir: "/repo/prismosoft/codius-desktop",
+            iconWorkingDir: "/repo/CodiusAI/codius-app",
             canCreateWorktree: true,
           },
           {
             serverId: "host-b",
-            iconWorkingDir: "/repo/prismosoft/codius-desktop",
+            iconWorkingDir: "/repo/CodiusAI/codius-app",
             canCreateWorktree: true,
           },
         ],
@@ -368,7 +368,7 @@ describe("shared sidebar workspace model", () => {
       ["host-b:feature", "running", "feature/status-flow"],
     ]);
     expect(model.projectNamesByKey).toEqual(
-      new Map([["prismosoft/codius-desktop", "prismosoft/codius-desktop"]]),
+      new Map([["CodiusAI/codius-app", "CodiusAI/codius-app"]]),
     );
   });
 
@@ -464,7 +464,7 @@ describe("shouldShowSidebarHostLabels", () => {
     const projects = buildSidebarProjectsFromStructure({
       projects: [
         project({
-          projectKey: "prismosoft/codius-desktop",
+          projectKey: "CodiusAI/codius-app",
           hosts: [
             { serverId: "host-a", iconWorkingDir: "/repo/codius", canCreateWorktree: true },
             { serverId: "host-b", iconWorkingDir: "/repo/codius", canCreateWorktree: true },

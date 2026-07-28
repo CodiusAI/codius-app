@@ -6,8 +6,8 @@ import {
 
 describe("projectDisplayNameFromProjectId", () => {
   it("shows owner and repo for GitHub remote ids", () => {
-    expect(projectDisplayNameFromProjectId("remote:github.com/prismosoft/codius-desktop")).toBe(
-      "prismosoft/codius-desktop",
+    expect(projectDisplayNameFromProjectId("remote:github.com/CodiusAI/codius-app")).toBe(
+      "CodiusAI/codius-app",
     );
   });
 
@@ -18,7 +18,7 @@ describe("projectDisplayNameFromProjectId", () => {
 
 describe("projectIconPlaceholderLabelFromDisplayName", () => {
   it("uses repo name instead of owner for GitHub-style display names", () => {
-    expect(projectIconPlaceholderLabelFromDisplayName("prismosoft/codius-desktop")).toBe(
+    expect(projectIconPlaceholderLabelFromDisplayName("CodiusAI/codius-app")).toBe(
       "codius-desktop",
     );
   });

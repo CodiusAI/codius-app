@@ -55,7 +55,7 @@ function contextAttachment(id: string): WorkspaceComposerAttachment {
     id,
     title: "Comment · octocat",
     text: "GitHub pull request comment\n\nLooks good.",
-    url: `https://github.com/prismosoft/codius-desktop/pull/42#${id}`,
+    url: `https://github.com/CodiusAI/codius-app/pull/42#${id}`,
   };
 }
 

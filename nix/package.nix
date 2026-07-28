@@ -128,7 +128,7 @@ buildNpmPackage rec {
 
   meta = {
     description = "Self-hosted daemon for Claude Code, Codex, and OpenCode";
-    homepage = "https://github.com/prismosoft/codius-desktop";
+    homepage = "https://github.com/CodiusAI/codius-app";
     license = lib.licenses.agpl3Plus;
     mainProgram = "codius";
     platforms = lib.platforms.linux ++ lib.platforms.darwin;

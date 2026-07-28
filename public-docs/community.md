@@ -20,4 +20,4 @@ Projects built by the Codius community. These **aren't official Codius projects*
 
 ## Add your project
 
-Built something for Codius, a relay, a deployment recipe, an integration, a client? Open a pull request or an issue on [GitHub](https://github.com/prismosoft/codius-desktop) to get it listed here.
+Built something for Codius, a relay, a deployment recipe, an integration, a client? Open a pull request or an issue on [GitHub](https://github.com/CodiusAI/codius-app) to get it listed here.

@@ -15,7 +15,7 @@ function contextAttachment(
     title: "Comment · octocat",
     subtitle: "Fix flaky build",
     text: "GitHub pull request comment\n\nLooks good.",
-    url: "https://github.com/prismosoft/codius-desktop/pull/42#issuecomment-1",
+    url: "https://github.com/CodiusAI/codius-app/pull/42#issuecomment-1",
     ...overrides,
   };
 }
@@ -32,7 +32,7 @@ describe("workspace attachment utilities", () => {
         kind: "issue",
         number: 12,
         title: "Bug",
-        url: "https://github.com/prismosoft/codius-desktop/issues/12",
+        url: "https://github.com/CodiusAI/codius-app/issues/12",
         state: "open",
         body: "Bug report",
         labels: [],

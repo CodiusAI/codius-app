@@ -89,8 +89,8 @@ describe("Add Project navigation", () => {
   it("restores the GitHub destination query and active parent when reopening a repository", () => {
     const repository = {
       id: "repo-1",
-      nameWithOwner: "prismosoft/codius-desktop",
-      cloneUrl: "git@github.com:prismosoft/codius-desktop.git",
+      nameWithOwner: "CodiusAI/codius-app",
+      cloneUrl: "git@github.com:CodiusAI/codius-app.git",
       description: null,
       visibility: "public",
       updatedAt: null,
@@ -149,18 +149,16 @@ describe("Add Project options", () => {
   });
 
   it("offers manual URL and protocol-specific owner/repo clone choices", () => {
-    expect(
-      buildManualGithubRepositoryChoices("git@github.com:prismosoft/codius-desktop.git"),
-    ).toEqual([
+    expect(buildManualGithubRepositoryChoices("git@github.com:CodiusAI/codius-app.git")).toEqual([
       expect.objectContaining({
-        id: "manual:git@github.com:prismosoft/codius-desktop.git",
-        nameWithOwner: "prismosoft/codius-desktop",
-        cloneUrl: "git@github.com:prismosoft/codius-desktop.git",
+        id: "manual:git@github.com:CodiusAI/codius-app.git",
+        nameWithOwner: "CodiusAI/codius-app",
+        cloneUrl: "git@github.com:CodiusAI/codius-app.git",
       }),
     ]);
-    expect(buildManualGithubRepositoryChoices("prismosoft/codius-desktop")).toEqual([
-      expect.objectContaining({ cloneProtocol: "https", cloneUrl: "prismosoft/codius-desktop" }),
-      expect.objectContaining({ cloneProtocol: "ssh", cloneUrl: "prismosoft/codius-desktop" }),
+    expect(buildManualGithubRepositoryChoices("CodiusAI/codius-app")).toEqual([
+      expect.objectContaining({ cloneProtocol: "https", cloneUrl: "CodiusAI/codius-app" }),
+      expect.objectContaining({ cloneProtocol: "ssh", cloneUrl: "CodiusAI/codius-app" }),
     ]);
     expect(buildManualGithubRepositoryChoices("codius")).toEqual([]);
   });

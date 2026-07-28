@@ -27,8 +27,7 @@ const REQUIRED_ASSET_PATTERNS = [
   /Codius-Setup-.*\.exe$/,
 ];
 
-const GITHUB_RELEASES_URL =
-  "https://api.github.com/repos/prismosoft/codius-desktop/releases?per_page=10";
+const GITHUB_RELEASES_URL = "https://api.github.com/repos/CodiusAI/codius-app/releases?per_page=10";
 const RELEASE_CACHE_KEY = "github-release:v1";
 const ANDROID_RELEASE_CACHE_KEY = "github-android-release:v1";
 

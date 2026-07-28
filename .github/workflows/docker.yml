@@ -40,7 +40,7 @@ on:
           - "false"
           - "true"
       publish_latest:
-        description: "Also publish ghcr.io/prismosoft/codius-desktop:latest. Ignored for prereleases."
+        description: "Also publish ghcr.io/CodiusAI/codius-app:latest. Ignored for prereleases."
         required: false
         default: "false"
         type: choice
