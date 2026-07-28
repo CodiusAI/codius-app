@@ -2,8 +2,6 @@
   <img src="packages/website/public/logo.svg" width="64" height="64" alt="Codius logo">
 </p>
 
-<h1 align="center">Codius</h1>
-
 <p align="center">
   <a href="README.md">English</a> ·
   <a href="README.zh-CN.md">简体中文</a> ·

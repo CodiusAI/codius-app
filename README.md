@@ -99,7 +99,7 @@ CODIUS_HOME=/path/to/codius-home
 
 New Codius installations use `CODIUS_HOME` and `~/.codius`.
 
-On the first run, Desktop creates a private local configuration that:
+On the first run, Codius creates a private local configuration that:
 
 - registers `codius acp` as the Codius provider;
 - enables Codius as the fresh provider preference;
@@ -136,9 +136,9 @@ Typical tasks include:
 
 Browser access should be enabled only for trusted agents because the Codius browser profile may contain authenticated sessions.
 
-## Desktop management CLI
+## Codius management CLI
 
-The desktop daemon-management command is named `codiusctl` so it does not conflict with the coding-agent command `codius`.
+The codius daemon-management command is named `codiusctl` so it does not conflict with the coding-agent command `codius`.
 
 ```bash
 codiusctl status
@@ -148,7 +148,7 @@ codiusctl attach <agent-id>
 codiusctl send <agent-id> "also update the documentation"
 ```
 
-Use `codius` for the coding agent itself and `codiusctl` for Desktop/daemon orchestration.
+Use `codius` for the coding agent itself and `codiusctl` for Codius/daemon orchestration.
 
 ## Development
 
@@ -207,8 +207,6 @@ Public releases from this repository use:
 - desktop management command: `codiusctl`;
 - coding agent command: `codius`;
 - data home: `~/.codius`.
-
-Runware credentials, routing identifiers, and internal provider economics must remain in Codius server infrastructure. They must never be bundled into Desktop or Codius CLI.
 
 ## License
 
