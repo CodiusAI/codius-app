@@ -141,6 +141,11 @@ describe("OMP host tools", () => {
         inputSchema: { initialPrompt: z.string().describe("Prompt for the new agent.") },
         handler: async () => ({ content: [] }),
       },
+      {
+        name: "browser_list_tabs",
+        description: "List browser tabs.",
+        handler: async () => ({ content: [] }),
+      },
     ]);
 
     expect(serializeOmpHostTools(catalog)).toEqual([
@@ -149,6 +154,12 @@ describe("OMP host tools", () => {
         label: "Create agent",
         description: "Create a Codius agent.",
         parameters: expect.objectContaining({ type: "object", required: ["initialPrompt"] }),
+      },
+      {
+        name: "browser_list_tabs",
+        description: "List browser tabs.",
+        loadMode: "essential",
+        parameters: expect.objectContaining({ type: "object" }),
       },
     ]);
   });

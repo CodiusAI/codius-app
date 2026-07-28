@@ -149,7 +149,7 @@ npm run build:server
 npm run typecheck
 ```
 
-## コミュニティ
+## 関連プロジェクト
 
 - [codius-relay](https://github.com/zenghongtu/codius-relay) — Go 実装のセルフホスト型リレー
 - [codius-vscode](https://marketplace.visualstudio.com/items?itemName=hinnes.codius-vscode) — VS Code 拡張機能

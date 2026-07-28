@@ -130,9 +130,10 @@ describe("createWebStreamStrategy", () => {
             routeBottomAnchorRequest: null,
             isAuthoritativeHistoryReady: true,
             onNearBottomChange: vi.fn(),
-            onNearHistoryStart: vi.fn(),
+            onNearHistoryStart: vi.fn().mockReturnValue(true),
             isLoadingOlderHistory: false,
             hasOlderHistory: false,
+            olderHistoryProgressKey: null,
             scrollEnabled: true,
             listStyle: null,
             baseListContentContainerStyle: null,
@@ -173,9 +174,10 @@ describe("createWebStreamStrategy", () => {
       routeBottomAnchorRequest: null,
       isAuthoritativeHistoryReady: true,
       onNearBottomChange: vi.fn(),
-      onNearHistoryStart: vi.fn(),
+      onNearHistoryStart: vi.fn().mockReturnValue(true),
       isLoadingOlderHistory: false,
       hasOlderHistory: false,
+      olderHistoryProgressKey: null,
       scrollEnabled: true,
       listStyle: null,
       baseListContentContainerStyle: null,
@@ -228,9 +230,10 @@ describe("createWebStreamStrategy", () => {
           routeBottomAnchorRequest: null,
           isAuthoritativeHistoryReady: true,
           onNearBottomChange: vi.fn(),
-          onNearHistoryStart: vi.fn(),
+          onNearHistoryStart: vi.fn().mockReturnValue(true),
           isLoadingOlderHistory: false,
           hasOlderHistory: false,
+          olderHistoryProgressKey: null,
           scrollEnabled: true,
           listStyle: null,
           baseListContentContainerStyle: null,
@@ -282,47 +285,52 @@ describe("createWebStreamStrategy", () => {
     expect(scrollTo).not.toHaveBeenCalled();
   });
 
-  it("fires near-history-start when the user scrolls near the top", async () => {
+  it("waits for bottom anchoring before evaluating a delayed initial tail", async () => {
+    HTMLElement.prototype.scrollTo = vi.fn(function (
+      this: HTMLElement,
+      options?: ScrollToOptions | number,
+      y?: number,
+    ) {
+      const top = typeof options === "object" ? (options.top ?? 0) : (y ?? 0);
+      Object.defineProperty(this, "scrollTop", { configurable: true, value: top });
+    });
     const strategy = createWebStreamStrategy({ isMobileBreakpoint: true });
     const viewportRef = React.createRef<StreamViewportHandle>();
-    const onNearHistoryStart = vi.fn();
+    const onNearHistoryStart = vi.fn().mockReturnValue(true);
+    const renderInput = {
+      agentId: "agent",
+      boundary: {
+        hasVirtualizedHistory: false,
+        hasMountedHistory: false,
+        hasLiveHead: false,
+      },
+      renderers: createRenderers(vi.fn()),
+      listEmptyComponent: null,
+      viewportRef,
+      routeBottomAnchorRequest: null,
+      isAuthoritativeHistoryReady: true,
+      onNearBottomChange: vi.fn(),
+      onNearHistoryStart,
+      isLoadingOlderHistory: false,
+      hasOlderHistory: false,
+      olderHistoryProgressKey: null,
+      scrollEnabled: true,
+      listStyle: null,
+      baseListContentContainerStyle: null,
+      forwardListContentContainerStyle: null,
+    };
     container = document.createElement("div");
     document.body.appendChild(container);
     root = createRoot(container);
 
     act(() => {
       root?.render(
-        <>
-          {strategy.render({
-            agentId: "agent",
-            segments: {
-              historyVirtualized: [],
-              historyMounted: [userMessage(1), userMessage(2)],
-              liveHead: [],
-            },
-            boundary: {
-              hasVirtualizedHistory: false,
-              hasMountedHistory: true,
-              hasLiveHead: false,
-            },
-            renderers: createRenderers(vi.fn()),
-            listEmptyComponent: null,
-            viewportRef,
-            routeBottomAnchorRequest: null,
-            isAuthoritativeHistoryReady: true,
-            onNearBottomChange: vi.fn(),
-            onNearHistoryStart,
-            isLoadingOlderHistory: false,
-            hasOlderHistory: true,
-            scrollEnabled: true,
-            listStyle: null,
-            baseListContentContainerStyle: null,
-            forwardListContentContainerStyle: null,
-          })}
-        </>,
+        strategy.render({
+          ...renderInput,
+          segments: { historyVirtualized: [], historyMounted: [], liveHead: [] },
+        }),
       );
     });
-
     await act(async () => {
       await new Promise((resolve) => requestAnimationFrame(resolve));
     });
@@ -333,13 +341,33 @@ describe("createWebStreamStrategy", () => {
     }
     Object.defineProperty(scrollContainer, "clientHeight", { configurable: true, value: 400 });
     Object.defineProperty(scrollContainer, "scrollHeight", { configurable: true, value: 1200 });
-    Object.defineProperty(scrollContainer, "scrollTop", { configurable: true, value: 64 });
+    Object.defineProperty(scrollContainer, "scrollTop", { configurable: true, value: 0 });
 
     act(() => {
-      scrollContainer?.dispatchEvent(new Event("scroll"));
+      root?.render(
+        strategy.render({
+          ...renderInput,
+          segments: {
+            historyVirtualized: [],
+            historyMounted: [userMessage(1), userMessage(2)],
+            liveHead: [],
+          },
+          boundary: {
+            hasVirtualizedHistory: false,
+            hasMountedHistory: true,
+            hasLiveHead: false,
+          },
+          hasOlderHistory: true,
+          olderHistoryProgressKey: "epoch-1:20",
+        }),
+      );
     });
 
-    expect(onNearHistoryStart).toHaveBeenCalledTimes(1);
+    expect(onNearHistoryStart).not.toHaveBeenCalled();
+    await act(async () => {
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    });
+    expect(onNearHistoryStart).not.toHaveBeenCalled();
   });
 
   it("keeps initial route entry anchored when delayed route readiness arrives before user scroll", async () => {
@@ -375,9 +403,10 @@ describe("createWebStreamStrategy", () => {
       viewportRef,
       routeBottomAnchorRequest,
       onNearBottomChange: vi.fn(),
-      onNearHistoryStart: vi.fn(),
+      onNearHistoryStart: vi.fn().mockReturnValue(true),
       isLoadingOlderHistory: false,
       hasOlderHistory: false,
+      olderHistoryProgressKey: null,
       scrollEnabled: true,
       listStyle: null,
       baseListContentContainerStyle: null,
@@ -482,9 +511,10 @@ describe("createWebStreamStrategy", () => {
       viewportRef,
       routeBottomAnchorRequest,
       onNearBottomChange: vi.fn(),
-      onNearHistoryStart: vi.fn(),
+      onNearHistoryStart: vi.fn().mockReturnValue(true),
       isLoadingOlderHistory: false,
       hasOlderHistory: false,
+      olderHistoryProgressKey: null,
       scrollEnabled: true,
       listStyle: null,
       baseListContentContainerStyle: null,
@@ -578,9 +608,10 @@ describe("createWebStreamStrategy", () => {
       viewportRef,
       routeBottomAnchorRequest,
       onNearBottomChange: vi.fn(),
-      onNearHistoryStart: vi.fn(),
+      onNearHistoryStart: vi.fn().mockReturnValue(true),
       isLoadingOlderHistory: false,
       hasOlderHistory: false,
+      olderHistoryProgressKey: null,
       scrollEnabled: true,
       listStyle: null,
       baseListContentContainerStyle: null,
@@ -676,9 +707,10 @@ describe("createWebStreamStrategy", () => {
       viewportRef,
       routeBottomAnchorRequest: null,
       onNearBottomChange: vi.fn(),
-      onNearHistoryStart: vi.fn(),
+      onNearHistoryStart: vi.fn().mockReturnValue(true),
       isLoadingOlderHistory: false,
       hasOlderHistory: false,
+      olderHistoryProgressKey: null,
       scrollEnabled: true,
       listStyle: null,
       baseListContentContainerStyle: null,

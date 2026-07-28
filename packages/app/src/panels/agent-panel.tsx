@@ -11,7 +11,7 @@ import React, {
   useSyncExternalStore,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, StyleSheet as RNStyleSheet, Text, View } from "react-native";
+import { StyleSheet as RNStyleSheet, Text, View } from "react-native";
 import ReanimatedAnimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
@@ -21,9 +21,11 @@ import { useStoreWithEqualityFn } from "zustand/traditional";
 import { AgentStreamView, type AgentStreamViewHandle } from "@/agent-stream/view";
 import { ArchivedAgentCallout } from "@/components/archived-agent-callout";
 import { FileDropZone } from "@/components/file-drop/file-drop-zone";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useRetainedPanelActive } from "@/components/retained-panel";
 import { SidebarCallout } from "@/components/sidebar-callout";
 import { Composer } from "@/composer";
+import { getActiveMessageSubmissions } from "@/composer/submission/model";
 import { RewindComposerRestoreProvider } from "@/components/rewind/composer-restore";
 import { getProviderIcon } from "@/components/provider-icons";
 import {
@@ -70,7 +72,7 @@ import { WorkspaceDraftAgentTab } from "@/composer/draft/workspace-tab";
 import { useCreateFlowStore } from "@/stores/create-flow-store";
 import { buildDraftStoreKey, generateDraftId } from "@/stores/draft-keys";
 import { usePanelStore } from "@/stores/panel-store";
-import { type Agent, useSessionStore } from "@/stores/session-store";
+import { selectAgentTimelineState, type Agent, useSessionStore } from "@/stores/session-store";
 import { useWorkspaceLayoutStore } from "@/stores/workspace-layout-store";
 import { buildWorkspaceTabPersistenceKey } from "@/workspace-tabs/model";
 import type { Theme } from "@/styles/theme";
@@ -215,7 +217,7 @@ function renderChatAgentNonReadyView(args: {
     return (
       <View style={styles.container} testID="agent-loading">
         <View style={styles.errorContainer}>
-          <ThemedActivityIndicator size="large" uniProps={foregroundMutedColorMapping} />
+          <ThemedLoadingSpinner size="large" uniProps={foregroundMutedColorMapping} />
         </View>
       </View>
     );
@@ -441,6 +443,7 @@ export function useDraftPanelDescriptor(
 }
 
 const EMPTY_STREAM_ITEMS: StreamItem[] = [];
+const EMPTY_MESSAGE_SUBMISSIONS = [] as const;
 const EMPTY_PENDING_PERMISSIONS = new Map<string, PendingPermission>();
 const EMPTY_PENDING_PERMISSION_LIST: PendingPermission[] = [];
 
@@ -716,7 +719,7 @@ function AgentPanelBody({
     return (
       <View style={styles.container} testID="agent-loading">
         <View style={styles.errorContainer}>
-          <ThemedActivityIndicator size="large" uniProps={foregroundMutedColorMapping} />
+          <ThemedLoadingSpinner size="large" uniProps={foregroundMutedColorMapping} />
         </View>
       </View>
     );
@@ -789,11 +792,12 @@ function ChatAgentContent({
   const historySyncGeneration = useSessionStore(
     (state) => state.sessions[serverId]?.historySyncGeneration ?? 0,
   );
-  const hasAppliedAuthoritativeHistory = useSessionStore((state) =>
+  const replicaTimelineStatus = useSessionStore((state) =>
     agentId
-      ? state.sessions[serverId]?.agentAuthoritativeHistoryApplied?.get(agentId) === true
-      : false,
+      ? selectAgentTimelineState(state.sessions[serverId], agentId).status
+      : ("cold" as const),
   );
+  const hasAppliedAuthoritativeHistory = replicaTimelineStatus === "synced";
   const agentHistorySyncGeneration = useSessionStore((state) =>
     agentId ? (state.sessions[serverId]?.agentHistorySyncGeneration?.get(agentId) ?? -1) : -1,
   );
@@ -829,7 +833,8 @@ function ChatAgentContent({
     kind: "idle",
   });
 
-  const hasHydratedHistoryBefore = hasAppliedAuthoritativeHistory;
+  const hasHydratedHistoryBefore =
+    hasAppliedAuthoritativeHistory || replicaTimelineStatus === "painted";
 
   const attentionController = useAgentAttentionClear({
     agentId,
@@ -1246,7 +1251,7 @@ const ChatAgentReadyContent = memo(function ChatAgentReadyContent({
 
           {showHistorySyncOverlay ? (
             <View style={styles.historySyncOverlay} testID="agent-history-overlay">
-              <ThemedActivityIndicator size="large" uniProps={foregroundMutedColorMapping} />
+              <ThemedLoadingSpinner size="large" uniProps={foregroundMutedColorMapping} />
             </View>
           ) : null}
 
@@ -1255,7 +1260,7 @@ const ChatAgentReadyContent = memo(function ChatAgentReadyContent({
 
         {isArchivingCurrentAgent ? (
           <View style={styles.archivingOverlay} testID="agent-archiving-overlay">
-            <ThemedActivityIndicator size="large" uniProps={foregroundColorMapping} />
+            <ThemedLoadingSpinner size="large" uniProps={foregroundColorMapping} />
             <Text style={styles.archivingTitle}>{t("agentPanel.states.archivingTitle")}</Text>
             <Text style={styles.archivingSubtitle}>{t("agentPanel.states.archivingSubtitle")}</Text>
           </View>
@@ -1286,6 +1291,11 @@ const AgentStreamSection = memo(function AgentStreamSection({
 }) {
   const streamItemsRaw = useSessionStore((state) =>
     agentId ? state.sessions[serverId]?.agentStreamTail?.get(agentId) : undefined,
+  );
+  const pendingMessageSubmissions = useSessionStore((state) =>
+    agentId
+      ? getActiveMessageSubmissions(state.sessions[serverId]?.messageSubmissions.get(agentId))
+      : EMPTY_MESSAGE_SUBMISSIONS,
   );
   const streamItems = streamItemsRaw ?? EMPTY_STREAM_ITEMS;
   const pendingPermissionList = useStoreWithEqualityFn(
@@ -1326,6 +1336,7 @@ const AgentStreamSection = memo(function AgentStreamSection({
       routeBottomAnchorRequest={routeBottomAnchorRequest}
       isAuthoritativeHistoryReady={hasAppliedAuthoritativeHistory}
       toast={toast}
+      pendingMessageSubmissions={pendingMessageSubmissions}
       onOpenWorkspaceFile={onOpenWorkspaceFile}
     />
   );
@@ -1600,7 +1611,7 @@ function AgentSessionUnavailableState({
       <View style={styles.centerState}>
         {isConnecting || isPreparingSession ? (
           <>
-            <ActivityIndicator size="large" />
+            <ThemedLoadingSpinner size="large" uniProps={foregroundMutedColorMapping} />
             <Text style={styles.loadingText}>
               {isPreparingSession
                 ? t("agentPanel.unavailable.preparingSession", { serverLabel })
@@ -1628,7 +1639,7 @@ function AgentSessionUnavailableState({
   );
 }
 
-const ThemedActivityIndicator = withUnistyles(ActivityIndicator);
+const ThemedLoadingSpinner = withUnistyles(LoadingSpinner);
 
 const foregroundMutedColorMapping = (theme: Theme) => ({
   color: theme.colors.foregroundMuted,

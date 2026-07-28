@@ -324,6 +324,11 @@ export interface SendMessageOptions {
   attachments?: SendAgentMessageRequest["attachments"];
 }
 
+export interface SendMessageResult {
+  /** Undefined when connected to a daemon predating message submission disposition. */
+  outOfBand?: boolean;
+}
+
 export interface AgentAttentionRequiredNotification {
   agentId: string;
   reason: "finished" | "error" | "permission";
@@ -2179,6 +2184,47 @@ export class DaemonClient {
     });
   }
 
+  async listWorkspaceScripts(
+    workspaceId: string,
+    requestId?: string,
+  ): Promise<
+    Extract<SessionOutboundMessage, { type: "workspace.script.list.response" }>["payload"]
+  > {
+    return this.sendCorrelatedSessionRequest({
+      requestId,
+      message: { type: "workspace.script.list.request", workspaceId },
+      responseType: "workspace.script.list.response",
+    });
+  }
+
+  async startWorkspaceScriptWithStatus(
+    workspaceId: string,
+    scriptName: string,
+    requestId?: string,
+  ): Promise<
+    Extract<SessionOutboundMessage, { type: "workspace.script.start.response" }>["payload"]
+  > {
+    return this.sendCorrelatedSessionRequest({
+      requestId,
+      message: { type: "workspace.script.start.request", workspaceId, scriptName },
+      responseType: "workspace.script.start.response",
+    });
+  }
+
+  async stopWorkspaceScript(
+    workspaceId: string,
+    scriptName: string,
+    requestId?: string,
+  ): Promise<
+    Extract<SessionOutboundMessage, { type: "workspace.script.stop.response" }>["payload"]
+  > {
+    return this.sendCorrelatedSessionRequest({
+      requestId,
+      message: { type: "workspace.script.stop.request", workspaceId, scriptName },
+      responseType: "workspace.script.stop.response",
+    });
+  }
+
   async archiveWorkspace(
     workspaceId: string,
     requestId?: string,
@@ -2818,7 +2864,7 @@ export class DaemonClient {
     agentId: string,
     text: string,
     options?: SendMessageOptions,
-  ): Promise<void> {
+  ): Promise<SendMessageResult> {
     const requestId = this.createRequestId();
     const messageId = options?.messageId ?? crypto.randomUUID();
     const message = SessionInboundMessageSchema.parse({
@@ -2847,6 +2893,7 @@ export class DaemonClient {
     if (!payload.accepted) {
       throw new Error(payload.error ?? "sendAgentMessage rejected");
     }
+    return payload.outOfBand === undefined ? {} : { outOfBand: payload.outOfBand };
   }
 
   async sendMessage(agentId: string, text: string, options?: SendMessageOptions): Promise<void> {

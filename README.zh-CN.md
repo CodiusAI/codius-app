@@ -149,7 +149,7 @@ npm run build:server
 npm run typecheck
 ```
 
-## 社区
+## 相关项目
 
 - [codius-relay](https://github.com/zenghongtu/codius-relay) — Go 实现的自托管 relay
 - [codius-vscode](https://marketplace.visualstudio.com/items?itemName=hinnes.codius-vscode) — VS Code 扩展

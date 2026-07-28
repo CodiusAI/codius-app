@@ -6,7 +6,7 @@ order: 7
 category: Getting started
 ---
 
-# Community projects
+# Related projects
 
 Projects built by the Codius community. These **aren't official Codius projects** and aren't covered by Codius's support, but they're useful starting points, especially for self-hosting. Review the code before running anything that touches your machine or your agents.
 

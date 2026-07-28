@@ -15,6 +15,24 @@ Codius is a daemon that supervises AI coding agents on your machine. Control it 
 
 Worktree creation and reference accounting are implementation details of `isolation: "worktree"`.
 
+## Workspace scripts
+
+Configured `codius.json` scripts use the same supervised lifecycle from tools and the CLI.
+
+**`list_workspace_scripts`** — `{ workspaceId }`. Lists configured scripts with lifecycle, service port, proxy URLs, health, exit code, and terminal ID.
+
+**`start_workspace_script`** — `{ workspaceId, scriptName }`. Starts one configured script through Codius's managed workspace-script launcher and returns its status metadata.
+
+**`stop_workspace_script`** — `{ workspaceId, scriptName }`. Stops a running script through its supervised terminal and returns the stopped status metadata.
+
+The matching CLI surface accepts either an explicit workspace ID or resolves the current directory:
+
+```bash
+codius script ls [--cwd <path> | --workspace <workspace-id>]
+codius script start <name> [--cwd <path> | --workspace <workspace-id>]
+codius script stop <name> [--cwd <path> | --workspace <workspace-id>]
+```
+
 ## Agents
 
 **`create_agent`** — required: `title`, `provider` (`claude/opus`, `codex/gpt-5.4`, …), `initialPrompt`. Optional: `workspaceId`, `notifyOnFinish`, `settings`, `labels`. Returns `{ agentId, workspaceId, … }`.

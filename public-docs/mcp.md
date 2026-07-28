@@ -55,6 +55,18 @@ MCP does not expose an agent-detach tool. Detaching is a manual user action in t
 
 For worktree isolation, `create_workspace` accepts the same useful choices as the app: branch off from a base, check out an existing branch, or check out a pull request. The worktree remains an implementation detail of the workspace lifecycle.
 
+### Workspace scripts
+
+These tools manage scripts configured in a workspace's `codius.json`. Each requires an explicit `workspaceId`; start and stop also require the configured `scriptName`.
+
+| Tool                     | Function                                                                                |
+| ------------------------ | --------------------------------------------------------------------------------------- |
+| `list_workspace_scripts` | List configured scripts with lifecycle, terminal, port, proxy URL, and health metadata. |
+| `start_workspace_script` | Start a configured script through Codius's managed launcher.                            |
+| `stop_workspace_script`  | Stop a running script through its supervised terminal.                                  |
+
+See [Git worktrees](/docs/worktrees#scripts-and-services) for `codius.json` configuration.
+
 ### Terminals
 
 | Tool                 | Function                                                                     |

@@ -86,6 +86,20 @@ codius workspace archive <workspace-id>
 
 Add `--forge <name>` to PR checkout when Codius cannot infer the forge from the source checkout. See [Git worktrees](/docs/worktrees) for setup hooks and services.
 
+## Workspace scripts
+
+List, start, and stop the scripts configured in a workspace's `codius.json`:
+
+```bash
+codius script ls
+codius script start web
+codius script stop web
+```
+
+By default, Codius selects the workspace whose directory is the current directory. Pass `--cwd <path>` to select a different directory, or `--workspace <workspace-id>` when a directory has multiple workspaces. These commands also accept `--host` and the standard output options such as `--json`.
+
+The output includes each script's lifecycle and supervised terminal ID. Services also include their assigned port, proxy URL, and health. See [Git worktrees](/docs/worktrees#scripts-and-services) for `codius.json` configuration.
+
 ## Listing agents
 
 ```bash

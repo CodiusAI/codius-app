@@ -38,7 +38,13 @@
 - Oh My Pi slash commands now include commands from every supported source ([#2175](https://github.com/CodiusAI/codius-app/pull/2175) by [@bendavid](https://github.com/bendavid))
 - Oh My Pi chats no longer stay stuck as running after delayed or incomplete completion events ([#2261](https://github.com/CodiusAI/codius-app/pull/2261), [#2282](https://github.com/CodiusAI/codius-app/pull/2282) by [@isac322](https://github.com/isac322))
 
-## 0.2.0-beta.2 - 2026-07-22
+## 0.2.2 - 2026-07-25
+
+### Fixed
+
+- Claude 5 models now use the correct context windows.
+
+## 0.2.1 - 2026-07-24
 
 ### Added
 

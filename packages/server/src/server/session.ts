@@ -13,6 +13,9 @@ import {
   type SessionOutboundMessage,
   type GitSetupOptions,
   type StartWorkspaceScriptRequest,
+  type WorkspaceScriptListRequest,
+  type WorkspaceScriptStartRequest,
+  type WorkspaceScriptStopRequest,
   type CloseItemsRequest,
   type DirectorySuggestionsRequest,
   type ProjectPlacementPayload,
@@ -162,7 +165,6 @@ import {
   archiveWorkspaceContents,
   requireActiveWorkspaceForArchive,
 } from "./workspace-archive-service.js";
-import { WorkspaceReconciliationService } from "./workspace-reconciliation-service.js";
 import type { ServiceProxySubsystem } from "./service-proxy.js";
 import { renameCurrentBranch as renameCurrentBranchDefault } from "../utils/checkout-git.js";
 import {
@@ -206,7 +208,6 @@ import type { ForgeService } from "../services/forge-service.js";
 import type { ProviderUsageService } from "../services/quota-fetcher/service.js";
 import {
   summarizeFetchWorkspacesEntries,
-  workspaceIdsForProjects,
   workspaceIdsOnCheckout,
   WorkspaceDirectory,
   type WorkspaceUpdatesFilter,
@@ -313,6 +314,9 @@ export function resolveWaitForFinishError(options: {
 export interface SessionRuntimeMetrics {
   terminalDirectorySubscriptionCount: number;
   terminalSubscriptionCount: number;
+  workspaceGitWatchedDirectoryCount: number;
+  workspaceGitWorkspaceRecordCount: number;
+  workspaceGitSubscriptionCount: number;
   inflightRequests: number;
   peakInflightRequests: number;
 }
@@ -401,6 +405,7 @@ export interface SessionOptions {
   onMessage: (msg: SessionOutboundMessage) => void;
   onMessageToSource?: (source: object, msg: SessionOutboundMessage) => void;
   onBinaryMessage?: (frame: Uint8Array) => void;
+  onBinaryMessageToSource?: (source: object, frame: Uint8Array) => Promise<void>;
   getTransportBufferedAmount?: () => number | null;
   onLifecycleIntent?: (intent: SessionLifecycleIntent) => void;
   onWorkspaceRecovered?: (workspace: PersistedWorkspaceRecord) => Promise<void>;
@@ -564,6 +569,9 @@ export class Session {
     | ((source: object, msg: SessionOutboundMessage) => void)
     | null;
   private readonly onBinaryMessage: ((frame: Uint8Array) => void) | null;
+  private readonly onBinaryMessageToSource:
+    | ((source: object, frame: Uint8Array) => Promise<void>)
+    | null;
   private readonly getTransportBufferedAmount: () => number | null;
   private readonly onLifecycleIntent: ((intent: SessionLifecycleIntent) => void) | null;
   private readonly onWorkspaceRecovered:
@@ -642,6 +650,7 @@ export class Session {
       onMessage,
       onMessageToSource,
       onBinaryMessage,
+      onBinaryMessageToSource,
       getTransportBufferedAmount,
       onLifecycleIntent,
       onWorkspaceRecovered,
@@ -694,6 +703,7 @@ export class Session {
     this.onMessage = onMessage;
     this.onMessageToSource = onMessageToSource ?? null;
     this.onBinaryMessage = onBinaryMessage ?? null;
+    this.onBinaryMessageToSource = onBinaryMessageToSource ?? null;
     this.getTransportBufferedAmount = getTransportBufferedAmount ?? (() => 0);
     this.onLifecycleIntent = onLifecycleIntent ?? null;
     this.onWorkspaceRecovered = onWorkspaceRecovered ?? null;
@@ -707,8 +717,8 @@ export class Session {
     });
     this.workspaceFilesSession = new WorkspaceFilesSession({
       host: {
-        emit: (msg) => this.emit(msg),
-        emitBinary: (frame) => this.emitBinary(frame),
+        emit: (msg, source) => this.emitForSource(msg, source),
+        emitBinary: (frame, source) => this.emitBinaryForFileTransfer(frame, source),
         hasBinaryChannel: () => this.onBinaryMessage !== null,
       },
       downloadTokenStore,
@@ -735,6 +745,7 @@ export class Session {
       logger: this.sessionLogger,
     });
     this.workspaceRecovery = createWorkspaceRecoveryService({
+      logger: this.sessionLogger,
       codiusHome: this.codiusHome,
       worktreesRoot: this.worktreesRoot,
       getWorkspace: (workspaceId) => this.workspaceRegistry.get(workspaceId),
@@ -1132,7 +1143,7 @@ export class Session {
   }
 
   async emitWorkspaceUpdateForWorkspaceId(workspaceId: string): Promise<void> {
-    await this.emitWorkspaceUpdatesForWorkspaceIds([workspaceId], { skipReconcile: true });
+    await this.emitWorkspaceUpdatesForWorkspaceIds([workspaceId]);
   }
 
   private async emitCreatedWorkspaceUpdate(
@@ -1140,10 +1151,10 @@ export class Session {
     optimisticStatus?: WorkspaceDescriptorPayload["status"],
   ): Promise<void> {
     if (this.workspaceUpdatesSubscription) {
-      await this.emitWorkspaceUpdatesForWorkspaceIds([workspace.id], {
-        skipReconcile: true,
-        ...(optimisticStatus ? { optimisticStatus } : {}),
-      });
+      await this.emitWorkspaceUpdatesForWorkspaceIds(
+        [workspace.id],
+        optimisticStatus ? { optimisticStatus } : undefined,
+      );
       return;
     }
     // COMPAT(workspaceCreateCausalUpdate): added in v0.1.106, remove after 2027-01-12.
@@ -1168,11 +1179,8 @@ export class Session {
     this.clearWorkspaceArchiving(workspaceIds);
   }
 
-  async emitWorkspaceUpdatesForExternalWorkspaceIds(
-    workspaceIds: Iterable<string>,
-    options?: { skipReconcile?: boolean },
-  ): Promise<void> {
-    await this.emitWorkspaceUpdatesForWorkspaceIds(workspaceIds, options);
+  async emitWorkspaceUpdatesForExternalWorkspaceIds(workspaceIds: Iterable<string>): Promise<void> {
+    await this.emitWorkspaceUpdatesForWorkspaceIds(workspaceIds);
   }
 
   async syncWorkspaceGitObserversForExternalWorkspaceIds(
@@ -1260,9 +1268,13 @@ export class Session {
 
   public getRuntimeMetrics(): SessionRuntimeMetrics {
     const terminalMetrics = this.terminalController.getMetrics();
+    const workspaceGitMetrics = this.workspaceGitObserver.getMetrics();
     return {
       terminalDirectorySubscriptionCount: terminalMetrics.directorySubscriptionCount,
       terminalSubscriptionCount: terminalMetrics.streamSubscriptionCount,
+      workspaceGitWatchedDirectoryCount: workspaceGitMetrics.watchedDirectoryCount,
+      workspaceGitWorkspaceRecordCount: workspaceGitMetrics.workspaceRecordCount,
+      workspaceGitSubscriptionCount: workspaceGitMetrics.subscriptionCount,
       inflightRequests: this.inflightRequests,
       peakInflightRequests: this.peakInflightRequests,
     };
@@ -1400,10 +1412,10 @@ export class Session {
       if (this.isCleanedUp) {
         return;
       }
-      await this.emitWorkspaceUpdatesForWorkspaceIds([mutation.workspaceId], {
-        skipReconcile: true,
-        ...(mutation.expectsInitialAgent ? { optimisticStatus: "running" } : {}),
-      });
+      await this.emitWorkspaceUpdatesForWorkspaceIds(
+        [mutation.workspaceId],
+        mutation.expectsInitialAgent ? { optimisticStatus: "running" } : undefined,
+      );
     } catch (error) {
       this.sessionLogger.warn(
         { err: error, workspaceId: mutation.workspaceId, mutationKind: mutation.kind },
@@ -1473,7 +1485,6 @@ export class Session {
           this.workspaceGitObserver.removeForWorkspaceId(workspaceId);
         }
         await this.emitWorkspaceUpdatesForWorkspaceIds(updateIds, {
-          skipReconcile: true,
           removedProjectId: mutation.projectId,
         });
         return;
@@ -1484,9 +1495,7 @@ export class Session {
           this.workspaceGitObserver.removeForWorkspaceId(workspaceId);
         }
       }
-      await this.emitWorkspaceUpdatesForWorkspaceIds(projectWorkspaceIds, {
-        skipReconcile: true,
-      });
+      await this.emitWorkspaceUpdatesForWorkspaceIds(projectWorkspaceIds);
     } catch (error) {
       this.sessionLogger.warn(
         { err: error, projectId: mutation.projectId, mutationKind: mutation.kind },
@@ -1784,7 +1793,7 @@ export class Session {
       this.dispatchCheckoutMessage(msg) ??
       this.dispatchWorkspaceRecoveryMessage(msg) ??
       this.dispatchWorkspaceAndProjectMessage(msg) ??
-      this.dispatchWorkspaceFileMessage(msg) ??
+      this.dispatchWorkspaceFileMessage(msg, source) ??
       this.dispatchProviderMessage(msg) ??
       this.dispatchTerminalMessage(msg) ??
       this.dispatchChatScheduleLoopMessage(msg) ??
@@ -1896,9 +1905,13 @@ export class Session {
   }
 
   private dispatchHubExecutionMessage(msg: SessionInboundMessage): Promise<void> | undefined {
-    return msg.type === "hub.execution.agent.create.request"
-      ? this.hubExecutionController?.createAgent(msg)
-      : undefined;
+    if (msg.type === "hub.execution.agent.create.request") {
+      return this.hubExecutionController?.createAgent(msg);
+    }
+    if (msg.type === "hub.execution.control.request") {
+      return this.hubExecutionController?.controlExecution(msg);
+    }
+    return undefined;
   }
 
   private dispatchAgentLifecycleMessage(msg: SessionInboundMessage): Promise<void> | undefined {
@@ -2100,10 +2113,13 @@ export class Session {
     }
   }
 
-  private dispatchWorkspaceFileMessage(msg: SessionInboundMessage): Promise<void> | undefined {
+  private dispatchWorkspaceFileMessage(
+    msg: SessionInboundMessage,
+    source?: object,
+  ): Promise<void> | undefined {
     switch (msg.type) {
       case "file_explorer_request":
-        return this.workspaceFilesSession.handleFileExplorerRequest(msg);
+        return this.workspaceFilesSession.handleFileExplorerRequest(msg, source);
       case "fs.file.subscribe.request":
         return this.workspaceFilesSession.handleFileSubscribeRequest(msg);
       case "fs.file.unsubscribe.request":
@@ -2158,10 +2174,18 @@ export class Session {
   }
 
   private dispatchTerminalMessage(msg: SessionInboundMessage): Promise<void> | undefined {
-    if (msg.type === "start_workspace_script_request") {
-      return this.handleStartWorkspaceScriptRequest(msg);
+    switch (msg.type) {
+      case "start_workspace_script_request":
+        return this.handleStartWorkspaceScriptRequest(msg);
+      case "workspace.script.list.request":
+        return this.handleWorkspaceScriptListRequest(msg);
+      case "workspace.script.start.request":
+        return this.handleWorkspaceScriptStartRequest(msg);
+      case "workspace.script.stop.request":
+        return this.handleWorkspaceScriptStopRequest(msg);
+      default:
+        return this.terminalController.dispatch(msg);
     }
-    return this.terminalController.dispatch(msg);
   }
 
   // eslint-disable-next-line complexity
@@ -2405,9 +2429,7 @@ export class Session {
         }
       }
 
-      await this.emitWorkspaceUpdatesForWorkspaceIds(affectedWorkspaceIds, {
-        skipReconcile: true,
-      });
+      await this.emitWorkspaceUpdatesForWorkspaceIds(affectedWorkspaceIds);
 
       this.emit({
         type: "agent.detach.response",
@@ -2612,9 +2634,7 @@ export class Session {
         .filter((workspace) => workspace.projectId === projectId)
         .map((workspace) => workspace.workspaceId);
       if (affectedWorkspaceIds.length > 0) {
-        await this.emitWorkspaceUpdatesForWorkspaceIds(affectedWorkspaceIds, {
-          skipReconcile: true,
-        });
+        await this.emitWorkspaceUpdatesForWorkspaceIds(affectedWorkspaceIds);
       }
     } catch (error) {
       this.sessionLogger.error(
@@ -2659,9 +2679,7 @@ export class Session {
 
       if (activeWorkspaceIds.length > 0) {
         this.markWorkspaceArchiving(activeWorkspaceIds, new Date().toISOString());
-        await this.emitWorkspaceUpdatesForWorkspaceIds(activeWorkspaceIds, {
-          skipReconcile: true,
-        });
+        await this.emitWorkspaceUpdatesForWorkspaceIds(activeWorkspaceIds);
       }
 
       const removedWorkspaceIds: string[] = [];
@@ -2693,7 +2711,6 @@ export class Session {
           ? removedWorkspaceIds
           : [projectWorkspaces[0]?.workspaceId ?? projectId];
       await this.emitWorkspaceUpdatesForWorkspaceIds(updateIds, {
-        skipReconcile: true,
         removedProjectId: projectId,
       });
 
@@ -2778,9 +2795,7 @@ export class Session {
         },
       });
 
-      await this.emitWorkspaceUpdatesForWorkspaceIds([workspaceId], {
-        skipReconcile: true,
-      });
+      await this.emitWorkspaceUpdatesForWorkspaceIds([workspaceId]);
     } catch (error) {
       this.sessionLogger.error(
         { err: error, workspaceId, requestId },
@@ -2835,7 +2850,7 @@ export class Session {
         return;
       }
       emitResponse(true, nextPinnedAt, null);
-      await this.emitWorkspaceUpdatesForWorkspaceIds([workspaceId], { skipReconcile: true });
+      await this.emitWorkspaceUpdatesForWorkspaceIds([workspaceId]);
     } catch (error) {
       this.sessionLogger.error(
         { ...logContext, err: error },
@@ -4566,67 +4581,9 @@ export class Session {
     releaseWorkspaceServicePortPlan(workspaceId);
   }
 
-  private async reconcileAndEmitWorkspaceUpdates(): Promise<void> {
-    if (!this.workspaceUpdatesSubscription) {
-      return;
-    }
-    try {
-      const changedWorkspaceIds = await this.reconcileActiveWorkspaceRecords();
-      if (changedWorkspaceIds.size === 0) {
-        return;
-      }
-      await this.emitWorkspaceUpdatesForWorkspaceIds(changedWorkspaceIds, {
-        skipReconcile: true,
-      });
-    } catch (error) {
-      this.sessionLogger.error({ err: error }, "Background workspace reconciliation failed");
-    }
-  }
-
-  private async reconcileActiveWorkspaceRecords(): Promise<Set<string>> {
-    const service = new WorkspaceReconciliationService({
-      projectRegistry: this.projectRegistry,
-      workspaceRegistry: this.workspaceRegistry,
-      logger: this.sessionLogger,
-      workspaceGitService: this.workspaceGitService,
-    });
-    const result = await service.runOnce();
-    const changedWorkspaceIds = new Set<string>();
-    const changedProjectIds = new Set<string>();
-
-    await Promise.all(
-      result.changesApplied.map(async (change) => {
-        switch (change.kind) {
-          case "workspace_archived":
-            await this.teardownArchivedWorkspace(change.workspaceId);
-            changedWorkspaceIds.add(change.workspaceId);
-            break;
-          case "workspace_updated":
-            changedWorkspaceIds.add(change.workspaceId);
-            break;
-          case "project_updated":
-            changedProjectIds.add(change.projectId);
-            break;
-        }
-      }),
-    );
-
-    if (changedProjectIds.size > 0) {
-      for (const workspaceId of workspaceIdsForProjects(
-        await this.workspaceRegistry.list(),
-        changedProjectIds,
-      )) {
-        changedWorkspaceIds.add(workspaceId);
-      }
-    }
-
-    return changedWorkspaceIds;
-  }
-
   private async emitWorkspaceUpdatesForWorkspaceIds(
     workspaceIds: Iterable<string>,
     options?: {
-      skipReconcile?: boolean;
       dedupeGitState?: boolean;
       removedProjectId?: string;
       optimisticStatus?: WorkspaceDescriptorPayload["status"];
@@ -4693,10 +4650,6 @@ export class Session {
 
       this.bufferOrEmitWorkspaceUpdate(subscription, nextPayload);
     }
-
-    if (!options?.skipReconcile) {
-      void this.reconcileAndEmitWorkspaceUpdates();
-    }
   }
 
   private applyOptimisticWorkspaceStatus(
@@ -4757,9 +4710,7 @@ export class Session {
     if (!event.workspaceId) {
       return;
     }
-    await this.emitWorkspaceUpdatesForWorkspaceIds([event.workspaceId], {
-      skipReconcile: true,
-    });
+    await this.emitWorkspaceUpdatesForWorkspaceIds([event.workspaceId]);
   }
 
   // A git fact (branch, diff, dirty, PR) changed at `cwd`. Every workspace whose
@@ -4770,7 +4721,6 @@ export class Session {
   private async emitWorkspaceUpdateForCwd(
     cwd: string,
     options?: {
-      skipReconcile?: boolean;
       dedupeGitState?: boolean;
     },
   ): Promise<void> {
@@ -4964,7 +4914,6 @@ export class Session {
 
       if (subscriptionId && this.workspaceUpdatesSubscription?.subscriptionId === subscriptionId) {
         this.flushBootstrappedWorkspaceUpdates(snapshot);
-        void this.reconcileAndEmitWorkspaceUpdates();
       }
     } catch (error) {
       if (subscriptionId && this.workspaceUpdatesSubscription?.subscriptionId === subscriptionId) {
@@ -5570,6 +5519,91 @@ export class Session {
 
   private handleStartWorkspaceScriptRequest(request: StartWorkspaceScriptRequest): Promise<void> {
     return this.workspaceScripts.start(request);
+  }
+
+  private async handleWorkspaceScriptListRequest(
+    request: WorkspaceScriptListRequest,
+  ): Promise<void> {
+    try {
+      const scripts = await this.workspaceScripts.list(request.workspaceId);
+      this.emit({
+        type: "workspace.script.list.response",
+        payload: {
+          requestId: request.requestId,
+          workspaceId: request.workspaceId,
+          scripts,
+          error: null,
+        },
+      });
+    } catch (error) {
+      this.emit({
+        type: "workspace.script.list.response",
+        payload: {
+          requestId: request.requestId,
+          workspaceId: request.workspaceId,
+          scripts: [],
+          error: error instanceof Error ? error.message : "Failed to list workspace scripts",
+        },
+      });
+    }
+  }
+
+  private async handleWorkspaceScriptStartRequest(
+    request: WorkspaceScriptStartRequest,
+  ): Promise<void> {
+    try {
+      const script = await this.workspaceScripts.launch(request);
+      this.emit({
+        type: "workspace.script.start.response",
+        payload: {
+          requestId: request.requestId,
+          workspaceId: request.workspaceId,
+          scriptName: request.scriptName,
+          script,
+          error: null,
+        },
+      });
+    } catch (error) {
+      this.emit({
+        type: "workspace.script.start.response",
+        payload: {
+          requestId: request.requestId,
+          workspaceId: request.workspaceId,
+          scriptName: request.scriptName,
+          script: null,
+          error: error instanceof Error ? error.message : "Failed to start workspace script",
+        },
+      });
+    }
+  }
+
+  private async handleWorkspaceScriptStopRequest(
+    request: WorkspaceScriptStopRequest,
+  ): Promise<void> {
+    try {
+      const script = await this.workspaceScripts.stop(request);
+      this.emit({
+        type: "workspace.script.stop.response",
+        payload: {
+          requestId: request.requestId,
+          workspaceId: request.workspaceId,
+          scriptName: request.scriptName,
+          script,
+          error: null,
+        },
+      });
+    } catch (error) {
+      this.emit({
+        type: "workspace.script.stop.response",
+        payload: {
+          requestId: request.requestId,
+          workspaceId: request.workspaceId,
+          scriptName: request.scriptName,
+          script: null,
+          error: error instanceof Error ? error.message : "Failed to stop workspace script",
+        },
+      });
+    }
   }
 
   // COMPAT(desktopEditorBridge): added in v0.1.88, remove after 2026-12-03 once old clients no longer call daemon editor RPCs.
@@ -6311,6 +6345,7 @@ export class Session {
             agentId,
             accepted: true,
             error: null,
+            outOfBand: true,
           },
         });
         return;
@@ -6338,6 +6373,7 @@ export class Session {
           agentId,
           accepted: true,
           error: null,
+          outOfBand: false,
         },
       });
     } catch (error) {
@@ -6506,6 +6542,22 @@ export class Session {
     } catch (error) {
       this.sessionLogger.error({ err: error }, "Failed to emit binary frame");
     }
+  }
+
+  private async emitBinaryForFileTransfer(frame: Uint8Array, source?: object): Promise<void> {
+    if (source && this.onBinaryMessageToSource) {
+      await this.onBinaryMessageToSource(source, frame);
+      return;
+    }
+    this.emitBinary(frame);
+  }
+
+  private emitForSource(msg: SessionOutboundMessage, source?: object): void {
+    if (source && this.onMessageToSource) {
+      this.onMessageToSource(source, msg);
+      return;
+    }
+    this.emit(msg);
   }
 
   /**
