@@ -7,7 +7,15 @@ const CODIUS_DEFAULT_CONFIG = {
   daemon: {
     listen: "127.0.0.1:6767",
     cors: {
-      allowedOrigins: ["https://codius.ai", "https://dev.codius.dev"],
+      // The browser client connects to this local daemon over WebSocket, and
+      // the upgrade is rejected unless its Origin is listed here. The app is
+      // served from its own subdomain, so the marketing origins are not enough.
+      allowedOrigins: [
+        "https://codius.ai",
+        "https://app.codius.ai",
+        "https://dev.codius.dev",
+        "https://devapp.codius.ai",
+      ],
     },
     relay: {
       // Codius does not use Paseo's hosted relay. A Codius relay can be enabled
