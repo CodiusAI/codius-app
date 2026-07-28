@@ -30,7 +30,7 @@ extraResources:
 publish:
   provider: github
   owner: prismosoft
-  repo: codius-desktop
+  repo: codius-app
 mac:
   artifactName: "Codius-${version}-${arch}.${ext}"
   category: public.app-category.developer-tools
@@ -69,7 +69,7 @@ appImage:
   # versioned path. A rename would orphan the old binary and break shortcuts.
   artifactName: "Codius-${arch}.${ext}"
 rpm:
-  packageName: codius-desktop
+  packageName: codius-app
 win:
   artifactName: "Codius-Setup-${version}-${arch}.${ext}"
   icon: assets/codius-icon.png

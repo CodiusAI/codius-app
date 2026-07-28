@@ -25,7 +25,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: codius-desktop-release-${{ github.ref }}
+  group: codius-app-release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -201,7 +201,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: codius-desktop-${{ matrix.artifact }}
+          name: codius-app-${{ matrix.artifact }}
           path: |
             packages/desktop/release/*.dmg
             packages/desktop/release/*.zip
@@ -222,7 +222,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: codius-desktop-*
+          pattern: codius-app-*
           path: release-assets
           merge-multiple: true
 

@@ -4147,7 +4147,7 @@ describe("session workspace script handling", () => {
     });
     const workspaceGitService = {
       peekSnapshot: vi.fn(() => snapshot),
-      getProjectSlug: vi.fn().mockResolvedValue("codius-desktop"),
+      getProjectSlug: vi.fn().mockResolvedValue("codius-app"),
     };
     const workspaceRegistry = {
       get: vi.fn().mockResolvedValue({
@@ -4184,7 +4184,7 @@ describe("session workspace script handling", () => {
       expect.objectContaining({
         repoRoot: "/tmp/repo",
         workspaceId: "workspace-1",
-        projectSlug: "codius-desktop",
+        projectSlug: "codius-app",
         branchName: "feature/service-scripts",
         scriptName: "api",
         daemonPort: 6767,

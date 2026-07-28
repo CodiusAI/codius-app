@@ -14,33 +14,27 @@ describe("buildWorkingDirectorySuggestions", () => {
 
   it("keeps fuzzy recommendation matches before de-duplicated daemon suggestions", () => {
     const results = buildWorkingDirectorySuggestions({
-      recommendedPaths: ["/Users/me/projects/codius-desktop", "/Users/me/documents"],
-      serverPaths: ["/Users/me/projects/codius-plan", "/Users/me/projects/codius-desktop"],
+      recommendedPaths: ["/Users/me/projects/codius-app", "/Users/me/documents"],
+      serverPaths: ["/Users/me/projects/codius-plan", "/Users/me/projects/codius-app"],
       query: "codius",
     });
 
-    expect(results).toEqual([
-      "/Users/me/projects/codius-desktop",
-      "/Users/me/projects/codius-plan",
-    ]);
+    expect(results).toEqual(["/Users/me/projects/codius-app", "/Users/me/projects/codius-plan"]);
   });
 
   it("does not reinterpret daemon-ranked suggestions", () => {
     const results = buildWorkingDirectorySuggestions({
       recommendedPaths: [],
-      serverPaths: ["/Users/me/projects/codius-desktop"],
+      serverPaths: ["/Users/me/projects/codius-app"],
       query: "a-query-ranked-by-the-daemon",
     });
 
-    expect(results).toEqual(["/Users/me/projects/codius-desktop"]);
+    expect(results).toEqual(["/Users/me/projects/codius-app"]);
   });
 
   it("leaves path-query semantics to the daemon", () => {
     const results = buildWorkingDirectorySuggestions({
-      recommendedPaths: [
-        "/Users/me/archive/projects/codius-desktop",
-        "/Users/me/projects/codius-desktop",
-      ],
+      recommendedPaths: ["/Users/me/archive/projects/codius-app", "/Users/me/projects/codius-app"],
       serverPaths: [],
       query: "~/projects/codius",
     });

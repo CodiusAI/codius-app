@@ -11,13 +11,13 @@
   libuv,
   # Reuse the daemon's prebuilt npm-deps FOD. Same lockfile, same content —
   # without this, the desktop drv produces a separately-named store path
-  # (`codius-desktop-<v>-npm-deps`) and refetches the entire registry. Override
+  # (`codius-app-<v>-npm-deps`) and refetches the entire registry. Override
   # the upstream hash via `codius.override { npmDepsHash = "..."; }`.
   codius,
 }:
 
 buildNpmPackage rec {
-  pname = "codius-desktop";
+  pname = "codius-app";
   version = (builtins.fromJSON (builtins.readFile ../package.json)).version;
 
   src = lib.cleanSourceWith {
@@ -91,7 +91,7 @@ buildNpmPackage rec {
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/share/codius-desktop $out/bin
+    mkdir -p $out/share/codius-app $out/bin
 
     # Preserve the monorepo layout so main.js's dev-mode path resolution
     # (`__dirname/../../app/dist`, `__dirname/../assets/icon.png`) works
@@ -103,18 +103,18 @@ buildNpmPackage rec {
     # Missing any workspace package leaves dangling symlinks and fails the
     # noBrokenSymlinks output check. The cleanSourceWith filter above already
     # drops the big platform-specific things (android/ios, website, tests).
-    cp package.json $out/share/codius-desktop/
-    cp -a packages $out/share/codius-desktop/
-    cp -a node_modules $out/share/codius-desktop/
+    cp package.json $out/share/codius-app/
+    cp -a packages $out/share/codius-app/
+    cp -a node_modules $out/share/codius-app/
 
     # Skills directory referenced at runtime by some agents
     if [ -d skills ]; then
-      cp -a skills $out/share/codius-desktop/
+      cp -a skills $out/share/codius-app/
     fi
 
     # Hicolor icon for desktop environments
     install -Dm644 packages/desktop/assets/icon.png \
-      $out/share/icons/hicolor/512x512/apps/codius-desktop.png
+      $out/share/icons/hicolor/512x512/apps/codius-app.png
 
     # Launcher wraps nixpkgs electron.
     # --no-sandbox: Chromium's setuid sandbox can't live in /nix/store
@@ -126,8 +126,8 @@ buildNpmPackage rec {
     # (defaults to http://localhost:8081 — the Expo dev server, which doesn't
     # exist here). Point it at the `codius://` protocol handler instead, which
     # serves from `__dirname/../../app/dist` (our install layout matches).
-    makeWrapper ${electron}/bin/electron $out/bin/codius-desktop \
-      --add-flags "$out/share/codius-desktop/packages/desktop/dist/main.js" \
+    makeWrapper ${electron}/bin/electron $out/bin/codius-app \
+      --add-flags "$out/share/codius-app/packages/desktop/dist/main.js" \
       --add-flags "--no-sandbox" \
       --set EXPO_DEV_URL "codius://app/"
 
@@ -138,12 +138,12 @@ buildNpmPackage rec {
 
   desktopItems = [
     (makeDesktopItem {
-      name = "codius-desktop";
+      name = "codius-app";
       desktopName = "Codius";
       genericName = "AI Coding Agents";
       comment = "Self-hosted daemon for AI coding agents";
-      exec = "codius-desktop";
-      icon = "codius-desktop";
+      exec = "codius-app";
+      icon = "codius-app";
       categories = [ "Development" ];
       startupWMClass = "Codius";
     })
@@ -153,7 +153,7 @@ buildNpmPackage rec {
     description = "Codius desktop app (Electron wrapper)";
     homepage = "https://github.com/CodiusAI/codius-app";
     license = lib.licenses.agpl3Plus;
-    mainProgram = "codius-desktop";
+    mainProgram = "codius-app";
     platforms = lib.platforms.linux;
   };
 }

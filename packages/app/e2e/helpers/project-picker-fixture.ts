@@ -18,7 +18,7 @@ interface ProjectPickerFixtureResource {
 export async function createProjectPickerFixture(): Promise<ProjectPickerFixtureResource> {
   const root = await mkdtemp(path.join(homedir(), "codius-e2e-project-picker-"));
   const nonce = randomUUID().replaceAll("-", "").slice(0, 8);
-  const projectPath = path.join(root, "client", "team", `codius-desktop-fuzzy-target-${nonce}`);
+  const projectPath = path.join(root, "client", "team", `codius-app-fuzzy-target-${nonce}`);
   await mkdir(projectPath, { recursive: true });
 
   return {

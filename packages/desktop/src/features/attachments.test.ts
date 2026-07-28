@@ -8,7 +8,7 @@ const originalCodiusHome = process.env.CODIUS_HOME;
 let testHome: string | null = null;
 
 async function useTempCodiusHome(): Promise<string> {
-  testHome = await mkdtemp(path.join(os.tmpdir(), "codius-desktop-attachments-"));
+  testHome = await mkdtemp(path.join(os.tmpdir(), "codius-app-attachments-"));
   process.env.CODIUS_HOME = testHome;
   return testHome;
 }

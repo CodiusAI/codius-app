@@ -75,7 +75,7 @@ describe("searchDirectoryEntries", () => {
   beforeEach(() => {
     configuredSearchRoot = mkdtempSync(path.join(tmpdir(), "directory-search-"));
     searchRoot = realpathSync.native(configuredSearchRoot);
-    mkdirSync(path.join(searchRoot, "projects", "codius-desktop"), { recursive: true });
+    mkdirSync(path.join(searchRoot, "projects", "codius-app"), { recursive: true });
     mkdirSync(path.join(searchRoot, "src", "components"), { recursive: true });
     mkdirSync(path.join(searchRoot, ".hidden", "secret"), { recursive: true });
     writeFileSync(path.join(searchRoot, "src", "components", "message-renderer.tsx"), "");
@@ -104,7 +104,7 @@ describe("searchDirectoryEntries", () => {
     expect({ directories, files }).toEqual({
       directories: [
         {
-          path: path.join(searchRoot, "projects", "codius-desktop"),
+          path: path.join(searchRoot, "projects", "codius-app"),
           kind: "directory",
         },
       ],
@@ -212,7 +212,7 @@ describe("searchDirectoryEntries", () => {
         { path: "projects", kind: "directory" },
         { path: "src", kind: "directory" },
       ],
-      projectEntries: [{ path: "projects/codius-desktop", kind: "directory" }],
+      projectEntries: [{ path: "projects/codius-app", kind: "directory" }],
     });
   });
 
@@ -452,7 +452,7 @@ describe("absolute directory-path configuration", () => {
 
   it("shares the scan budget fairly between nested sibling branches", async () => {
     const budgetHome = path.join(tempRoot, "nested-budget-home");
-    const projectPath = path.join(budgetHome, "work", "client", "team", "codius-desktop");
+    const projectPath = path.join(budgetHome, "work", "client", "team", "codius-app");
     mkdirSync(projectPath, { recursive: true });
     for (let index = 0; index < 10; index += 1) {
       mkdirSync(
@@ -463,7 +463,7 @@ describe("absolute directory-path configuration", () => {
 
     const results = await searchAbsoluteDirectoryPaths({
       homeDir: budgetHome,
-      query: "codius-desktop",
+      query: "codius-app",
       limit: 10,
       maxDirectoriesScanned: 8,
     });
@@ -476,7 +476,7 @@ describe("absolute directory-path configuration", () => {
   it.skipIf(isWindows)("does not let a queued symlink hide the direct project branch", async () => {
     const symlinkHome = path.join(tempRoot, "symlink-budget-home");
     const projectRoot = path.join(symlinkHome, "b-projects", "project-root");
-    const projectPath = path.join(projectRoot, "codius-desktop");
+    const projectPath = path.join(projectRoot, "codius-app");
     const noisyBranch = path.join(symlinkHome, "a-noisy");
     mkdirSync(projectPath, { recursive: true });
     for (let index = 0; index < 10; index += 1) {
@@ -490,7 +490,7 @@ describe("absolute directory-path configuration", () => {
 
     const results = await searchAbsoluteDirectoryPaths({
       homeDir: symlinkHome,
-      query: "codius-desktop",
+      query: "codius-app",
       limit: 10,
       maxDirectoriesScanned: 6,
     });
@@ -502,7 +502,7 @@ describe("absolute directory-path configuration", () => {
 
   it.skipIf(isWindows)("follows visible directory symlinks that stay inside home", async () => {
     const symlinkHome = path.join(tempRoot, "internal-symlink-home");
-    const projectPath = path.join(symlinkHome, ".linked", "project-root", "codius-desktop");
+    const projectPath = path.join(symlinkHome, ".linked", "project-root", "codius-app");
     mkdirSync(projectPath, { recursive: true });
     symlinkSync(path.dirname(projectPath), path.join(symlinkHome, "linked-project"));
 

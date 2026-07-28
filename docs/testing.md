@@ -120,7 +120,7 @@ To exercise the smoke locally on Linux:
 
 ```bash
 CODIUS_DESKTOP_SMOKE=1 \
-CODIUS_DESKTOP_SMOKE_ARTIFACT_DIR=/tmp/codius-desktop-smoke \
+CODIUS_DESKTOP_SMOKE_ARTIFACT_DIR=/tmp/codius-app-smoke \
 npm run build:desktop -- --publish never --linux --x64 --dir
 ```
 

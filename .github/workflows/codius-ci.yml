@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: codius-desktop-ci-${{ github.ref }}
+  group: codius-app-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

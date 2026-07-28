@@ -50,7 +50,7 @@ describe("checkout status projection", () => {
       {
         number: 993,
         repoOwner: "prismosoft",
-        repoName: "codius-desktop",
+        repoName: "codius-app",
         url: "https://github.com/CodiusAI/codius-app/pull/993",
         title: "Auto-merge UX",
         state: "open",

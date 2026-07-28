@@ -9,19 +9,19 @@ describe("normalizeGithubRemote", () => {
   it.each([
     [
       "https://github.com/CodiusAI/codius-app",
-      { owner: "prismosoft", repo: "codius-desktop", host: "github.com" },
+      { owner: "prismosoft", repo: "codius-app", host: "github.com" },
     ],
     [
       "https://github.com/CodiusAI/codius-app.git",
-      { owner: "prismosoft", repo: "codius-desktop", host: "github.com" },
+      { owner: "prismosoft", repo: "codius-app", host: "github.com" },
     ],
     [
       "git@github.com:CodiusAI/codius-app.git",
-      { owner: "prismosoft", repo: "codius-desktop", host: "github.com" },
+      { owner: "prismosoft", repo: "codius-app", host: "github.com" },
     ],
     [
       "ssh://git@github.com/CodiusAI/codius-app.git",
-      { owner: "prismosoft", repo: "codius-desktop", host: "github.com" },
+      { owner: "prismosoft", repo: "codius-app", host: "github.com" },
     ],
   ])("extracts GitHub identity from %s", (remoteUrl, expected) => {
     expect(normalizeGithubRemote(remoteUrl)).toEqual(expected);
@@ -45,7 +45,7 @@ describe("parseGithubRef", () => {
       kind: "pull",
       number: 994,
       owner: "prismosoft",
-      repo: "codius-desktop",
+      repo: "codius-app",
       url: "https://github.com/CodiusAI/codius-app/pull/994",
     });
   });
@@ -57,7 +57,7 @@ describe("parseGithubRef", () => {
       kind: "issues",
       number: 456,
       owner: "prismosoft",
-      repo: "codius-desktop",
+      repo: "codius-app",
       url: "https://github.com/CodiusAI/codius-app/issues/456",
     });
   });
@@ -67,7 +67,7 @@ describe("parseGithubRef", () => {
       kind: "pull",
       number: 994,
       owner: "prismosoft",
-      repo: "codius-desktop",
+      repo: "codius-app",
       url: "https://github.com/CodiusAI/codius-app/pull/994",
     });
   });
@@ -98,7 +98,7 @@ describe("parseGithubRef", () => {
       kind: "pull",
       number: 994,
       owner: "prismosoft",
-      repo: "codius-desktop",
+      repo: "codius-app",
       url: "https://github.com/CodiusAI/codius-app/pull/994",
     });
   });
@@ -118,14 +118,14 @@ describe("extractGithubRefs", () => {
         kind: "pull",
         number: 994,
         owner: "prismosoft",
-        repo: "codius-desktop",
+        repo: "codius-app",
         url: "https://github.com/CodiusAI/codius-app/pull/994",
       },
       {
         kind: "issues",
         number: 456,
         owner: "prismosoft",
-        repo: "codius-desktop",
+        repo: "codius-app",
         url: "https://github.com/CodiusAI/codius-app/issues/456",
       },
     ]);

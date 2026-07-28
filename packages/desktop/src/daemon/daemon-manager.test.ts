@@ -10,7 +10,7 @@ import { createDaemonCommandHandlers } from "./daemon-manager";
 const originalResourcesPath = process.resourcesPath;
 
 const mocks = vi.hoisted(() => ({
-  codiusHome: "/tmp/codius-desktop-daemon-manager-test-home",
+  codiusHome: "/tmp/codius-app-daemon-manager-test-home",
   settings: {
     releaseChannel: "stable",
     daemon: {
@@ -28,7 +28,7 @@ const mocks = vi.hoisted(() => ({
   spawnProcess: vi.fn(),
   logInfo: vi.fn(),
   logError: vi.fn(),
-  appLogPath: "/tmp/codius-desktop-daemon-manager-test-main.log",
+  appLogPath: "/tmp/codius-app-daemon-manager-test-main.log",
   getElectronLogFile: vi.fn(),
 }));
 

@@ -18,9 +18,7 @@ describe("projectDisplayNameFromProjectId", () => {
 
 describe("projectIconPlaceholderLabelFromDisplayName", () => {
   it("uses repo name instead of owner for GitHub-style display names", () => {
-    expect(projectIconPlaceholderLabelFromDisplayName("CodiusAI/codius-app")).toBe(
-      "codius-desktop",
-    );
+    expect(projectIconPlaceholderLabelFromDisplayName("CodiusAI/codius-app")).toBe("codius-app");
   });
 
   it("returns the original display name when it has no path separator", () => {

@@ -265,7 +265,7 @@ describe("start", () => {
     expect(spawnCalls[0]).toMatchObject({
       repoRoot: "/tmp/repo",
       workspaceId: "ws-1",
-      projectSlug: "codius-desktop",
+      projectSlug: "codius-app",
       branchName: "feature/scripts",
       scriptName: "app",
       daemonPort: 6767,

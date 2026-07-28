@@ -162,7 +162,7 @@ Install and run:
 
 ```bash
 git clone https://github.com/CodiusAI/codius-app.git
-cd codius-desktop
+cd codius-app
 npm install
 npm run dev
 ```
