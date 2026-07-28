@@ -1,6 +1,10 @@
 <p align="center">
   <a href="https://codius.ai">
-    <img src="assets/codius-logo.svg" width="360" alt="Codius" />
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/codius-logo-light.svg" />
+      <source media="(prefers-color-scheme: light)" srcset="assets/codius-logo-dark.svg" />
+      <img src="assets/codius-logo-dark.svg" width="360" alt="Codius" />
+    </picture>
   </a>
 </p>
 
@@ -9,9 +13,9 @@
 <p align="center"><strong>A visual command center for Codius CLI and the coding agents you already use.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/prismosoft/codius-desktop/actions"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/prismosoft/codius-desktop/ci.yml?style=flat-square&branch=main" /></a>
-  <a href="https://github.com/prismosoft/codius-desktop/releases"><img alt="Release" src="https://img.shields.io/github/v/release/prismosoft/codius-desktop?style=flat-square" /></a>
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/prismosoft/codius-desktop?style=flat-square" /></a>
+  <a href="https://github.com/prismosoft/codius-desktop/actions/workflows/codius-ci.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/prismosoft/codius-desktop/codius-ci.yml?style=flat-square&branch=main" /></a>
+  <a href="https://github.com/prismosoft/codius-desktop/releases"><img alt="Release" src="https://img.shields.io/github/v/release/prismosoft/codius-desktop?include_prereleases&style=flat-square" /></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-AGPL--3.0-blue?style=flat-square" /></a>
 </p>
 
 Codius is an open-source visual workspace for local coding agents. It combines agent orchestration, worktrees, Git review, terminals, schedules, MCP integration, an embedded browser, and visible browser automation while making **Codius CLI the first-run default provider**.
