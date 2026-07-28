@@ -8,8 +8,6 @@
   </a>
 </p>
 
-<h1 align="center">Codius</h1>
-
 <p align="center"><strong>A visual command center for Codius CLI and the coding agents you already use.</strong></p>
 
 <p align="center">
