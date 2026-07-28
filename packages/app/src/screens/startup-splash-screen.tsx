@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { openExternalUrl } from "@/utils/open-external-url";
 import { BookOpen, Copy, RotateCw, TriangleAlert } from "lucide-react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { CodiusLogo } from "@/components/icons/codius-logo";
+import { CODIUS_LOGO_PATH, CodiusLogo } from "@/components/icons/codius-logo";
 import { Button } from "@/components/ui/button";
 import { getDesktopDaemonLogs, type DesktopDaemonLogs } from "@/desktop/daemon/desktop-daemon";
 import { TitlebarDragRegion } from "@/components/desktop/titlebar-drag-region";
@@ -112,7 +112,14 @@ function WebLogoShimmer({ color }: { color: string }) {
     [color],
   );
 
-  return <View style={shimmerStyle as never} />;
+  const codiusMaskStyle = useMemo(
+    () => ({
+      WebkitMaskImage: `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${LOGO_SIZE}' height='${LOGO_SIZE}' viewBox='0 0 24 24'><path fill='black' d='${CODIUS_LOGO_PATH}'/></svg>`)}")`,
+    }),
+    [],
+  );
+
+  return <View style={[shimmerStyle, codiusMaskStyle] as never} />;
 }
 
 function NativeLogoShimmer({ color }: { color: string }) {
