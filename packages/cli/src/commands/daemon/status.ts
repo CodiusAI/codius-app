@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { createRequire } from "node:module";
-import { getOrCreateServerId, findExecutable, execCommand } from "@codius-ai/server";
+import { getOrCreateServerId, findExecutable, execCommand } from "@codius.ai/server";
 import { connectToDaemon } from "../../utils/client.js";
 import type { CommandOptions, ListResult, OutputSchema } from "../../output/index.js";
 import { resolveLocalDaemonState, resolveTcpHostFromListen } from "./local-daemon.js";
@@ -127,7 +127,7 @@ function toStatusRows(status: DaemonStatus): StatusRow[] {
     { key: "Logs", value: status.logPath },
     { key: "Daemon Node", value: status.daemonNode },
     { key: "CLI Node", value: status.cliNode },
-    { key: "CLI", value: status.cliVersion },
+    { key: "Codius CLI", value: status.cliVersion },
     { key: "Daemon Version", value: status.daemonVersion ?? "-" },
   ];
 

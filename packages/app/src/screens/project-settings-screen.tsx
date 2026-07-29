@@ -12,8 +12,8 @@ import type {
   CodiusConfigRaw,
   CodiusConfigRevision,
   ProjectConfigRpcError,
-} from "@codius-ai/protocol/messages";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+} from "@codius.ai/protocol/messages";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

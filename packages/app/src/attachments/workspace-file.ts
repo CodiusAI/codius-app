@@ -1,4 +1,4 @@
-import type { AgentAttachment } from "@codius-ai/protocol/messages";
+import type { AgentAttachment } from "@codius.ai/protocol/messages";
 import type {
   UserComposerAttachment,
   WorkspaceFileComposerAttachment,

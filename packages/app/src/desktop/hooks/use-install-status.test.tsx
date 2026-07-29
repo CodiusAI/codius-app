@@ -60,7 +60,7 @@ describe("useCliInstall", () => {
     vi.clearAllMocks();
   });
 
-  it("loads CLI install status", async () => {
+  it("loads Codius CLI install status", async () => {
     const { result } = renderDesktopHook(() => useCliInstall());
 
     await waitFor(() => {
@@ -70,7 +70,7 @@ describe("useCliInstall", () => {
     expect(toast.error).not.toHaveBeenCalled();
   });
 
-  it("toasts and exposes CLI install errors", async () => {
+  it("toasts and exposes Codius CLI install errors", async () => {
     const error = new Error("Missing IPC handler");
     desktopDaemon.getCliInstallStatus.mockResolvedValue({ installed: false });
     desktopDaemon.installCli.mockRejectedValue(error);
@@ -88,11 +88,14 @@ describe("useCliInstall", () => {
       expect(result.current.error).toBe(error);
     });
 
-    expect(toast.error).toHaveBeenCalledWith("Unable to install the Codius CLI.");
-    expect(console.error).toHaveBeenCalledWith("[Integrations] Failed to install CLI", error);
+    expect(toast.error).toHaveBeenCalledWith("Unable to install Codius CLI.");
+    expect(console.error).toHaveBeenCalledWith(
+      "[Integrations] Failed to install Codius CLI",
+      error,
+    );
   });
 
-  it("uses the active language for CLI install errors", async () => {
+  it("uses the active language for Codius CLI install errors", async () => {
     await i18n.changeLanguage("zh-CN");
     const error = new Error("Missing IPC handler");
     desktopDaemon.getCliInstallStatus.mockResolvedValue({ installed: false });

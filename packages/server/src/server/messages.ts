@@ -1,10 +1,10 @@
 import type { ManagedAgent } from "./agent/agent-manager.js";
 import { toAgentPayload } from "./agent/agent-projections.js";
 import type { AgentStreamEvent } from "./agent/agent-sdk-types.js";
-import type { AgentSnapshotPayload, AgentStreamEventPayload } from "@codius-ai/protocol/messages";
-import { AgentStreamEventPayloadSchema as AgentStreamEventPayloadRuntimeSchema } from "@codius-ai/protocol/messages";
+import type { AgentSnapshotPayload, AgentStreamEventPayload } from "@codius.ai/protocol/messages";
+import { AgentStreamEventPayloadSchema as AgentStreamEventPayloadRuntimeSchema } from "@codius.ai/protocol/messages";
 
-export * from "@codius-ai/protocol/messages";
+export * from "@codius.ai/protocol/messages";
 
 function validateStreamEventPayload(payload: unknown): AgentStreamEventPayload | null {
   const parsed = AgentStreamEventPayloadRuntimeSchema.safeParse(payload);

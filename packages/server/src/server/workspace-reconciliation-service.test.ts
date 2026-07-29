@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import type { ProjectCheckoutLitePayload } from "@codius-ai/protocol/messages";
+import type { ProjectCheckoutLitePayload } from "@codius.ai/protocol/messages";
 import type pino from "pino";
 import { afterEach, describe, expect, test } from "vitest";
 import {

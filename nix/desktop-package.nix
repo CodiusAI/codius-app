@@ -31,8 +31,6 @@ buildNpmPackage rec {
       # Exclude mobile-only platform code (we only need the web/electron build)
       !(lib.hasPrefix "/packages/app/android" relPath)
       && !(lib.hasPrefix "/packages/app/ios" relPath)
-      # Website is unrelated to the desktop app
-      && !(lib.hasPrefix "/packages/website" relPath)
       # Test fixtures and build artifacts
       && !(lib.hasSuffix ".test.ts" baseName)
       && !(lib.hasSuffix ".e2e.test.ts" baseName)
@@ -73,17 +71,17 @@ buildNpmPackage rec {
     # Native deps (terminal emulation; libuv-linked on Linux)
     npm rebuild node-pty
 
-    # Server workspaces (highlight + relay + protocol + client + server + cli)
+    # Server workspaces (highlight + relay + protocol + client + server + CLI)
     npm run build:server
 
     # App workspace deps not covered by build:server
-    npm run build --workspace=@codius-ai/expo-two-way-audio
+    npm run build --workspace=@codius.ai/expo-two-way-audio
 
     # Expo web export for the Electron renderer
     ( cd packages/app && CODIUS_WEB_PLATFORM=electron npx expo export --platform web )
 
     # Desktop main process (tsc only — NOT electron-builder)
-    npm run build:main --workspace=@codius-ai/desktop
+    npm run build:main --workspace=@codius.ai/desktop
 
     runHook postBuild
   '';
@@ -99,7 +97,7 @@ buildNpmPackage rec {
     # `app.isPackaged` is false, so these relative paths are used.
     #
     # Copy the entire packages/ tree (not just built artifacts) because npm
-    # creates workspace symlinks from node_modules/@codius-ai/* into packages/*.
+    # creates workspace symlinks from node_modules/@codius.ai/* into packages/*.
     # Missing any workspace package leaves dangling symlinks and fails the
     # noBrokenSymlinks output check. The cleanSourceWith filter above already
     # drops the big platform-specific things (android/ios, website, tests).

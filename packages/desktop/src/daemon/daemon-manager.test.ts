@@ -1,6 +1,5 @@
 import { EventEmitter } from "node:events";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
-import path from "node:path";
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DEFAULT_DESKTOP_SETTINGS } from "../settings/desktop-settings";
@@ -18,8 +17,8 @@ const mocks = vi.hoisted(() => ({
       keepRunningAfterQuit: true,
     },
   },
-  runExternalCliJsonCommand: vi.fn(),
-  runExternalCliTextCommand: vi.fn(),
+  runCliJsonCommand: vi.fn(),
+  runCliTextCommand: vi.fn(),
   createNodeEntrypointInvocation: vi.fn(() => ({
     command: "node",
     args: [],
@@ -54,7 +53,7 @@ vi.mock("electron-log/main", () => ({
   },
 }));
 
-vi.mock("@codius-ai/server", () => ({
+vi.mock("@codius.ai/server", () => ({
   resolveCodiusHome: vi.fn(() => mocks.codiusHome),
   spawnProcess: mocks.spawnProcess,
 }));
@@ -75,9 +74,9 @@ vi.mock("./runtime-paths.js", () => ({
   })),
 }));
 
-vi.mock("./cli/external.js", () => ({
-  runExternalCliJsonCommand: mocks.runExternalCliJsonCommand,
-  runExternalCliTextCommand: mocks.runExternalCliTextCommand,
+vi.mock("./cli/runner.js", () => ({
+  runCliJsonCommand: mocks.runCliJsonCommand,
+  runCliTextCommand: mocks.runCliTextCommand,
 }));
 
 function desktopSettingsWithManagement(enabled: boolean) {
@@ -119,8 +118,8 @@ describe("daemon-manager commands", () => {
       value: "/Applications/Codius.app/Contents/Resources",
     });
     mocks.settings = DEFAULT_DESKTOP_SETTINGS;
-    mocks.runExternalCliJsonCommand.mockReset();
-    mocks.runExternalCliTextCommand.mockReset();
+    mocks.runCliJsonCommand.mockReset();
+    mocks.runCliTextCommand.mockReset();
     mocks.createNodeEntrypointInvocation.mockReset();
     mocks.createNodeEntrypointInvocation.mockReturnValue({
       command: "node",
@@ -159,13 +158,13 @@ describe("daemon-manager commands", () => {
       "Built-in daemon management is disabled.",
     );
 
-    expect(mocks.runExternalCliJsonCommand).not.toHaveBeenCalled();
+    expect(mocks.runCliJsonCommand).not.toHaveBeenCalled();
     expect(mocks.spawnProcess).not.toHaveBeenCalled();
   });
 
   it("keeps stop callable while built-in daemon management is disabled", async () => {
     mocks.settings = desktopSettingsWithManagement(false);
-    mocks.runExternalCliJsonCommand.mockResolvedValue({
+    mocks.runCliJsonCommand.mockResolvedValue({
       localDaemon: "stopped",
       serverId: "",
     });
@@ -183,11 +182,11 @@ describe("daemon-manager commands", () => {
       error: null,
     });
 
-    expect(mocks.runExternalCliJsonCommand).toHaveBeenCalledWith(["daemon", "status", "--json"]);
+    expect(mocks.runCliJsonCommand).toHaveBeenCalledWith(["daemon", "status", "--json"]);
   });
 
-  it("routes running desktop daemon stops through external CLI daemon stop", async () => {
-    mocks.runExternalCliJsonCommand
+  it("routes running desktop daemon stops through Codius CLI", async () => {
+    mocks.runCliJsonCommand
       .mockResolvedValueOnce({
         localDaemon: "running",
         serverId: "server-1",
@@ -214,12 +213,8 @@ describe("daemon-manager commands", () => {
       error: null,
     });
 
-    expect(mocks.runExternalCliJsonCommand).toHaveBeenNthCalledWith(1, [
-      "daemon",
-      "status",
-      "--json",
-    ]);
-    expect(mocks.runExternalCliJsonCommand).toHaveBeenNthCalledWith(2, [
+    expect(mocks.runCliJsonCommand).toHaveBeenNthCalledWith(1, ["daemon", "status", "--json"]);
+    expect(mocks.runCliJsonCommand).toHaveBeenNthCalledWith(2, [
       "daemon",
       "stop",
       "--json",
@@ -229,11 +224,7 @@ describe("daemon-manager commands", () => {
       "--kill-timeout",
       "5",
     ]);
-    expect(mocks.runExternalCliJsonCommand).toHaveBeenNthCalledWith(3, [
-      "daemon",
-      "status",
-      "--json",
-    ]);
+    expect(mocks.runCliJsonCommand).toHaveBeenNthCalledWith(3, ["daemon", "status", "--json"]);
     expect(mocks.logInfo).toHaveBeenCalledWith(
       "[desktop daemon]",
       "desktop daemon stop requested",
@@ -261,8 +252,8 @@ describe("daemon-manager commands", () => {
     );
   });
 
-  it("routes stale reachable desktop daemon stops through external CLI daemon stop", async () => {
-    mocks.runExternalCliJsonCommand
+  it("routes stale reachable desktop daemon stops through Codius CLI", async () => {
+    mocks.runCliJsonCommand
       .mockResolvedValueOnce({
         localDaemon: "stale_pid",
         connectedDaemon: "reachable",
@@ -292,7 +283,7 @@ describe("daemon-manager commands", () => {
       error: null,
     });
 
-    expect(mocks.runExternalCliJsonCommand).toHaveBeenNthCalledWith(2, [
+    expect(mocks.runCliJsonCommand).toHaveBeenNthCalledWith(2, [
       "daemon",
       "stop",
       "--json",
@@ -305,7 +296,7 @@ describe("daemon-manager commands", () => {
   });
 
   it("records the renderer stop reason when stopping the desktop daemon", async () => {
-    mocks.runExternalCliJsonCommand
+    mocks.runCliJsonCommand
       .mockResolvedValueOnce({
         localDaemon: "running",
         serverId: "server-1",
@@ -341,7 +332,7 @@ describe("daemon-manager commands", () => {
   });
 
   it("uses a stale reachable desktop daemon when the version matches", async () => {
-    mocks.runExternalCliJsonCommand.mockResolvedValue({
+    mocks.runCliJsonCommand.mockResolvedValue({
       localDaemon: "stale_pid",
       connectedDaemon: "reachable",
       serverId: "server-1",
@@ -369,7 +360,7 @@ describe("daemon-manager commands", () => {
   });
 
   it("restarts a stale reachable desktop daemon when the version differs", async () => {
-    mocks.runExternalCliJsonCommand
+    mocks.runCliJsonCommand
       .mockResolvedValueOnce({
         localDaemon: "stale_pid",
         connectedDaemon: "reachable",
@@ -420,7 +411,7 @@ describe("daemon-manager commands", () => {
       error: null,
     });
 
-    expect(mocks.runExternalCliJsonCommand).toHaveBeenNthCalledWith(3, [
+    expect(mocks.runCliJsonCommand).toHaveBeenNthCalledWith(3, [
       "daemon",
       "stop",
       "--json",
@@ -439,7 +430,7 @@ describe("daemon-manager commands", () => {
       `${mocks.codiusHome}/daemon.log`,
       ["old log line", "recent daemon failure"].join("\n"),
     );
-    mocks.runExternalCliJsonCommand.mockResolvedValue({
+    mocks.runCliJsonCommand.mockResolvedValue({
       localDaemon: "stopped",
       connectedDaemon: "unreachable",
       serverId: "",
@@ -477,16 +468,13 @@ describe("daemon-manager commands", () => {
           CODIUS_CLI: getBundledCliShimPath(),
           CODIUS_ENV: "production",
           CODIUS_WEB_UI_ENABLED: "false",
-          PATH: expect.stringContaining(
-            path.join("/Applications/Codius.app/Contents/Resources", "bin"),
-          ),
         }),
       }),
     );
   });
 
   it("passes stale lock reclaim only after a live desktop daemon is confirmed unresponsive", async () => {
-    mocks.runExternalCliJsonCommand.mockResolvedValue({
+    mocks.runCliJsonCommand.mockResolvedValue({
       localDaemon: "unresponsive",
       connectedDaemon: "unreachable",
       serverId: "",
@@ -510,7 +498,7 @@ describe("daemon-manager commands", () => {
   });
 
   it("does not pass stale lock reclaim when the status command fails", async () => {
-    mocks.runExternalCliJsonCommand.mockRejectedValue(new Error("status command failed"));
+    mocks.runCliJsonCommand.mockRejectedValue(new Error("status command failed"));
     mocks.spawnProcess.mockImplementation(() => {
       const child = createMockChildProcess();
       scheduleFailedStartup(child);

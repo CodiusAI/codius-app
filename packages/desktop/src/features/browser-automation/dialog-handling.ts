@@ -1,4 +1,4 @@
-import type { BrowserAutomationDialogEvent } from "@codius-ai/protocol/browser-automation/rpc-schemas";
+import type { BrowserAutomationDialogEvent } from "@codius.ai/protocol/browser-automation/rpc-schemas";
 
 export const MAX_DIALOGS_PER_COMMAND = 20;
 

@@ -1,4 +1,4 @@
-import { getErrorMessage } from "@codius-ai/protocol/error-utils";
+import { getErrorMessage } from "@codius.ai/protocol/error-utils";
 import {
   daemonInstallOriginRuntime,
   validateDaemonInstallOrigin,

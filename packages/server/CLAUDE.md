@@ -4,7 +4,7 @@ For AI coding agents working in `packages/server`. Supplements [CLAUDE.md](../CL
 
 ## Project Overview
 
-Codius is a mobile + CLI app for monitoring and controlling local AI coding agents (Claude Code, Codex, GitHub Copilot, OpenCode, Pi). The daemon runs on your machine, manages agent processes, and streams their output over WebSocket to clients.
+Codius is a cross-device app for monitoring and controlling local AI coding agents (Claude Code, Codex, GitHub Copilot, OpenCode, Pi). The daemon runs on your machine, manages agent processes, and streams their output over WebSocket to clients. Codius CLI provides the administrative terminal surface.
 
 ---
 
@@ -14,7 +14,7 @@ Codius is a mobile + CLI app for monitoring and controlling local AI coding agen
 
 ```bash
 npm run dev                          # Start daemon + Expo in Tmux
-npm run build:server                 # Build: highlight + relay + protocol + client + server + cli
+npm run build:server                 # Build: highlight + relay + protocol + client + server + CLI
 npm run typecheck                    # Typecheck all packages
 npm run test                         # Test all packages
 npm run format                       # Format with Biome (in-place)
@@ -179,7 +179,7 @@ Daemon logs: `$CODIUS_HOME/daemon.log`
 ```bash
 tail -f $CODIUS_HOME/daemon.log      # Daemon logs
 npm run test:ui                     # Vitest browser UI at localhost:51204
-npm run cli -- inspect <agent-id>   # Detailed agent info
+npm run cli -- inspect <agent-id> # Detailed agent info
 npm run db:query -- "SELECT * FROM agent_timeline_rows..."
 ```
 

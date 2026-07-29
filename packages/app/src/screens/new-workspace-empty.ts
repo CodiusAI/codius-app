@@ -1,6 +1,6 @@
 import type { normalizeWorkspaceDescriptor } from "@/stores/session-store";
 import type { MessagePayload } from "@/composer/types";
-import type { AgentAttachment } from "@codius-ai/protocol/messages";
+import type { AgentAttachment } from "@codius.ai/protocol/messages";
 
 export function isEmptyWorkspaceSubmission(payload: MessagePayload): boolean {
   return !payload.text.trim() && payload.attachments.length === 0;

@@ -45,7 +45,7 @@ export function useCliInstall(): DesktopInstallHookResult {
   useDesktopIpcQueryErrorToast({
     error: statusQuery.error,
     message: t("desktop.integrations.cli.statusFailed"),
-    logLabel: "[Integrations] Failed to load CLI status",
+    logLabel: "[Integrations] Failed to load Codius CLI status",
   });
 
   const installMutation = useMutation<InstallStatus, Error>({
@@ -54,7 +54,7 @@ export function useCliInstall(): DesktopInstallHookResult {
       reportError({
         error,
         message: t("desktop.integrations.cli.installFailed"),
-        logLabel: "[Integrations] Failed to install CLI",
+        logLabel: "[Integrations] Failed to install Codius CLI",
       });
     },
     onSuccess: (nextStatus) => {

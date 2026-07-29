@@ -8,7 +8,7 @@ import {
   loadPersistedConfig,
   type CliConfigOverrides,
   type PersistedConfig,
-} from "@codius-ai/server";
+} from "@codius.ai/server";
 import {
   resolveLocalCodiusHome,
   resolveLocalDaemonState,
@@ -304,13 +304,13 @@ function printNextSteps(pairingUrl: string | null, codiusHome: string, richUi: b
     "2. Web app: https://app.codius.ai",
     "3. Desktop app: https://github.com/CodiusAI/codius-app/releases/latest",
     "4. Docs: https://codius.ai/docs",
-    '5. Example: codiusctl run --output-schema schema.json "extract fields"',
+    '5. Example: codius run --output-schema schema.json "extract fields"',
   ];
   const quickReferenceLines = [
-    "1. codiusctl --help",
-    "2. codiusctl ls",
-    '3. codiusctl run "your prompt"',
-    "4. codiusctl status",
+    "1. codius --help",
+    "2. codius ls",
+    '3. codius run "your prompt"',
+    "4. codius status",
     `5. Daemon logs: ${daemonLogPath}`,
   ];
 
@@ -321,7 +321,7 @@ function printNextSteps(pairingUrl: string | null, codiusHome: string, richUi: b
       console.log(line);
     }
     console.log("");
-    console.log("CLI quick reference:");
+    console.log("Codius CLI quick reference:");
     for (const line of quickReferenceLines) {
       console.log(line);
     }
@@ -329,7 +329,7 @@ function printNextSteps(pairingUrl: string | null, codiusHome: string, richUi: b
   }
 
   renderNote(nextStepsLines.join("\n"), "Next steps");
-  renderNote(quickReferenceLines.join("\n"), "CLI quick reference");
+  renderNote(quickReferenceLines.join("\n"), "Codius CLI quick reference");
 }
 
 export function onboardCommand(): Command {

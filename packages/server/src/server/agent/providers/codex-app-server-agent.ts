@@ -3051,11 +3051,18 @@ function normalizeOpenAICompatibleBaseUrl(value: string): string | null {
 function buildCodexCustomProviderConfig(
   runtimeSettings: ProviderRuntimeSettings | undefined,
   customProvider: CodexAppServerAgentDeps["customProvider"],
+  launchEnv?: Record<string, string>,
 ): Record<string, unknown> | null {
-  if (customProvider?.extends !== CODEX_PROVIDER) {
+  const env = {
+    ...runtimeSettings?.env,
+    ...launchEnv,
+  };
+  const sessionProviderId = env.CODIUS_MODEL_ACCESS_PROVIDER_ID?.trim();
+  const provider = resolveCodexCustomProvider(customProvider, sessionProviderId);
+  if (!provider) {
     return null;
   }
-  const baseUrl = runtimeSettings?.env?.OPENAI_BASE_URL;
+  const baseUrl = env.OPENAI_BASE_URL;
   if (typeof baseUrl !== "string") {
     return null;
   }
@@ -3064,20 +3071,33 @@ function buildCodexCustomProviderConfig(
     return null;
   }
   const providerConfig: Record<string, unknown> = {
-    name: customProvider.label,
+    name: provider.label,
     base_url: normalizedBaseUrl,
     wire_api: "responses",
   };
-  if (runtimeSettings?.env?.OPENAI_API_KEY?.trim()) {
+  if (env.OPENAI_API_KEY?.trim()) {
     providerConfig.env_key = "OPENAI_API_KEY";
     providerConfig.requires_openai_auth = false;
   }
   return {
-    model_provider: customProvider.id,
+    model_provider: provider.id,
     model_providers: {
-      [customProvider.id]: providerConfig,
+      [provider.id]: providerConfig,
     },
   };
+}
+
+function resolveCodexCustomProvider(
+  customProvider: CodexAppServerAgentDeps["customProvider"],
+  sessionProviderId: string | undefined,
+): { id: string; label: string } | null {
+  if (customProvider?.extends === CODEX_PROVIDER) {
+    return { id: customProvider.id, label: customProvider.label };
+  }
+  if (sessionProviderId) {
+    return { id: sessionProviderId, label: "Codius" };
+  }
+  return null;
 }
 
 interface CodexSubAgentCallState {
@@ -6224,12 +6244,13 @@ export class CodexAppServerAgentClient implements AgentClient {
     private readonly deps: CodexAppServerAgentDeps = {},
   ) {}
 
-  private sessionDeps(): CodexAppServerAgentDeps {
+  private sessionDeps(launchEnv?: Record<string, string>): CodexAppServerAgentDeps {
     return {
       ...this.deps,
       customCodexConfig: buildCodexCustomProviderConfig(
         this.runtimeSettings,
         this.deps.customProvider,
+        launchEnv,
       ),
     };
   }
@@ -6335,7 +6356,7 @@ export class CodexAppServerAgentClient implements AgentClient {
       this.logger,
       () =>
         this.spawnAppServer(launchContext?.env, { goalsEnabled, agentId: launchContext?.agentId }),
-      this.sessionDeps(),
+      this.sessionDeps(launchContext?.env),
       options?.persistSession === false,
       goalsEnabled,
       autoReviewEnabled,
@@ -6366,7 +6387,7 @@ export class CodexAppServerAgentClient implements AgentClient {
       this.logger,
       () =>
         this.spawnAppServer(launchContext?.env, { goalsEnabled, agentId: launchContext?.agentId }),
-      this.sessionDeps(),
+      this.sessionDeps(launchContext?.env),
       false,
       goalsEnabled,
       autoReviewEnabled,

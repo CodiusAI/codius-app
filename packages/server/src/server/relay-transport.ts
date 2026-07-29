@@ -6,8 +6,8 @@ import {
   createDaemonChannel,
   type Transport as RelayTransport,
   type KeyPair,
-} from "@codius-ai/relay/e2ee";
-import { buildRelayWebSocketUrl } from "@codius-ai/protocol/daemon-endpoints";
+} from "@codius.ai/relay/e2ee";
+import { buildRelayWebSocketUrl } from "@codius.ai/protocol/daemon-endpoints";
 import type { ExternalSocketMetadata } from "./websocket-server.js";
 import { createEncryptedRelaySocket } from "./websocket/encrypted-relay-socket.js";
 

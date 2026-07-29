@@ -9,8 +9,8 @@ import {
 } from "./agent/provider-launch-config.js";
 import type { AgentProviderRuntimeSettingsMap } from "./agent/provider-launch-config.js";
 import { ensurePrivateFile, writePrivateFileAtomicSync } from "./private-files.js";
-import { TerminalProfileSchema } from "@codius-ai/protocol/messages";
-import { CodiusServicePortAllocationSchema } from "@codius-ai/protocol/codius-config-schema";
+import { TerminalProfileSchema } from "@codius.ai/protocol/messages";
+import { CodiusServicePortAllocationSchema } from "@codius.ai/protocol/codius-config-schema";
 
 export const LogLevelSchema = z.enum(["trace", "debug", "info", "warn", "error", "fatal"]);
 export const LogFormatSchema = z.enum(["pretty", "json"]);

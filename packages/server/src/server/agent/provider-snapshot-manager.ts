@@ -27,7 +27,7 @@ import {
   shutdownAgentClients,
   type ProviderDefinition,
 } from "./provider-registry.js";
-import { BUILTIN_PROVIDER_IDS } from "@codius-ai/protocol/provider-manifest";
+import { BUILTIN_PROVIDER_IDS } from "@codius.ai/protocol/provider-manifest";
 import { applyMutableProviderConfigToOverrides } from "../daemon-config-store.js";
 import {
   formatProviderDiagnostic,

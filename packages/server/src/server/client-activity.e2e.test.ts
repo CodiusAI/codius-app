@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { createTestCodiusDaemon, type TestCodiusDaemon } from "./test-utils/codius-daemon.js";
 import { DaemonClient } from "./test-utils/daemon-client.js";
-import type { AgentStreamEventPayload } from "@codius-ai/protocol/messages";
+import type { AgentStreamEventPayload } from "@codius.ai/protocol/messages";
 import type { AgentSnapshotPayload } from "./messages.js";
 import type { PushNotificationSender, PushPayload } from "./push/notifications.js";
 import { PRESENCE_THRESHOLD_MS } from "./agent-attention-policy.js";

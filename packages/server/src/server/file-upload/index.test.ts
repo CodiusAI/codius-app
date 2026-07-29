@@ -8,7 +8,7 @@ import {
   encodeFileTransferFrame,
   FileTransferOpcode,
   type FileTransferFrame,
-} from "@codius-ai/protocol/binary-frames/index";
+} from "@codius.ai/protocol/binary-frames/index";
 import { FileUploadStore } from "./index.js";
 
 const tempDirs: string[] = [];

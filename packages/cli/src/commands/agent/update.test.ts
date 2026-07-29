@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { AgentProviderNotice } from "@codius-ai/protocol/agent-types";
+import type { AgentProviderNotice } from "@codius.ai/protocol/agent-types";
 import {
   applyAgentChanges,
   toAgentUpdateResult,

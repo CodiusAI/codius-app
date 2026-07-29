@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { CheckoutPrStatusSchema } from "@codius-ai/protocol/messages";
+import { CheckoutPrStatusSchema } from "@codius.ai/protocol/messages";
 import type { WorkspaceGitRuntimeSnapshot } from "../workspace-git-service.js";
 import {
   buildCheckoutPrStatusPayloadFromSnapshot,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { AgentModelDefinition, ProviderSnapshotEntry } from "@codius-ai/protocol/agent-types";
-import type { AgentProviderDefinition } from "@codius-ai/protocol/provider-manifest";
+import type { AgentModelDefinition, ProviderSnapshotEntry } from "@codius.ai/protocol/agent-types";
+import type { AgentProviderDefinition } from "@codius.ai/protocol/provider-manifest";
 import { i18n } from "@/i18n/i18next";
 import {
   buildProviderSelectorProviders,
@@ -110,20 +110,15 @@ describe("combined model selector data", () => {
     ).toEqual([]);
   });
 
-  it("places Codius first while preserving the relative order of other providers", () => {
+  it("preserves the provider snapshot order", () => {
     const providers = buildSelectableProviderSelectorProviders([
       snapshotEntry({ provider: "claude", label: "Claude" }),
       snapshotEntry({ provider: "codex", label: "Codex" }),
-      snapshotEntry({ provider: "codius", label: "Codius" }),
+      snapshotEntry({ provider: "pi", label: "Pi" }),
       snapshotEntry({ provider: "opencode", label: "OpenCode" }),
     ]);
 
-    expect(providers.map((provider) => provider.id)).toEqual([
-      "codius",
-      "claude",
-      "codex",
-      "opencode",
-    ]);
+    expect(providers.map((provider) => provider.id)).toEqual(["claude", "codex", "pi", "opencode"]);
   });
 
   it("surfaces non-ready providers with their state-specific selection", () => {

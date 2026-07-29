@@ -7,7 +7,7 @@ case "$SCRIPT_PATH" in
   *) SCRIPT_PATH="$(pwd)/$SCRIPT_PATH" ;;
 esac
 
-# Follow symlinks so ~/.local/bin/codiusctl resolves back into the app bundle.
+# Follow symlinks so ~/.local/bin/codius resolves back into the app bundle.
 while [ -L "$SCRIPT_PATH" ]; do
   SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$SCRIPT_PATH")" && pwd)
   LINK_TARGET=$(readlink "$SCRIPT_PATH")
@@ -48,7 +48,7 @@ else
 fi
 
 RUNNER_PATH="${RESOURCES_DIR}/app.asar.unpacked/dist/daemon/node-entrypoint-runner.js"
-CLI_ENTRYPOINT="${RESOURCES_DIR}/app.asar/node_modules/@codius-ai/cli/dist/index.js"
+CLI_ENTRYPOINT="${RESOURCES_DIR}/app.asar/node_modules/@codius.ai/cli/dist/index.js"
 
 exec env \
   ELECTRON_RUN_AS_NODE=1 \

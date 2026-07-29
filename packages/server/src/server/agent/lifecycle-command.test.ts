@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import {
   getParentAgentIdFromLabels,
   PARENT_AGENT_ID_LABEL,
-} from "@codius-ai/protocol/agent-labels";
+} from "@codius.ai/protocol/agent-labels";
 
 import { createTestLogger } from "../../test-utils/test-logger.js";
 import type { StoredAgentRecord } from "./agent-storage.js";

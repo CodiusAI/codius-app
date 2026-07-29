@@ -74,7 +74,14 @@ npm run release:patch
 npm run release:minor
 ```
 
-This bumps the version across all workspaces, runs checks, publishes to npm, and pushes the branch + tag. The tag push triggers `Desktop Release`, `Android APK Release`, `Docker`, and `Release Notes Sync` on GitHub Actions. EAS picks up the same tag via the EAS GitHub app and starts the iOS + Android store builds in parallel (see "Mobile builds (EAS)" below) — there is no `release-mobile.yml` in this repo.
+This bumps the version across all workspaces, builds and checksum-locks the six
+public npm tarballs, and pushes the branch + tag. The tag push triggers
+`Publish Codius npm packages`, `Desktop Release`, `Android APK Release`,
+`Docker`, and `Release Notes Sync` on GitHub Actions. The npm workflow publishes
+with GitHub OIDC from the protected `npm-production` environment; the release
+scripts never embed a long-lived npm token. EAS picks up the same tag via the
+EAS GitHub app and starts the iOS + Android store builds in parallel (see
+"Mobile builds (EAS)" below) — there is no `release-mobile.yml` in this repo.
 
 The Docker workflow builds images from the checked-out source tree on pull requests and on `main` as non-publishing checks. Stable `vX.Y.Z` tag pushes publish `ghcr.io/CodiusAI/codius-app:X.Y.Z` and `ghcr.io/CodiusAI/codius-app:latest`; beta `vX.Y.Z-beta.N` tag pushes publish only `ghcr.io/CodiusAI/codius-app:X.Y.Z-beta.N` and never move `latest`.
 
@@ -86,13 +93,57 @@ Relay deployment is manual-only while `relay.codius.ai` bridges traffic to the F
 
 ```bash
 npm run typecheck            # Verify the exact commit you intend to release
-npm run release:check        # Typecheck, build, dry-run pack
 # Run exactly one approved version command:
 npm run version:all:patch
 npm run version:all:minor
-npm run release:publish      # Publish to npm
-npm run release:push         # Push HEAD + tag (triggers CI workflows)
+npm run release:check        # Validate, build, and checksum-lock all npm tarballs
+npm run release:push         # Push HEAD + tag (protected CI publishes)
 ```
+
+`release:check` writes the reviewed package set to
+`artifacts/npm/<version>/npm-release-<version>.json`. Each tarball's SHA-512
+digest is recorded there together with the source commit and release tag, when
+present. The publish workflow verifies the source identity and digests before
+publishing in dependency order:
+
+1. `@codius.ai/highlight`
+2. `@codius.ai/relay`
+3. `@codius.ai/protocol`
+4. `@codius.ai/client`
+5. `@codius.ai/server`
+6. `@codius.ai/cli`
+
+If publishing stops partway through, rerun the same workflow for the same tag.
+It checks npm first, skips exact versions already present, and resumes with the
+first missing package. Never bump a version merely to retry infrastructure.
+
+### First npm publication only
+
+The six package records must exist before npm trusted publishers can be
+attached. Bootstrap them once from an npm-authenticated local machine with 2FA:
+
+```bash
+npm run release:check
+CODIUS_NPM_PUBLISH=true npm run release:packages:publish -- --confirm X.Y.Z-beta.N
+```
+
+Run `npm whoami --registry=https://registry.npmjs.org/` before this bootstrap.
+If npm reports `EPERM` because the default cache contains files owned by another
+user, use a fresh user-writable cache for both commands instead of changing the
+prepared tarballs:
+
+```bash
+CODIUS_NPM_CACHE_PATH="$(mktemp -d)"
+npm_config_cache="$CODIUS_NPM_CACHE_PATH" npm whoami --registry=https://registry.npmjs.org/
+CODIUS_NPM_PUBLISH=true npm_config_cache="$CODIUS_NPM_CACHE_PATH" \
+  npm run release:packages:publish -- --confirm X.Y.Z-beta.N
+```
+
+Do not paste an npm password, OTP, or access token into an issue, chat, log, or
+repository secret. After the first coordinated release exists, configure each
+package's trusted publisher for `CodiusAI/codius-app`,
+`.github/workflows/npm-publish.yml`, and the `npm-production` environment.
+Subsequent releases must use the protected workflow.
 
 ## Beta flow
 
@@ -105,7 +156,9 @@ npm run release:promote          # Promote X.Y.Z-beta.N to stable X.Y.Z
 ```
 
 - Beta tags are published GitHub prereleases like `v0.1.41-beta.1`
-- Betas publish npm packages with `--tag beta`, so `npm install @codius-ai/cli@beta` opts in while plain `npm install @codius-ai/cli` stays on `latest`
+- Betas publish npm packages with the `beta` dist-tag, so
+  `npm install --global @codius.ai/cli@beta` opts in while the unqualified
+  install remains on `latest`
 - Betas publish desktop assets and APKs for testing, but they do not trigger the production web/mobile release flows
 - `release:promote` creates a fresh stable tag like `v0.1.41`; the final release never reuses the beta tag
 - Desktop assets now come from the Electron package at `packages/desktop`
@@ -290,13 +343,12 @@ Tight cadence on purpose. The first run fires immediately, giving a near-real-ti
 
 The GitHub Release body is populated automatically by the `Release Notes Sync` workflow (`.github/workflows/release-notes-sync.yml`). It triggers on every `v*` tag push and on any push to `main` that touches `CHANGELOG.md`, then runs `scripts/sync-release-notes-from-changelog.mjs` to mirror the matching changelog entry into the release body. You don't need to write release notes on GitHub manually — keep `CHANGELOG.md` correct and the workflow will sync it. To force a re-sync, dispatch the workflow with the tag input.
 
-## Website behavior
+## Public website follow-up
 
-- The website download page points to GitHub's latest published **stable** release.
-- Published beta prereleases are public on GitHub Releases, but they do **not** become the website download target.
-- The download target only moves when you publish the final stable release tag like `v0.1.41`.
-- The public `/changelog` page renders `CHANGELOG.md` as-is, so the in-flight `-beta.N` entry shows there once it lands on `main` — that's intended, it's where beta users check what's coming. Only the **download target** stays pinned to the latest stable; the download links read GitHub's releases API, not the changelog, so a `-beta.N` heading on top never affects them.
-- The website itself is deployed by `Deploy Website` (Cloudflare Workers), which redeploys on `release: published` for non-prerelease releases and on pushes to `main` that touch `CHANGELOG.md` or `packages/website/**`.
+`codius.ai` is maintained in the separate Codius platform repository. App
+release notes and artifact changes that affect downloads or public guidance
+must be listed in the upstream-maintenance report for reviewed publication
+there. This repository does not deploy a marketing or documentation website.
 
 ## Fixing a failed release build
 
@@ -356,11 +408,16 @@ This ensures the checkout ref matches the actual code on `main` with the fix inc
 
 ## Notes
 
-- `version:all:*` bumps root + syncs workspace versions and `@codius-ai/*` dependency versions
+- `version:all:*` bumps root + syncs workspace versions and `@codius.ai/*` dependency versions
 - `release:prepare` refreshes workspace `node_modules` links to prevent stale types
 - `npm run dev:desktop` and `npm run build:desktop` target the Electron desktop package in `packages/desktop`
-- If `release:publish` partially fails, re-run it — npm skips already-published versions
-- If `release:publish:beta` partially fails, re-run it — npm skips already-published versions and keeps prereleases off `latest` because every publish uses `--tag beta`
+- `config/npm-package-release.json` is the canonical public-package order and
+  private-workspace boundary
+- `scripts/npm-package-release.mjs` validates versions and metadata, builds,
+  packs, records checksums, reports registry status, and resumes partial
+  publication safely
+- Prerelease versions can only publish on `beta`; stable versions can only
+  publish on `latest`
 - The website uses GitHub's latest published release API for download links, so published beta prereleases do not replace the stable download target.
 
 ## Changelog format
@@ -493,6 +550,7 @@ Betas are checkpoints along the way; the entry is the single record for the jump
 - [ ] The previous-stable-to-`HEAD` diff is classified as patch or minor, with the target version and rationale approved
 - [ ] `npm run release:beta:patch`, `npm run release:beta:minor`, or `npm run release:beta:next` completes successfully
 - [ ] npm shows the version under the `beta` dist-tag, not `latest`
+- [ ] GitHub `Publish Codius npm packages` is green and all six packages have the exact coordinated version
 - [ ] GitHub `Desktop Release` workflow for the `v*-beta.N` tag is green
 - [ ] GitHub `Android APK Release` workflow for the same tag is green
 - [ ] GitHub `Release Notes Sync` mirrored the beta entry into the prerelease body
@@ -506,6 +564,7 @@ Betas are checkpoints along the way; the entry is the single record for the jump
 - [ ] Update `CHANGELOG.md` with user-facing release notes (features, fixes — not refactors). When promoting from beta, overwrite the existing `## X.Y.Z-beta.N` heading in place (heading → `X.Y.Z`, date → promotion day) — do not add a new entry on top of the beta one
 - [ ] Verify the changelog heading follows strict `## X.Y.Z - YYYY-MM-DD` format
 - [ ] `npm run release:patch`, `npm run release:minor`, or `npm run release:promote` completes successfully
+- [ ] GitHub `Publish Codius npm packages` is green and all six packages have the exact coordinated version under `latest`
 - [ ] GitHub `Desktop Release` workflow for the `v*` tag is green
 - [ ] GitHub `Android APK Release` workflow for the same tag is green
 - [ ] EAS `Release Mobile` workflow for the same tag is green

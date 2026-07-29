@@ -1,5 +1,5 @@
-import { parseCronExpression } from "@codius-ai/protocol/schedule/cron-expression";
-import type { ScheduleCadence } from "@codius-ai/protocol/schedule/types";
+import { parseCronExpression } from "@codius.ai/protocol/schedule/cron-expression";
+import type { ScheduleCadence } from "@codius.ai/protocol/schedule/types";
 
 interface CronDateParts {
   minute: number;

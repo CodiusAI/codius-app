@@ -1,4 +1,4 @@
-import type { ToolCallDetail } from "@codius-ai/protocol/agent-types";
+import type { ToolCallDetail } from "@codius.ai/protocol/agent-types";
 
 function hasMeaningfulUnknownValue(value: unknown): boolean {
   if (value === null || value === undefined) {

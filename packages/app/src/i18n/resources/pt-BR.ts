@@ -1,4 +1,4 @@
-import type { TranslationResources } from "./en";
+import { en, type TranslationResources } from "./en";
 
 export const ptBR: TranslationResources = {
   common: {
@@ -1176,8 +1176,8 @@ export const ptBR: TranslationResources = {
     },
     integrations: {
       cli: {
-        statusFailed: "Não foi possível verificar o status de instalação da CLI.",
-        installFailed: "Não foi possível instalar a CLI do Codius.",
+        statusFailed: "Não foi possível verificar a instalação do Codius CLI.",
+        installFailed: "Não foi possível instalar o Codius CLI.",
       },
       skills: {
         statusFailed: "Não foi possível verificar o status das skills de orquestração.",
@@ -1874,18 +1874,18 @@ export const ptBR: TranslationResources = {
     integrations: {
       title: "Integrações",
       docs: {
-        cli: "Docs da CLI",
+        cli: "Docs do Codius CLI",
         skills: "Docs das skills",
-        openCli: "Abrir documentação da CLI",
+        openCli: "Abrir documentação do Codius CLI",
         openSkills: "Abrir documentação das skills",
       },
-      commandLine: {
-        title: "Linha de comando",
+      cli: {
+        title: "Codius CLI",
         description: "Controle agentes e execute scripts pelo terminal",
       },
       skills: {
         title: "Skills de orquestração",
-        description: "Ensine seus agentes a orquestrar pela CLI",
+        description: "Ensine seus agentes a orquestrar pelo Codius CLI",
         updateAvailable: "Atualização disponível",
         updateTitle: "Atualizar Codius skills?",
         updateFallback: "Sincronize as skills incluídas com sua máquina.",
@@ -2066,6 +2066,7 @@ export const ptBR: TranslationResources = {
     },
     providers: {
       title: "Provedores",
+      codius: en.settings.providers.codius,
       addProvider: "Adicionar provedor",
       providerDetails: "Detalhes do provedor {{name}}",
       enableProvider: "Ativar {{name}}",

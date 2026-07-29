@@ -14,12 +14,12 @@ import { setImmediate as waitForImmediate } from "node:timers/promises";
 import { afterEach, expect, test, vi } from "vitest";
 import { z } from "zod";
 
-import { CLIENT_CAPS } from "@codius-ai/protocol/client-capabilities";
+import { CLIENT_CAPS } from "@codius.ai/protocol/client-capabilities";
 import { createTestLogger } from "../test-utils/test-logger.js";
 import { Session } from "./session.js";
 import type { SessionOptions } from "./session.js";
 import type { AgentUpdatesService } from "./session/agent-updates/agent-updates-service.js";
-import type { AgentSnapshotPayload, SessionOutboundMessage } from "@codius-ai/protocol/messages";
+import type { AgentSnapshotPayload, SessionOutboundMessage } from "@codius.ai/protocol/messages";
 import type { TerminalManager } from "../terminal/terminal-manager.js";
 import { createTerminalManager } from "../terminal/terminal-manager.js";
 import { AgentManager } from "./agent/agent-manager.js";

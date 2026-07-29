@@ -1,4 +1,4 @@
-import type { CreateTerminalResponse, ListTerminalsResponse } from "@codius-ai/protocol/messages";
+import type { CreateTerminalResponse, ListTerminalsResponse } from "@codius.ai/protocol/messages";
 
 type TerminalListEntry = ListTerminalsResponse["payload"]["terminals"][number];
 type CreatedTerminal = NonNullable<CreateTerminalResponse["payload"]["terminal"]>;

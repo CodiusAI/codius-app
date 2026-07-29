@@ -22,7 +22,7 @@ import type {
   FetchCatalogOptions,
 } from "../agent/agent-sdk-types.js";
 import type { AgentPermissionRequest, AgentPermissionResponse } from "../agent/agent-sdk-types.js";
-import { isLikelyExternalToolName } from "@codius-ai/protocol/tool-name-normalization";
+import { isLikelyExternalToolName } from "@codius.ai/protocol/tool-name-normalization";
 
 const TEST_CAPABILITIES: AgentCapabilityFlags = {
   supportsStreaming: true,

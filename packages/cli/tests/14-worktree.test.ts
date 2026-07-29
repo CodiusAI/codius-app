@@ -36,7 +36,7 @@ try {
   // Test 1: worktree --help shows subcommands
   {
     console.log("Test 1: worktree --help shows subcommands");
-    const result = await $`npx codiusctl worktree --help`.nothrow();
+    const result = await $`npx codius worktree --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "worktree --help should exit 0");
     assert(result.stdout.includes("ls"), "help should mention ls subcommand");
     assert(result.stdout.includes("archive"), "help should mention archive subcommand");
@@ -46,7 +46,7 @@ try {
   // Test 2: worktree ls --help shows options
   {
     console.log("Test 2: worktree ls --help shows options");
-    const result = await $`npx codiusctl worktree ls --help`.nothrow();
+    const result = await $`npx codius worktree ls --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "worktree ls --help should exit 0");
     assert(result.stdout.includes("--host"), "help should mention --host option");
     console.log("✓ worktree ls --help shows options\n");
@@ -56,7 +56,7 @@ try {
   {
     console.log("Test 3: worktree ls handles daemon not running");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl worktree ls`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius worktree ls`.nothrow();
     // Should fail because daemon not running
     assert.notStrictEqual(result.exitCode, 0, "should fail when daemon not running");
     const output = result.stdout + result.stderr;
@@ -72,7 +72,7 @@ try {
   {
     console.log("Test 4: worktree ls with --host flag is accepted");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl worktree ls --host localhost:${port}`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius worktree ls --host localhost:${port}`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --host flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -82,7 +82,7 @@ try {
   // Test 5: worktree archive --help shows options
   {
     console.log("Test 5: worktree archive --help shows options");
-    const result = await $`npx codiusctl worktree archive --help`.nothrow();
+    const result = await $`npx codius worktree archive --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "worktree archive --help should exit 0");
     assert(result.stdout.includes("--host"), "help should mention --host option");
     assert(result.stdout.includes("<name>"), "help should mention required name argument");
@@ -93,7 +93,7 @@ try {
   {
     console.log("Test 6: worktree archive requires name argument");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl worktree archive`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius worktree archive`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail without name");
     const output = result.stdout + result.stderr;
     const hasError =
@@ -108,7 +108,7 @@ try {
   {
     console.log("Test 7: worktree archive handles daemon not running");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl worktree archive test-worktree`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius worktree archive test-worktree`.nothrow();
     // Should fail because daemon not running
     assert.notStrictEqual(result.exitCode, 0, "should fail when daemon not running");
     const output = result.stdout + result.stderr;
@@ -124,7 +124,7 @@ try {
   {
     console.log("Test 8: worktree archive with name and --host flag is accepted");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl worktree archive test-worktree --host localhost:${port}`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius worktree archive test-worktree --host localhost:${port}`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --host flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -135,7 +135,7 @@ try {
   {
     console.log("Test 9: -q (quiet) flag is accepted with worktree ls");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl -q worktree ls`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius -q worktree ls`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -q flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -146,20 +146,20 @@ try {
   {
     console.log("Test 10: --json flag is accepted with worktree ls");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl worktree ls --json`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius worktree ls --json`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --json flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
     console.log("✓ --json flag is accepted with worktree ls\n");
   }
 
-  // Test 11: codiusctl --help keeps the compatibility command hidden
+  // Test 11: codius --help keeps the compatibility command hidden
   {
-    console.log("Test 11: codiusctl --help hides worktree compatibility command");
-    const result = await $`npx codiusctl --help`.nothrow();
-    assert.strictEqual(result.exitCode, 0, "codiusctl --help should exit 0");
+    console.log("Test 11: codius --help hides worktree compatibility command");
+    const result = await $`npx codius --help`.nothrow();
+    assert.strictEqual(result.exitCode, 0, "codius --help should exit 0");
     assert(!result.stdout.includes("worktree"), "help should not advertise worktree subcommand");
-    console.log("✓ codiusctl --help hides worktree compatibility command\n");
+    console.log("✓ codius --help hides worktree compatibility command\n");
   }
 } finally {
   // Clean up temp directory

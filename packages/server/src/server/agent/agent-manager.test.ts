@@ -15,7 +15,7 @@ import {
 } from "./agent-manager.js";
 import { AgentStorage } from "./agent-storage.js";
 import { toAgentPayload } from "./agent-projections.js";
-import { PARENT_AGENT_ID_LABEL } from "@codius-ai/protocol/agent-labels";
+import { PARENT_AGENT_ID_LABEL } from "@codius.ai/protocol/agent-labels";
 import { formatSystemNotificationPrompt } from "./agent-prompt.js";
 import { ensureAgentLoaded, ensureUnarchivedAgentLoaded } from "./agent-loading.js";
 import type { StoredAgentRecord } from "./agent-storage.js";
@@ -39,6 +39,7 @@ import type {
 } from "./agent-sdk-types.js";
 import type { CodiusToolCatalog } from "./tools/types.js";
 import type { ProviderDefinition } from "./provider-registry.js";
+import type { CodiusModelAccessStore } from "../codius-model-access-store.js";
 
 interface Deferred<T> {
   promise: Promise<T>;
@@ -1705,6 +1706,62 @@ test("createAgent passes daemon launch env through the provider launch context",
   expect(client.lastLaunchContext).toEqual({
     agentId: snapshot.id,
     env: {
+      CODIUS_AGENT_ID: snapshot.id,
+    },
+  });
+});
+
+test("createAgent keeps host Codius credentials and endpoint configuration inseparable", async () => {
+  const workdir = mkdtempSync(join(tmpdir(), "agent-manager-codius-models-"));
+  const storage = new AgentStorage(join(workdir, "agents"), logger);
+
+  class CaptureClient extends TestAgentClient {
+    lastConfig: AgentSessionConfig | null = null;
+    lastLaunchContext: AgentLaunchContext | undefined;
+
+    override async createSession(
+      config: AgentSessionConfig,
+      launchContext?: AgentLaunchContext,
+    ): Promise<AgentSession> {
+      this.lastConfig = config;
+      this.lastLaunchContext = launchContext;
+      return new TestAgentSession(config);
+    }
+  }
+
+  const client = new CaptureClient("opencode");
+  const modelAccess = {
+    resolveAgentDefaults: () => ({
+      model: "codius/code-default",
+      env: {
+        CODIUS_API_KEY: "host-key",
+        OPENCODE_CONFIG_CONTENT: '{"provider":{"codius":{}}}',
+      },
+    }),
+  } as CodiusModelAccessStore;
+  const manager = new AgentManager({
+    clients: { opencode: client },
+    registry: storage,
+    codiusModelAccessStore: modelAccess,
+    logger,
+    idFactory: () => "00000000-0000-4000-8000-000000000104",
+  });
+
+  const snapshot = await manager.createAgent({ provider: "opencode", cwd: workdir }, undefined, {
+    env: { CODIUS_API_KEY: "session-override" },
+    workspaceId: undefined,
+  });
+
+  expect(client.lastConfig).toMatchObject({
+    provider: "opencode",
+    cwd: workdir,
+    model: "codius/code-default",
+  });
+  expect(client.lastLaunchContext).toEqual({
+    agentId: snapshot.id,
+    env: {
+      CODIUS_API_KEY: "host-key",
+      OPENCODE_CONFIG_CONTENT: '{"provider":{"codius":{}}}',
       CODIUS_AGENT_ID: snapshot.id,
     },
   });

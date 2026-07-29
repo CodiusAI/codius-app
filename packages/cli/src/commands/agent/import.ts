@@ -3,7 +3,7 @@ import { connectToDaemon, getDaemonHost } from "../../utils/client.js";
 import { collectMultiple } from "../../utils/command-options.js";
 import type { CommandError, CommandOptions, SingleResult } from "../../output/index.js";
 import { agentRunSchema, type AgentRunResult } from "./run.js";
-import type { AgentSnapshotPayload } from "@codius-ai/protocol/messages";
+import type { AgentSnapshotPayload } from "@codius.ai/protocol/messages";
 
 export function addImportOptions(cmd: Command): Command {
   return cmd
@@ -44,7 +44,7 @@ function parseImportProvider(provider: string | undefined): string {
     throw {
       code: "MISSING_PROVIDER",
       message: "Provider is required",
-      details: "Usage: codiusctl import --provider <provider> <id>",
+      details: "Usage: codius import --provider <provider> <id>",
     } satisfies CommandError;
   }
 
@@ -105,7 +105,7 @@ async function connectToDaemonOrThrow(
     throw {
       code: "DAEMON_NOT_RUNNING",
       message: `Cannot connect to daemon at ${host}: ${message}`,
-      details: "Start the daemon with: codiusctl daemon start",
+      details: "Start the daemon with: codius daemon start",
     } satisfies CommandError;
   }
 }
@@ -121,7 +121,7 @@ export async function runImportCommand(
     throw {
       code: "MISSING_SESSION_ID",
       message: "Session ID is required",
-      details: "Usage: codiusctl import --provider <provider> <id>",
+      details: "Usage: codius import --provider <provider> <id>",
     } satisfies CommandError;
   }
 

@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import { connectToDaemon, getDaemonHost } from "../../utils/client.js";
 import { isSameOrDescendantPath } from "../../utils/paths.js";
 
@@ -45,7 +45,7 @@ export async function runDeleteCommand(
     const error: CommandError = {
       code: "MISSING_ARGUMENT",
       message: "Agent ID required unless --all or --cwd is specified",
-      details: "Usage: codiusctl agent delete <id> | --all | --cwd <path>",
+      details: "Usage: codius agent delete <id> | --all | --cwd <path>",
     };
     throw error;
   }
@@ -58,7 +58,7 @@ export async function runDeleteCommand(
     const error: CommandError = {
       code: "DAEMON_NOT_RUNNING",
       message: `Cannot connect to daemon at ${host}: ${message}`,
-      details: "Start the daemon with: codiusctl daemon start",
+      details: "Start the daemon with: codius daemon start",
     };
     throw error;
   }
@@ -81,7 +81,7 @@ export async function runDeleteCommand(
         const error: CommandError = {
           code: "AGENT_NOT_FOUND",
           message: `No agent found matching: ${id}`,
-          details: "Use `codiusctl ls` to list available agents",
+          details: "Use `codius ls` to list available agents",
         };
         throw error;
       }

@@ -1,6 +1,6 @@
 import { page } from "@vitest/browser/context";
 import { afterEach, describe, expect, it } from "vitest";
-import type { TerminalState } from "@codius-ai/protocol/messages";
+import type { TerminalState } from "@codius.ai/protocol/messages";
 import { encodeTerminalOutput, TerminalEmulatorRuntime } from "./terminal-emulator-runtime";
 
 // Regression: "streaming pino log, resized the Codius terminal, old logs stayed

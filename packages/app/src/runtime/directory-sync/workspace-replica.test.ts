@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
-import type { WorkspaceDescriptorPayload } from "@codius-ai/protocol/messages";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
+import type { WorkspaceDescriptorPayload } from "@codius.ai/protocol/messages";
 import {
   normalizeEmptyProjectDescriptor,
   normalizeWorkspaceDescriptor,

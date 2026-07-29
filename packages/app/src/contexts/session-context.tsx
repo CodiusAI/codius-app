@@ -25,18 +25,18 @@ import {
   type TimelineDeliveryMode,
   type ViewedTimelineSync,
 } from "@/timeline/viewed-timeline-sync";
-import type { AgentAttachment, SessionOutboundMessage } from "@codius-ai/protocol/messages";
-import { parseServerInfoStatusPayload } from "@codius-ai/protocol/messages";
+import type { AgentAttachment, SessionOutboundMessage } from "@codius.ai/protocol/messages";
+import { parseServerInfoStatusPayload } from "@codius.ai/protocol/messages";
 import {
   buildAgentAttentionNotificationPayload,
   type AgentAttentionReason,
   type AgentAttentionNotificationPayload,
   type NotificationPermissionRequest,
-} from "@codius-ai/protocol/agent-attention-notification";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
-import type { AgentSessionConfig } from "@codius-ai/protocol/agent-types";
-import type { GitSetupOptions } from "@codius-ai/protocol/messages";
-import type { AgentPermissionResponse } from "@codius-ai/protocol/agent-types";
+} from "@codius.ai/protocol/agent-attention-notification";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
+import type { AgentSessionConfig } from "@codius.ai/protocol/agent-types";
+import type { GitSetupOptions } from "@codius.ai/protocol/messages";
+import type { AgentPermissionResponse } from "@codius.ai/protocol/agent-types";
 import { getHostRuntimeStore, useHostRuntimeIsConnected } from "@/runtime/host-runtime";
 import { useVoiceAudioEngineOptional, useVoiceRuntimeOptional } from "@/contexts/voice-context";
 import type { AudioPlaybackSource } from "@/voice/audio-engine-types";

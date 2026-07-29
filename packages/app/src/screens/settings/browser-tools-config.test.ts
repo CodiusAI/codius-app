@@ -1,4 +1,4 @@
-import type { MutableDaemonConfig } from "@codius-ai/protocol/messages";
+import type { MutableDaemonConfig } from "@codius.ai/protocol/messages";
 import { describe, expect, it } from "vitest";
 import {
   BROWSER_TOOLS_WARNING,

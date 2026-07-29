@@ -15,8 +15,8 @@ import {
   resolveCodiusCliExecutablePath,
   type TerminalSession,
 } from "./terminal.js";
-import type { TerminalState } from "@codius-ai/protocol/messages";
-import type { TerminalActivity } from "@codius-ai/protocol/terminal-activity";
+import type { TerminalState } from "@codius.ai/protocol/messages";
+import type { TerminalActivity } from "@codius.ai/protocol/terminal-activity";
 import type {
   TerminalWorkerRequest,
   TerminalWorkerToParentMessage,

@@ -1,4 +1,4 @@
-import type { TerminalProfile } from "@codius-ai/protocol/messages";
+import type { TerminalProfile } from "@codius.ai/protocol/messages";
 import type { TerminalProfileInput } from "@/screens/workspace/terminals/use-workspace-terminals";
 import type { PinnedTabTarget } from "@/workspace-pins/target";
 

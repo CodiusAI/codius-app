@@ -40,7 +40,7 @@ describe("OpenCode terminal agent hooks", () => {
     expect(agentHooksAreInstalled(opencodeAgentHookProvider, { configDir })).toBe(true);
   });
 
-  it("writes the plugin that maps OpenCode bus events to codius hook events", () => {
+  it("writes the plugin that maps OpenCode bus events to Codius CLI hook events", () => {
     const configDir = createTempDir("codius-opencode-config-source-");
     const { configPath } = installAgentHooks(opencodeAgentHookProvider, { configDir });
     const source = readFileSync(configPath, "utf8");

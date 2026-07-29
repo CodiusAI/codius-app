@@ -11,7 +11,7 @@ import {
   type ChatMessage,
   type ChatRoom,
   type ChatRoomDetail,
-} from "@codius-ai/protocol/chat/types";
+} from "@codius.ai/protocol/chat/types";
 
 const ChatStorePayloadSchema = z.object({
   rooms: z.array(ChatRoomSchema),

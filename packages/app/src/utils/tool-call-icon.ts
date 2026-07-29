@@ -10,7 +10,7 @@ import {
   SquareTerminal,
   Wrench,
 } from "lucide-react-native";
-import type { ToolCallDetail } from "@codius-ai/protocol/agent-types";
+import type { ToolCallDetail } from "@codius.ai/protocol/agent-types";
 import { CodiusLogo } from "@/components/icons/codius-logo";
 import { resolveToolCallIconName, type ToolCallIcon } from "./tool-call-icon-name";
 

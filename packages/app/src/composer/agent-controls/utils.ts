@@ -1,4 +1,4 @@
-import type { AgentFeature, AgentModelDefinition } from "@codius-ai/protocol/agent-types";
+import type { AgentFeature, AgentModelDefinition } from "@codius.ai/protocol/agent-types";
 import { i18n } from "@/i18n/i18next";
 
 export type ExplainedAgentControl = "mode" | "model" | "thinking";

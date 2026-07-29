@@ -1,5 +1,5 @@
 import type { AgentPermissionRequest } from "./agent/agent-sdk-types.js";
-import { isSpeakToolName } from "@codius-ai/protocol/tool-name-normalization";
+import { isSpeakToolName } from "@codius.ai/protocol/tool-name-normalization";
 
 /** Voice assistant policy: only allow the speak tool. */
 export function isVoicePermissionAllowed(request: AgentPermissionRequest): boolean {

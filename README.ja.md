@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="packages/website/public/logo.svg" width="64" height="64" alt="Codius logo">
+  <img src="https://codius.ai/images/logo-mark-light.svg" width="64" height="64" alt="Codius logo">
 </p>
 
 <p align="center">
@@ -15,9 +15,6 @@
   <a href="https://github.com/CodiusAI/codius-app/releases">
     <img src="https://img.shields.io/github/v/release/CodiusAI/codius-app?style=flat&logo=github" alt="GitHub release">
   </a>
-  <a href="https://x.com/moboudra">
-    <img src="https://img.shields.io/badge/%40moboudra-555?logo=x" alt="X">
-  </a>
   <a href="https://discord.gg/jz8T2uahpH">
     <img src="https://img.shields.io/badge/Discord-555?logo=discord" alt="Discord">
   </a>
@@ -29,11 +26,11 @@
 <p align="center">Claude Code、Codex、Copilot、OpenCode、Pi のエージェントを、ひとつのインターフェースで。</p>
 
 <p align="center">
-  <img src="https://codius.ai/hero-mockup.png" alt="Codius アプリのスクリーンショット" width="100%">
+  <img src="https://codius.ai/images/product/codius-app-desktop.png" alt="サニタイズされたデモリポジトリを表示する実際の Codius App デスクトップ画面" width="100%">
 </p>
 
 <p align="center">
-  <img src="https://codius.ai/mobile-mockup.png" alt="Codius モバイルアプリ" width="100%">
+  <a href="https://codius.ai/app">Codius App のデスクトップ、Web、モバイル製品画面を見る</a>
 </p>
 
 > [!NOTE]
@@ -47,12 +44,12 @@
 - **セルフホスト:** エージェントはあなたのマシン上で動作し、完全な開発環境を使用します。自分のツール・設定・スキルをそのまま活用できます。
 - **マルチプロバイダー:** Claude Code、Codex、Copilot、OpenCode、Pi を同一のインターフェースで利用。タスクに合ったモデルを選べます。
 - **音声コントロール:** 音声モードでタスクを口述したり問題を話し合ったりできます。ハンズフリーが必要なときに便利です。
-- **クロスデバイス:** iOS、Android、デスクトップ、Web、CLI に対応。机で作業を始め、スマートフォンで確認し、ターミナルから自動化できます。
+- **クロスデバイス:** iOS、Android、デスクトップ、Web、Codius CLI に対応。机で作業を始め、スマートフォンで確認し、ターミナルから自動化できます。
 - **プライバシー優先:** Codius にはテレメトリー・トラッキング・強制ログインは一切ありません。
 
 ## はじめかた
 
-Codius はコーディングエージェントを管理するローカルサーバー（デーモン）を起動します。デスクトップアプリ・モバイルアプリ・Web アプリ・CLI などのクライアントがこのデーモンに接続します。
+Codius はコーディングエージェントを管理するローカルサーバー（デーモン）を起動します。デスクトップアプリ・モバイルアプリ・Web アプリ・Codius CLI がこのデーモンに接続します。
 
 ### 前提条件
 
@@ -70,29 +67,17 @@ Codius はコーディングエージェントを管理するローカルサー�
 
 スマートフォンから接続するには、Settings 画面に表示される QR コードをスキャンしてください。
 
-### CLI / ヘッドレス
+### Codius CLI / ヘッドレス
 
-CLI をインストールして Codius を起動します。
+サーバーやリモートマシンでは、Codius CLI の `codius` コマンドからホストとエージェントを管理できます。セットアップは [Codius CLI ドキュメント](https://codius.ai/docs/cli)を参照してください。
 
-```bash
-npm install -g @codius-ai/cli
-codius
-```
+## Codius CLI
 
-ターミナルに QR コードが表示されます。どのクライアントからでも接続できます。サーバーやリモートマシンでの利用に適しています。
-
-詳しいセットアップと設定については以下を参照してください。
-
-- [ドキュメント](https://codius.ai/docs)
-- [設定リファレンス](https://codius.ai/docs/configuration)
-
-## CLI
-
-アプリでできることはすべてターミナルからも実行できます。
+ターミナルからホストとエージェントを管理できます。
 
 ```bash
-codius run --provider claude/opus-4.6 "implement user authentication"
-codius run --provider codex/gpt-5.4 --worktree feature-x "implement feature X"
+codius run --provider claude "implement user authentication"
+codius run --provider codex --worktree feature-x "implement feature X"
 
 codius ls                           # 実行中のエージェントを一覧表示
 codius attach abc123                # ライブ出力をストリーミング
@@ -102,7 +87,7 @@ codius send abc123 "also add tests" # 追加タスクを送信
 codius --host workstation.local:6767 run "run the full test suite"
 ```
 
-詳細は[完全な CLI リファレンス](https://codius.ai/docs/cli)を参照してください。
+詳細は[Codius CLI リファレンス](https://codius.ai/docs/cli)を参照してください。
 
 ## スキル
 
@@ -125,10 +110,9 @@ npx skills add CodiusAI/codius-app
 
 - `packages/server`: Codius デーモン（エージェントプロセスのオーケストレーション、WebSocket API、MCP サーバー）
 - `packages/app`: Expo クライアント（iOS、Android、Web）
-- `packages/cli`: デーモンおよびエージェントワークフロー向け `codius` CLI
+- `packages/cli`: デーモンおよびエージェントワークフロー向け Codius CLI (`codius`)
 - `packages/desktop`: Electron デスクトップアプリ
 - `packages/relay`: リモート接続用リレーパッケージ
-- `packages/website`: マーケティングサイトとドキュメント（`codius.ai`）
 
 よく使うコマンド：
 
@@ -140,7 +124,6 @@ npm run dev
 npm run dev:server
 npm run dev:app
 npm run dev:desktop
-npm run dev:website
 
 # サーバースタックをビルド
 npm run build:server

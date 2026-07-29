@@ -50,8 +50,8 @@ export function createCli(): Command {
   const program = new Command();
 
   program
-    .name("codiusctl")
-    .description("Codius CLI - control local coding agents and the Codius daemon")
+    .name("codius")
+    .description("Codius CLI - administer hosts, agents, workspaces, and schedules")
     .version(VERSION, "-v, --version", "output the version number")
     // Global output options
     .option("-o, --format <format>", "output format: table, json, yaml", "table")
@@ -121,7 +121,7 @@ export function createCli(): Command {
   addJsonOption(
     program
       .command("status")
-      .description('Show local daemon status (alias for "codiusctl daemon status")'),
+      .description('Show local daemon status (alias for "codius daemon status")'),
   )
     .option("--home <path>", "Codius home directory (default: ~/.codius)")
     .action(withOutput(runDaemonStatusCommand));
@@ -129,7 +129,7 @@ export function createCli(): Command {
   addJsonOption(
     program
       .command("restart")
-      .description('Restart local daemon (alias for "codiusctl daemon restart")'),
+      .description('Restart local daemon (alias for "codius daemon restart")'),
   )
     .option("--home <path>", "Codius home directory (default: ~/.codius)")
     .option("--timeout <seconds>", "Wait timeout before force step (default: 15)")

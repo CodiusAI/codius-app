@@ -1,4 +1,4 @@
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 
 // Binds the branch switcher's git operations to a single workspace directory, so a
 // workspace id can never be passed where a cwd is expected. `cwd` is set once here;

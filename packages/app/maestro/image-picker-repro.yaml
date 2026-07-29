@@ -1,4 +1,4 @@
-appId: sh.codius
+appId: ai.codius
 ---
 - runFlow: flows/land-in-chat.yaml
 

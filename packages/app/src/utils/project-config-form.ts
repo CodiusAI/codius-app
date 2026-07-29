@@ -3,7 +3,7 @@ import type {
   CodiusMetadataGeneration,
   CodiusMetadataGenerationEntry,
   CodiusScriptEntryRaw,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 
 export type LifecycleOriginalKind = "string" | "array" | "missing";
 

@@ -8,7 +8,7 @@ import {
   SYNTAX_THEME_OPTIONS,
   type SyntaxThemeId,
   type SyntaxThemeOption,
-} from "@codius-ai/highlight";
+} from "@codius.ai/highlight";
 import {
   DropdownMenu,
   DropdownMenuContent,

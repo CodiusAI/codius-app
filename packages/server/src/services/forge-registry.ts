@@ -1,5 +1,5 @@
-import { getForgeDefinition } from "@codius-ai/protocol/forge-manifest";
-import { normalizeHost } from "@codius-ai/protocol/git-remote";
+import { getForgeDefinition } from "@codius.ai/protocol/forge-manifest";
+import { normalizeHost } from "@codius.ai/protocol/git-remote";
 import { createGitHubService, probeGitHubHost } from "./github-service.js";
 import type { ForgeService } from "./forge-service.js";
 import { createGiteaService, resolveGiteaFamilyForge } from "./gitea-service.js";

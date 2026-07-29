@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { AgentStreamEventPayload } from "@codius-ai/protocol/messages";
+import type { AgentStreamEventPayload } from "@codius.ai/protocol/messages";
 import {
   createUserMessage,
   hydrateStreamState,

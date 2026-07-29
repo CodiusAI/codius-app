@@ -144,6 +144,7 @@ import { CheckoutDiffManager } from "./checkout-diff-manager.js";
 import { LoopService } from "./loop-service.js";
 import { ScheduleService } from "./schedule/service.js";
 import { DaemonConfigStore, type MutableDaemonConfig } from "./daemon-config-store.js";
+import { CodiusModelAccessStore } from "./codius-model-access-store.js";
 import { BrowserToolsBroker } from "./browser-tools/broker.js";
 import { DaemonConfigBrowserToolsPolicy } from "./browser-tools/policy.js";
 import { WorkspaceGitServiceImpl } from "./workspace-git-service.js";
@@ -166,7 +167,7 @@ import type { PushNotificationSender } from "./push/notifications.js";
 import { getOrCreateServerId } from "./server-id.js";
 import { resolveDaemonVersion } from "./daemon-version.js";
 import type { AgentClient, AgentProvider } from "./agent/agent-sdk-types.js";
-import type { FirstAgentContext, TerminalProfile } from "@codius-ai/protocol/messages";
+import type { FirstAgentContext, TerminalProfile } from "@codius.ai/protocol/messages";
 import type {
   AgentProviderRuntimeSettingsMap,
   ProviderOverride,
@@ -541,6 +542,7 @@ export async function createCodiusDaemon(
     createInitialMutableDaemonConfig(config),
     logger,
   );
+  const codiusModelAccessStore = new CodiusModelAccessStore(config.codiusHome, { logger });
   const browserToolsPolicy = new DaemonConfigBrowserToolsPolicy(daemonConfigStore);
   const browserToolsBroker = new BrowserToolsBroker({});
 
@@ -820,6 +822,7 @@ export async function createCodiusDaemon(
       workspaceGitService.onWorkspaceStateMayHaveChanged(cwd);
     },
     mcpAuthToken: agentMcpAuthToken,
+    codiusModelAccessStore,
     logger,
   });
 
@@ -1569,6 +1572,7 @@ export async function createCodiusDaemon(
               serviceProxyPublicBaseUrl,
               browserToolsBroker,
               hubRelationships,
+              codiusModelAccessStore,
             );
             await hubRelationships.start();
 

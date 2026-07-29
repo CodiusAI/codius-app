@@ -180,7 +180,7 @@ export async function runLoopRunCommand(
     throw {
       code: "DAEMON_NOT_RUNNING",
       message: `Cannot connect to daemon at ${host}: ${message}`,
-      details: "Start the daemon with: codiusctl daemon start",
+      details: "Start the daemon with: codius daemon start",
     } satisfies CommandError;
   }
 

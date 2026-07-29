@@ -1,7 +1,7 @@
 import type { ITheme } from "@xterm/xterm";
 import xtermCss from "@xterm/xterm/css/xterm.css";
-import type { TerminalState } from "@codius-ai/protocol/messages";
-import type { TerminalInputModeState } from "@codius-ai/protocol/terminal-input-mode";
+import type { TerminalState } from "@codius.ai/protocol/messages";
+import type { TerminalInputModeState } from "@codius.ai/protocol/terminal-input-mode";
 import type { PendingTerminalModifiers } from "@/utils/terminal-keys";
 import {
   encodeTerminalOutput,

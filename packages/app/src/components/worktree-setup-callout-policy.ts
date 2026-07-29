@@ -1,4 +1,4 @@
-import type { CodiusConfigRaw } from "@codius-ai/protocol/messages";
+import type { CodiusConfigRaw } from "@codius.ai/protocol/messages";
 import { i18n } from "@/i18n/i18next";
 import { buildProjectSettingsRoute } from "@/utils/host-routes";
 

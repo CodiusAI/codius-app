@@ -4,7 +4,7 @@ import type {
   UserComposerAttachment,
   WorkspaceComposerAttachment,
 } from "@/attachments/types";
-import type { AgentAttachment } from "@codius-ai/protocol/messages";
+import type { AgentAttachment } from "@codius.ai/protocol/messages";
 
 export function isPullRequestContextAttachment(
   attachment: ComposerAttachment | undefined,

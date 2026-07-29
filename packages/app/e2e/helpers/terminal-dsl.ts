@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 import type {
   TerminalActivity,
   TerminalActivityState,
-} from "@codius-ai/protocol/terminal-activity";
+} from "@codius.ai/protocol/terminal-activity";
 import { createTempGitRepo } from "./workspace";
 import { navigateToTerminal, setupDeterministicPrompt } from "./terminal-perf";
 import { connectSeedClient, type SeedDaemonClient } from "./seed-client";

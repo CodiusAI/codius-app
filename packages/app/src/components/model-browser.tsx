@@ -17,7 +17,7 @@ import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { AlertTriangle, Check, ChevronRight, Search, Settings, Star } from "lucide-react-native";
-import type { AgentProvider } from "@codius-ai/protocol/agent-types";
+import type { AgentProvider } from "@codius.ai/protocol/agent-types";
 import type { SheetHeader } from "@/components/adaptive-modal-sheet";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";

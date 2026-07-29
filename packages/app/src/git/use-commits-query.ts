@@ -1,4 +1,4 @@
-import type { CheckoutCommit } from "@codius-ai/protocol/messages";
+import type { CheckoutCommit } from "@codius.ai/protocol/messages";
 import invariant from "tiny-invariant";
 import { useFetchQuery } from "@/data/query";
 import { checkoutCommitsQueryKey } from "@/git/query-keys";

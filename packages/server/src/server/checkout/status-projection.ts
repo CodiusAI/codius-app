@@ -2,7 +2,7 @@ import type {
   CheckoutPrStatusResponse,
   CheckoutStatusResponse,
   SessionOutboundMessage,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 import { isGitHubPullRequestStatusFacts } from "../../services/github-facts.js";
 import type { WorkspaceGitRuntimeSnapshot } from "../workspace-git-service.js";
 

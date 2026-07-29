@@ -3,7 +3,7 @@ import type {
   DaemonClient,
   FetchAgentHistoryEntry,
   FetchAgentHistoryOptions,
-} from "@codius-ai/client/internal/daemon-client";
+} from "@codius.ai/client/internal/daemon-client";
 import type { AgentHistoryClient, AgentHistoryHost } from "./use-agent-history";
 import { allAgentHistoryQueryKey } from "./agent-history-query-key";
 

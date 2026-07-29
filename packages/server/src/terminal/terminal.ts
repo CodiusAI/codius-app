@@ -9,17 +9,17 @@ import { fileURLToPath } from "node:url";
 import { createExternalProcessEnv } from "../server/codius-env.js";
 import { writePrivateFileAtomicSync } from "../server/private-files.js";
 import { findExecutable } from "../executable-resolution/executable-resolution.js";
-import type { TerminalCell, TerminalState } from "@codius-ai/protocol/messages";
-import { TerminalInputModeTracker } from "@codius-ai/protocol/terminal-input-mode";
+import type { TerminalCell, TerminalState } from "@codius.ai/protocol/messages";
+import { TerminalInputModeTracker } from "@codius.ai/protocol/terminal-input-mode";
 import { TerminalActivityTracker } from "./activity/terminal-activity-tracker.js";
 import type {
   TerminalActivity,
   TerminalActivityState,
-} from "@codius-ai/protocol/terminal-activity";
+} from "@codius.ai/protocol/terminal-activity";
 
 const { Terminal } = xterm;
 const require = createRequire(import.meta.url);
-const CODIUS_CLI_BIN_ENTRY = "@codius-ai/cli/bin/codius";
+const CODIUS_CLI_BIN_ENTRY = "@codius.ai/cli/bin/codius";
 let nodePtySpawnHelperChecked = false;
 const TERMINAL_TITLE_DEBOUNCE_MS = 150;
 const TERMINAL_EXIT_OUTPUT_LINE_LIMIT = 12;

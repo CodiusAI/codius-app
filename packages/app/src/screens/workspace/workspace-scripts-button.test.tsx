@@ -5,7 +5,7 @@ import { i18n as testI18n } from "@/i18n/i18next";
 import React, { type ReactElement } from "react";
 import { act, fireEvent } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { WorkspaceScriptPayload } from "@codius-ai/protocol/messages";
+import type { WorkspaceScriptPayload } from "@codius.ai/protocol/messages";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createRoot } from "react-dom/client";
 import { WorkspaceScriptsButton } from "@/screens/workspace/workspace-scripts-button";

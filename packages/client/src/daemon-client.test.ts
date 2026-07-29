@@ -1,13 +1,13 @@
 import { afterEach, expect, expectTypeOf, test, vi } from "vitest";
 import { z } from "zod";
 import { DaemonClient, type DaemonTransport, type Logger } from "./daemon-client";
-import { CLIENT_CAPS } from "@codius-ai/protocol/client-capabilities";
-import { BROWSER_AUTOMATION_COMMAND_NAMES } from "@codius-ai/protocol/browser-automation/rpc-schemas";
+import { CLIENT_CAPS } from "@codius.ai/protocol/client-capabilities";
+import { BROWSER_AUTOMATION_COMMAND_NAMES } from "@codius.ai/protocol/browser-automation/rpc-schemas";
 import {
   decodeFileTransferFrame,
   encodeFileTransferFrame,
   FileTransferOpcode,
-} from "@codius-ai/protocol/binary-frames/index";
+} from "@codius.ai/protocol/binary-frames/index";
 import {
   asUint8Array,
   decodeTerminalResizePayload,
@@ -15,7 +15,7 @@ import {
   encodeTerminalSnapshotPayload,
   encodeTerminalStreamFrame,
   TerminalStreamOpcode,
-} from "@codius-ai/protocol/terminal-stream-protocol";
+} from "@codius.ai/protocol/terminal-stream-protocol";
 
 expectTypeOf<"getGitDiff" extends keyof DaemonClient ? true : false>().toEqualTypeOf<false>();
 expectTypeOf<
@@ -1534,13 +1534,13 @@ test("goes red with the daemon's reason when the connection is closed", async ()
   const session = new DaemonClientSession();
 
   await session.connect();
-  session.daemonClosesWith("Control unresponsive");
+  session.daemonClosesWith("Client unresponsive");
 
   expect(session.state()).toEqual({
     status: "disconnected",
-    reason: "Control unresponsive",
+    reason: "Client unresponsive",
   });
-  expect(session.lastError()).toBe("Control unresponsive");
+  expect(session.lastError()).toBe("Client unresponsive");
   expect(session.closesFromClient()).toEqual([]);
 });
 

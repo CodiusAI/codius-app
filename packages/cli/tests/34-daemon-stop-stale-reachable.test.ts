@@ -1,7 +1,7 @@
 #!/usr/bin/env npx tsx
 
 /**
- * Regression: `codiusctl daemon stop` must stop a reachable daemon even when the
+ * Regression: `codius daemon stop` must stop a reachable daemon even when the
  * local pid file points at a dead supervisor owner.
  */
 
@@ -65,7 +65,7 @@ interface DaemonStatus {
 
 async function readDaemonStatus(codiusHome: string): Promise<DaemonStatus> {
   const result =
-    await $`CODIUS_HOME=${codiusHome} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${testEnv.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${testEnv.CODIUS_VOICE_MODE_ENABLED} npx codiusctl daemon status --home ${codiusHome} --json`.nothrow();
+    await $`CODIUS_HOME=${codiusHome} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${testEnv.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${testEnv.CODIUS_VOICE_MODE_ENABLED} npx codius daemon status --home ${codiusHome} --json`.nothrow();
   if (result.exitCode !== 0) {
     return { localDaemon: null, connectedDaemon: null, pid: null };
   }
@@ -159,10 +159,10 @@ try {
   console.log(`✓ fixture has stale pid ${stalePid} and live worker ${workerProcess.pid}\n`);
 
   console.log(
-    "Test 2: `codiusctl daemon stop` should stop reachable worker instead of saying not_running",
+    "Test 2: `codius daemon stop` should stop reachable worker instead of saying not_running",
   );
   const stopResult =
-    await $`CODIUS_HOME=${codiusHome} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${testEnv.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${testEnv.CODIUS_VOICE_MODE_ENABLED} npx codiusctl daemon stop --home ${codiusHome} --json`.nothrow();
+    await $`CODIUS_HOME=${codiusHome} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${testEnv.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${testEnv.CODIUS_VOICE_MODE_ENABLED} npx codius daemon stop --home ${codiusHome} --json`.nothrow();
   assert.strictEqual(stopResult.exitCode, 0, `stop should succeed: ${stopResult.stderr}`);
   const stopJson = JSON.parse(stopResult.stdout) as {
     action?: unknown;
@@ -200,7 +200,7 @@ try {
     });
   }
 
-  await $`CODIUS_HOME=${codiusHome} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${testEnv.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${testEnv.CODIUS_VOICE_MODE_ENABLED} npx codiusctl daemon stop --home ${codiusHome} --force`.nothrow();
+  await $`CODIUS_HOME=${codiusHome} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${testEnv.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${testEnv.CODIUS_VOICE_MODE_ENABLED} npx codius daemon stop --home ${codiusHome} --force`.nothrow();
   await rm(codiusHome, { recursive: true, force: true });
 }
 

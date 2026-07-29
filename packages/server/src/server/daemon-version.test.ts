@@ -20,11 +20,11 @@ afterEach(() => {
 });
 
 describe("resolveDaemonVersion", () => {
-  it("resolves server version by walking up to @codius-ai/server package.json", () => {
+  it("resolves server version by walking up to @codius.ai/server package.json", () => {
     const root = createTempDir();
     writeFileSync(
       path.join(root, "package.json"),
-      JSON.stringify({ name: "@codius-ai/server", version: "9.8.7" }),
+      JSON.stringify({ name: "@codius.ai/server", version: "9.8.7" }),
       "utf8",
     );
     const nestedDir = path.join(root, "dist", "server");
@@ -34,7 +34,7 @@ describe("resolveDaemonVersion", () => {
     expect(resolveDaemonVersion(moduleUrl)).toBe("9.8.7");
   });
 
-  it("throws when @codius-ai/server package metadata cannot be resolved", () => {
+  it("throws when @codius.ai/server package metadata cannot be resolved", () => {
     const root = createTempDir();
     writeFileSync(
       path.join(root, "package.json"),
@@ -48,11 +48,11 @@ describe("resolveDaemonVersion", () => {
     expect(() => resolveDaemonVersion(moduleUrl)).toThrow(DaemonVersionResolutionError);
   });
 
-  it("throws when @codius-ai/server version is missing", () => {
+  it("throws when @codius.ai/server version is missing", () => {
     const root = createTempDir();
     writeFileSync(
       path.join(root, "package.json"),
-      JSON.stringify({ name: "@codius-ai/server" }),
+      JSON.stringify({ name: "@codius.ai/server" }),
       "utf8",
     );
     const nestedDir = path.join(root, "dist", "server");

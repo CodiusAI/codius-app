@@ -45,7 +45,7 @@ async function requireTerminalId(
   const error: CommandError = {
     code: "TERMINAL_NOT_FOUND",
     message: `No terminal found matching: ${terminalId}`,
-    details: "Use `codiusctl terminal ls --all` to list available terminals.",
+    details: "Use `codius terminal ls --all` to list available terminals.",
   };
   throw error;
 }

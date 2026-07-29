@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { highlightCode, isLanguageSupported, type HighlightToken } from "@codius-ai/highlight";
+import { highlightCode, isLanguageSupported, type HighlightToken } from "@codius.ai/highlight";
 
 export interface DiffLine {
   type: "add" | "remove" | "context" | "header";

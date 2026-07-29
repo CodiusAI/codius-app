@@ -9,7 +9,7 @@ import {
   resolvePackagedAsarPath,
 } from "../package-paths.js";
 
-const CLI_PACKAGE_NAME = "@codius-ai/cli";
+const CLI_PACKAGE_NAME = "@codius.ai/cli";
 const CLI_BIN_ENTRY = `${CLI_PACKAGE_NAME}/bin/codius`;
 const CLI_RUN_ENTRY = `${CLI_PACKAGE_NAME}/dist/run.js`;
 
@@ -22,15 +22,15 @@ function resolveCliPackageRoot(): string {
   }).root;
 }
 
-export function resolveExternalCliEntrypoint(): NodeEntrypointSpec {
+export function resolveCliEntrypoint(): NodeEntrypointSpec {
   if (app.isPackaged) {
     return {
       entryPath: assertPathExists({
-        label: "Bundled external CLI entrypoint",
+        label: "Bundled Codius CLI entrypoint",
         filePath: path.join(
           resolvePackagedAsarPath(),
           "node_modules",
-          "@codius-ai",
+          "@codius.ai",
           "cli",
           "dist",
           "index.js",
@@ -51,7 +51,7 @@ export function resolveExternalCliEntrypoint(): NodeEntrypointSpec {
 
   return {
     entryPath: assertPathExists({
-      label: "External CLI source entrypoint",
+      label: "Codius CLI source entrypoint",
       filePath: path.join(cliRoot, "src", "index.ts"),
     }),
     execArgv: ["--import", "tsx"],
@@ -61,11 +61,11 @@ export function resolveExternalCliEntrypoint(): NodeEntrypointSpec {
 export function resolvePassthroughCliEntrypoint(): string {
   if (app.isPackaged) {
     return assertPathExists({
-      label: "Bundled passthrough CLI entrypoint",
+      label: "Bundled passthrough Codius CLI entrypoint",
       filePath: path.join(
         resolvePackagedAsarPath(),
         "node_modules",
-        "@codius-ai",
+        "@codius.ai",
         "cli",
         "dist",
         "run.js",
@@ -74,7 +74,7 @@ export function resolvePassthroughCliEntrypoint(): string {
   }
 
   return assertPathExists({
-    label: "Passthrough CLI entrypoint",
+    label: "Passthrough Codius CLI entrypoint",
     filePath: esmRequire.resolve(CLI_RUN_ENTRY),
   });
 }

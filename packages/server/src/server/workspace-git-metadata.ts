@@ -1,6 +1,6 @@
 import { basename } from "path";
 import { createHash } from "node:crypto";
-import { parseGitHubRemoteUrl } from "@codius-ai/protocol/git-remote";
+import { parseGitHubRemoteUrl } from "@codius.ai/protocol/git-remote";
 import { slugify } from "../utils/worktree.js";
 
 export function parseGitHubRepoFromRemote(remoteUrl: string): string | null {

@@ -61,7 +61,7 @@ describe("server config", () => {
             packageRoot,
             "app.asar",
             "node_modules",
-            "@codius-ai",
+            "@codius.ai",
             "server",
             "dist",
             "server",

@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import type { AgentStreamEventPayload, SessionOutboundMessage } from "@codius-ai/protocol/messages";
+import type { AgentStreamEventPayload, SessionOutboundMessage } from "@codius.ai/protocol/messages";
 import { resolveVoiceUnavailableMessage } from "@/utils/server-info-capabilities";
 import type { DaemonServerInfo } from "@/stores/session-store";
 import type { AudioEngine } from "@/voice/audio-engine-types";

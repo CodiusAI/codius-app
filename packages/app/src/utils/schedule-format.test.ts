@@ -1,4 +1,4 @@
-import type { ScheduleSummary } from "@codius-ai/protocol/schedule/types";
+import type { ScheduleSummary } from "@codius.ai/protocol/schedule/types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   describeCron,

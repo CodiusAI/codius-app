@@ -8,11 +8,11 @@ import {
   buildWorkspaceScriptPayloads,
   createScriptStatusEmitter,
 } from "./script-status-projection.js";
-import { WorkspaceScriptPayloadSchema } from "@codius-ai/protocol/messages";
+import { WorkspaceScriptPayloadSchema } from "@codius.ai/protocol/messages";
 import type { ScriptHealthState } from "./script-health-monitor.js";
 import { WorkspaceScriptRuntimeStore } from "./workspace-script-runtime-store.js";
 import { readCodiusConfig } from "../utils/worktree.js";
-import type { CodiusConfig } from "@codius-ai/protocol/codius-config-schema";
+import type { CodiusConfig } from "@codius.ai/protocol/codius-config-schema";
 import { createTestLogger } from "../test-utils/test-logger.js";
 
 function createWorkspaceRepo(options?: {

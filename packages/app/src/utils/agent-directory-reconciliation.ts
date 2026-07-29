@@ -1,4 +1,4 @@
-import type { FetchAgentsEntry } from "@codius-ai/client/internal/daemon-client";
+import type { FetchAgentsEntry } from "@codius.ai/client/internal/daemon-client";
 import type { Agent } from "@/stores/session-store";
 import type { AgentDirectoryDelta } from "./agent-directory-sync";
 import { acceptAgentDirectoryUpdate } from "./agent-directory-update-policy";

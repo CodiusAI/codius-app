@@ -1,6 +1,6 @@
 import type { z } from "zod";
-import { CLIENT_CAPS, type ClientCapability } from "@codius-ai/protocol/client-capabilities";
-import type { AgentAttentionNotificationPayload } from "@codius-ai/protocol/agent-attention-notification";
+import { CLIENT_CAPS, type ClientCapability } from "@codius.ai/protocol/client-capabilities";
+import type { AgentAttentionNotificationPayload } from "@codius.ai/protocol/agent-attention-notification";
 import {
   AgentCreateFailedStatusPayloadSchema,
   AgentCreatedStatusPayloadSchema,
@@ -14,8 +14,8 @@ import {
   DaemonUpdateResponseSchema,
   SessionInboundMessageSchema,
   type ServerInfoStatusPayload,
-} from "@codius-ai/protocol/messages";
-import { validateWSOutboundMessage } from "@codius-ai/protocol/validation/ws-outbound";
+} from "@codius.ai/protocol/messages";
+import { validateWSOutboundMessage } from "@codius.ai/protocol/validation/ws-outbound";
 import type {
   AgentStreamEventPayload,
   AgentSnapshotPayload,
@@ -99,7 +99,7 @@ import type {
   CodiusConfigRevision,
   WorkspaceCreateRequest,
   WorkspaceRecoveryState,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 import type {
   AgentPermissionRequest,
   AgentPermissionResponse,
@@ -107,10 +107,15 @@ import type {
   AgentProviderNotice,
   AgentProvider,
   AgentSessionConfig,
-} from "@codius-ai/protocol/agent-types";
-import type { MutableDaemonConfig, MutableDaemonConfigPatch } from "@codius-ai/protocol/messages";
-import { isRelayClientWebSocketUrl } from "@codius-ai/protocol/daemon-endpoints";
-import { terminalSubscriptionKey } from "@codius-ai/protocol/terminal-subscription-key";
+} from "@codius.ai/protocol/agent-types";
+import type {
+  CodiusModelAccessStatus,
+  MutableDaemonConfig,
+  MutableDaemonConfigPatch,
+  UpdateCodiusModelAccessInput,
+} from "@codius.ai/protocol/messages";
+import { isRelayClientWebSocketUrl } from "@codius.ai/protocol/daemon-endpoints";
+import { terminalSubscriptionKey } from "@codius.ai/protocol/terminal-subscription-key";
 import {
   asUint8Array,
   decodeFileTransferFrame,
@@ -119,7 +124,7 @@ import {
   FileTransferOpcode,
   TerminalStreamOpcode,
   type FileTransferFrame,
-} from "@codius-ai/protocol/binary-frames/index";
+} from "@codius.ai/protocol/binary-frames/index";
 import {
   createRelayE2eeTransportFactory,
   createWebSocketTransportFactory,
@@ -141,7 +146,7 @@ import { TerminalStreamRouter, type TerminalStreamEvent } from "./terminal-strea
 import type {
   BrowserAutomationExecuteRequest,
   BrowserAutomationExecuteResponse,
-} from "@codius-ai/protocol/browser-automation/rpc-schemas";
+} from "@codius.ai/protocol/browser-automation/rpc-schemas";
 
 export interface Logger {
   debug(obj: object, msg?: string): void;
@@ -4368,6 +4373,32 @@ export class DaemonClient {
         type: "get_daemon_config_request",
       },
       responseType: "get_daemon_config_response",
+    });
+  }
+
+  async getCodiusModelAccess(
+    requestId?: string,
+  ): Promise<{ requestId: string; status: CodiusModelAccessStatus; error: string | null }> {
+    return this.sendCorrelatedSessionRequest({
+      requestId,
+      message: {
+        type: "models.codius.get_access.request",
+      },
+      responseType: "models.codius.get_access.response",
+    });
+  }
+
+  async updateCodiusModelAccess(
+    input: UpdateCodiusModelAccessInput,
+    requestId?: string,
+  ): Promise<{ requestId: string; status: CodiusModelAccessStatus; error: string | null }> {
+    return this.sendCorrelatedSessionRequest({
+      requestId,
+      message: {
+        type: "models.codius.update_access.request",
+        input,
+      },
+      responseType: "models.codius.update_access.response",
     });
   }
 

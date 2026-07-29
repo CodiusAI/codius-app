@@ -1,4 +1,4 @@
-import type { AgentPermissionRequest } from "@codius-ai/protocol/agent-types";
+import type { AgentPermissionRequest } from "@codius.ai/protocol/agent-types";
 
 /**
  * Pending permission structure

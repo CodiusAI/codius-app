@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { lstat, mkdir, mkdtemp, rename, rm, stat } from "node:fs/promises";
 import { resolve, sep } from "path";
 import { homedir } from "node:os";
-import { CLIENT_CAPS, type ClientCapability } from "@codius-ai/protocol/client-capabilities";
+import { CLIENT_CAPS, type ClientCapability } from "@codius.ai/protocol/client-capabilities";
 import {
   serializeAgentStreamEvent,
   type AgentSnapshotPayload,
@@ -27,8 +27,8 @@ import type {
   TerminalWorkspaceContributionChangedEvent,
 } from "../terminal/terminal-manager.js";
 import { TerminalSessionController } from "../terminal/terminal-session-controller.js";
-import type { TerminalActivity } from "@codius-ai/protocol/terminal-activity";
-import type { BinaryFrame } from "@codius-ai/protocol/binary-frames/index";
+import type { TerminalActivity } from "@codius.ai/protocol/terminal-activity";
+import type { BinaryFrame } from "@codius.ai/protocol/binary-frames/index";
 import { CursorError } from "./pagination/cursor.js";
 import { SortablePager, type SortSpec } from "./pagination/sortable-pager.js";
 import type { SpeechToTextProvider, TextToSpeechProvider } from "./speech/speech-provider.js";
@@ -55,11 +55,12 @@ import {
   type WorkspaceScriptsService,
 } from "./session/workspace-scripts/workspace-scripts-service.js";
 import type { DaemonConfigStore } from "./daemon-config-store.js";
+import type { CodiusModelAccessStore } from "./codius-model-access-store.js";
 import { loadPersistedConfig } from "./persisted-config.js";
 import { releaseWorkspaceServicePortPlan } from "./workspace-service-port-registry.js";
-import { getErrorMessage, getErrorMessageOr } from "@codius-ai/protocol/error-utils";
-import { getAgentStatusPriority } from "@codius-ai/protocol/agent-state-bucket";
-import { getParentAgentIdFromLabels } from "@codius-ai/protocol/agent-labels";
+import { getErrorMessage, getErrorMessageOr } from "@codius.ai/protocol/error-utils";
+import { getAgentStatusPriority } from "@codius.ai/protocol/agent-state-bucket";
+import { getParentAgentIdFromLabels } from "@codius.ai/protocol/agent-labels";
 import type { WorkspaceGitRuntimeSnapshot, WorkspaceGitService } from "./workspace-git-service.js";
 import type { ProjectUpdate } from "./workspace-reconciliation-service.js";
 import {
@@ -231,7 +232,7 @@ import {
 } from "./worktree-session.js";
 import { archiveByScope, type ActiveWorkspaceRef } from "./workspace-archive-service.js";
 import { WorktreeRequestError, toWorktreeWireError } from "./worktree-errors.js";
-import { parseGitRemoteLocation } from "@codius-ai/protocol/git-remote";
+import { parseGitRemoteLocation } from "@codius.ai/protocol/git-remote";
 import {
   createProjectDirectory,
   ProjectDirectoryRequestError,
@@ -431,6 +432,7 @@ export interface SessionOptions {
   workspaceGitService: WorkspaceGitService;
   workspaceAutoName: WorkspaceAutoName;
   daemonConfigStore: DaemonConfigStore;
+  codiusModelAccessStore?: CodiusModelAccessStore;
   mcpBaseUrl?: string | null;
   stt: Resolvable<SpeechToTextProvider | null>;
   sttLanguage?: string;
@@ -594,6 +596,7 @@ export class Session {
   private readonly workspaceProvisioning: WorkspaceProvisioningService;
   private readonly workspaceRecovery: WorkspaceRecoveryService;
   private readonly daemonConfigStore: DaemonConfigStore;
+  private readonly codiusModelAccessStore: CodiusModelAccessStore | undefined;
   private readonly pushTokenStore: PushTokenStore;
   private unsubscribeAgentEvents: (() => void) | null = null;
   private unsubscribeProjectMutations: (() => void) | null = null;
@@ -673,6 +676,7 @@ export class Session {
       workspaceGitService,
       workspaceAutoName,
       daemonConfigStore,
+      codiusModelAccessStore,
       stt,
       sttLanguage,
       tts,
@@ -738,6 +742,7 @@ export class Session {
       logger: this.sessionLogger,
     });
     this.workspaceAutoName = workspaceAutoName;
+    this.codiusModelAccessStore = codiusModelAccessStore;
     this.workspaceProvisioning = createWorkspaceProvisioningService({
       workspaceRegistry: this.workspaceRegistry,
       projectRegistry: this.projectRegistry,
@@ -1994,12 +1999,85 @@ export class Session {
           },
         });
         return undefined;
+      case "models.codius.get_access.request":
+        return this.handleGetCodiusModelAccess(msg.requestId);
+      case "models.codius.update_access.request":
+        return this.handleUpdateCodiusModelAccess(msg.requestId, msg.input);
       case "read_project_config_request":
         return this.projectConfigSession.handleReadProjectConfigRequest(msg);
       case "write_project_config_request":
         return this.projectConfigSession.handleWriteProjectConfigRequest(msg);
       default:
         return undefined;
+    }
+  }
+
+  private async handleGetCodiusModelAccess(requestId: string): Promise<void> {
+    const store = this.codiusModelAccessStore;
+    if (!store) {
+      this.emit({
+        type: "models.codius.get_access.response",
+        payload: {
+          requestId,
+          status: {
+            configured: false,
+            maskedApiKey: null,
+            baseUrl: "https://api.codius.ai/v1",
+            defaultForAgents: false,
+            defaultModel: null,
+            models: [],
+            lastValidatedAt: null,
+          },
+          error: "Update the Codius host to manage Codius models.",
+        },
+      });
+      return;
+    }
+    this.emit({
+      type: "models.codius.get_access.response",
+      payload: { requestId, status: store.getStatus(), error: null },
+    });
+  }
+
+  private async handleUpdateCodiusModelAccess(
+    requestId: string,
+    input: Extract<SessionInboundMessage, { type: "models.codius.update_access.request" }>["input"],
+  ): Promise<void> {
+    const store = this.codiusModelAccessStore;
+    if (!store) {
+      this.emit({
+        type: "models.codius.update_access.response",
+        payload: {
+          requestId,
+          status: {
+            configured: false,
+            maskedApiKey: null,
+            baseUrl: "https://api.codius.ai/v1",
+            defaultForAgents: false,
+            defaultModel: null,
+            models: [],
+            lastValidatedAt: null,
+          },
+          error: "Update the Codius host to manage Codius models.",
+        },
+      });
+      return;
+    }
+    try {
+      const status = await store.update(input);
+      this.emit({
+        type: "models.codius.update_access.response",
+        payload: { requestId, status, error: null },
+      });
+    } catch (error) {
+      this.emit({
+        type: "models.codius.update_access.response",
+        payload: {
+          requestId,
+          status: store.getStatus(),
+          error: getErrorMessageOr(error, "Unable to update Codius model access."),
+        },
+      });
     }
   }
 

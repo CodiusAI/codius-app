@@ -12,7 +12,7 @@ import type {
 } from "./types.js";
 import { parseDuration } from "../../utils/duration.js";
 import { resolveProviderAndModel } from "../../utils/provider-model.js";
-import { everyMsToFiveFieldCron } from "@codius-ai/protocol/schedule/cadence";
+import { everyMsToFiveFieldCron } from "@codius.ai/protocol/schedule/cadence";
 
 export interface ScheduleCommandOptions extends CommandOptions {
   host?: string;
@@ -32,7 +32,7 @@ export async function connectScheduleClient(
     throw {
       code: "DAEMON_NOT_RUNNING",
       message: `Cannot connect to daemon at ${resolvedHost}: ${message}`,
-      details: "Start the daemon with: codiusctl daemon start",
+      details: "Start the daemon with: codius daemon start",
     } satisfies CommandError;
   }
 }
@@ -120,7 +120,7 @@ function resolveScheduleTarget(args: {
   }
 
   if (targetValue === "self") {
-    // COMPAT(scheduleSelfTarget): heartbeat creation moved to `codiusctl heartbeat create`.
+    // COMPAT(scheduleSelfTarget): heartbeat creation moved to `codius heartbeat create`.
     // Added in v0.2.0; remove after 2027-01-17.
     const currentAgentId = process.env.CODIUS_AGENT_ID?.trim();
     if (!currentAgentId) {

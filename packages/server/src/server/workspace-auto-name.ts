@@ -1,5 +1,5 @@
 import type pino from "pino";
-import type { FirstAgentContext } from "@codius-ai/protocol/messages";
+import type { FirstAgentContext } from "@codius.ai/protocol/messages";
 
 import { resolveFirstAgentPromptTitle } from "./agent/create-agent-title.js";
 import type { AgentManager } from "./agent/agent-manager.js";

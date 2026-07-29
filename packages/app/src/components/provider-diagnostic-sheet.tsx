@@ -24,8 +24,8 @@ import { settingsStyles } from "@/styles/settings";
 import { resolveProviderLabel } from "@/utils/provider-definitions";
 import { formatTimeAgo } from "@/utils/time";
 import { compareMatchScores, scoreTextFields } from "@/utils/score-match";
-import type { AgentModelDefinition, AgentProvider } from "@codius-ai/protocol/agent-types";
-import type { ProviderProfileModel } from "@codius-ai/protocol/provider-config";
+import type { AgentModelDefinition, AgentProvider } from "@codius.ai/protocol/agent-types";
+import type { ProviderProfileModel } from "@codius.ai/protocol/provider-config";
 import {
   resolveProviderDiscoveredModels,
   type ProviderDiscoveredModelsCache,

@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import type { ProjectCheckoutLitePayload } from "@codius-ai/protocol/messages";
+import type { ProjectCheckoutLitePayload } from "@codius.ai/protocol/messages";
 import { afterEach, describe, expect, test } from "vitest";
 
 import { createTestLogger } from "../test-utils/test-logger.js";

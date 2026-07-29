@@ -1,5 +1,5 @@
 import { expect, type BrowserContext, type Page } from "@playwright/test";
-import type { DaemonClient as InternalDaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient as InternalDaemonClient } from "@codius.ai/client/internal/daemon-client";
 import { decodeWorkspaceIdFromPathSegment } from "@/utils/host-routes";
 import { connectDaemonClient } from "./daemon-client-loader";
 import { daemonWsRoutePattern } from "./daemon-port";

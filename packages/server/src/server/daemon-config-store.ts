@@ -7,12 +7,12 @@ import { ProviderOverrideSchema } from "./agent/provider-launch-config.js";
 import {
   MutableDaemonConfigSchema,
   MutableDaemonConfigPatchSchema,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 
-export type { MutableDaemonConfig, MutableDaemonConfigPatch } from "@codius-ai/protocol/messages";
+export type { MutableDaemonConfig, MutableDaemonConfigPatch } from "@codius.ai/protocol/messages";
 
-type MutableDaemonConfig = import("@codius-ai/protocol/messages").MutableDaemonConfig;
-type MutableDaemonConfigPatch = import("@codius-ai/protocol/messages").MutableDaemonConfigPatch;
+type MutableDaemonConfig = import("@codius.ai/protocol/messages").MutableDaemonConfig;
+type MutableDaemonConfigPatch = import("@codius.ai/protocol/messages").MutableDaemonConfigPatch;
 type ProviderOverride = import("./agent/provider-launch-config.js").ProviderOverride;
 
 interface LoggerLike {

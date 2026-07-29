@@ -11,14 +11,14 @@ interface CommandCall {
 
 const globalRoot = path.join(path.sep, "global", "lib");
 const globalNodeModules = path.join(globalRoot, "node_modules");
-const cliPackagePath = path.join(globalNodeModules, "@codius-ai", "cli");
+const cliPackagePath = path.join(globalNodeModules, "@codius.ai", "cli");
 
 function npmGlobalCodiusCliJson(version: string, options?: { linked?: boolean }): string {
   return JSON.stringify({
     name: "lib",
     path: globalRoot,
     dependencies: {
-      "@codius-ai/cli": {
+      "@codius.ai/cli": {
         version,
         path: cliPackagePath,
         link: options?.linked === true,
@@ -28,7 +28,7 @@ function npmGlobalCodiusCliJson(version: string, options?: { linked?: boolean })
 }
 
 describe("DefaultNpmGlobalCodiusCli", () => {
-  test("inspects the npm global cli install with npm -g ls", async () => {
+  test("inspects the npm global Codius CLI install with npm -g ls", async () => {
     const calls: CommandCall[] = [];
     const cli = new DefaultNpmGlobalCodiusCli(async (command, args, options) => {
       calls.push({
@@ -49,14 +49,14 @@ describe("DefaultNpmGlobalCodiusCli", () => {
     expect(calls).toEqual([
       {
         command: "npm",
-        args: ["-g", "ls", "@codius-ai/cli", "--json", "--depth=0", "--long"],
+        args: ["-g", "ls", "@codius.ai/cli", "--json", "--depth=0", "--long"],
         timeout: 10_000,
         maxBuffer: 10 * 1024 * 1024,
       },
     ]);
   });
 
-  test("runs the global install command for the latest cli", async () => {
+  test("runs the global install command for the latest Codius CLI", async () => {
     const calls: CommandCall[] = [];
     const cli = new DefaultNpmGlobalCodiusCli(async (command, args, options) => {
       calls.push({
@@ -76,7 +76,7 @@ describe("DefaultNpmGlobalCodiusCli", () => {
     expect(calls).toEqual([
       {
         command: "npm",
-        args: ["install", "-g", "@codius-ai/cli@latest"],
+        args: ["install", "-g", "@codius.ai/cli@latest"],
         timeout: 300_000,
         maxBuffer: 10 * 1024 * 1024,
       },
@@ -93,7 +93,7 @@ describe("DefaultNpmGlobalCodiusCli", () => {
     await expect(cli.inspect()).rejects.toThrow("npm: command not found");
   });
 
-  test("reports missing global cli when npm output has no cli dependency", async () => {
+  test("reports missing global Codius CLI when npm output has no CLI dependency", async () => {
     const cli = new DefaultNpmGlobalCodiusCli(async () => ({
       exitCode: 1,
       stdout: JSON.stringify({ name: "lib", path: globalRoot, dependencies: {} }),
@@ -101,7 +101,7 @@ describe("DefaultNpmGlobalCodiusCli", () => {
     }));
 
     await expect(cli.inspect()).rejects.toThrow(
-      "@codius-ai/cli is not installed with npm -g on this host",
+      "@codius.ai/cli is not installed with npm -g on this host",
     );
   });
 });

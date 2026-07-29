@@ -1,4 +1,4 @@
-import type { TranslationResources } from "./en";
+import { en, type TranslationResources } from "./en";
 
 export const zhCN: TranslationResources = {
   common: {
@@ -1134,7 +1134,7 @@ export const zhCN: TranslationResources = {
     },
     integrations: {
       cli: {
-        statusFailed: "无法检查 CLI 安装状态。",
+        statusFailed: "无法检查 Codius CLI 安装状态。",
         installFailed: "无法安装 Codius CLI。",
       },
       skills: {
@@ -1821,18 +1821,18 @@ export const zhCN: TranslationResources = {
     integrations: {
       title: "集成",
       docs: {
-        cli: "CLI 文档",
+        cli: "Codius CLI 文档",
         skills: "Skills 文档",
-        openCli: "打开 CLI 文档",
+        openCli: "打开 Codius CLI 文档",
         openSkills: "打开 skills 文档",
       },
-      commandLine: {
-        title: "命令行",
+      cli: {
+        title: "Codius CLI",
         description: "从终端控制 Agent 并运行脚本",
       },
       skills: {
         title: "编排 skills",
-        description: "教会 Agent 通过 CLI 编排任务",
+        description: "教会 Agent 通过 Codius CLI 编排任务",
         updateAvailable: "有更新可用",
         updateTitle: "更新 Codius skills？",
         updateFallback: "将内置 skills 同步到你的机器。",
@@ -2005,6 +2005,7 @@ export const zhCN: TranslationResources = {
     },
     providers: {
       title: "Providers",
+      codius: en.settings.providers.codius,
       addProvider: "添加 Provider",
       providerDetails: "{{name}} Provider 详情",
       enableProvider: "启用 {{name}}",

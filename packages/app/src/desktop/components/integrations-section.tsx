@@ -155,13 +155,9 @@ export function IntegrationsSection() {
           <View style={settingsStyles.rowContent}>
             <View style={styles.rowTitleRow}>
               <Terminal size={theme.iconSize.md} color={theme.colors.foreground} />
-              <Text style={settingsStyles.rowTitle}>
-                {t("settings.integrations.commandLine.title")}
-              </Text>
+              <Text style={settingsStyles.rowTitle}>{t("settings.integrations.cli.title")}</Text>
             </View>
-            <Text style={settingsStyles.rowHint}>
-              {t("settings.integrations.commandLine.description")}
-            </Text>
+            <Text style={settingsStyles.rowHint}>{t("settings.integrations.cli.description")}</Text>
           </View>
           {cliStatus?.installed ? (
             <View style={styles.installedLabel}>

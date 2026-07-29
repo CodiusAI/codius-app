@@ -6,7 +6,7 @@ import {
   type ClientForgeLogicModule,
   type MergeCapability,
 } from "@/git/client-forge-module";
-import type { CheckoutPrMergeMethod } from "@codius-ai/protocol/messages";
+import type { CheckoutPrMergeMethod } from "@codius.ai/protocol/messages";
 import { mapCheckStatus, type CheckStatus } from "@/git/pull-request-panel/check-status";
 
 const GiteaMergeFactsSchema = z

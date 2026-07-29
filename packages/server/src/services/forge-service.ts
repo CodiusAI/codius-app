@@ -1,4 +1,4 @@
-import type { ForgeSearchKind } from "@codius-ai/protocol/messages";
+import type { ForgeSearchKind } from "@codius.ai/protocol/messages";
 
 export type ForgeSearchRequestKind = ForgeSearchKind | "github-issue" | "github-pr" | "pr";
 

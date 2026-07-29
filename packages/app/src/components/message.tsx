@@ -62,8 +62,8 @@ import { CODE_SURFACE_DATASET } from "@/styles/code-surface";
 import { inlineUnistylesStyle } from "@/styles/unistyles-inline-style";
 import { MarkdownRenderer, type MarkdownStyles } from "@/components/markdown/renderer";
 import type { TodoEntry, UserMessageImageAttachment } from "@/types/stream";
-import type { AgentAttachment } from "@codius-ai/protocol/messages";
-import type { ToolCallDetail } from "@codius-ai/protocol/agent-types";
+import type { AgentAttachment } from "@codius.ai/protocol/messages";
+import type { ToolCallDetail } from "@codius.ai/protocol/agent-types";
 import { buildToolCallPresentation } from "@/tool-calls/presentation";
 import { resolveToolCallIcon } from "@/utils/tool-call-icon";
 import { getMarkdownListMarker, getMarkdownListSpacing } from "@/utils/markdown-list";
@@ -96,9 +96,9 @@ import {
   AttachmentThumbnail,
 } from "@/components/attachment-pill";
 import { AttachmentLightbox } from "@/components/attachment-lightbox";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import { isWeb, isNative } from "@/constants/platform";
-import type { AgentCapabilityFlags } from "@codius-ai/protocol/agent-types";
+import type { AgentCapabilityFlags } from "@codius.ai/protocol/agent-types";
 import { RewindMenu, type RewindMode } from "@/components/rewind/rewind-menu";
 import { useRewindAgentMutation } from "@/components/rewind/use-rewind-agent-mutation";
 import { AssistantForkMenu, type AssistantForkTarget } from "@/components/assistant-fork-menu";

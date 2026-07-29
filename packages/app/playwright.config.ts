@@ -9,6 +9,7 @@ process.env.CODIUS_SEED_DEFAULTS ??= "0";
 // This allows multiple test runs in parallel across different worktrees
 const baseURL =
   process.env.E2E_BASE_URL ?? `http://localhost:${process.env.E2E_METRO_PORT ?? "8081"}`;
+const browserExecutablePath = process.env.E2E_BROWSER_EXECUTABLE;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -33,7 +34,12 @@ export default defineConfig({
     {
       name: "Desktop Chrome",
       testIgnore: ["**/*.real.spec.ts"],
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        ...(browserExecutablePath
+          ? { launchOptions: { executablePath: browserExecutablePath } }
+          : {}),
+      },
     },
     {
       name: "real-provider",

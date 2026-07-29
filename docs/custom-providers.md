@@ -414,7 +414,7 @@ This session directory is also import-only. Launching and resuming still go thro
 
 ## Disabling a provider
 
-Set `enabled: false` to hide a provider from the provider list. The provider will not appear in the app or CLI.
+Set `enabled: false` to hide a provider from the provider list. The provider will not appear in the app or Codius CLI.
 
 ```json
 {

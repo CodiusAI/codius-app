@@ -1160,8 +1160,8 @@ export const en = {
     },
     integrations: {
       cli: {
-        statusFailed: "Unable to check CLI install status.",
-        installFailed: "Unable to install the Codius CLI.",
+        statusFailed: "Unable to check Codius CLI install status.",
+        installFailed: "Unable to install Codius CLI.",
       },
       skills: {
         statusFailed: "Unable to check orchestration skills status.",
@@ -1852,18 +1852,18 @@ export const en = {
     integrations: {
       title: "Integrations",
       docs: {
-        cli: "CLI docs",
+        cli: "Codius CLI docs",
         skills: "Skills docs",
-        openCli: "Open CLI documentation",
+        openCli: "Open Codius CLI documentation",
         openSkills: "Open skills documentation",
       },
-      commandLine: {
-        title: "Command line",
+      cli: {
+        title: "Codius CLI",
         description: "Control and script agents from your terminal",
       },
       skills: {
         title: "Orchestration skills",
-        description: "Teach your agents to orchestrate through the CLI",
+        description: "Teach your agents to orchestrate through Codius CLI",
         updateAvailable: "Update available",
         updateTitle: "Update Codius skills?",
         updateFallback: "Sync bundled skills to your machine.",
@@ -2042,6 +2042,30 @@ export const en = {
     },
     providers: {
       title: "Providers",
+      codius: {
+        title: "Codius models",
+        heading: "Use Codius models automatically",
+        description:
+          "Add one API key to this host. Codius securely configures each compatible agent session without changing the agent’s files.",
+        connected: "Connected",
+        notConnected: "Not connected",
+        apiKey: "Codius API key",
+        keyPlaceholder: "Paste your Codius API key",
+        replacePlaceholder: "Paste a new key to replace {{maskedKey}}",
+        connect: "Connect",
+        update: "Update",
+        manageKeys: "Create or manage API keys",
+        modelLabel: "Default coding model",
+        modelPlaceholder: "Choose a model",
+        modelPickerTitle: "Choose a Codius model",
+        searchModels: "Search models",
+        noModels: "No models are available for this account",
+        defaultTitle: "Use Codius by default",
+        defaultDescription:
+          "New compatible agent sessions start with {{model}}. A model selected for an individual agent still takes priority.",
+        firstModel: "the first available model",
+        disconnect: "Disconnect Codius models",
+      },
       addProvider: "Add provider",
       providerDetails: "{{name}} provider details",
       enableProvider: "Enable {{name}}",

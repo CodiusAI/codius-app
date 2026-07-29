@@ -27,7 +27,7 @@ import {
 import type { WorktreeCreationIntent } from "./resolve-worktree-creation-intent.js";
 import { resolveFirstAgentPromptTitle } from "./agent/create-agent-title.js";
 import { buildAgentBranchNameSeed } from "./agent/prompt-attachments.js";
-import type { FirstAgentContext } from "@codius-ai/protocol/messages";
+import type { FirstAgentContext } from "@codius.ai/protocol/messages";
 import type { WorktreeIncludeSummary } from "../utils/worktree-include.js";
 
 export interface CreateCodiusWorktreeInput extends CreateWorktreeCoreInput {

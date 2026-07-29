@@ -1,9 +1,28 @@
 {
-  "name": "@codius-ai/highlight",
+  "name": "@codius.ai/highlight",
   "version": "0.2.0-beta.3",
+  "description": "Syntax-highlighting utilities used by Codius",
+  "keywords": [
+    "codemirror",
+    "codius",
+    "syntax-highlighting"
+  ],
+  "homepage": "https://codius.ai",
+  "bugs": {
+    "url": "https://github.com/CodiusAI/codius-app/issues"
+  },
+  "license": "AGPL-3.0-or-later",
+  "author": "Prismosoft",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodiusAI/codius-app.git",
+    "directory": "packages/highlight"
+  },
   "files": [
     "dist",
-    "!dist/**/*.map"
+    "!dist/**/*.map",
+    "README.md",
+    "LICENSE"
   ],
   "type": "module",
   "main": "./dist/index.js",
@@ -11,12 +30,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "source": "./src/index.ts",
       "default": "./dist/index.js"
     }
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "clean": "node ../../scripts/clean-package-dist.mjs",
@@ -50,5 +69,8 @@
   "devDependencies": {
     "typescript": "^5.9.2",
     "vitest": "^4.1.6"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   }
 }

@@ -32,7 +32,7 @@ import {
 import { createAgentCommand, type CreateAgentFromMcpInput } from "../create-agent/create.js";
 import type { VoiceCallerContext, VoiceSpeakHandler } from "../../voice-types.js";
 import type { FirstAgentContext } from "../../messages.js";
-import { everyMsToFiveFieldCron } from "@codius-ai/protocol/schedule/cadence";
+import { everyMsToFiveFieldCron } from "@codius.ai/protocol/schedule/cadence";
 import { expandUserPath, isSameOrDescendantPath, resolvePathFromBase } from "../../path-utils.js";
 import type { TerminalManager } from "../../../terminal/terminal-manager.js";
 import type { CreateCodiusWorktreeWorkflowFn } from "../../worktree-session.js";
@@ -43,7 +43,7 @@ import {
   StoredScheduleSchema,
   type ScheduleCadence,
   type UpdateScheduleInput,
-} from "@codius-ai/protocol/schedule/types";
+} from "@codius.ai/protocol/schedule/types";
 import type { ProviderSnapshotManager } from "../provider-snapshot-manager.js";
 import {
   AgentModelSchema,

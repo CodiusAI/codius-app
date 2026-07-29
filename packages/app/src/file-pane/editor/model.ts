@@ -1,4 +1,4 @@
-import type { FileVersion, FileWriteResult } from "@codius-ai/protocol/messages";
+import type { FileVersion, FileWriteResult } from "@codius.ai/protocol/messages";
 
 export type FileEditorStatus = "loading" | "clean" | "dirty" | "saving" | "conflict" | "error";
 export type FileLineSeparator = "\n" | "\r\n" | "\r";

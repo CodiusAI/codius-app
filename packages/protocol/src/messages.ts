@@ -175,6 +175,33 @@ export const MutableDaemonConfigPatchSchema = z
 
 export type MutableDaemonConfig = z.infer<typeof MutableDaemonConfigSchema>;
 export type MutableDaemonConfigPatch = z.infer<typeof MutableDaemonConfigPatchSchema>;
+
+export const CodiusModelAccessModelSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+});
+
+export const CodiusModelAccessStatusSchema = z.object({
+  configured: z.boolean(),
+  maskedApiKey: z.string().nullable(),
+  baseUrl: z.string(),
+  defaultForAgents: z.boolean(),
+  defaultModel: z.string().nullable(),
+  models: z.array(CodiusModelAccessModelSchema),
+  lastValidatedAt: z.string().nullable(),
+});
+
+export const UpdateCodiusModelAccessInputSchema = z
+  .object({
+    apiKey: z.string().optional(),
+    defaultForAgents: z.boolean().optional(),
+    defaultModel: z.string().optional(),
+    clearApiKey: z.boolean().optional(),
+  })
+  .strict();
+
+export type CodiusModelAccessStatus = z.infer<typeof CodiusModelAccessStatusSchema>;
+export type UpdateCodiusModelAccessInput = z.infer<typeof UpdateCodiusModelAccessInputSchema>;
 import type {
   AgentCapabilityFlags,
   AgentModelDefinition,
@@ -1167,6 +1194,17 @@ export const SetDaemonConfigRequestMessageSchema = z.object({
   type: z.literal("set_daemon_config_request"),
   requestId: z.string(),
   config: MutableDaemonConfigPatchSchema,
+});
+
+export const GetCodiusModelAccessRequestMessageSchema = z.object({
+  type: z.literal("models.codius.get_access.request"),
+  requestId: z.string(),
+});
+
+export const UpdateCodiusModelAccessRequestMessageSchema = z.object({
+  type: z.literal("models.codius.update_access.request"),
+  requestId: z.string(),
+  input: UpdateCodiusModelAccessInputSchema,
 });
 
 export const ReadProjectConfigRequestMessageSchema = z.object({
@@ -2467,6 +2505,8 @@ export const SessionInboundMessageSchema = z.discriminatedUnion("type", [
   DiagnosticsRequestSchema,
   GetDaemonConfigRequestMessageSchema,
   SetDaemonConfigRequestMessageSchema,
+  GetCodiusModelAccessRequestMessageSchema,
+  UpdateCodiusModelAccessRequestMessageSchema,
   ReadProjectConfigRequestMessageSchema,
   WriteProjectConfigRequestMessageSchema,
   DictationStreamStartMessageSchema,
@@ -2832,6 +2872,8 @@ export const ServerInfoStatusPayloadSchema = z
         stableProjectIdentity: z.boolean().optional(),
         // COMPAT(workspaceScriptManagement): added in v0.1.105, remove gate after 2027-01-10.
         workspaceScriptManagement: z.boolean().optional(),
+        // COMPAT(codiusModelAccess): added in v0.2.X, remove when all supported daemons include it.
+        codiusModelAccess: z.boolean().optional(),
       })
       .optional(),
   })
@@ -3734,6 +3776,24 @@ export const GetDaemonConfigResponseMessageSchema = z.object({
       config: MutableDaemonConfigSchema,
     })
     .passthrough(),
+});
+
+export const GetCodiusModelAccessResponseMessageSchema = z.object({
+  type: z.literal("models.codius.get_access.response"),
+  payload: z.object({
+    requestId: z.string(),
+    status: CodiusModelAccessStatusSchema,
+    error: z.string().nullable(),
+  }),
+});
+
+export const UpdateCodiusModelAccessResponseMessageSchema = z.object({
+  type: z.literal("models.codius.update_access.response"),
+  payload: z.object({
+    requestId: z.string(),
+    status: CodiusModelAccessStatusSchema,
+    error: z.string().nullable(),
+  }),
 });
 
 export const DaemonGetStatusResponseSchema = z.object({
@@ -5228,6 +5288,8 @@ export const SessionOutboundMessageSchema = z.discriminatedUnion("type", [
   DiagnosticsResponseSchema,
   GetDaemonConfigResponseMessageSchema,
   SetDaemonConfigResponseMessageSchema,
+  GetCodiusModelAccessResponseMessageSchema,
+  UpdateCodiusModelAccessResponseMessageSchema,
   ReadProjectConfigResponseMessageSchema,
   WriteProjectConfigResponseMessageSchema,
   SetAgentModeResponseMessageSchema,

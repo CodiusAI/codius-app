@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "scope": "@codius.ai",
+  "registry": "https://registry.npmjs.org/",
+  "trustedPublishing": {
+    "nodeVersion": "22.14.0",
+    "npmVersion": "11.5.1",
+    "githubEnvironment": "npm-production"
+  },
+  "packages": [
+    {
+      "name": "@codius.ai/highlight",
+      "workspace": "packages/highlight",
+      "dependsOn": []
+    },
+    {
+      "name": "@codius.ai/relay",
+      "workspace": "packages/relay",
+      "dependsOn": []
+    },
+    {
+      "name": "@codius.ai/protocol",
+      "workspace": "packages/protocol",
+      "dependsOn": []
+    },
+    {
+      "name": "@codius.ai/client",
+      "workspace": "packages/client",
+      "dependsOn": ["@codius.ai/protocol", "@codius.ai/relay"]
+    },
+    {
+      "name": "@codius.ai/server",
+      "workspace": "packages/server",
+      "dependsOn": [
+        "@codius.ai/client",
+        "@codius.ai/highlight",
+        "@codius.ai/protocol",
+        "@codius.ai/relay"
+      ],
+      "requiredPackedFiles": [
+        "dist/server/web-ui/index.html",
+        "dist/server/web-ui/index.html.br",
+        "dist/server/web-ui/index.html.gz"
+      ]
+    },
+    {
+      "name": "@codius.ai/cli",
+      "workspace": "packages/cli",
+      "dependsOn": ["@codius.ai/client", "@codius.ai/protocol", "@codius.ai/server"],
+      "bin": {
+        "codius": "bin/codius"
+      }
+    }
+  ],
+  "privateWorkspaces": [
+    {
+      "name": "@codius.ai/app",
+      "workspace": "packages/app"
+    },
+    {
+      "name": "@codius.ai/desktop",
+      "workspace": "packages/desktop"
+    },
+    {
+      "name": "@codius.ai/expo-two-way-audio",
+      "workspace": "packages/expo-two-way-audio"
+    }
+  ]
+}

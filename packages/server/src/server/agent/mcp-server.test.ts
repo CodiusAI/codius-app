@@ -20,7 +20,7 @@ import {
   AgentListItemPayloadSchema,
   AgentPermissionRequestPayloadSchema,
   AgentSnapshotPayloadSchema,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 import {
   createPersistedProjectRecord,
   createPersistedWorkspaceRecord,
@@ -33,7 +33,7 @@ import type {
   CreateScheduleInput,
   StoredSchedule,
   UpdateScheduleInput,
-} from "@codius-ai/protocol/schedule/types";
+} from "@codius.ai/protocol/schedule/types";
 import type { ScheduleService } from "../schedule/service.js";
 import type { WorkspaceGitService } from "../workspace-git-service.js";
 import {
@@ -51,7 +51,7 @@ import type { GeneratedWorkspaceName } from "../worktree-branch-name-generator.j
 import type { ForgeService } from "../../services/forge-service.js";
 import { areEquivalentPaths } from "../../utils/path.js";
 import type { TerminalManager } from "../../terminal/terminal-manager.js";
-import { PARENT_AGENT_ID_LABEL } from "@codius-ai/protocol/agent-labels";
+import { PARENT_AGENT_ID_LABEL } from "@codius.ai/protocol/agent-labels";
 import type { BrowserToolsBroker, BrowserToolsExecuteInput } from "../browser-tools/broker.js";
 import type { BrowserToolsResponsePayload } from "../browser-tools/errors.js";
 import { readCodiusWorktreeMetadata } from "../../utils/worktree-metadata.js";

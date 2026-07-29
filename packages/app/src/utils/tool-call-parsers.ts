@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { HighlightToken } from "@codius-ai/highlight";
+import type { HighlightToken } from "@codius.ai/highlight";
 
 export interface DiffSegment {
   text: string;

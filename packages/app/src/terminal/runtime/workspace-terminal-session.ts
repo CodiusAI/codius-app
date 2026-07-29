@@ -1,4 +1,4 @@
-import type { TerminalState } from "@codius-ai/protocol/messages";
+import type { TerminalState } from "@codius.ai/protocol/messages";
 
 export interface WorkspaceTerminalSnapshots {
   get: (input: { terminalId: string }) => TerminalState | null;

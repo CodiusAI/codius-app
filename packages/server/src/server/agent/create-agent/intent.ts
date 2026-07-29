@@ -1,4 +1,4 @@
-import { PARENT_AGENT_ID_LABEL } from "@codius-ai/protocol/agent-labels";
+import { PARENT_AGENT_ID_LABEL } from "@codius.ai/protocol/agent-labels";
 
 export interface CreateAgentCaller {
   id: string;

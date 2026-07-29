@@ -10,7 +10,7 @@ import { OpenAITTS } from "./speech/providers/openai/tts.js";
 import { OpenAISTT } from "./speech/providers/openai/stt.js";
 import { STTManager } from "./agent/stt-manager.js";
 import { withTimeout } from "../utils/promise-timeout.js";
-import type { SessionOutboundMessage } from "@codius-ai/protocol/messages";
+import type { SessionOutboundMessage } from "@codius.ai/protocol/messages";
 
 type SessionMessage<T extends SessionOutboundMessage["type"]> = Extract<
   SessionOutboundMessage,

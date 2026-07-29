@@ -15,9 +15,9 @@ const codiusHome = await mkdtemp(join(tmpdir(), "codius-onboard-home-"));
 const port = await getAvailablePort();
 
 try {
-  console.log("Test 1: `codiusctl` runs blocking onboarding and prints pairing info");
+  console.log("Test 1: `codius` runs blocking onboarding and prints pairing info");
   const onboard =
-    await $`CODIUS_HOME=${codiusHome} CODIUS_LISTEN=127.0.0.1:${port} CODIUS_PAIRING_QR=0 npx codiusctl`.nothrow();
+    await $`CODIUS_HOME=${codiusHome} CODIUS_LISTEN=127.0.0.1:${port} CODIUS_PAIRING_QR=0 npx codius`.nothrow();
 
   assert.strictEqual(
     onboard.exitCode,
@@ -31,29 +31,23 @@ try {
   );
   assert(onboard.stdout.includes("#offer="), "onboard output should include pairing offer URL");
   assert(
-    onboard.stdout.includes("CLI quick reference"),
-    "onboard output should include CLI quick reference",
+    onboard.stdout.includes("Codius CLI quick reference"),
+    "onboard output should include Codius CLI quick reference",
   );
+  assert(onboard.stdout.includes("codius --help"), "onboard output should include --help shortcut");
+  assert(onboard.stdout.includes("codius ls"), "onboard output should include ls shortcut");
   assert(
-    onboard.stdout.includes("codiusctl --help"),
-    "onboard output should include --help shortcut",
-  );
-  assert(onboard.stdout.includes("codiusctl ls"), "onboard output should include ls shortcut");
-  assert(
-    onboard.stdout.includes('codiusctl run "your prompt"'),
+    onboard.stdout.includes('codius run "your prompt"'),
     "onboard output should include run shortcut",
   );
-  assert(
-    onboard.stdout.includes("codiusctl status"),
-    "onboard output should include status shortcut",
-  );
+  assert(onboard.stdout.includes("codius status"), "onboard output should include status shortcut");
   assert(
     onboard.stdout.includes(join(codiusHome, "daemon.log")),
     "onboard output should include daemon log path",
   );
 
   const status =
-    await $`CODIUS_HOME=${codiusHome} npx codiusctl daemon status --home ${codiusHome}`.nothrow();
+    await $`CODIUS_HOME=${codiusHome} npx codius daemon status --home ${codiusHome}`.nothrow();
   assert.strictEqual(status.exitCode, 0, `daemon status should succeed: ${status.stderr}`);
   assert(status.stdout.includes("running"), "daemon should be running when onboarding exits");
   console.log("✓ onboarding prints pairing info and waits for daemon readiness\n");
@@ -84,7 +78,7 @@ try {
   );
   console.log("✓ non-interactive run persisted voice disabled choices\n");
 } finally {
-  await $`CODIUS_HOME=${codiusHome} npx codiusctl daemon stop --home ${codiusHome} --force`.nothrow();
+  await $`CODIUS_HOME=${codiusHome} npx codius daemon stop --home ${codiusHome} --force`.nothrow();
   await rm(codiusHome, { recursive: true, force: true });
 }
 

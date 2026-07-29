@@ -1,0 +1,20 @@
+{
+  "phase": "retired",
+  "retiredRoots": ["packages/website", "public-docs", "packages/desktop/vendor/codius"],
+  "retiredFiles": [
+    ".github/workflows/deploy-website.yml",
+    "packages/desktop/scripts/codius-acp-integration.mjs"
+  ],
+  "forbiddenWorkspaceEntries": ["packages/website"],
+  "forbiddenScripts": ["dev:website", "test:codius-acp"],
+  "forbiddenTextFragments": [
+    { "id": "retired-scope", "parts": ["@codius", "-ai/"] },
+    { "id": "retired-control-product-name", "parts": ["Codius", " Control"] },
+    { "id": "retired-control-package-name", "parts": ["@codius.ai/", "control"] },
+    { "id": "retired-control-workspace", "parts": ["packages/", "control"] },
+    { "id": "retired-control-command", "parts": ["codius", "ctl"] },
+    { "id": "retired-repository-url", "parts": ["CodiusAI/codius", "-cli"] },
+    { "id": "retired-agent-command", "parts": ["codius", " acp"] }
+  ],
+  "notes": "codius.ai owns public marketing and documentation. Codius CLI is the supported App controller in packages/cli with the codius executable. The retired standalone coding-agent fork, its bundled vendor binary, ACP integration, old npm scope, Control naming, and website paths must not return during upstream reconciliation."
+}

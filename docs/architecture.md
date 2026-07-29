@@ -1,6 +1,6 @@
 # Architecture
 
-Codius is a client-server system for monitoring and controlling local AI coding agents. The daemon runs on your machine, manages agent processes, and streams their output in real time over WebSocket. Clients (mobile app, CLI, desktop app) connect to the daemon to observe and interact with agents.
+Codius is a client-server system for monitoring and controlling local AI coding agents. The daemon runs on your machine, manages agent processes, and streams their output in real time over WebSocket. Clients (mobile app, Codius CLI, desktop app) connect to the daemon to observe and interact with agents.
 
 Your code never leaves your machine. Codius is local-first.
 
@@ -8,8 +8,8 @@ Your code never leaves your machine. Codius is local-first.
 
 ```
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│  Mobile App  │    │     CLI     │    │ Desktop App │
-│   (Expo)     │    │ (Commander) │    │ (Electron)  │
+│  Mobile App  │    │ Codius CLI  │    │ Desktop App │
+│   (Expo)     │    │  (codius)   │    │ (Electron)  │
 └──────┬───────┘    └──────┬──────┘    └──────┬──────┘
        │                   │                  │
        │    WebSocket      │    WebSocket     │    Managed subprocess
@@ -35,7 +35,7 @@ Your code never leaves your machine. Codius is local-first.
 
 - **Daemon:** Local server that spawns and manages agent processes and exposes the WebSocket API.
 - **App:** Cross-platform Expo client for iOS, Android, web, and the shared UI used by desktop.
-- **CLI:** Terminal interface for agent workflows that can also start and manage the daemon.
+- **Codius CLI:** Terminal administration interface for agent workflows and daemon management.
 - **Desktop app:** Electron wrapper around the web app that bundles and auto-manages its own daemon.
 - **Relay:** Optional encrypted bridge for remote access without opening ports directly.
 
@@ -50,7 +50,7 @@ The heart of Codius. A Node.js process that:
 - Streams agent output in real time via a timeline model
 - Provides agent-to-agent tools through a transport-neutral tool catalog, with MCP as one adapter
 - Optionally connects outbound to a relay for remote access
-- Optionally serves the browser web client from the same HTTP server (self-hosting guide: [public-docs/web-ui.md](../public-docs/web-ui.md))
+- Optionally serves the browser web client from the same HTTP server (self-hosting guide: [codius.ai/docs/app/web-ui](https://codius.ai/docs/app/web-ui))
 
 All paths are under `packages/server/src/`.
 
@@ -83,15 +83,15 @@ not retain non-Git directories.
 
 The source of truth for WebSocket messages, binary frame codecs, endpoint parsing,
 agent timeline types, provider config schemas, and other values shared by daemon
-and clients. Server, app, CLI, and `@codius-ai/client` all depend on this package;
+and clients. Server, app, Codius CLI, and `@codius.ai/client` all depend on this package;
 it does not depend on the server.
 
 ### `packages/client` — Daemon client library and SDK facade
 
 Owns the low-level daemon WebSocket driver plus the higher-level `CodiusClient`
-facade. App and CLI may import the low-level driver from
-`@codius-ai/client/internal/daemon-client` during migration, while new SDK-shaped
-code imports from `@codius-ai/client`.
+facade. The App and Codius CLI may import the low-level driver from
+`@codius.ai/client/internal/daemon-client`; SDK-shaped code imports from
+`@codius.ai/client`.
 
 ### `packages/app` — Mobile + web client (Expo)
 
@@ -113,12 +113,12 @@ code, prompts, and tool output; encrypted-at-rest storage is a separate product/
 Its serialized payload has a 1 MiB byte budget and evicts whole host snapshots in least-recently-
 written order; a single oversized host is omitted rather than partially restored.
 
-### `packages/cli` — Command-line client
+### `packages/cli` — Codius CLI
 
-Commander.js CLI with Docker-style commands. Common agent operations are also exposed at the top level (e.g. `codius ls`, `codius run`).
+Commander.js administration interface with Docker-style commands.
 
 - `codius agent ls/run/import/attach/logs/stop/delete/send/inspect/wait/archive/reload/update/mode`
-- `codiusctl daemon start/stop/restart/status/pair/set-password`
+- `codius daemon start/stop/restart/status/pair/set-password`
 - `codius chat ls/create/inspect/post/read/wait/delete`
 - `codius terminal ls/create/capture/send-keys/kill`
 - `codius loop run/ls/inspect/logs/stop`
@@ -127,7 +127,6 @@ Commander.js CLI with Docker-style commands. Common agent operations are also ex
 - `codius workspace create/ls/archive`
 - `codius permit allow/deny/ls`
 - `codius provider ls/models`
-- hidden legacy `codius worktree create/ls/archive` compatibility alias
 - `codius speech …`
 
 Communicates with the daemon via the same WebSocket protocol as the app.
@@ -159,7 +158,7 @@ Electron wrapper for macOS, Linux, and Windows.
 - Native file access for workspace integration
 - Same WebSocket client as mobile app
 
-**Multi-window (hybrid land-on model).** `createWindow()` in `main.ts` is reusable: `⌘⇧N`/File→New Window, relaunching the app (`second-instance`), and the sidebar "Open in new window" action each open a fresh `BrowserWindow`. Every window shows the full sidebar — there is no per-window project ownership or filtering. "Land on a project" is delivered by a per-`webContents` `PendingOpenProjectStore`: each window pulls its own pending project path on mount (`codius:get-pending-open-project`) and runs the normal open-project flow, identical to a CLI `codius <path>` launch.
+**Multi-window (hybrid land-on model).** `createWindow()` in `main.ts` is reusable: `⌘⇧N`/File→New Window, relaunching the app (`second-instance`), and the sidebar "Open in new window" action each open a fresh `BrowserWindow`. Every window shows the full sidebar — there is no per-window project ownership or filtering. "Land on a project" is delivered by a per-`webContents` `PendingOpenProjectStore`: each window pulls its own pending project path on mount (`codius:get-pending-open-project`) and runs the normal open-project flow, identical to a `codius <path>` launch.
 
 > **Window-state v1 limitation:** only the _first_ window of a session restores and persists saved geometry (size/position/maximized). Windows opened via ⌘⇧N / second-instance / "Open in new window" open at the default size, OS-cascaded, and do not persist — this avoids every window stacking on the same restored bounds and fighting over the single window-state store. Lifting this needs per-window state keys.
 >
@@ -182,10 +181,6 @@ Agent browser_keypress -> guest sendInputEvent(skipIfUnhandled)
   |-- guest handles ------------> page owns it
   `-- guest does not handle ----> stop; never redispatch to the host window
 ```
-
-### `packages/website` — Marketing site
-
-TanStack Router + Cloudflare Workers. Serves codius.ai.
 
 ## WebSocket protocol
 
@@ -384,6 +379,6 @@ $CODIUS_HOME/
 
 ## Deployment models
 
-1. **Local daemon** (default): `codiusctl daemon start` on `127.0.0.1:6767`
+1. **Local daemon** (default): `codius daemon start` on `127.0.0.1:6767`
 2. **Managed desktop**: Electron app spawns daemon as subprocess
 3. **Remote + relay**: Daemon behind firewall, relay bridges with E2E encryption

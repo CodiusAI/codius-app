@@ -25,7 +25,7 @@ import {
   readCodiusConfigForProjection,
 } from "../../script-status-projection.js";
 import { deriveProjectServiceSlug, deriveProjectSlug } from "../../workspace-git-metadata.js";
-import type { CodiusServicePortAllocation } from "@codius-ai/protocol/codius-config-schema";
+import type { CodiusServicePortAllocation } from "@codius.ai/protocol/codius-config-schema";
 
 type WorkspaceScriptsPayload = WorkspaceDescriptorPayload["scripts"];
 

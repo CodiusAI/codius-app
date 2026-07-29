@@ -3,7 +3,7 @@ import type {
   AgentSnapshotPayload,
   HubExecutionAgentCreateRequest,
   SessionOutboundMessage,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 
 import type {
   HubExecutionAgents,

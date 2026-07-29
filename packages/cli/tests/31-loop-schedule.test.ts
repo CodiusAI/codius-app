@@ -30,7 +30,10 @@ async function waitForLoopInList(
 
 console.log("=== Loop And Schedule Command Tests ===\n");
 
-const ctx = await createE2ETestContext({ timeout: 30000 });
+const ctx = await createE2ETestContext({
+  timeout: 30000,
+  env: { CODIUS_NODE_ENV: "development" },
+});
 
 try {
   {
@@ -183,6 +186,10 @@ try {
         "smoke-loop",
         "--verify-check",
         "true",
+        "--provider",
+        "mock",
+        "--model",
+        "ten-second-stream",
         "--json",
       ],
       { timeout: 30000 },
@@ -198,7 +205,7 @@ try {
     );
 
     async function pollStatus(attempt: number): Promise<string> {
-      if (attempt >= 40) return "running";
+      if (attempt >= 80) return "running";
       const inspect = await ctx.codius(["loop", "inspect", runJson.id, "--json"]);
       assert.strictEqual(inspect.exitCode, 0, inspect.stderr);
       const inspectJson = JSON.parse(inspect.stdout);
@@ -220,7 +227,7 @@ try {
     const stopped = await ctx.codius(["loop", "stop", runJson.id, "--json"]);
     assert.strictEqual(stopped.exitCode, 0, stopped.stderr);
     const stoppedJson = JSON.parse(stopped.stdout);
-    assert(["succeeded", "stopped"].includes(stoppedJson.status), stopped.stdout);
+    assert.strictEqual(stoppedJson.status, "succeeded", stopped.stdout);
     console.log("loop commands work\n");
   }
 } finally {

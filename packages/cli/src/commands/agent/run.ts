@@ -1,6 +1,6 @@
 import { Command, Option } from "commander";
-import { getStructuredAgentResponse, StructuredAgentResponseError } from "@codius-ai/server";
-import type { AgentSnapshotPayload } from "@codius-ai/protocol/messages";
+import { getStructuredAgentResponse, StructuredAgentResponseError } from "@codius.ai/server";
+import type { AgentSnapshotPayload } from "@codius.ai/protocol/messages";
 import { connectToDaemon, getDaemonHost } from "../../utils/client.js";
 import type {
   CommandOptions,
@@ -339,7 +339,7 @@ function validateRunWorkspaceOptions(options: AgentRunOptions): void {
     throw {
       code: "INVALID_OPTIONS",
       message: "Worktree options require --new-workspace worktree",
-      details: "Usage: codiusctl run --new-workspace worktree [worktree options] <prompt>",
+      details: "Usage: codius run --new-workspace worktree [worktree options] <prompt>",
     } satisfies CommandError;
   }
 
@@ -378,7 +378,7 @@ function validateRunOptions(prompt: string, options: AgentRunOptions, outputSche
     throw {
       code: "MISSING_PROMPT",
       message: "A prompt is required",
-      details: "Usage: codiusctl agent run [options] <prompt>",
+      details: "Usage: codius agent run [options] <prompt>",
     } satisfies CommandError;
   }
 
@@ -493,7 +493,7 @@ async function connectToDaemonOrThrow(
     throw {
       code: "DAEMON_NOT_RUNNING",
       message: `Cannot connect to daemon at ${host}: ${message}`,
-      details: "Start the daemon with: codiusctl daemon start",
+      details: "Start the daemon with: codius daemon start",
     } satisfies CommandError;
   }
 }
@@ -532,7 +532,7 @@ export async function resolveExistingRunWorkspace(
   } satisfies CommandError;
 }
 
-// Workspace policy for `codiusctl run`. Precedence:
+// Workspace policy for `codius run`. Precedence:
 //   1. --workspace <id>            -> run in that existing workspace
 //   2. $CODIUS_AGENT_ID             -> daemon resolves the caller's workspace
 //   3. $CODIUS_WORKSPACE_ID         -> exported by workspace terminals
@@ -606,7 +606,7 @@ export async function runRunCommand(
         code: "INVALID_THINKING_OPTION",
         message: "--thinking cannot be empty",
         details:
-          'Provide a thinking option ID. Use "codiusctl provider models <provider> --thinking" to list valid IDs.',
+          'Provide a thinking option ID. Use "codius provider models <provider> --thinking" to list valid IDs.',
       };
       throw error;
     }

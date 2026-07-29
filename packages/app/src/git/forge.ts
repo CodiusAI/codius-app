@@ -11,9 +11,9 @@
  * still maps to GitHub so old daemons (which never send a forge) render exactly
  * as before.
  */
-import { FORGE_DEFINITIONS, getForgeDefinitionOrNeutral } from "@codius-ai/protocol/forge-manifest";
-import { normalizeHost, parseGitRemoteLocation } from "@codius-ai/protocol/git-remote";
-import type { ForgeAuthState } from "@codius-ai/protocol/messages";
+import { FORGE_DEFINITIONS, getForgeDefinitionOrNeutral } from "@codius.ai/protocol/forge-manifest";
+import { normalizeHost, parseGitRemoteLocation } from "@codius.ai/protocol/git-remote";
+import type { ForgeAuthState } from "@codius.ai/protocol/messages";
 import {
   buildForgeBlobUrl,
   buildForgeBranchTreeUrl,

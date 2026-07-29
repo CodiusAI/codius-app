@@ -2,7 +2,7 @@ import {
   createClientChannel,
   type EncryptedChannel,
   type Transport as RelayTransport,
-} from "@codius-ai/relay/e2ee";
+} from "@codius.ai/relay/e2ee";
 import type {
   DaemonTransport,
   DaemonTransportFactory,

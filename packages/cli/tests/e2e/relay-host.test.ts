@@ -4,10 +4,10 @@ import { createRequire } from "node:module";
 import net from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildRelayWebSocketUrl } from "@codius-ai/protocol/daemon-endpoints";
-import { parseConnectionOfferFromUrl } from "@codius-ai/protocol/connection-offer";
-import { generateLocalPairingOffer } from "@codius-ai/server";
-import { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import { buildRelayWebSocketUrl } from "@codius.ai/protocol/daemon-endpoints";
+import { parseConnectionOfferFromUrl } from "@codius.ai/protocol/connection-offer";
+import { generateLocalPairingOffer } from "@codius.ai/server";
+import { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import { WebSocket } from "ws";
 import { getAvailablePort } from "../helpers/network.ts";
 import { createE2ETestContext } from "../helpers/test-daemon.ts";
@@ -210,7 +210,7 @@ async function waitForDaemonRelayRegistered(offerUrl: string, timeoutMs = 30_000
     }
   }, SHUTDOWN_TIMEOUT_MS);
 
-  it("runs `codiusctl --host <offer-url> ls` over the relay and matches direct ls output", async () => {
+  it("runs `codius --host <offer-url> ls` over the relay and matches direct ls output", async () => {
     if (!ctx) throw new Error("test context not initialized");
 
     const direct = await ctx.codius(["ls", "--json"]);

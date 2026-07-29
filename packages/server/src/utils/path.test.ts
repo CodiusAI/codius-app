@@ -29,7 +29,7 @@ describe("path equivalence", () => {
   });
 
   test("checks POSIX root containment without prefix false positives", () => {
-    expect(isPathInsideRoot("/opt/codius", "/opt/codius/node_modules/@codius-ai/server")).toBe(
+    expect(isPathInsideRoot("/opt/codius", "/opt/codius/node_modules/@codius.ai/server")).toBe(
       true,
     );
     expect(isPathInsideRoot("/opt/codius", "/opt/codius-other")).toBe(false);
@@ -37,7 +37,7 @@ describe("path equivalence", () => {
 
   test("checks Windows root containment case-insensitively", () => {
     expect(
-      isPathInsideRoot("C:\\Codius\\node_modules", "c:/codius/node_modules/@codius-ai/server"),
+      isPathInsideRoot("C:\\Codius\\node_modules", "c:/codius/node_modules/@codius.ai/server"),
     ).toBe(true);
     expect(isPathInsideRoot("C:\\Codius\\node_modules", "C:\\Codius\\node_modules-other")).toBe(
       false,

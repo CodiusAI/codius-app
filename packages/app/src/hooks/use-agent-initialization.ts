@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import { selectAgentTimelineState, useSessionStore } from "@/stores/session-store";
 import {
   createInitDeferred,

@@ -30,7 +30,7 @@ import {
   requirePlannedWorkspaceServicePort,
   refreshWorkspaceServicePort,
 } from "./workspace-service-port-registry.js";
-import type { CodiusServicePortAllocation } from "@codius-ai/protocol/codius-config-schema";
+import type { CodiusServicePortAllocation } from "@codius.ai/protocol/codius-config-schema";
 
 export interface WorktreeBootstrapTerminalResult {
   name: string | null;

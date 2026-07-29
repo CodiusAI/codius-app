@@ -3,7 +3,7 @@ name: codius
 description: Codius reference for managing workspaces, agents, schedules, and heartbeats.
 ---
 
-Codius is a daemon that supervises AI coding agents on your machine. Control it through tools or a CLI.
+Codius is a daemon that supervises AI coding agents on your machine. Control it through tools or Codius CLI.
 
 ## Workspaces
 
@@ -17,7 +17,7 @@ Worktree creation and reference accounting are implementation details of `isolat
 
 ## Workspace scripts
 
-Configured `codius.json` scripts use the same supervised lifecycle from tools and the CLI.
+Configured `codius.json` scripts use the same supervised lifecycle from tools and Codius CLI.
 
 **`list_workspace_scripts`** — `{ workspaceId }`. Lists configured scripts with lifecycle, service port, proxy URLs, health, exit code, and terminal ID.
 
@@ -25,7 +25,7 @@ Configured `codius.json` scripts use the same supervised lifecycle from tools an
 
 **`stop_workspace_script`** — `{ workspaceId, scriptName }`. Stops a running script through its supervised terminal and returns the stopped status metadata.
 
-The matching CLI surface accepts either an explicit workspace ID or resolves the current directory:
+The matching Codius CLI surface accepts either an explicit workspace ID or resolves the current directory:
 
 ```bash
 codius script ls [--cwd <path> | --workspace <workspace-id>]
@@ -113,9 +113,9 @@ For agent-scoped `create_agent` and background `send_agent_prompt`, leave `notif
 
 Don't poll `list_agents` or `get_agent_status` to "check on" a running agent. The notification will tell you.
 
-## CLI semantics
+## Codius CLI semantics
 
-The CLI and tools use the same ownership semantics even where their syntax differs:
+Codius CLI and the tools use the same ownership semantics even where their syntax differs:
 
 ```bash
 codius workspace create --isolation worktree --mode branch-off --new-branch fix-x --base main
@@ -131,7 +131,7 @@ codius heartbeat create --cron "*/15 * * * *" "check the build"
 
 Discover with `codius --help` and `codius <cmd> --help`.
 
-**If `codius` isn't on PATH but the desktop app is installed**, the bundled CLI is at:
+**If `codius` isn't on PATH but the desktop app is installed**, the bundled Codius CLI executable is at:
 
 - macOS: `/Applications/Codius.app/Contents/Resources/bin/codius`
 - Linux: `<install-dir>/resources/bin/codius`
@@ -141,7 +141,7 @@ The desktop app's first-run hook (`installCli`) symlinks this to `~/.local/bin/c
 
 ## Ops and debugging
 
-Daemon-client architecture: the daemon owns agent lifecycle, state, and the WebSocket API. Tools, CLI, mobile, and desktop apps are all clients.
+Daemon-client architecture: the daemon owns agent lifecycle, state, and the WebSocket API. Tools, Codius CLI, mobile, and desktop apps are all clients.
 
 |                | Default                                                          |
 | -------------- | ---------------------------------------------------------------- |
@@ -156,7 +156,7 @@ Daemon-client architecture: the daemon owns agent lifecycle, state, and the WebS
 Debug order:
 
 1. `tail -n 200 ~/.codius/daemon.log`.
-2. `codiusctl daemon status` for liveness.
-3. `curl -s localhost:6767/api/health` if the CLI itself is suspect.
+2. `codius daemon status` for liveness.
+3. `curl -s localhost:6767/api/health` if Codius CLI itself is suspect.
 
 **Never restart the daemon without explicit user approval** — it kills every running agent, including, often, the one asking.

@@ -8,7 +8,7 @@ import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type { UserComposerAttachment } from "@/attachments/types";
 import type { ForgeSearchClient } from "@/git/use-forge-search-query";
-import type { ForgeSearchItem, ForgeSearchResponse } from "@codius-ai/protocol/messages";
+import type { ForgeSearchItem, ForgeSearchResponse } from "@codius.ai/protocol/messages";
 import { useComposerGithubAutoAttach } from "./auto-attach";
 
 type ForgeSearchPayload = ForgeSearchResponse["payload"];

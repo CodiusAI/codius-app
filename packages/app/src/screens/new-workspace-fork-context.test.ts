@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { AgentAttachment } from "@codius-ai/protocol/messages";
+import type { AgentAttachment } from "@codius.ai/protocol/messages";
 import {
   getWorkspaceNamingAttachments,
   remapDraftCwdToWorkspace,

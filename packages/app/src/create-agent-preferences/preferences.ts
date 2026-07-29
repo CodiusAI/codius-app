@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { AgentProvider } from "@codius-ai/protocol/agent-types";
+import type { AgentProvider } from "@codius.ai/protocol/agent-types";
 
 export interface FavoriteModelPreference {
   provider: string;
@@ -39,9 +39,7 @@ const formPreferencesSchema = z.object({
 export type ProviderPreferences = z.infer<typeof providerPreferencesSchema>;
 export type FormPreferences = z.infer<typeof formPreferencesSchema>;
 
-// Codius is only the first-run default. Once the user selects and persists a
-// different provider, the stored preference replaces this fallback.
-export const DEFAULT_FORM_PREFERENCES: FormPreferences = { provider: "codius" };
+export const DEFAULT_FORM_PREFERENCES: FormPreferences = {};
 
 export function parseFormPreferences(value: unknown): FormPreferences {
   const result = formPreferencesSchema.safeParse(value);

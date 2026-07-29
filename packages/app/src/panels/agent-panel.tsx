@@ -1,4 +1,4 @@
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import type { TFunction } from "i18next";
 import { SquarePen } from "lucide-react-native";
 import React, {

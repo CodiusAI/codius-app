@@ -5,7 +5,7 @@ import {
   mapClaudeFailedToolCall,
   mapClaudeRunningToolCall,
 } from "./tool-call-mapper.js";
-import { buildToolCallDisplayModel } from "@codius-ai/protocol/tool-call-display";
+import { buildToolCallDisplayModel } from "@codius.ai/protocol/tool-call-display";
 
 import type { AgentMetadata, AgentStreamEvent, AgentTimelineItem } from "../../agent-sdk-types.js";
 

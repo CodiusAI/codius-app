@@ -9,8 +9,8 @@ import {
 import { FakeCreateAgentPreferenceStorage } from "./test-utils/fake-preference-storage";
 
 describe("create agent preferences", () => {
-  it("uses Codius as the first-run provider", () => {
-    expect(parseFormPreferences(undefined)).toEqual({ provider: "codius" });
+  it("does not force a coding agent on first run", () => {
+    expect(parseFormPreferences(undefined)).toEqual({});
   });
 
   it("keeps the selected mode after saving model and thinking", async () => {
@@ -134,9 +134,8 @@ describe("create agent preferences", () => {
     storage.finishOldestWrite();
     await save;
 
-    expect(storage.savedPreferences()).toEqual({ provider: "codius", isolation: "worktree" });
+    expect(storage.savedPreferences()).toEqual({ isolation: "worktree" });
     expect(await new CreateAgentPreferencesService(storage).load()).toEqual({
-      provider: "codius",
       isolation: "worktree",
     });
   });

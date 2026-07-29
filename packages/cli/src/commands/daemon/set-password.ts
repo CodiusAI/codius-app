@@ -6,7 +6,7 @@ import {
   loadPersistedConfig,
   savePersistedConfig,
   type PersistedConfig,
-} from "@codius-ai/server";
+} from "@codius.ai/server";
 import type {
   CommandError,
   CommandOptions,
@@ -100,8 +100,8 @@ export async function setDaemonPasswordInConfig(
   return {
     action: "password_set",
     configPath,
-    restartCommand: "codiusctl daemon restart",
-    message: `Password written to ${configPath}\nRestart the daemon for the change to take effect.\nRun: codiusctl daemon restart`,
+    restartCommand: "codius daemon restart",
+    message: `Password written to ${configPath}\nRestart the daemon for the change to take effect.\nRun: codius daemon restart`,
   };
 }
 

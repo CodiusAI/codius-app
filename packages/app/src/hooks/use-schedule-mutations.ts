@@ -10,8 +10,8 @@ import type {
   CreateScheduleOptions,
   DaemonClient,
   UpdateScheduleOptions,
-} from "@codius-ai/client/internal/daemon-client";
-import type { ScheduleSummary } from "@codius-ai/protocol/schedule/types";
+} from "@codius.ai/client/internal/daemon-client";
+import type { ScheduleSummary } from "@codius.ai/protocol/schedule/types";
 import type {
   AggregatedSchedule,
   FetchAggregatedSchedulesState,

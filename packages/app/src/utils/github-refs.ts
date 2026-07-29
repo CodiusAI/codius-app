@@ -1,4 +1,4 @@
-import { parseGitHubRemoteUrl } from "@codius-ai/protocol/git-remote";
+import { parseGitHubRemoteUrl } from "@codius.ai/protocol/git-remote";
 
 export type GithubRefKind = "pull" | "issues";
 

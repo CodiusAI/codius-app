@@ -1,5 +1,5 @@
 import type pino from "pino";
-import { getErrorMessage } from "@codius-ai/protocol/error-utils";
+import { getErrorMessage } from "@codius.ai/protocol/error-utils";
 import {
   checkoutResolvedBranch,
   type CheckoutExistingBranchResult,

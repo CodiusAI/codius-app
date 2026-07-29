@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { AgentAttachment, ForgeSearchItem } from "@codius-ai/protocol/messages";
+import type { AgentAttachment, ForgeSearchItem } from "@codius.ai/protocol/messages";
 import type {
   AttachmentMetadata,
   ComposerAttachment,

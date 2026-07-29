@@ -1,7 +1,6 @@
 # Build output
 dist/
 release/
-vendor/codius/
 
 # Dependencies
 node_modules/

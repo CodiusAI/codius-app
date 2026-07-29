@@ -1,4 +1,4 @@
-import type { AgentStreamEventPayload } from "@codius-ai/protocol/messages";
+import type { AgentStreamEventPayload } from "@codius.ai/protocol/messages";
 import { selectAgentTimelineState, useSessionStore } from "@/stores/session-store";
 import type { AssistantMessageItem, StreamItem } from "@/types/stream";
 import {

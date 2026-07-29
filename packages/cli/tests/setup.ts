@@ -56,7 +56,7 @@ export interface TestContext {
   workDir: string;
   /** Running daemon process */
   daemon: ProcessPromise | null;
-  /** Run a codiusctl CLI command against the test daemon */
+  /** Run a codius CLI command against the test daemon */
   codius: (args: string[]) => ProcessPromise;
   /** Clean up all resources */
   cleanup: () => Promise<void>;
@@ -81,11 +81,11 @@ export async function createTempDirs(): Promise<{ codiusHome: string; workDir: s
 
 /**
  * Wait for daemon to be ready by testing WebSocket connection
- * Uses `codiusctl agent ls` which connects via WebSocket
+ * Uses `codius agent ls` which connects via WebSocket
  */
 async function probeDaemon(port: number): Promise<boolean> {
   try {
-    const result = await $`CODIUS_HOST=localhost:${port} codiusctl agent ls`.nothrow();
+    const result = await $`CODIUS_HOST=localhost:${port} codius agent ls`.nothrow();
     return result.exitCode === 0;
   } catch {
     return false;
@@ -111,7 +111,7 @@ export async function waitForDaemon(port: number, timeout = 30000): Promise<void
 export async function startDaemon(port: number, codiusHome: string): Promise<ProcessPromise> {
   $.verbose = false;
   const daemon =
-    $`CODIUS_HOME=${codiusHome} CODIUS_LISTEN=127.0.0.1:${port} CODIUS_RELAY_ENABLED=false CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${TEST_ENV_DEFAULTS.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${TEST_ENV_DEFAULTS.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${TEST_ENV_DEFAULTS.CODIUS_VOICE_MODE_ENABLED} CI=true codiusctl daemon start --foreground`.nothrow();
+    $`CODIUS_HOME=${codiusHome} CODIUS_LISTEN=127.0.0.1:${port} CODIUS_RELAY_ENABLED=false CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${TEST_ENV_DEFAULTS.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${TEST_ENV_DEFAULTS.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${TEST_ENV_DEFAULTS.CODIUS_VOICE_MODE_ENABLED} CI=true codius daemon start --foreground`.nothrow();
   return daemon;
 }
 
@@ -125,7 +125,7 @@ export async function createTestContext(): Promise<TestContext> {
   // Helper to run CLI commands against test daemon
   const codius = (args: string[]): ProcessPromise => {
     $.verbose = false;
-    return $`CODIUS_HOST=localhost:${port} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${TEST_ENV_DEFAULTS.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${TEST_ENV_DEFAULTS.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${TEST_ENV_DEFAULTS.CODIUS_VOICE_MODE_ENABLED} codiusctl ${args}`.nothrow();
+    return $`CODIUS_HOST=localhost:${port} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${TEST_ENV_DEFAULTS.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${TEST_ENV_DEFAULTS.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${TEST_ENV_DEFAULTS.CODIUS_VOICE_MODE_ENABLED} codius ${args}`.nothrow();
   };
 
   // Cleanup function

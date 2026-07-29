@@ -5,7 +5,7 @@ import { withUnistyles } from "react-native-unistyles";
 import {
   getTerminalProfileIcon,
   resolveTerminalProfiles,
-} from "@codius-ai/protocol/terminal-profiles";
+} from "@codius.ai/protocol/terminal-profiles";
 import { getProviderIcon } from "@/components/provider-icons";
 import { getIsElectron } from "@/constants/platform";
 import { useDaemonConfig } from "@/hooks/use-daemon-config";

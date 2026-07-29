@@ -221,7 +221,7 @@ describe("translation resources", () => {
     expect(en.settings.appearance.theme.title).toBe("Theme");
     expect(en.settings.appearance.fonts.interfaceFont).toBe("Interface font");
     expect(en.settings.shortcuts.actions.rebind).toBe("Rebind");
-    expect(en.settings.integrations.commandLine.title).toBe("Command line");
+    expect(en.settings.integrations.cli.title).toBe("Codius CLI");
     expect(en.settings.integrations.skills.updateAvailable).toBe("Update available");
     expect(en.settings.permissions.notifications).toBe("Notifications");
     expect(en.settings.permissions.actions.request).toBe("Request");
@@ -622,7 +622,7 @@ describe("translation resources", () => {
       "Failed to fetch daemon status: {{message}}",
     );
     expect(en.desktop.daemon.loadFailed).toBe("Unable to load desktop daemon status.");
-    expect(en.desktop.integrations.cli.installFailed).toBe("Unable to install the Codius CLI.");
+    expect(en.desktop.integrations.cli.installFailed).toBe("Unable to install Codius CLI.");
     expect(en.desktop.integrations.skills.installFailed).toBe(
       "Unable to install orchestration skills.",
     );

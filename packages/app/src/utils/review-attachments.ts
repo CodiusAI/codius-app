@@ -1,4 +1,4 @@
-import type { AgentAttachment, ForgeSearchItem } from "@codius-ai/protocol/messages";
+import type { AgentAttachment, ForgeSearchItem } from "@codius.ai/protocol/messages";
 
 export function buildForgeAttachmentFromSearchItem(
   item: ForgeSearchItem | null,

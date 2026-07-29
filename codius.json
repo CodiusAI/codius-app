@@ -5,7 +5,7 @@
       "node ./scripts/seed-ios-native-cache.mjs",
       "node ./scripts/seed-worktree-dev-state.mjs",
       "npm run build:server",
-      "npm run build --workspace=@codius-ai/expo-two-way-audio"
+      "npm run build --workspace=@codius.ai/expo-two-way-audio"
     ]
   },
   "scripts": {
@@ -19,7 +19,7 @@
     },
     "desktop": {
       "type": "service",
-      "command": "CODIUS_DEV_MANAGED_HOME=1 CODIUS_DEV_ROOT=\"${CODIUS_WORKTREE_PATH:-$PWD}\" CODIUS_HOME=\"${CODIUS_WORKTREE_PATH:-$PWD}/.dev/codius-home\" CODIUS_LISTEN=0.0.0.0:${CODIUS_SERVICE_DAEMON_PORT:-6768} CODIUS_DEV_DAEMON_ENDPOINT=localhost:${CODIUS_SERVICE_DAEMON_PORT:-6768} EXPO_PORT=${CODIUS_PORT:-} npm run dev --workspace=@codius-ai/desktop"
+      "command": "CODIUS_DEV_MANAGED_HOME=1 CODIUS_DEV_ROOT=\"${CODIUS_WORKTREE_PATH:-$PWD}\" CODIUS_HOME=\"${CODIUS_WORKTREE_PATH:-$PWD}/.dev/codius-home\" CODIUS_LISTEN=0.0.0.0:${CODIUS_SERVICE_DAEMON_PORT:-6768} CODIUS_DEV_DAEMON_ENDPOINT=localhost:${CODIUS_SERVICE_DAEMON_PORT:-6768} EXPO_PORT=${CODIUS_PORT:-} npm run dev --workspace=@codius.ai/desktop"
     },
     "ios-simulator": {
       "type": "service",

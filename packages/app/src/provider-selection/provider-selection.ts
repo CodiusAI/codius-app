@@ -3,8 +3,8 @@ import type {
   AgentModelDefinition,
   AgentProvider,
   ProviderSnapshotEntry,
-} from "@codius-ai/protocol/agent-types";
-import type { AgentProviderDefinition } from "@codius-ai/protocol/provider-manifest";
+} from "@codius.ai/protocol/agent-types";
+import type { AgentProviderDefinition } from "@codius.ai/protocol/provider-manifest";
 import type { DraftCommandConfig } from "@/hooks/use-agent-commands-query";
 import { buildFavoriteModelKey, type FavoriteModelRow } from "@/hooks/use-form-preferences";
 import { i18n } from "@/i18n/i18next";
@@ -127,11 +127,6 @@ export function buildSelectableProviderSelectorProviders(
 ): ProviderSelectorProvider[] {
   return (entries ?? [])
     .filter((entry) => entry.enabled)
-    .sort((left, right) => {
-      if (left.provider === "codius") return -1;
-      if (right.provider === "codius") return 1;
-      return 0;
-    })
     .map((entry) => {
       const label = entry.label ?? entry.provider;
       return {

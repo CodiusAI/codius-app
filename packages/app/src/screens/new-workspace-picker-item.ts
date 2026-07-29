@@ -1,5 +1,5 @@
-import type { CreateCodiusWorktreeInput } from "@codius-ai/client/internal/daemon-client";
-import type { ForgeSearchItem } from "@codius-ai/protocol/messages";
+import type { CreateCodiusWorktreeInput } from "@codius.ai/client/internal/daemon-client";
+import type { ForgeSearchItem } from "@codius.ai/protocol/messages";
 
 export type PickerItem =
   | { kind: "branch"; name: string }

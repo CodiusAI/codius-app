@@ -22,8 +22,8 @@ import type {
   StoredSchedule,
   UpdateScheduleInput,
   UpdateScheduleNewAgentConfig,
-} from "@codius-ai/protocol/schedule/types";
-import type { FirstAgentContext } from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/schedule/types";
+import type { FirstAgentContext } from "@codius.ai/protocol/messages";
 
 const SCHEDULE_TICK_INTERVAL_MS = 1000;
 

@@ -1,6 +1,8 @@
 # Releasing Codius
 
 Codius releases are built by `.github/workflows/codius-release.yml`.
+The coordinated npm packages are built and published separately by
+`.github/workflows/npm-publish.yml` from the same version tag.
 
 ## Required repository secrets
 
@@ -21,8 +23,8 @@ The workflow's **unsigned** manual option is intended only for testing the packa
 ## Stable release
 
 1. Confirm **Codius CI** is green on `main`.
-2. Confirm the matching Codius CLI release is available and that `codius acp` starts successfully.
-3. Confirm the production Codius API is available at `https://api.codius.ai/v1`.
+2. Confirm the direct adapters for every supported agent pass their focused tests.
+3. Confirm the production Codius API and model catalog are available at `https://api.codius.ai/v1`.
 4. Create and push a signed SemVer tag:
 
    ```bash
@@ -33,11 +35,14 @@ The workflow's **unsigned** manual option is intended only for testing the packa
    ```
 
 5. The release workflow synchronizes all workspace versions, validates source, builds Linux, Windows, Apple Silicon, and Intel macOS packages, verifies `Codius-*` artifact names, and publishes them to GitHub Releases.
-6. Verify installation, update checks, deep links, `codiusctl`, `codius acp`, inline browser tabs, and browser automation on clean machines before announcement.
+6. Confirm the protected npm workflow published the coordinated
+   `@codius.ai/highlight`, `relay`, `protocol`, `client`, `server`, and `cli`
+   packages at the exact tag version.
+7. Verify installation, update checks, deep links, Codius CLI, supported-agent launches, Codius model access, inline browser tabs, and browser automation on clean machines before announcement.
 
 ## Security checklist
 
-- No Runware API key or internal routing identifier may be present in the desktop source, packaged ASAR, environment templates, or logs.
-- Codius inference credentials belong to the user's Codius account/CLI credential store.
+- No internal inference-provider API key or routing identifier may be present in the desktop source, packaged ASAR, environment templates, or logs.
+- Codius inference credentials belong to the user's Codius account and the App's private model-access store.
 - Browser automation remains opt-in and must clearly warn that the agent can access the Codius browser profile's authenticated sessions.
 - Preserve Codius's AGPL-3.0 license, modification notices, source offer, and upstream attribution in every distributed build.

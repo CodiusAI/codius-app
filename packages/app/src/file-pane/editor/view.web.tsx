@@ -1,7 +1,7 @@
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { Annotation, Compartment, EditorState, Transaction } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import { getLanguageForFile } from "@codius-ai/highlight";
+import { getLanguageForFile } from "@codius.ai/highlight";
 import { getCM, vim } from "@replit/codemirror-vim";
 import { isRenderedMarkdownFile } from "@/components/file-pane-render-mode";
 import type { WorkspaceFileLocation } from "@/workspace/file-open";

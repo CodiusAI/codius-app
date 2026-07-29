@@ -12,7 +12,7 @@ import {
 
 const createClientChannelMock = vi.hoisted(() => vi.fn());
 
-vi.mock("@codius-ai/relay/e2ee", () => ({
+vi.mock("@codius.ai/relay/e2ee", () => ({
   createClientChannel: createClientChannelMock,
 }));
 

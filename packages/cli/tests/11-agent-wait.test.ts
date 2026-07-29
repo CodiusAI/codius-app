@@ -36,7 +36,7 @@ try {
   // Test 1: wait --help shows options
   {
     console.log("Test 1: wait --help shows options");
-    const result = await $`npx codiusctl wait --help`.nothrow();
+    const result = await $`npx codius wait --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "wait --help should exit 0");
     assert(result.stdout.includes("--host"), "help should mention --host option");
     assert(result.stdout.includes("--timeout"), "help should mention --timeout option");
@@ -51,7 +51,7 @@ try {
   {
     console.log("Test 2: wait requires id argument");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl wait`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius wait`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail without id");
     const output = result.stdout + result.stderr;
     // Commander should complain about missing argument
@@ -67,7 +67,7 @@ try {
   {
     console.log("Test 3: wait handles daemon not running");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl wait abc123`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius wait abc123`.nothrow();
     // Should fail because daemon not running
     assert.notStrictEqual(result.exitCode, 0, "should fail when daemon not running");
     const output = result.stdout + result.stderr;
@@ -83,7 +83,7 @@ try {
   {
     console.log("Test 4: wait --timeout flag is accepted");
     const result =
-      await $`CODIUS_HOME=${codiusHome} npx codiusctl wait --timeout 30 --host localhost:${port} abc123`.nothrow();
+      await $`CODIUS_HOME=${codiusHome} npx codius wait --timeout 30 --host localhost:${port} abc123`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --timeout flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -94,7 +94,7 @@ try {
   {
     console.log("Test 5: wait --host flag is accepted");
     const result =
-      await $`CODIUS_HOME=${codiusHome} npx codiusctl wait --host localhost:${port} abc123`.nothrow();
+      await $`CODIUS_HOME=${codiusHome} npx codius wait --host localhost:${port} abc123`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --host flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -105,7 +105,7 @@ try {
   {
     console.log("Test 6: -q (quiet) flag is accepted with wait");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl -q wait abc123`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius -q wait abc123`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -q flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -116,7 +116,7 @@ try {
   {
     console.log("Test 7: --json flag is accepted with wait");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl wait abc123 --json`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius wait abc123 --json`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --json flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -127,26 +127,26 @@ try {
   {
     console.log("Test 8: --format yaml flag is accepted with wait");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl --format yaml wait abc123`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius --format yaml wait abc123`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --format yaml flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
     console.log("--format yaml flag is accepted with wait\n");
   }
 
-  // Test 9: codiusctl --help shows wait command
+  // Test 9: codius --help shows wait command
   {
-    console.log("Test 9: codiusctl --help shows wait command");
-    const result = await $`npx codiusctl --help`.nothrow();
-    assert.strictEqual(result.exitCode, 0, "codiusctl --help should exit 0");
+    console.log("Test 9: codius --help shows wait command");
+    const result = await $`npx codius --help`.nothrow();
+    assert.strictEqual(result.exitCode, 0, "codius --help should exit 0");
     assert(result.stdout.includes("wait"), "help should mention wait command");
-    console.log("codiusctl --help shows wait command\n");
+    console.log("codius --help shows wait command\n");
   }
 
   // Test 10: wait command description is helpful
   {
     console.log("Test 10: wait command description is helpful");
-    const result = await $`npx codiusctl wait --help`.nothrow();
+    const result = await $`npx codius wait --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "wait --help should exit 0");
     const hasDescription =
       result.stdout.toLowerCase().includes("wait") || result.stdout.toLowerCase().includes("idle");
@@ -157,7 +157,7 @@ try {
   // Test 11: ID prefix syntax is mentioned in help
   {
     console.log("Test 11: wait command mentions ID");
-    const result = await $`npx codiusctl wait --help`.nothrow();
+    const result = await $`npx codius wait --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "wait --help should exit 0");
     const hasIdMention =
       result.stdout.toLowerCase().includes("id") || result.stdout.toLowerCase().includes("prefix");
@@ -168,7 +168,7 @@ try {
   // Test 12: timeout option documents no default limit
   {
     console.log("Test 12: timeout option documents no default limit");
-    const result = await $`npx codiusctl wait --help`.nothrow();
+    const result = await $`npx codius wait --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "wait --help should exit 0");
     assert(
       result.stdout.toLowerCase().includes("default: no limit"),

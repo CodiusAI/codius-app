@@ -13,13 +13,13 @@ directories:
 files:
   - dist/**/*
   - "!**/*.map"
-  - "!node_modules/@codius-ai/*/src/**"
-  - "!node_modules/@codius-ai/**/*.test.*"
-  - "!node_modules/@codius-ai/**/*.spec.*"
-  - "!node_modules/@codius-ai/server/dist/server/web-ui/**"
+  - "!node_modules/@codius.ai/*/src/**"
+  - "!node_modules/@codius.ai/**/*.test.*"
+  - "!node_modules/@codius.ai/**/*.spec.*"
+  - "!node_modules/@codius.ai/server/dist/server/web-ui/**"
 asarUnpack:
   - dist/daemon/node-entrypoint-runner.js
-  - node_modules/@codius-ai/server/dist/server/terminal/shell-integration/**/*
+  - node_modules/@codius.ai/server/dist/server/terminal/shell-integration/**/*
 extraResources:
   - from: ../app/dist
     to: app-dist
@@ -41,8 +41,6 @@ mac:
   entitlementsInherit: build/entitlements.mac.inherit.plist
   extraResources:
     - from: bin/codius
-      to: bin/codiusctl
-    - from: vendor/codius/darwin-${arch}/codius
       to: bin/codius
   target:
     - dmg
@@ -55,8 +53,6 @@ linux:
   vendor: "Codius"
   extraResources:
     - from: bin/codius
-      to: bin/codiusctl
-    - from: vendor/codius/linux-${arch}/codius
       to: bin/codius
   target:
     - AppImage
@@ -75,9 +71,7 @@ win:
   icon: assets/codius-icon.png
   extraResources:
     - from: bin/codius.cmd
-      to: bin/codiusctl.cmd
-    - from: vendor/codius/win32-${arch}/codius.exe
-      to: bin/codius.exe
+      to: bin/codius.cmd
   target:
     - target: nsis
       arch:

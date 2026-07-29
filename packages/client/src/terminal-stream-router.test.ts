@@ -1,4 +1,4 @@
-import { TerminalStreamOpcode } from "@codius-ai/protocol/binary-frames/index";
+import { TerminalStreamOpcode } from "@codius.ai/protocol/binary-frames/index";
 import { describe, expect, test } from "vitest";
 
 import { TerminalStreamRouter, type TerminalStreamEvent } from "./terminal-stream-router.js";

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { darkHighlightColors, resolveSyntaxColors } from "@codius-ai/highlight";
+import { darkHighlightColors, resolveSyntaxColors } from "@codius.ai/highlight";
 import { DEFAULT_UI_FONT_STACK } from "@/styles/theme";
 import { applyAppearance, type AppearanceInput } from "./apply-appearance";
 

@@ -1,5 +1,5 @@
-import type { ToolCallDetail, ToolCallIconName } from "@codius-ai/protocol/agent-types";
-import { isCodiusToolName } from "@codius-ai/protocol/tool-name-normalization";
+import type { ToolCallDetail, ToolCallIconName } from "@codius.ai/protocol/agent-types";
+import { isCodiusToolName } from "@codius.ai/protocol/tool-name-normalization";
 
 export type ToolCallIcon = ToolCallIconName | "codius";
 

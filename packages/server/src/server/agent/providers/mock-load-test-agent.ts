@@ -29,7 +29,7 @@ import type {
   ToolCallTimelineItem,
 } from "../agent-sdk-types.js";
 import { importSessionFromPersistence } from "../provider-session-import.js";
-import { getAgentProviderDefinition } from "@codius-ai/protocol/provider-manifest";
+import { getAgentProviderDefinition } from "@codius.ai/protocol/provider-manifest";
 
 export const MOCK_LOAD_TEST_PROVIDER_ID = "mock";
 export const MOCK_LOAD_TEST_DEFAULT_MODEL_ID = "five-minute-stream";

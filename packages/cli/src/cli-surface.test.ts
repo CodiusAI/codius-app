@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createCli } from "./cli.js";
 
-describe("canonical CLI surface", () => {
+describe("canonical Codius CLI surface", () => {
   it("shows workspace and heartbeat commands while hiding worktree compatibility", () => {
     const cli = createCli();
     const help = cli.helpInformation();

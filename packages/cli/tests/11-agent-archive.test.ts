@@ -34,7 +34,7 @@ try {
   // Test 1: agent archive --help shows options
   {
     console.log("Test 1: agent archive --help shows options");
-    const result = await $`npx codiusctl agent archive --help`.nothrow();
+    const result = await $`npx codius agent archive --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "agent archive --help should exit 0");
     assert(result.stdout.includes("--force"), "help should mention --force flag");
     assert(result.stdout.includes("--host"), "help should mention --host option");
@@ -46,7 +46,7 @@ try {
   {
     console.log("Test 2: agent archive requires ID argument");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl agent archive`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius agent archive`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail without id");
     const output = result.stdout + result.stderr;
     const hasError =
@@ -61,7 +61,7 @@ try {
   {
     console.log("Test 3: agent archive handles daemon not running");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl agent archive abc123`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius agent archive abc123`.nothrow();
     // Should fail because daemon not running
     assert.notStrictEqual(result.exitCode, 0, "should fail when daemon not running");
     const output = result.stdout + result.stderr;
@@ -77,7 +77,7 @@ try {
   {
     console.log("Test 4: agent archive --force flag is accepted");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl agent archive abc123 --force`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius agent archive abc123 --force`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --force flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -88,7 +88,7 @@ try {
   {
     console.log("Test 5: agent archive with ID and --host flag is accepted");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl agent archive abc123 --host localhost:${port}`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius agent archive abc123 --host localhost:${port}`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --host flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -98,7 +98,7 @@ try {
   // Test 6: agent shows archive in subcommands
   {
     console.log("Test 6: agent --help shows archive subcommand");
-    const result = await $`npx codiusctl agent --help`.nothrow();
+    const result = await $`npx codius agent --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "agent --help should exit 0");
     assert(result.stdout.includes("archive"), "help should mention archive subcommand");
     console.log("✓ agent --help shows archive subcommand\n");
@@ -108,7 +108,7 @@ try {
   {
     console.log("Test 7: -q (quiet) flag is accepted with agent archive");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl -q agent archive abc123`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius -q agent archive abc123`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -q flag");
     assert(!output.includes("error: option"), "should not have option parsing error");

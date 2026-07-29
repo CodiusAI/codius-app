@@ -2,7 +2,7 @@ import type {
   DaemonClient,
   FetchAgentsEntry,
   FetchAgentsOptions,
-} from "@codius-ai/client/internal/daemon-client";
+} from "@codius.ai/client/internal/daemon-client";
 import { fetchAgentTimelineOnce } from "@/timeline/fetch-agent-timeline-once";
 import {
   normalizeEmptyProjectDescriptor,

@@ -13,7 +13,7 @@ import {
   keymap,
   lineNumbers,
 } from "@codemirror/view";
-import { createCodeMirrorHighlightStyle, type HighlightStyle } from "@codius-ai/highlight";
+import { createCodeMirrorHighlightStyle, type HighlightStyle } from "@codius.ai/highlight";
 
 export interface EditorVisualTheme {
   colorScheme: "light" | "dark";

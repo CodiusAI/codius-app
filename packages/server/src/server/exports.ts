@@ -1,4 +1,4 @@
-// CLI exports for @codius-ai/server
+// CLI exports for @codius.ai/server
 export { createCodiusDaemon, type CodiusDaemon, type CodiusDaemonConfig } from "./bootstrap.js";
 export { loadConfig, type CliConfigOverrides } from "./config.js";
 export { resolveCodiusHome } from "./codius-home.js";
@@ -16,21 +16,21 @@ export {
   decodeOfferFragmentPayload,
   parseConnectionOfferFromUrl,
   type ConnectionOffer,
-} from "@codius-ai/protocol/connection-offer";
-export { buildRelayWebSocketUrl } from "@codius-ai/protocol/daemon-endpoints";
+} from "@codius.ai/protocol/connection-offer";
+export { buildRelayWebSocketUrl } from "@codius.ai/protocol/daemon-endpoints";
 export {
   buildDaemonWebSocketUrl,
   deriveLabelFromEndpoint,
   normalizeHostPort,
   parseConnectionUri,
   shouldUseTlsForDefaultHostedRelay,
-} from "@codius-ai/protocol/daemon-endpoints";
-export { PARENT_AGENT_ID_LABEL } from "@codius-ai/protocol/agent-labels";
+} from "@codius.ai/protocol/daemon-endpoints";
+export { PARENT_AGENT_ID_LABEL } from "@codius.ai/protocol/agent-labels";
 export {
   DirectTcpHostConnectionSchema,
   type DirectTcpHostConnection,
   type NormalizedDirectTcpHostConnection,
-} from "@codius-ai/protocol/host-connection-schema";
+} from "@codius.ai/protocol/host-connection-schema";
 export {
   ensureLocalSpeechModels,
   listLocalSpeechModels,
@@ -61,7 +61,7 @@ export {
   AGENT_PROVIDER_DEFINITIONS,
   BUILTIN_PROVIDER_IDS,
   type AgentProviderDefinition,
-} from "@codius-ai/protocol/provider-manifest";
+} from "@codius.ai/protocol/provider-manifest";
 
 // Agent SDK types for CLI commands
 export type {
@@ -95,4 +95,4 @@ export type {
   AgentSnapshotPayload,
   AgentStreamEventPayload,
   AgentStreamMessage,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";

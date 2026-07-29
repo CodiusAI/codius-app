@@ -1,5 +1,5 @@
-import type { ScheduleCadence, ScheduleSummary } from "@codius-ai/protocol/schedule/types";
-import { validateCronExpression } from "@codius-ai/protocol/schedule/cron-expression";
+import type { ScheduleCadence, ScheduleSummary } from "@codius.ai/protocol/schedule/types";
+import { validateCronExpression } from "@codius.ai/protocol/schedule/cron-expression";
 
 export type IntervalUnit = "minutes" | "hours" | "days";
 type CronCadence = Extract<ScheduleCadence, { type: "cron" }>;

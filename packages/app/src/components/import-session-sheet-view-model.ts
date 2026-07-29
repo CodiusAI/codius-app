@@ -1,5 +1,5 @@
-import type { FetchRecentProviderSessionEntry } from "@codius-ai/client/internal/daemon-client";
-import type { AgentProvider } from "@codius-ai/protocol/agent-types";
+import type { FetchRecentProviderSessionEntry } from "@codius.ai/client/internal/daemon-client";
+import type { AgentProvider } from "@codius.ai/protocol/agent-types";
 import { i18n } from "@/i18n/i18next";
 
 export const PER_PROVIDER_LIMIT = 15;

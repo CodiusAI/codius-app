@@ -1,6 +1,6 @@
 import { z } from "zod";
 import pLimit from "p-limit";
-import { parseGitHubRemoteIdentity, parseGitRemoteLocation } from "@codius-ai/protocol/git-remote";
+import { parseGitHubRemoteIdentity, parseGitRemoteLocation } from "@codius.ai/protocol/git-remote";
 import { findExecutable } from "../executable-resolution/executable-resolution.js";
 import { runGitCommand } from "../utils/run-git-command.js";
 import { execCommand } from "../utils/spawn.js";

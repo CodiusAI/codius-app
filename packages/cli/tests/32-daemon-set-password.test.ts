@@ -5,7 +5,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { Command } from "commander";
-import { isBearerTokenValid } from "@codius-ai/server";
+import { isBearerTokenValid } from "@codius.ai/server";
 import {
   runSetPasswordCommand,
   setDaemonPasswordInConfig,
@@ -51,7 +51,7 @@ try {
     const config = JSON.parse(await readFile(join(codiusHome, "config.json"), "utf-8"));
 
     assert.strictEqual(result.configPath, join(codiusHome, "config.json"));
-    assert.strictEqual(result.restartCommand, "codiusctl daemon restart");
+    assert.strictEqual(result.restartCommand, "codius daemon restart");
     assert.strictEqual(config.daemon.listen, "127.0.0.1:9999");
     assert.strictEqual(config.daemon.relay.enabled, false);
     assert.notStrictEqual(config.daemon.auth.password, "shared-secret");

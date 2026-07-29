@@ -129,7 +129,7 @@ describe.skipIf(!claudeAvailability.available)(
       const cwd = createTempDir("codius-real-claude-cwd-");
       const codiusCliBinDir = resolveCodiusCliBinDir();
       if (!codiusCliBinDir) {
-        throw new Error("Could not resolve codius CLI bin directory");
+        throw new Error("Could not resolve Codius CLI bin directory");
       }
 
       installRegisteredAgentHooks({ configDir });

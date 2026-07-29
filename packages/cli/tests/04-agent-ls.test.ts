@@ -10,13 +10,13 @@
  * - JSON output format
  *
  * Tests:
- * - codiusctl --help shows ls command
- * - codiusctl ls --help shows options
- * - codiusctl ls returns empty list or error when no daemon
- * - codiusctl ls --json returns valid JSON (or error)
- * - codiusctl ls -a flag is accepted
- * - codiusctl ls -g flag is accepted
- * - codiusctl ls does not support --ui
+ * - codius --help shows ls command
+ * - codius ls --help shows options
+ * - codius ls returns empty list or error when no daemon
+ * - codius ls --json returns valid JSON (or error)
+ * - codius ls -a flag is accepted
+ * - codius ls -g flag is accepted
+ * - codius ls does not support --ui
  */
 
 import assert from "node:assert";
@@ -32,20 +32,20 @@ const port = 10000 + Math.floor(Math.random() * 50000);
 const codiusHome = await mkdtemp(join(tmpdir(), "codius-test-home-"));
 
 try {
-  // Test 1: codiusctl --help shows ls command
+  // Test 1: codius --help shows ls command
   {
-    console.log("Test 1: codiusctl --help shows ls command");
+    console.log("Test 1: codius --help shows ls command");
     const result = await runLocalCodius(["--help"]);
-    assert.strictEqual(result.exitCode, 0, "codiusctl --help should exit 0");
+    assert.strictEqual(result.exitCode, 0, "codius --help should exit 0");
     assert(result.stdout.includes("ls"), "help should mention ls command");
-    console.log("✓ codiusctl --help shows ls command\n");
+    console.log("✓ codius --help shows ls command\n");
   }
 
-  // Test 2: codiusctl ls --help shows options
+  // Test 2: codius ls --help shows options
   {
-    console.log("Test 2: codiusctl ls --help shows options");
+    console.log("Test 2: codius ls --help shows options");
     const result = await runLocalCodius(["ls", "--help"]);
-    assert.strictEqual(result.exitCode, 0, "codiusctl ls --help should exit 0");
+    assert.strictEqual(result.exitCode, 0, "codius ls --help should exit 0");
     assert(result.stdout.includes("-a"), "help should mention -a flag");
     assert(result.stdout.includes("--all"), "help should mention --all flag");
     assert(result.stdout.includes("-g"), "help should mention -g flag");
@@ -54,12 +54,12 @@ try {
     assert(!result.stdout.includes("Legacy no-op"), "help should not describe -g as a no-op");
     assert(result.stdout.includes("--host"), "help should mention --host option");
     assert(!result.stdout.includes("--ui"), "help should not mention --ui");
-    console.log("✓ codiusctl ls --help shows options\n");
+    console.log("✓ codius ls --help shows options\n");
   }
 
-  // Test 3: codiusctl ls returns error when no daemon running
+  // Test 3: codius ls returns error when no daemon running
   {
-    console.log("Test 3: codiusctl ls handles daemon not running");
+    console.log("Test 3: codius ls handles daemon not running");
     const result = await runLocalCodius(["ls"], {
       CODIUS_HOST: `localhost:${port}`,
       CODIUS_HOME: codiusHome,
@@ -74,12 +74,12 @@ try {
     assert(hasError, "error message should mention connection issue");
     assert(output.includes("--host <host:port>"), "error message should mention --host");
     assert(output.includes("CODIUS_HOST"), "error message should mention CODIUS_HOST");
-    console.log("✓ codiusctl ls handles daemon not running\n");
+    console.log("✓ codius ls handles daemon not running\n");
   }
 
-  // Test 4: codiusctl ls --json returns valid JSON error
+  // Test 4: codius ls --json returns valid JSON error
   {
-    console.log("Test 4: codiusctl ls --json handles errors");
+    console.log("Test 4: codius ls --json handles errors");
     const result = await runLocalCodius(["ls", "--json"], {
       CODIUS_HOST: `localhost:${port}`,
       CODIUS_HOME: codiusHome,
@@ -91,19 +91,19 @@ try {
     if (output.length > 0) {
       try {
         JSON.parse(output);
-        console.log("✓ codiusctl ls --json outputs valid JSON error\n");
+        console.log("✓ codius ls --json outputs valid JSON error\n");
       } catch {
         // Empty or stderr-only output is acceptable
-        console.log("✓ codiusctl ls --json handled error (output may be in stderr)\n");
+        console.log("✓ codius ls --json handled error (output may be in stderr)\n");
       }
     } else {
-      console.log("✓ codiusctl ls --json handled error gracefully\n");
+      console.log("✓ codius ls --json handled error gracefully\n");
     }
   }
 
-  // Test 5: codiusctl ls -a flag is accepted
+  // Test 5: codius ls -a flag is accepted
   {
-    console.log("Test 5: codiusctl ls -a flag is accepted");
+    console.log("Test 5: codius ls -a flag is accepted");
     const result = await runLocalCodius(["ls", "-a"], {
       CODIUS_HOST: `localhost:${port}`,
       CODIUS_HOME: codiusHome,
@@ -113,12 +113,12 @@ try {
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -a flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
-    console.log("✓ codiusctl ls -a flag is accepted\n");
+    console.log("✓ codius ls -a flag is accepted\n");
   }
 
-  // Test 6: codiusctl ls -g flag is accepted
+  // Test 6: codius ls -g flag is accepted
   {
-    console.log("Test 6: codiusctl ls -g flag is accepted");
+    console.log("Test 6: codius ls -g flag is accepted");
     const result = await runLocalCodius(["ls", "-g"], {
       CODIUS_HOST: `localhost:${port}`,
       CODIUS_HOME: codiusHome,
@@ -126,12 +126,12 @@ try {
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -g flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
-    console.log("✓ codiusctl ls -g flag is accepted\n");
+    console.log("✓ codius ls -g flag is accepted\n");
   }
 
-  // Test 7: codiusctl ls -ag combined flags are accepted
+  // Test 7: codius ls -ag combined flags are accepted
   {
-    console.log("Test 7: codiusctl ls -ag combined flags are accepted");
+    console.log("Test 7: codius ls -ag combined flags are accepted");
     const result = await runLocalCodius(["ls", "-ag"], {
       CODIUS_HOST: `localhost:${port}`,
       CODIUS_HOME: codiusHome,
@@ -139,7 +139,7 @@ try {
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -ag flags");
     assert(!output.includes("error: option"), "should not have option parsing error");
-    console.log("✓ codiusctl ls -ag combined flags are accepted\n");
+    console.log("✓ codius ls -ag combined flags are accepted\n");
   }
 
   // Test 8: -q (quiet) flag is accepted globally
@@ -155,9 +155,9 @@ try {
     console.log("✓ -q (quiet) flag is accepted\n");
   }
 
-  // Test 9: codiusctl ls --ui is rejected (flag removed)
+  // Test 9: codius ls --ui is rejected (flag removed)
   {
-    console.log("Test 9: codiusctl ls --ui is rejected");
+    console.log("Test 9: codius ls --ui is rejected");
     const result = await runLocalCodius(["ls", "--ui"], {
       CODIUS_HOST: `localhost:${port}`,
       CODIUS_HOME: codiusHome,
@@ -165,7 +165,7 @@ try {
     assert.notStrictEqual(result.exitCode, 0, "should fail for removed --ui flag");
     const output = result.stdout + result.stderr;
     assert(output.includes("unknown option"), "should report unknown option for --ui");
-    console.log("✓ codiusctl ls --ui is rejected\n");
+    console.log("✓ codius ls --ui is rejected\n");
   }
 } finally {
   // Clean up temp directory

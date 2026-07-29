@@ -172,3 +172,100 @@ export function computeNextReleaseVersion(currentVersion, mode) {
 
   throw new Error(`Unsupported release mode "${mode}".`);
 }
+
+export function computeAvailableReleaseVersion(currentVersion, mode, existingTags = []) {
+  const nextVersion = computeNextReleaseVersion(currentVersion, mode);
+  if (mode !== "beta-next") {
+    return nextVersion;
+  }
+
+  const parsed = parseReleaseVersion(currentVersion);
+  const occupiedTags = new Set(
+    existingTags.map((tag) =>
+      tag
+        .trim()
+        .replace(/^refs\/tags\//, "")
+        .replace(/\^\{\}$/, ""),
+    ),
+  );
+
+  let betaNumber = parsed.betaNumber + 1;
+  while (occupiedTags.has(`v${parsed.baseVersion}-beta.${betaNumber}`)) {
+    betaNumber += 1;
+  }
+
+  return formatReleaseVersion({
+    major: parsed.major,
+    minor: parsed.minor,
+    patch: parsed.patch,
+    prerelease: `beta.${betaNumber}`,
+  });
+}
+
+export function parseRemoteTagRefs(output) {
+  const directTargets = new Map();
+  const peeledTargets = new Map();
+
+  for (const rawLine of output.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line) {
+      continue;
+    }
+
+    const match = line.match(
+      /^(?<target>[0-9a-fA-F]+)\s+refs\/tags\/(?<tag>.+?)(?<peeled>\^\{\})?$/,
+    );
+    if (!match?.groups?.target || !match.groups.tag) {
+      throw new Error(`Unable to parse remote tag ref: ${rawLine}`);
+    }
+
+    const target = match.groups.target.toLowerCase();
+    if (match.groups.peeled) {
+      peeledTargets.set(match.groups.tag, target);
+    } else {
+      directTargets.set(match.groups.tag, target);
+    }
+  }
+
+  const tags = new Map();
+  for (const [tag, target] of directTargets) {
+    tags.set(tag, peeledTargets.get(tag) ?? target);
+  }
+  for (const [tag, target] of peeledTargets) {
+    if (!tags.has(tag)) {
+      tags.set(tag, target);
+    }
+  }
+  return tags;
+}
+
+export function assertReleaseTagUnused({
+  tag,
+  headCommit,
+  localTagCommit = "",
+  remoteTagCommit = "",
+}) {
+  const collisions = [];
+  if (localTagCommit) {
+    collisions.push({ location: "local", commit: localTagCommit });
+  }
+  if (remoteTagCommit) {
+    collisions.push({ location: "origin", commit: remoteTagCommit });
+  }
+  if (collisions.length === 0) {
+    return;
+  }
+
+  const details = collisions
+    .map(({ location, commit }) =>
+      commit === headCommit
+        ? `${location} tag already points to current HEAD ${headCommit}`
+        : `${location} tag points to ${commit}, not current HEAD ${headCommit}`,
+    )
+    .join("; ");
+
+  throw new Error(
+    `Refusing to create release tag ${tag}: ${details}. ` +
+      "Release tags must be unused before npm version changes any files.",
+  );
+}

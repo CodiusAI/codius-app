@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ToolCallDetail } from "@codius-ai/protocol/agent-types";
+import type { ToolCallDetail } from "@codius.ai/protocol/agent-types";
 import type { StreamItem, ToolCallItem } from "@/types/stream";
 import {
   prepareToolCallHistory,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { AgentSnapshotPayload } from "@codius-ai/protocol/messages";
-import { PARENT_AGENT_ID_LABEL } from "@codius-ai/protocol/agent-labels";
+import type { AgentSnapshotPayload } from "@codius.ai/protocol/messages";
+import { PARENT_AGENT_ID_LABEL } from "@codius.ai/protocol/agent-labels";
 import { normalizeAgentSnapshot } from "./agent-snapshots";
 
 function createSnapshot(

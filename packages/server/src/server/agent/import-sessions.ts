@@ -17,11 +17,11 @@ import type {
   FetchRecentProviderSessionsRequestMessage,
   ImportAgentRequestMessageSchema,
   RecentProviderSessionDescriptorPayload,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 import {
   getParentAgentIdFromLabels,
   PARENT_AGENT_ID_LABEL,
-} from "@codius-ai/protocol/agent-labels";
+} from "@codius.ai/protocol/agent-labels";
 import { createRealpathAwarePathMatcher } from "../../utils/path.js";
 
 type ImportAgentRequestMessage = z.infer<typeof ImportAgentRequestMessageSchema>;

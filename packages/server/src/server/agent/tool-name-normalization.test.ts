@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   getCodiusToolLeafName,
   isCodiusToolName,
-} from "@codius-ai/protocol/tool-name-normalization";
+} from "@codius.ai/protocol/tool-name-normalization";
 
 describe("isCodiusToolName", () => {
   it("detects Claude Code format", () => {

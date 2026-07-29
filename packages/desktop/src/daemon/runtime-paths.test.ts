@@ -21,7 +21,7 @@ vi.mock("electron-log/main", () => ({
   default: { warn: vi.fn() },
 }));
 
-vi.mock("@codius-ai/server", () => ({
+vi.mock("@codius.ai/server", () => ({
   spawnProcess: vi.fn(),
 }));
 

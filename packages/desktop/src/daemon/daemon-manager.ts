@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { app, ipcMain, powerMonitor } from "electron";
 import log from "electron-log/main";
-import { resolveCodiusHome, spawnProcess } from "@codius-ai/server";
+import { resolveCodiusHome, spawnProcess } from "@codius.ai/server";
 import {
   copyAttachmentFileToManagedStorage,
   deleteManagedAttachmentFile,
@@ -34,9 +34,8 @@ import {
   sendLocalTransportMessage,
   closeLocalTransportSession,
 } from "./local-transport.js";
-import { createBundledCodiusProviderEnv } from "./bundled-codius-provider.js";
 import { createNodeEntrypointInvocation, resolveDaemonRunnerEntrypoint } from "./runtime-paths.js";
-import { runExternalCliJsonCommand, runExternalCliTextCommand } from "./cli/external.js";
+import { runCliJsonCommand, runCliTextCommand } from "./cli/runner.js";
 import {
   createDesktopSettingsCommandHandlers,
   type DesktopCommandHandler,
@@ -182,7 +181,7 @@ async function runDesktopDaemonStopViaCli({
     statusBefore: statusBefore ? summarizeDesktopDaemonStatus(statusBefore) : null,
   });
 
-  const cliResult = await runExternalCliJsonCommand(DESKTOP_DAEMON_STOP_CLI_ARGS);
+  const cliResult = await runCliJsonCommand(DESKTOP_DAEMON_STOP_CLI_ARGS);
   const statusAfter = resolveStatusAfter ? await resolveDesktopDaemonStatus() : null;
 
   logDesktopDaemonLifecycle("desktop daemon stop completed", {
@@ -265,7 +264,7 @@ export async function resolveDesktopDaemonStatus(): Promise<DesktopDaemonStatus>
   const home = getCodiusHome();
 
   try {
-    const payload = (await runExternalCliJsonCommand(["daemon", "status", "--json"])) as Record<
+    const payload = (await runCliJsonCommand(["daemon", "status", "--json"])) as Record<
       string,
       unknown
     >;
@@ -297,7 +296,9 @@ export async function resolveDesktopDaemonStatus(): Promise<DesktopDaemonStatus>
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logDesktopDaemonLifecycle("resolveStatus CLI command failed", { error: errorMessage });
+    logDesktopDaemonLifecycle("resolveStatus Codius CLI command failed", {
+      error: errorMessage,
+    });
     return {
       serverId: "",
       status: "stopped",
@@ -419,11 +420,6 @@ async function startDaemon(): Promise<DesktopDaemonStatus> {
     envMode: "internal",
     env: invocation.env,
     envOverlay: {
-      ...createBundledCodiusProviderEnv({
-        isPackaged: app.isPackaged,
-        resourcesPath: process.resourcesPath,
-        env: invocation.env,
-      }),
       CODIUS_DESKTOP_MANAGED: "1",
       CODIUS_CLI: getBundledCliShimPath(),
       CODIUS_ENV: "production",
@@ -518,7 +514,7 @@ function getDaemonLogs(): DesktopDaemonLogs {
 }
 
 async function getCliDaemonStatus(): Promise<string> {
-  return await runExternalCliTextCommand(["daemon", "status"]);
+  return await runCliTextCommand(["daemon", "status"]);
 }
 
 async function getDaemonPairing(): Promise<DesktopPairingOffer> {
@@ -532,7 +528,7 @@ async function getDaemonPairing(): Promise<DesktopPairingOffer> {
   }
 
   try {
-    const payload = await runExternalCliJsonCommand(["daemon", "pair", "--json"]);
+    const payload = await runCliJsonCommand(["daemon", "pair", "--json"]);
     if (!isRecord(payload)) {
       throw new Error("Daemon pairing response was not an object.");
     }

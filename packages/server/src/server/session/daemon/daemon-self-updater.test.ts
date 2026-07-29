@@ -19,8 +19,8 @@ type RuntimeCall = "inspect" | "installLatest";
 
 const globalRoot = "/global/lib";
 const globalNodeModules = `${globalRoot}/node_modules`;
-const cliPackagePath = `${globalNodeModules}/@codius-ai/cli`;
-const npmServerPackageRoot = `${cliPackagePath}/node_modules/@codius-ai/server`;
+const cliPackagePath = `${globalNodeModules}/@codius.ai/cli`;
+const npmServerPackageRoot = `${cliPackagePath}/node_modules/@codius.ai/server`;
 const sourceServerPackageRoot = "/repo/packages/server";
 
 function npmGlobalCodiusInstall(
@@ -115,7 +115,7 @@ describe("DaemonSelfUpdater", () => {
     expect(calls).toEqual([]);
   });
 
-  test("updates a daemon that is running from the npm global cli install", async () => {
+  test("updates a daemon that is running from the npm global Codius CLI install", async () => {
     const calls: RuntimeCall[] = [];
     const runtime = createRuntime({
       calls,
@@ -133,22 +133,22 @@ describe("DaemonSelfUpdater", () => {
     expect(calls).toEqual(["inspect", "installLatest", "inspect"]);
   });
 
-  test("does not run install when npm global cli is missing", async () => {
+  test("does not run install when npm global Codius CLI is missing", async () => {
     const calls: RuntimeCall[] = [];
     const runtime = createRuntime({
       calls,
-      inspections: [new Error("@codius-ai/cli is not installed with npm -g on this host")],
+      inspections: [new Error("@codius.ai/cli is not installed with npm -g on this host")],
     });
 
     const { result, phases } = await runUpdate({ runtime });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("@codius-ai/cli is not installed with npm -g on this host");
+    expect(result.error).toBe("@codius.ai/cli is not installed with npm -g on this host");
     expect(phases).toEqual(["starting"]);
     expect(calls).toEqual(["inspect"]);
   });
 
-  test("does not update a daemon whose version does not match the npm global cli", async () => {
+  test("does not update a daemon whose version does not match the npm global Codius CLI", async () => {
     const calls: RuntimeCall[] = [];
     const runtime = createRuntime({
       calls,
@@ -160,7 +160,7 @@ describe("DaemonSelfUpdater", () => {
     expect(result).toEqual({
       success: false,
       error:
-        "This daemon is not running from the npm global @codius-ai/cli install (global npm has 0.1.15, daemon is 0.1.96).",
+        "This daemon is not running from the npm global @codius.ai/cli install (global npm has 0.1.15, daemon is 0.1.96).",
       newVersion: null,
     });
     expect(calls).toEqual(["inspect"]);
@@ -178,7 +178,7 @@ describe("DaemonSelfUpdater", () => {
 
     expect(result).toEqual({
       success: false,
-      error: "This daemon is not running from the npm global @codius-ai/cli install.",
+      error: "This daemon is not running from the npm global @codius.ai/cli install.",
       newVersion: null,
     });
     expect(calls).toEqual(["inspect"]);
@@ -194,7 +194,7 @@ describe("DaemonSelfUpdater", () => {
     expect(result).toEqual({
       success: false,
       error:
-        "The global @codius-ai/cli install is linked; self-update only supports normal npm global installs.",
+        "The global @codius.ai/cli install is linked; self-update only supports normal npm global installs.",
       newVersion: null,
     });
   });

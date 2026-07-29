@@ -3,19 +3,19 @@ import { mkdtempSync, rmSync } from "fs";
 import { tmpdir } from "os";
 import path from "path";
 import { WebSocket } from "ws";
-import { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import {
   WSOutboundMessageSchema,
   type TerminalState,
   type WSOutboundMessage,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 import {
   decodeTerminalSnapshotPayload,
   decodeTerminalStreamFrame,
   encodeTerminalStreamFrame,
   TerminalStreamOpcode,
   type TerminalStreamFrame,
-} from "@codius-ai/protocol/terminal-stream-protocol";
+} from "@codius.ai/protocol/terminal-stream-protocol";
 import { createDaemonTestContext, type DaemonTestContext } from "../test-utils/index.js";
 
 type RawSessionEnvelope = Extract<WSOutboundMessage, { type: "session" }>;

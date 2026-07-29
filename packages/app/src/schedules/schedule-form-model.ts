@@ -3,8 +3,8 @@ import type {
   AgentModelDefinition,
   AgentProvider,
   ProviderSnapshotEntry,
-} from "@codius-ai/protocol/agent-types";
-import type { ScheduleCadence, ScheduleSummary } from "@codius-ai/protocol/schedule/types";
+} from "@codius.ai/protocol/agent-types";
+import type { ScheduleCadence, ScheduleSummary } from "@codius.ai/protocol/schedule/types";
 import type { FormPreferences } from "@/create-agent-preferences/preferences";
 import { formatThinkingOptionLabel } from "@/composer/agent-controls/utils";
 import {

@@ -8,7 +8,7 @@
   </a>
 </p>
 
-<p align="center"><strong>A visual command center for Codius CLI and the coding agents you already use.</strong></p>
+<p align="center"><strong>A visual command center for the coding agents you already use.</strong></p>
 
 <p align="center">
   <a href="https://github.com/CodiusAI/codius-app/actions/workflows/codius-ci.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/CodiusAI/codius-app/codius-ci.yml?style=flat-square&branch=main" /></a>
@@ -16,9 +16,17 @@
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-AGPL--3.0-blue?style=flat-square" /></a>
 </p>
 
-Codius is an open-source visual workspace for local coding agents. It combines agent orchestration, worktrees, Git review, terminals, schedules, MCP integration, an embedded browser, and visible browser automation while making **Codius CLI the first-run default provider**.
+Codius is an open-source visual workspace for local coding agents. It combines agent orchestration, worktrees, Git review, terminals, schedules, MCP integration, an embedded browser, and visible browser automation.
 
-Users remain free to select Codex, Claude Code, GitHub Copilot, OpenCode, Pi, custom ACP agents, and other supported providers. Once a user selects another provider, Codius remembers that preference instead of forcing Codius again.
+Connect a Codius API key once in the App to make Codius models available automatically to compatible agents. Users remain free to select Codex, Claude Code, GitHub Copilot, OpenCode, Pi, custom ACP agents, and other supported providers.
+
+<p align="center">
+  <img src="https://codius.ai/images/product/codius-app-desktop.png" alt="Real Codius App desktop interface showing a sanitized agent workflow" width="100%" />
+</p>
+
+<p align="center">
+  <a href="https://codius.ai/app">See the real desktop, command-center, and mobile product captures</a>
+</p>
 
 ## Product architecture
 
@@ -27,28 +35,25 @@ Codius Coding Plans
         │
         ▼
 Codius API — OpenAI-compatible inference
-        ▲
         │
-Codius CLI — local coding agent and ACP server
-        ▲
-        │ Agent Client Protocol
+        ▼
+Codius App
         │
-Codius
+        ├── Claude Code
+        ├── Codex
+        ├── GitHub Copilot
+        ├── OpenCode
+        ├── Pi
+        └── custom agents
 Browser · Terminal · Git · Worktrees · Diffs · Schedules · Agents
 ```
 
-Codius launches the default provider with:
-
-```bash
-codius acp
-```
-
-The desktop app receives streamed responses, reasoning events, model and mode discovery, permission requests, sessions, and MCP definitions over ACP. Local files, Git operations, terminals, and browser interaction stay on the user's machine.
+The App launches the agent selected by the user. When Codius model access is enabled, it supplies that agent's session-scoped provider settings without rewriting the agent's configuration files. Local files, Git operations, terminals, and browser interaction stay on the user's machine.
 
 ## Features
 
-- **Codius by default:** A fresh install selects Codius CLI and its current Codius model catalog.
-- **Multi-provider:** Continue using Codex, Claude Code, Copilot, OpenCode, Pi, or custom ACP providers.
+- **One-time model connection:** Add a Codius API key once and use the available Codius models with compatible agents.
+- **Multi-agent:** Use Codex, Claude Code, Copilot, OpenCode, Pi, or custom ACP providers.
 - **Parallel agents:** Run isolated coding agents simultaneously in separate workspaces and worktrees.
 - **Inline browser:** Open development sites in browser panels beside chat, terminal, logs, and diffs.
 - **Visible browser automation:** Approved agents can navigate, click, type, fill forms, upload workspace files, inspect console/network output, and take screenshots in the same browser tab the user sees.
@@ -63,25 +68,9 @@ The desktop app receives streamed responses, reasoning events, model and mode di
 | Development | `https://dev.codius.dev` | `https://devapi.codius.dev/v1` |
 | Production  | `https://codius.ai`      | `https://api.codius.ai/v1`     |
 
-Codius CLI controls which model API environment it uses. Development and prerelease CLI builds default to the development endpoints; stable releases default to production.
-
 ## Requirements
 
-For the default provider, install Codius CLI and connect a Codius API key:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/CodiusAI/codius-cli/dev/install | bash
-export CODIUS_API_KEY="codius_..."
-```
-
-Verify both the CLI and ACP server:
-
-```bash
-codius --version
-codius acp --help
-```
-
-Other providers require their own local CLI, account, or API key.
+Install at least one supported coding agent. To use Codius models, add a Codius API key under **Host settings → Providers**. The App validates and stores the key privately, then configures compatible agent sessions automatically. Agents may also use their own accounts or provider credentials.
 
 ## First launch
 
@@ -101,25 +90,11 @@ New Codius installations use `CODIUS_HOME` and `~/.codius`.
 
 On the first run, Codius creates a private local configuration that:
 
-- registers `codius acp` as the Codius provider;
-- enables Codius as the fresh provider preference;
 - keeps hosted relay access disabled by default;
 - allows the production and development Codius web origins;
-- retains all other built-in and custom providers.
+- retains built-in and custom agent definitions.
 
-## Provider behavior
-
-The default selection logic is intentionally non-destructive:
-
-```text
-explicit task/provider selection
-        ↓
-saved user provider preference
-        ↓
-Codius first-run default
-```
-
-A user who chooses Claude Code, Codex, OpenCode, or another agent will continue with that provider on later launches. Codius is a default, not a lock-in mechanism.
+The App remembers the agent selected by the user. Codius model access changes only the model provider supplied to compatible sessions; it does not replace the selected agent or overwrite the agent's own configuration.
 
 ## Browser automation
 
@@ -136,19 +111,19 @@ Typical tasks include:
 
 Browser access should be enabled only for trusted agents because the Codius browser profile may contain authenticated sessions.
 
-## Codius management CLI
+## Codius CLI
 
-The codius daemon-management command is named `codiusctl` so it does not conflict with the coding-agent command `codius`.
+`codius` provides terminal access to Codius App hosts and agent orchestration.
 
 ```bash
-codiusctl status
-codiusctl run --provider codius "fix the failing tests"
-codiusctl ls
-codiusctl attach <agent-id>
-codiusctl send <agent-id> "also update the documentation"
+codius status
+codius run --provider codex "fix the failing tests"
+codius ls
+codius attach <agent-id>
+codius send <agent-id> "also update the documentation"
 ```
 
-Use `codius` for the coding agent itself and `codiusctl` for Codius/daemon orchestration.
+See the [Codius CLI documentation](https://codius.ai/docs/cli).
 
 ## Development
 
@@ -156,7 +131,6 @@ Requirements:
 
 - Node.js matching the repository configuration
 - npm
-- Codius CLI available on `PATH` for end-to-end provider tests
 
 Install and run:
 
@@ -178,23 +152,15 @@ npm run typecheck
 npm test
 ```
 
-Test the default ACP integration:
-
-```bash
-CODIUS_ENV=development \
-CODIUS_API_KEY="codius_..." \
-npm run dev:desktop
-```
-
 The primary packages are:
 
 - `packages/server` — daemon and agent orchestration
 - `packages/app` — desktop/web/mobile-compatible application UI
 - `packages/desktop` — Electron host and packaging
-- `packages/cli` — daemon-management CLI, publicly branded `codiusctl`
+- `packages/cli` — Codius CLI (`codius`) for host and daemon administration
 - `packages/protocol` — shared provider and transport contracts
 
-All internal workspaces use the `@codius-ai/*` package scope. Public product names, executables, application IDs, installers, documentation, endpoints, and assets are Codius-branded.
+All internal workspaces use the `@codius.ai/*` package scope. Public product names, executables, application IDs, installers, documentation, endpoints, and assets are Codius-branded.
 
 ## Release identity
 
@@ -204,8 +170,7 @@ Public releases from this repository use:
 - repository: `CodiusAI/codius-app`;
 - application ID: `ai.codius.desktop`;
 - deep-link protocol: `codius:`;
-- desktop management command: `codiusctl`;
-- coding agent command: `codius`;
+- desktop management command: `codius`;
 - data home: `~/.codius`.
 
 ## License
@@ -215,6 +180,5 @@ Codius is licensed under AGPL-3.0. Required copyright, source, and network-use n
 ## Related projects
 
 - [Codius](https://github.com/CodiusAI/codius-platform) — plans, dashboard, billing, metering, model catalog, and OpenAI-compatible API
-- [Codius CLI](https://github.com/CodiusAI/codius-cli) — local coding agent and ACP provider used by default
 
 <sub>Upstream note: Codius began as a fork of [Paseo](https://github.com/getpaseo/paseo).</sub>

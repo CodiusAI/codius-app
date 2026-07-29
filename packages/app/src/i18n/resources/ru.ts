@@ -1,4 +1,4 @@
-import type { TranslationResources } from "./en";
+import { en, type TranslationResources } from "./en";
 
 export const ru: TranslationResources = {
   common: {
@@ -1179,8 +1179,8 @@ export const ru: TranslationResources = {
     },
     integrations: {
       cli: {
-        statusFailed: "Невозможно проверить статус установки CLI.",
-        installFailed: "Невозможно установить CodiusCLI.",
+        statusFailed: "Невозможно проверить установку Codius CLI.",
+        installFailed: "Невозможно установить Codius CLI.",
       },
       skills: {
         statusFailed: "Невозможно проверить статус навыков оркестровки.",
@@ -1880,18 +1880,18 @@ export const ru: TranslationResources = {
     integrations: {
       title: "Интеграции",
       docs: {
-        cli: "Документация CLI",
+        cli: "Документация Codius CLI",
         skills: "Документы по навыкам",
-        openCli: "Открыть документацию CLI",
+        openCli: "Открыть документацию Codius CLI",
         openSkills: "Открытая документация по навыкам",
       },
-      commandLine: {
-        title: "Командная строка",
+      cli: {
+        title: "Codius CLI",
         description: "Агенты управления и сценариев с вашего терминала",
       },
       skills: {
         title: "Навыки оркестровки",
-        description: "Научите своих агентов организовывать работу через CLI",
+        description: "Научите своих агентов работать через Codius CLI",
         updateAvailable: "Доступно обновление",
         updateTitle: "Обновить навыки Codius?",
         updateFallback: "Синхронизируйте связанные навыки с вашим компьютером.",
@@ -2071,6 +2071,7 @@ export const ru: TranslationResources = {
     },
     providers: {
       title: "Провайдеры",
+      codius: en.settings.providers.codius,
       addProvider: "Добавить провайдера",
       providerDetails: "Подробности о провайдере{{name}}",
       enableProvider: "Включить{{name}}",

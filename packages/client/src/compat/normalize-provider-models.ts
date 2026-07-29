@@ -1,10 +1,10 @@
-import type { AgentModelDefinition, ProviderSnapshotEntry } from "@codius-ai/protocol/agent-types";
-import { normalizeAgentModelDefinition } from "@codius-ai/protocol/agent-types";
+import type { AgentModelDefinition, ProviderSnapshotEntry } from "@codius.ai/protocol/agent-types";
+import { normalizeAgentModelDefinition } from "@codius.ai/protocol/agent-types";
 import type {
   GetProvidersSnapshotResponseMessage,
   ListProviderModelsResponseMessage,
   SessionOutboundMessage,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 
 type ListProviderModelsPayload = ListProviderModelsResponseMessage["payload"];
 type GetProvidersSnapshotPayload = GetProvidersSnapshotResponseMessage["payload"];

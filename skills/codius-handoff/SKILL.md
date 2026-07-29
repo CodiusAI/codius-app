@@ -60,7 +60,7 @@ Prepare the handoff in a dedicated workspace:
 2. Call `create_agent` with a `[Handoff] <task>` title, the briefing as initial prompt, and the selected `workspaceId` when explicit placement is needed.
 3. Return the agent and workspace to the user, explaining that it remains in your subagent track until they detach it manually.
 
-Do not encode independence as a create mode and do not invoke CLI or wire-level detach operations. Detach is a user gesture in the subagents track.
+Do not encode independence as a create mode and do not invoke Codius CLI or wire-level detach operations. Detach is a user gesture in the subagents track.
 
 Leave `notifyOnFinish` omitted unless the user explicitly wants no callback.
 

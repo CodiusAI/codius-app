@@ -16,12 +16,12 @@ import {
   type UserModifiedFields,
 } from "./resolve-agent-form";
 import { buildProviderDefinitions } from "@/utils/provider-definitions";
-import type { AgentProviderDefinition } from "@codius-ai/protocol/provider-manifest";
+import type { AgentProviderDefinition } from "@codius.ai/protocol/provider-manifest";
 import type {
   AgentModelDefinition,
   AgentProvider,
   ProviderSnapshotEntry,
-} from "@codius-ai/protocol/agent-types";
+} from "@codius.ai/protocol/agent-types";
 
 const TEST_CODEX_DEFINITION: AgentProviderDefinition = {
   id: "codex",

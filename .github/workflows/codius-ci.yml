@@ -24,6 +24,14 @@ jobs:
       ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
     steps:
       - uses: actions/checkout@v4
+      - name: Enforce downstream website boundary
+        run: |
+          npm run check:downstream-boundaries
+          npm run test:downstream-boundaries
+      - name: Enforce public-content boundary
+        run: |
+          npm run check:public-content
+          npm run test:public-content
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -32,33 +40,31 @@ jobs:
       - run: npm run format:check
       # Workspace type declarations and app assets must be built before
       # typecheck and the workspace test suites can resolve cross-package
-      # imports (e.g. @codius-ai/protocol/*, @codius-ai/client/internal/*).
+      # imports (e.g. @codius.ai/protocol/*, @codius.ai/client/internal/*).
       - name: Build workspace dependencies
         run: |
           npm run build:server
           npm run build:app-deps
-          npm run build:main --workspace=@codius-ai/desktop
+          npm run build:main --workspace=@codius.ai/desktop
       - run: npm run typecheck
       # Focused Codius behaviour tests. The full workspace suites (protocol,
-      # server, desktop, app, cli) run in ci.yml; this job gates the
+      # server, desktop, app, CLI) run in ci.yml; this job gates the
       # Codius-specific contract so it stays fast and deterministic. Each step
       # scopes vitest to the relevant files rather than re-running everything
       # (npm run test:unit -- <files> => vitest run --exclude e2e <files>).
       - name: Codius deep-link tests (protocol)
-        run: npm run test --workspace=@codius-ai/protocol -- src/agent-deep-link.test.ts
+        run: npm run test --workspace=@codius.ai/protocol -- src/agent-deep-link.test.ts
       - name: Codius home + provider tests (server)
-        run: npm run test:unit --workspace=@codius-ai/server -- src/server/codius-home.test.ts src/server/agent/provider-registry.test.ts
-      - name: Codius provider packaging tests (desktop)
-        run: npm run test --workspace=@codius-ai/desktop -- src/features/browser-profile.test.ts src/daemon/bundled-codius-provider.test.ts src/daemon/daemon-manager.test.ts src/daemon/desktop-packaging.test.ts
-      - name: Codius default-provider tests (app)
-        run: npm run test --workspace=@codius-ai/app -- src/create-agent-preferences/preferences.test.ts src/provider-selection/provider-selection.test.ts
-      - name: Codius <-> CLI ACP integration (skips cleanly without codius on PATH)
-        run: npm run test:codius-acp --workspace=@codius-ai/desktop
+        run: npm run test:unit --workspace=@codius.ai/server -- src/server/codius-home.test.ts src/server/agent/provider-registry.test.ts
+      - name: Codius desktop packaging tests
+        run: npm run test --workspace=@codius.ai/desktop -- src/features/browser-profile.test.ts src/daemon/daemon-manager.test.ts src/daemon/desktop-packaging.test.ts
+      - name: Codius provider-selection tests (app)
+        run: npm run test --workspace=@codius.ai/app -- src/create-agent-preferences/preferences.test.ts src/provider-selection/provider-selection.test.ts
       - name: Audit Codius product contract
         shell: bash
         run: |
-          grep -q 'command: \["codius", "acp"\]' packages/server/src/server/codius-defaults.ts
-          grep -q 'DEFAULT_FORM_PREFERENCES: FormPreferences = { provider: "codius" }' packages/app/src/create-agent-preferences/preferences.ts
+          ! grep -q 'command: \["codius", "acp"\]' packages/server/src/server/codius-defaults.ts
+          ! grep -q 'provider: "codius"' packages/app/src/create-agent-preferences/preferences.ts
           grep -q 'ai.codius.desktop' packages/desktop/electron-builder.yml
           grep -q 'productName: Codius' packages/desktop/electron-builder.yml
           grep -q 'persist:codius-browser' packages/desktop/src/features/browser-profile.ts
@@ -67,4 +73,3 @@ jobs:
           test -s packages/desktop/assets/icon.png
           test -s packages/desktop/assets/icon.ico
           test -s packages/desktop/assets/icon.icns
-          ! grep -R --line-number --exclude-dir=node_modules --exclude='*.md' 'RUNWARE_API_KEY\|api\.runware' packages/server packages/app packages/desktop

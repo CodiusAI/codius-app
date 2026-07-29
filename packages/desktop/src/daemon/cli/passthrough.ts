@@ -42,7 +42,7 @@ async function importPassthroughCliRunner(): Promise<PassthroughCliRunner> {
     runCli?: unknown;
   };
   if (typeof imported.runCli !== "function") {
-    throw new Error(`Passthrough CLI entrypoint did not export runCli: ${entrypoint}`);
+    throw new Error(`Passthrough Codius CLI entrypoint did not export runCli: ${entrypoint}`);
   }
   return imported.runCli as PassthroughCliRunner;
 }

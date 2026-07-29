@@ -1,8 +1,8 @@
-import { getErrorMessage } from "@codius-ai/protocol/error-utils";
+import { getErrorMessage } from "@codius.ai/protocol/error-utils";
 import { z } from "zod";
 import { execCommand } from "../../../utils/spawn.js";
 
-export const CODIUS_CLI_PACKAGE = "@codius-ai/cli";
+export const CODIUS_CLI_PACKAGE = "@codius.ai/cli";
 
 const NPM_PROBE_TIMEOUT_MS = 10_000;
 const NPM_INSTALL_TIMEOUT_MS = 300_000;

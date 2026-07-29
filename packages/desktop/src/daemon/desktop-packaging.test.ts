@@ -28,7 +28,7 @@ function createFakeMacBundle(options: { includeHelper: boolean }): {
   const appPath = join(root, "Codius.app");
   const contentsPath = join(appPath, "Contents");
   const resourcesPath = join(contentsPath, "Resources");
-  const shimPath = join(resourcesPath, "bin", "codiusctl");
+  const shimPath = join(resourcesPath, "bin", "codius");
   const mainPath = join(contentsPath, "MacOS", "Codius");
   const helperPath = join(
     contentsPath,
@@ -67,10 +67,10 @@ describe("desktop packaging", () => {
     const config = readFileSync(join(packageRoot, "electron-builder.yml"), "utf8");
 
     expect(config).toContain(
-      "node_modules/@codius-ai/server/dist/server/terminal/shell-integration/**/*",
+      "node_modules/@codius.ai/server/dist/server/terminal/shell-integration/**/*",
     );
     expect(config).not.toContain(
-      "node_modules/@codius-ai/server/dist/src/terminal/shell-integration/**/*",
+      "node_modules/@codius.ai/server/dist/src/terminal/shell-integration/**/*",
     );
   });
 
@@ -78,15 +78,15 @@ describe("desktop packaging", () => {
     const config = readFileSync(join(packageRoot, "electron-builder.yml"), "utf8");
 
     expect(config).toContain("!**/*.map");
-    expect(config).toContain("!node_modules/@codius-ai/*/src/**");
-    expect(config).toContain("!node_modules/@codius-ai/**/*.test.*");
-    expect(config).toContain("!node_modules/@codius-ai/**/*.spec.*");
+    expect(config).toContain("!node_modules/@codius.ai/*/src/**");
+    expect(config).toContain("!node_modules/@codius.ai/**/*.test.*");
+    expect(config).toContain("!node_modules/@codius.ai/**/*.spec.*");
   });
 
   it("excludes the bundled daemon web UI from the packaged app", () => {
     const config = readFileSync(join(packageRoot, "electron-builder.yml"), "utf8");
 
-    expect(config).toContain("!node_modules/@codius-ai/server/dist/server/web-ui/**");
+    expect(config).toContain("!node_modules/@codius.ai/server/dist/server/web-ui/**");
   });
 
   it("registers Codius agent links with the operating system", () => {
@@ -94,16 +94,6 @@ describe("desktop packaging", () => {
 
     expect(config).toContain("name: Codius agent link");
     expect(config).toContain("- codius");
-  });
-
-  it("ships the Codius coding CLI for every packaged platform", () => {
-    const config = readFileSync(join(packageRoot, "electron-builder.yml"), "utf8");
-
-    expect(config).toContain("vendor/codius/darwin-${arch}/codius");
-    expect(config).toContain("vendor/codius/linux-${arch}/codius");
-    expect(config).toContain("vendor/codius/win32-${arch}/codius.exe");
-    expect(config.match(/to: bin\/codius$/gm)).toHaveLength(2);
-    expect(config).toContain("to: bin/codius.exe");
   });
 
   // electron-builder packs production dependencies declared in package.json into
@@ -118,12 +108,12 @@ describe("desktop packaging", () => {
     };
     const deps = pkg.dependencies ?? {};
 
-    for (const required of ["@codius-ai/cli", "@codius-ai/server"]) {
+    for (const required of ["@codius.ai/cli", "@codius.ai/server"]) {
       expect(deps[required], `${required} must be declared in dependencies`).toBe("*");
     }
   });
 
-  it("launches packaged macOS codiusctl through Helper instead of the main app executable", () => {
+  it("launches packaged macOS codius through Helper instead of the main app executable", () => {
     if (process.platform === "win32") return;
 
     const bundle = createFakeMacBundle({ includeHelper: true });
@@ -134,7 +124,7 @@ describe("desktop packaging", () => {
       expect(result.stdout).toContain(`helper env=production managed=1 cli=${bundle.shimPath}`);
       expect(result.stdout).toContain("node-entrypoint-runner.js");
       expect(result.stdout).toContain("node-script");
-      expect(result.stdout).toContain("@codius-ai/cli/dist/index.js");
+      expect(result.stdout).toContain("@codius.ai/cli/dist/index.js");
       expect(result.stdout).toContain("--version");
       expect(result.stdout).not.toContain("main-executable");
     } finally {
@@ -142,7 +132,7 @@ describe("desktop packaging", () => {
     }
   });
 
-  it("fails packaged macOS codiusctl startup when Helper is missing", () => {
+  it("fails packaged macOS codius startup when Helper is missing", () => {
     if (process.platform === "win32") return;
 
     const bundle = createFakeMacBundle({ includeHelper: false });

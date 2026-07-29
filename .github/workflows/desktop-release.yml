@@ -123,7 +123,7 @@ jobs:
           node-version: "22"
           cache: "npm"
           cache-dependency-path: package-lock.json
-          registry-url: "https://npm.pkg.github.com"
+          registry-url: "https://registry.npmjs.org/"
           scope: "@boudra"
 
       - name: Install JS dependencies
@@ -233,7 +233,7 @@ jobs:
           node-version: "22"
           cache: "npm"
           cache-dependency-path: package-lock.json
-          registry-url: "https://npm.pkg.github.com"
+          registry-url: "https://registry.npmjs.org/"
           scope: "@boudra"
 
       - name: Install JS dependencies
@@ -341,7 +341,7 @@ jobs:
           node-version: "22"
           cache: "npm"
           cache-dependency-path: package-lock.json
-          registry-url: "https://npm.pkg.github.com"
+          registry-url: "https://registry.npmjs.org/"
           scope: "@boudra"
 
       - name: Install JS dependencies
@@ -451,7 +451,7 @@ jobs:
           node-version: "22"
           cache: "npm"
           cache-dependency-path: package-lock.json
-          registry-url: "https://npm.pkg.github.com"
+          registry-url: "https://registry.npmjs.org/"
           scope: "@boudra"
 
       - name: Install JS dependencies

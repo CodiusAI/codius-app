@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { CheckoutCommitFile, ParsedDiffFile } from "@codius-ai/protocol/messages";
+import type { CheckoutCommitFile, ParsedDiffFile } from "@codius.ai/protocol/messages";
 import { useFetchQueries } from "@/data/query";
 import { checkoutCommitFileDiffQueryKey, COMMIT_FILE_DIFF_STALE_TIME } from "@/git/query-keys";
 import { useCheckoutCommitsQuery } from "@/git/use-commits-query";

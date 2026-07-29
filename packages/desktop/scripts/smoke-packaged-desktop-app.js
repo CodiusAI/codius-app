@@ -53,23 +53,11 @@ function getExecutablePath(appPath) {
 
 function getCliShimPath(appPath) {
   if (process.platform === "darwin") {
-    return path.join(appPath, "Contents", "Resources", "bin", "codiusctl");
-  }
-
-  if (process.platform === "win32") {
-    return path.join(appPath, "resources", "bin", "codiusctl.cmd");
-  }
-
-  return path.join(appPath, "resources", "bin", "codiusctl");
-}
-
-function getCodiusProviderPath(appPath) {
-  if (process.platform === "darwin") {
     return path.join(appPath, "Contents", "Resources", "bin", "codius");
   }
 
   if (process.platform === "win32") {
-    return path.join(appPath, "resources", "bin", "codius.exe");
+    return path.join(appPath, "resources", "bin", "codius.cmd");
   }
 
   return path.join(appPath, "resources", "bin", "codius");
@@ -621,7 +609,7 @@ function getCliShimScript(cliShimPath, args) {
 
 async function runCliShimCommand({ appPath, env, args, label }) {
   const cliShimPath = getCliShimPath(appPath);
-  assertExecutable(cliShimPath, "Bundled CLI shim");
+  assertExecutable(cliShimPath, "Bundled Codius CLI shim");
 
   return await runShellCommand({
     script: getCliShimScript(cliShimPath, args),
@@ -650,33 +638,14 @@ async function runCliShimJsonCommand({ appPath, env, args, label }) {
 }
 
 async function smokeCliShim({ appPath, env }) {
-  console.log("Packaged desktop smoke: running bundled CLI shim daemon status");
+  console.log("Packaged desktop smoke: running bundled Codius CLI daemon status");
   const result = await runCliShimCommand({
     appPath,
     env,
     args: ["daemon", "status"],
-    label: "Bundled CLI shim daemon status",
+    label: "Bundled Codius CLI daemon status",
   });
   assertCleanDaemonStatusOutput(`${result.stdout}\n${result.stderr}`);
-}
-
-function smokeCodiusProvider(appPath) {
-  const providerPath = getCodiusProviderPath(appPath);
-  assertExecutable(providerPath, "Bundled Codius provider");
-
-  for (const args of [["--version"], ["acp", "--help"]]) {
-    const result = spawnSync(providerPath, args, {
-      encoding: "utf8",
-      env: { ...process.env, CODIUS_ENV: "production" },
-    });
-    if (result.error || result.status !== 0) {
-      throw new Error(
-        `Bundled Codius provider failed: ${providerPath} ${args.join(" ")}\n${
-          result.stderr?.trim() || result.stdout?.trim() || result.error || "Unknown error"
-        }`,
-      );
-    }
-  }
 }
 
 async function smokeColdCliDaemonStart({ appPath }) {
@@ -687,7 +656,7 @@ async function smokeColdCliDaemonStart({ appPath }) {
   const env = createDefaultDaemonEnv();
 
   try {
-    console.log("Packaged desktop smoke: cold-starting daemon through bundled CLI shim");
+    console.log("Packaged desktop smoke: cold-starting daemon through bundled Codius CLI");
     await runCliShimCommand({
       appPath,
       env,
@@ -702,26 +671,26 @@ async function smokeColdCliDaemonStart({ appPath }) {
         "--no-mcp",
         "--no-inject-mcp",
       ],
-      label: "Bundled CLI shim cold daemon start",
+      label: "Bundled Codius CLI cold daemon start",
     });
 
-    const pidInfo = JSON.parse(await waitForFile(pidPath, "cold CLI daemon pid file"));
+    const pidInfo = JSON.parse(await waitForFile(pidPath, "cold Cli daemon pid file"));
     if (!pidInfo || typeof pidInfo.pid !== "number") {
-      throw new Error(`Cold CLI daemon wrote invalid pid file: ${JSON.stringify(pidInfo)}`);
+      throw new Error(`Cold Cli daemon wrote invalid pid file: ${JSON.stringify(pidInfo)}`);
     }
 
     if (process.platform === "darwin") {
       assertDarwinProcessDoesNotUseMainAppExecutable({
         appPath,
         pid: pidInfo.pid,
-        label: "Cold CLI daemon supervisor",
+        label: "Cold Cli daemon supervisor",
       });
       const childPids = await waitForChildPids(pidInfo.pid);
       for (const childPid of childPids) {
         assertDarwinProcessDoesNotUseMainAppExecutable({
           appPath,
           pid: childPid,
-          label: "Cold CLI daemon worker",
+          label: "Cold Cli daemon worker",
         });
       }
     }
@@ -731,9 +700,9 @@ async function smokeColdCliDaemonStart({ appPath }) {
         appPath,
         env,
         args: ["daemon", "stop", "--home", home, "--force"],
-        label: "Bundled CLI shim cold daemon stop",
+        label: "Bundled Codius CLI cold daemon stop",
       }).catch((error) => {
-        console.warn(`Packaged desktop smoke: failed to stop cold CLI daemon: ${error}`);
+        console.warn(`Packaged desktop smoke: failed to stop cold Cli daemon: ${error}`);
       });
     }
     await removeTempDir(home);
@@ -749,7 +718,7 @@ function assertCleanDaemonStatusOutput(output) {
   ];
   const failure = failureNeedles.find((needle) => output.includes(needle));
   if (failure) {
-    throw new Error(`Bundled CLI shim daemon status included process lookup failure: ${failure}`);
+    throw new Error(`Bundled Codius CLI daemon status included process lookup failure: ${failure}`);
   }
 }
 
@@ -760,12 +729,12 @@ async function smokeCliTerminal({ appPath, env }) {
   let terminalId = null;
 
   try {
-    console.log("Packaged desktop smoke: creating terminal through bundled CLI shim");
+    console.log("Packaged desktop smoke: creating terminal through bundled Codius CLI");
     const created = await runCliShimJsonCommand({
       appPath,
       env,
       args: ["terminal", "create", "--cwd", cwd, "--name", name],
-      label: "Bundled CLI shim terminal create",
+      label: "Bundled Codius CLI terminal create",
     });
     if (!created || typeof created.id !== "string" || created.id.length === 0) {
       throw new Error(`Terminal create returned unexpected payload: ${JSON.stringify(created)}`);
@@ -776,7 +745,7 @@ async function smokeCliTerminal({ appPath, env }) {
       appPath,
       env,
       args: ["terminal", "ls", "--all"],
-      label: "Bundled CLI shim terminal ls",
+      label: "Bundled Codius CLI terminal ls",
     });
     if (!Array.isArray(terminals) || !terminals.some((terminal) => terminal.id === terminalId)) {
       throw new Error(`Terminal ${terminalId} was not listed after create`);
@@ -786,7 +755,7 @@ async function smokeCliTerminal({ appPath, env }) {
       appPath,
       env,
       args: ["terminal", "send-keys", terminalId, getTerminalHookSmokeCommand(marker), "Enter"],
-      label: "Bundled CLI shim terminal hook command",
+      label: "Bundled Codius CLI terminal hook command",
     });
 
     for (let attempt = 1; attempt <= TERMINAL_CAPTURE_ATTEMPTS; attempt += 1) {
@@ -794,7 +763,7 @@ async function smokeCliTerminal({ appPath, env }) {
         appPath,
         env,
         args: ["terminal", "capture", terminalId, "--scrollback"],
-        label: "Bundled CLI shim terminal capture",
+        label: "Bundled Codius CLI terminal capture",
       });
       const lines = Array.isArray(capture?.lines) ? capture.lines : [];
       if (lines.join("\n").includes(marker)) {
@@ -814,7 +783,7 @@ async function smokeCliTerminal({ appPath, env }) {
         appPath,
         env,
         args: ["terminal", "kill", terminalId],
-        label: "Bundled CLI shim terminal kill",
+        label: "Bundled Codius CLI terminal kill",
       }).catch((error) => {
         console.warn(`Packaged desktop smoke: failed to kill terminal ${terminalId}: ${error}`);
       });
@@ -824,19 +793,18 @@ async function smokeCliTerminal({ appPath, env }) {
 }
 
 async function stopCliDaemon({ appPath, env }) {
-  console.log("Packaged desktop smoke: stopping daemon through bundled CLI shim");
+  console.log("Packaged desktop smoke: stopping daemon through bundled Codius CLI");
   await runCliShimCommand({
     appPath,
     env,
     args: ["daemon", "stop", "--force"],
-    label: "Bundled CLI shim daemon stop",
+    label: "Bundled Codius CLI daemon stop",
   });
 }
 
 async function smokePackagedDesktopApp({ appPath }) {
   const executablePath = getExecutablePath(appPath);
   assertExecutable(executablePath, "Packaged app executable");
-  smokeCodiusProvider(appPath);
   ensureLinuxSandboxPermissions(appPath);
   await smokeColdCliDaemonStart({ appPath });
 
@@ -915,7 +883,7 @@ async function smokePackagedDesktopApp({ appPath }) {
     await smokeCliTerminal({ appPath, env });
     await stopDaemonForCleanup();
     console.log(
-      `Packaged desktop smoke passed: real renderer and preload loaded; renderer-started desktop daemon pid ${status.pid}, listen ${status.listen}; CLI shim daemon status and terminal smoke succeeded`,
+      `Packaged desktop smoke passed: real renderer and preload loaded; renderer-started desktop daemon pid ${status.pid}, listen ${status.listen}; Codius CLI daemon status and terminal smoke succeeded`,
     );
   } catch (error) {
     await writeFailureArtifacts({ page, stdout, stderr, userData, daemonHome, error }).catch(

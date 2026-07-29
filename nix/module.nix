@@ -186,7 +186,7 @@ in
         Runtime mutations to `config.json` (e.g. via `codius daemon set-password`
         or the mobile app toggling MCP injection / provider overrides) are
         overwritten on the next restart. Pick one: manage via this option, or
-        manage via the CLI — not both.
+        manage via Codius CLI — not both.
 
         The full schema is defined by `PersistedConfigSchema` in
         `packages/server/src/server/persisted-config.ts`.

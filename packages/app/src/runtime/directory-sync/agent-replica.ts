@@ -1,5 +1,5 @@
-import type { FetchAgentsEntry } from "@codius-ai/client/internal/daemon-client";
-import type { AgentSnapshotPayload } from "@codius-ai/protocol/messages";
+import type { FetchAgentsEntry } from "@codius.ai/client/internal/daemon-client";
+import type { AgentSnapshotPayload } from "@codius.ai/protocol/messages";
 import { clearArchiveAgentPending } from "@/hooks/use-archive-agent";
 import { queryClient } from "@/data/query-client";
 import { useSessionStore, type Agent } from "@/stores/session-store";

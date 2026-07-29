@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, test } from "vitest";
-import { CLIENT_CAPS } from "@codius-ai/protocol/client-capabilities";
-import type { SessionOutboundMessage } from "@codius-ai/protocol/messages";
+import { CLIENT_CAPS } from "@codius.ai/protocol/client-capabilities";
+import type { SessionOutboundMessage } from "@codius.ai/protocol/messages";
 import { DaemonClient } from "./test-utils/daemon-client.js";
 import { createTestCodiusDaemon, type TestCodiusDaemon } from "./test-utils/codius-daemon.js";
 

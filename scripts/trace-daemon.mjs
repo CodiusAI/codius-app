@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Emit the set of files the daemon and CLI need at runtime, computed by
+// Emit the set of files the daemon and Codius CLI need at runtime, computed by
 // static module-graph tracing (@vercel/nft) from the daemon entry points.
 // Used by nix/package.nix's installPhase to materialize $out/lib/codius
 // with only the bytes the daemon actually loads — no Expo, RN, Metro,
@@ -47,7 +47,7 @@ const additionalInputs = [
   "packages/server/dist/server/server/speech/providers/local/sherpa/assets/silero_vad.onnx",
   // Server runtime config files (read by path, not require)
   "packages/server/.env.example",
-  // CLI shebang script wrapping dist/index.js
+  // Codius CLI shebang script wrapping dist/index.js
   "packages/cli/bin/codius",
   // node-pty's compiled native addon. nft can't trace it because
   // node-pty loads it via `require(path.join(__dirname, 'prebuilds/<plat>/pty.node'))`

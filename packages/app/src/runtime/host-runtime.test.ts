@@ -4,10 +4,10 @@ import type {
   ConnectionState,
   FetchAgentsEntry,
   FetchAgentsOptions,
-} from "@codius-ai/client/internal/daemon-client";
-import type { ConnectionOffer } from "@codius-ai/protocol/connection-offer";
-import type { SessionOutboundMessage } from "@codius-ai/protocol/messages";
-import type { AgentPermissionRequest } from "@codius-ai/protocol/agent-types";
+} from "@codius.ai/client/internal/daemon-client";
+import type { ConnectionOffer } from "@codius.ai/protocol/connection-offer";
+import type { SessionOutboundMessage } from "@codius.ai/protocol/messages";
+import type { AgentPermissionRequest } from "@codius.ai/protocol/agent-types";
 import type { HostConnection, HostProfile } from "@/types/host-connection";
 import { useSessionStore, type Agent } from "@/stores/session-store";
 import { normalizeAgentSnapshot } from "@/utils/agent-snapshots";

@@ -1,4 +1,4 @@
-import type { AgentProvider } from "@codius-ai/protocol/agent-types";
+import type { AgentProvider } from "@codius.ai/protocol/agent-types";
 import type { ProviderSelectorProvider } from "@/provider-selection/provider-selection";
 import type { CommandCenterContribution, CommandCenterIcon } from "./contributions";
 

@@ -1,4 +1,4 @@
-import { createCodiusClient, type CodiusClient } from "@codius-ai/client";
+import { createCodiusClient, type CodiusClient } from "@codius.ai/client";
 
 export function createClient(url: string): CodiusClient {
   return createCodiusClient({

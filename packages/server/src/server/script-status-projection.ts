@@ -3,8 +3,8 @@ import type {
   ScriptStatusUpdateMessage,
   SessionOutboundMessage,
   WorkspaceScriptPayload,
-} from "@codius-ai/protocol/messages";
-import type { CodiusConfig } from "@codius-ai/protocol/codius-config-schema";
+} from "@codius.ai/protocol/messages";
+import type { CodiusConfig } from "@codius.ai/protocol/codius-config-schema";
 import { getScriptConfigs, isServiceScript, readCodiusConfig } from "../utils/worktree.js";
 import { deriveProjectSlug } from "./workspace-git-metadata.js";
 import type { ScriptHealthEntry, ScriptHealthState } from "./script-health-monitor.js";

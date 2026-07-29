@@ -674,7 +674,40 @@ function createPiCodiusExtensionFile(systemPrompt?: string): PiTempFile {
 	  );
 	}
 
+	function registerCodiusProvider(pi) {
+	  const apiKey = process.env.CODIUS_API_KEY;
+	  const baseUrl = process.env.CODIUS_API_BASE_URL;
+	  const encodedCatalog = process.env.CODIUS_MODEL_CATALOG;
+	  if (!apiKey || !baseUrl || !encodedCatalog) {
+	    return;
+	  }
+	  const catalog = decodePayload(encodedCatalog);
+	  const models = Array.isArray(catalog.models)
+	    ? catalog.models
+	        .filter((model) => model && typeof model.id === "string")
+	        .map((model) => ({
+	          id: model.id,
+	          name: typeof model.name === "string" ? model.name : model.id,
+	          reasoning: true,
+	          input: ["text", "image"],
+	          contextWindow: 200000,
+	          maxTokens: 64000,
+	          cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+	        }))
+	    : [];
+	  if (models.length === 0) {
+	    return;
+	  }
+	  pi.registerProvider("codius", {
+	    baseUrl,
+	    apiKey: "$CODIUS_API_KEY",
+	    api: "openai-completions",
+	    models,
+	  });
+	}
+
 	export default function codiusIntegration(pi) {
+	  registerCodiusProvider(pi);
 	  const submittedUserMessages = [];
 
 	  function emitSubmittedUserEntries(ctx) {

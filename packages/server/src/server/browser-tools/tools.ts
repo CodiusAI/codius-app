@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BrowserAutomationBrowserIdSchema } from "@codius-ai/protocol/browser-automation/rpc-schemas";
+import { BrowserAutomationBrowserIdSchema } from "@codius.ai/protocol/browser-automation/rpc-schemas";
 import type { BrowserToolsBroker } from "./broker.js";
 import type { BrowserToolsResponsePayload } from "./errors.js";
 import type {

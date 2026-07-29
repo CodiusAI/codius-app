@@ -2,7 +2,7 @@ import pino from "pino";
 import { z } from "zod";
 import { describe, expect, test } from "vitest";
 
-import { CLIENT_CAPS } from "@codius-ai/protocol/client-capabilities";
+import { CLIENT_CAPS } from "@codius.ai/protocol/client-capabilities";
 import {
   AgentSnapshotPayloadSchema,
   AgentTimelineItemPayloadSchema,
@@ -12,7 +12,7 @@ import {
   SessionOutboundMessageSchema,
   type SessionOutboundMessage,
   WSHelloMessageSchema,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 import { Session, type SessionOptions } from "./session.js";
 import { createProviderSnapshotManagerStub } from "./test-utils/session-stubs.js";
 import type { AgentTimelineRow } from "./agent/agent-manager.js";

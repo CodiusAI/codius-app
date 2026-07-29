@@ -166,7 +166,7 @@ export async function createTempDirs(): Promise<{ codiusHome: string; workDir: s
 }
 
 /**
- * Wait for daemon to be ready by running `codiusctl agent ls`
+ * Wait for daemon to be ready by running `codius agent ls`
  * This connects via WebSocket and ensures the daemon is responsive
  */
 async function probeDaemonReady(port: number): Promise<boolean> {
@@ -330,7 +330,7 @@ export async function startTestDaemon(options?: {
 }
 
 /**
- * Run a codiusctl CLI command against a test daemon
+ * Run a codius CLI command against a test daemon
  *
  * This is a helper that sets the correct environment variables
  * to point at the test daemon.
@@ -379,7 +379,7 @@ export async function runCodiusCli(
       if (proc.pid) {
         signalProcessTree(proc.pid, "SIGKILL");
       }
-      reject(new Error(`CLI command timed out after ${timeout}ms: codiusctl ${args.join(" ")}`));
+      reject(new Error(`CLI command timed out after ${timeout}ms: codius ${args.join(" ")}`));
     }, timeout);
 
     proc.on("exit", (code) => {
@@ -409,7 +409,7 @@ export async function createE2ETestContext(options?: {
   env?: NodeJS.ProcessEnv;
 }): Promise<
   TestDaemonContext & {
-    /** Run a codiusctl CLI command against this daemon */
+    /** Run a codius CLI command against this daemon */
     codius: (
       args: string[],
       opts?: { timeout?: number; cwd?: string; env?: NodeJS.ProcessEnv },

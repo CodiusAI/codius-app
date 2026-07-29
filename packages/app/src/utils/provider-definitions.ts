@@ -1,10 +1,10 @@
-import type { ProviderSnapshotEntry } from "@codius-ai/protocol/agent-types";
+import type { ProviderSnapshotEntry } from "@codius.ai/protocol/agent-types";
 import {
   type AgentModeColorTier,
   type AgentModeIcon,
   type AgentProviderDefinition,
   type AgentProviderModeDefinition,
-} from "@codius-ai/protocol/provider-manifest";
+} from "@codius.ai/protocol/provider-manifest";
 
 function buildProviderModes(entry: ProviderSnapshotEntry): AgentProviderModeDefinition[] {
   const entryModes = entry.modes ?? [];

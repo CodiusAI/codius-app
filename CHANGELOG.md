@@ -2,18 +2,12 @@
 
 ## 0.2.0-beta.4 - 2026-07-27
 
-### Added
-
-- Package the Codius CLI with the desktop app so the default Codius provider works without a separate CLI install
-
 ### Improved
 
-- Put Codius first in the provider picker and keep it as the first-run default
 - Use the official Codius mark and the product name **Codius** across app surfaces and installers
 
 ### Fixed
 
-- Validate real ACP model discovery during releases
 - Make unsigned macOS prerelease builds launch correctly without hardened-runtime signing conflicts
 
 ## 0.2.0-beta.3 - 2026-07-22
@@ -22,7 +16,7 @@
 
 - Open the complete Changes view as a workspace tab ([#2298](https://github.com/CodiusAI/codius-app/pull/2298) by [@nikuscs](https://github.com/nikuscs))
 - Add files to chat directly from Files and Changes ([#2275](https://github.com/CodiusAI/codius-app/pull/2275) by [@nikuscs](https://github.com/nikuscs))
-- Open existing agents from Codius links or the CLI ([#2324](https://github.com/CodiusAI/codius-app/pull/2324))
+- Open existing agents from Codius links or Codius CLI ([#2324](https://github.com/CodiusAI/codius-app/pull/2324))
 - Use Oh My Pi's Write Approval mode to allow reads while requiring approval for changes ([#2228](https://github.com/CodiusAI/codius-app/pull/2228) by [@theslava](https://github.com/theslava))
 
 ### Improved
@@ -34,7 +28,7 @@
 
 - Notifications now open the correct workspace and agent ([#2331](https://github.com/CodiusAI/codius-app/pull/2331))
 - Archived agents can be restored directly from History ([#2316](https://github.com/CodiusAI/codius-app/pull/2316))
-- CLI agent runs stay in the current workspace unless a new workspace is requested ([#2315](https://github.com/CodiusAI/codius-app/pull/2315))
+- Codius CLI agent runs stay in the current workspace unless a new workspace is requested ([#2315](https://github.com/CodiusAI/codius-app/pull/2315))
 - Oh My Pi slash commands now include commands from every supported source ([#2175](https://github.com/CodiusAI/codius-app/pull/2175) by [@bendavid](https://github.com/bendavid))
 - Oh My Pi chats no longer stay stuck as running after delayed or incomplete completion events ([#2261](https://github.com/CodiusAI/codius-app/pull/2261), [#2282](https://github.com/CodiusAI/codius-app/pull/2282) by [@isac322](https://github.com/isac322))
 
@@ -57,7 +51,7 @@
 
 ### Improved
 
-- Improved parity of CLI and MCP tools for workspace, agent and schedule management ([#2186](https://github.com/CodiusAI/codius-app/pull/2186))
+- Improved parity of Codius CLI and MCP tools for workspace, agent and schedule management ([#2186](https://github.com/CodiusAI/codius-app/pull/2186))
 - Pasted PR/MR links in the composer become auto-selected as a checkout option ([#2290](https://github.com/CodiusAI/codius-app/pull/2290))
 - Projects, workspaces and chat syncing is more efficient ([#2028](https://github.com/CodiusAI/codius-app/pull/2028), [#2185](https://github.com/CodiusAI/codius-app/pull/2185), [#2196](https://github.com/CodiusAI/codius-app/pull/2196), [#2206](https://github.com/CodiusAI/codius-app/pull/2206), [#2259](https://github.com/CodiusAI/codius-app/pull/2259), [#2263](https://github.com/CodiusAI/codius-app/pull/2263))
 - Make project creation more explicit ([#2098](https://github.com/CodiusAI/codius-app/pull/2098), [#2187](https://github.com/CodiusAI/codius-app/pull/2187))
@@ -255,8 +249,8 @@
 - Renamed hosts keep their name after reconnecting ([#1940](https://github.com/CodiusAI/codius-app/pull/1940))
 - Desktop finds your installed CLIs even when your shell is slow to start ([#1916](https://github.com/CodiusAI/codius-app/pull/1916))
 - Restarting the daemon from desktop settings works reliably ([#1915](https://github.com/CodiusAI/codius-app/pull/1915))
-- Restarting the daemon from the bundled CLI keeps it managed by the desktop app ([#1919](https://github.com/CodiusAI/codius-app/pull/1919))
-- Web UI loads when the daemon is started from the bundled CLI ([#1899](https://github.com/CodiusAI/codius-app/pull/1899) by [@yzim](https://github.com/yzim))
+- Restarting the daemon from bundled Codius CLI keeps it managed by the desktop app ([#1919](https://github.com/CodiusAI/codius-app/pull/1919))
+- Web UI loads when the daemon is started from bundled Codius CLI ([#1899](https://github.com/CodiusAI/codius-app/pull/1899) by [@yzim](https://github.com/yzim))
 - Worktree setup scripts keep your PATH ([#1908](https://github.com/CodiusAI/codius-app/pull/1908))
 - Docker images keep running during provider cleanup and diagnostics ([#1877](https://github.com/CodiusAI/codius-app/pull/1877))
 - New Workspace drafts survive archiving a workspace ([#1838](https://github.com/CodiusAI/codius-app/pull/1838))
@@ -871,7 +865,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - User messages now have a distinct bubble fill for clearer chat hierarchy
 - Closing a tab returns to its parent tab
 - Diff rows show the full file path on hover ([#1061](https://github.com/CodiusAI/codius-app/pull/1061) by [@Myriad-Dreamin](https://github.com/Myriad-Dreamin))
-- The CLI shows the remote daemon host when `ls` cannot connect ([#1043](https://github.com/CodiusAI/codius-app/pull/1043) by [@mturac](https://github.com/mturac))
+- Codius CLI shows the remote daemon host when `ls` cannot connect ([#1043](https://github.com/CodiusAI/codius-app/pull/1043) by [@mturac](https://github.com/mturac))
 - Nix install of the daemon is smaller ([#966](https://github.com/CodiusAI/codius-app/pull/966) by [@ixxie](https://github.com/ixxie))
 - Nix install honors home-manager profile paths when inheriting the user PATH ([#1040](https://github.com/CodiusAI/codius-app/pull/1040) by [@ixxie](https://github.com/ixxie))
 
@@ -1026,7 +1020,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Codex `/goal` slash command — set or update the goal mid-turn while a Codex agent is running
 - Claude's Sonnet 4.6 1M context model is now selectable in the model picker
 - Detect GitHub issue and PR URLs pasted into the composer search
-- `codius worktree create` CLI command, with parity to the MCP `create_worktree` tool
+- `codius worktree create` command, with parity to the MCP `create_worktree` tool
 - `codius schedule update` to edit a schedule in place without recreating it
 - `codius schedule run-once` for cron-style triggers, plus `--mode` on `schedule` and `loop`. Background runs now default to unattended mode
 - Projects settings now lists workspaces from any remote — GitLab, Gitea, Bitbucket, self-hosted, and SSH-style URLs, not just GitHub ([#681](https://github.com/CodiusAI/codius-app/pull/681) by [@krumpyzoid](https://github.com/krumpyzoid))
@@ -1052,7 +1046,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Checkout shortstat now counts untracked files ([#608](https://github.com/CodiusAI/codius-app/issues/608), [#762](https://github.com/CodiusAI/codius-app/pull/762) by [@somus](https://github.com/somus))
 - Relay endpoints on port 443 use TLS automatically ([#774](https://github.com/CodiusAI/codius-app/pull/774) by [@caoer](https://github.com/caoer))
 - Desktop CLI passthrough TTY handling — interactive commands now behave correctly when launched from the desktop app
-- The CLI honors the `CODIUS_PASSWORD` environment variable for password-protected daemons
+- Codius CLI honors the `CODIUS_PASSWORD` environment variable for password-protected daemons
 - Daemon shutdown terminates all child processes cleanly using tree-kill
 - Agent spawn paths handle missing executables and unusual install layouts more reliably
 - OpenCode now forwards provider retry errors instead of silently swallowing them
@@ -1113,7 +1107,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Pull and push your branch in one step from the git actions menu in the changes pane
 - Resume existing agent sessions with `codius import --provider <name> <id>` ([#632](https://github.com/CodiusAI/codius-app/pull/632))
 - Password authentication and SSL support for daemon connections ([#635](https://github.com/CodiusAI/codius-app/pull/635))
-- Connect to a daemon via relay using a pairing offer URL from the CLI ([#639](https://github.com/CodiusAI/codius-app/pull/639))
+- Connect to a daemon via relay using a pairing offer URL from Codius CLI ([#639](https://github.com/CodiusAI/codius-app/pull/639))
 - **Windows:** Native ARM64 builds are now available
 - Bundled Codius skills now refresh automatically on desktop app launch
 
@@ -1202,7 +1196,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Claude's Grep results show up in the search detail body
 - Reopening a worktree lands under the right project
 - Agents from disabled or unavailable providers stay visible in history
-- New CLI agents now require a provider instead of failing silently
+- New Codius CLI agent runs now require a provider instead of failing silently
 - Git diff headers no longer truncate
 - Provider diagnostic modal scrolls on short screens
 - Provider diagnostics show the real error and underlying child-process output instead of a generic message
@@ -1223,7 +1217,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 ### Fixed
 
 - Pull request status resolves correctly for PRs opened from forks
-- Installing the codius CLI from the macOS desktop app now works in packaged builds
+- Installing Codius CLI from the macOS desktop app now works in packaged builds
 - Agents launched from the desktop app no longer inherit Electron-only environment variables
 
 ## 0.1.61 - 2026-04-23
@@ -1314,7 +1308,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - OpenCode todo and compaction events render in the timeline ([#429](https://github.com/CodiusAI/codius-app/pull/429) by [@aaronflorey](https://github.com/aaronflorey))
 - OpenCode sessions archive cleanly when closed ([#408](https://github.com/CodiusAI/codius-app/pull/408) by [@aaronflorey](https://github.com/aaronflorey))
 - OpenCode slash commands recover from SSE timeouts ([#407](https://github.com/CodiusAI/codius-app/pull/407) by [@aaronflorey](https://github.com/aaronflorey))
-- Codius MCP tools work against archived agents, matching the CLI ([#423](https://github.com/CodiusAI/codius-app/pull/423))
+- Codius MCP tools work against archived agents, matching Codius CLI ([#423](https://github.com/CodiusAI/codius-app/pull/423))
 - Native scrollbars match the active theme across all web views ([#399](https://github.com/CodiusAI/codius-app/pull/399) by [@ethersh](https://github.com/ethersh))
 
 ### Fixed
@@ -1349,7 +1343,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 ### Improved
 
 - Git operations are dramatically faster — workspace status, PR checks, and branch data all use a shared cached snapshot service instead of shelling out to git on every request. Running 20+ workspaces simultaneously is now smooth
-- Windows support — the daemon and CLI run natively on Windows with proper shell quoting, executable resolution, and path handling
+- Windows support — the daemon and Codius CLI run natively on Windows with proper shell quoting, executable resolution, and path handling
 - iPad and tablet layouts work correctly across all screen sizes
 - IME composition (Chinese, Japanese, Korean input) no longer submits prematurely when pressing Enter
 
@@ -1370,7 +1364,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 ### Improved
 
 - Codius tools are no longer injected into agents by default — opt in from Settings when you need agent-to-agent orchestration
-- Agent provider and mode are now resolved server-side, so CLI commands like `codius run` use consistent defaults without client-side lookups
+- Agent provider and mode are now resolved server-side, so Codius CLI commands like `codius run` use consistent defaults without client-side lookups
 
 ### Fixed
 
@@ -1385,7 +1379,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Agents get Codius tools automatically — every new agent gets access to terminals, schedules, worktrees, and other agents through MCP. Toggle it off in Settings under "Inject Codius tools"
 - Git pull — pull remote changes directly from the workspace header. Promoted to the primary action when your branch is behind origin
 - Child agent notifications — parent agents are automatically notified when a child agent finishes, errors, or needs permission approval
-- Agent reload — `codius agent reload` restarts an agent's underlying process from the CLI
+- Agent reload — `codius agent reload` restarts an agent's underlying process from Codius CLI
 - Middle-click to close tabs on desktop
 - Keyboard shortcut to cycle themes
 
@@ -1527,7 +1521,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 - Provider-declared features system — providers can expose dynamic toggles and selects that the app renders automatically. First consumer: Codex fast mode
 - Codex plan mode — start agents in plan-only mode with a dedicated plan card UI for reviewing proposed changes before execution
 - OpenCode custom agents and slash commands — user-defined agents from opencode.json now appear in the mode picker, and slash commands accept optional arguments
-- Desktop Integrations settings — install the Codius CLI and orchestration skills directly from the app without touching the terminal
+- Desktop Integrations settings — install Codius CLI and orchestration skills directly from the app without touching the terminal
 - Daemon status dialog in desktop settings for quick health checks
 - Auto-restart daemon on version mismatch — the desktop app detects when the running daemon is outdated and restarts it automatically
 - Setup hint and codius.ai link on the mobile welcome screen so new App Store users know what to do next
@@ -1631,7 +1625,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- **Terminal management from the CLI** — new `codius terminal` command group lets you list, create, and interact with workspace terminals without leaving your terminal
+- **Terminal management from Codius CLI** — the `codius terminal` command group lets you list, create, and interact with workspace terminals without leaving your terminal
 - **Material file icons in the explorer** — the file explorer tree now shows language-specific icons (TypeScript, JSON, Markdown, etc.) so you can spot files at a glance
 
 ### Fixed
@@ -2019,7 +2013,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Fixed
 
-- Fixed CLI `run --output-schema` to use the shared structured-output path instead of ad-hoc JSON parsing
+- Fixed Codius CLI `run --output-schema` to use the shared structured-output path instead of ad-hoc JSON parsing
 - Fixed `run --output-schema` failures where providers returned empty `lastMessage` by recovering from timeline assistant output
 - Fixed internal commit message, pull request text, and agent metadata generation to follow one consistent structured pipeline
 
@@ -2057,7 +2051,7 @@ _This release only fixes an Android issue — desktop users don't need to update
 ### Fixed
 
 - Prevented an initial desktop combobox `0,0` position flash
-- Fixed CLI version output issues
+- Fixed Codius CLI version output issues
 - Hardened server runtime loading for local speech dependencies
 
 ## 0.1.6 - 2026-02-16
@@ -2106,16 +2100,16 @@ _This release only fixes an Android issue — desktop users don't need to update
 
 ### Added
 
-- Added CLI onboarding command
-- Added CLI `--output-schema` support for structured agent output
-- Added CLI agent metadata update support for names and labels
+- Added the Codius CLI onboarding command
+- Added Codius CLI `--output-schema` support for structured agent output
+- Added Codius CLI agent metadata update support for names and labels
 - Added provider availability detection with normalization of legacy default model IDs
 
 ### Improved
 
 - Improved file explorer refresh feedback and unresolved checkout fallback handling
 - Added better voice interrupt handling with a speech-start grace period
-- Improved CLI defaults to list all non-archived agents by default
+- Improved Codius CLI defaults to list all non-archived agents by default
 - Improved website UX with clearer install CTA and privacy policy access
 
 ### Fixed

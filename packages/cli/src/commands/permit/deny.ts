@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import type { AgentPermissionRequest } from "@codius-ai/protocol/agent-types";
+import type { AgentPermissionRequest } from "@codius.ai/protocol/agent-types";
 import { connectToDaemon, getDaemonHost } from "../../utils/client.js";
 import type { CommandOptions, ListResult, CommandError } from "../../output/index.js";
 import { permitResponseSchema, type PermissionResponseItem } from "./allow.js";
@@ -26,8 +26,7 @@ export async function runDenyCommand(
     const error: CommandError = {
       code: "MISSING_ARGUMENT",
       message: "Request ID is required unless --all is specified",
-      details:
-        "Usage: codiusctl permit deny <agent> <req_id> or codiusctl permit deny <agent> --all",
+      details: "Usage: codius permit deny <agent> <req_id> or codius permit deny <agent> --all",
     };
     throw error;
   }
@@ -40,7 +39,7 @@ export async function runDenyCommand(
     const error: CommandError = {
       code: "DAEMON_NOT_RUNNING",
       message: `Cannot connect to daemon at ${host}: ${message}`,
-      details: "Start the daemon with: codiusctl daemon start",
+      details: "Start the daemon with: codius daemon start",
     };
     throw error;
   }
@@ -52,7 +51,7 @@ export async function runDenyCommand(
       const error: CommandError = {
         code: "AGENT_NOT_FOUND",
         message: `Agent not found: ${agentIdOrPrefix}`,
-        details: 'Use "codiusctl ls" to list available agents',
+        details: 'Use "codius ls" to list available agents',
       };
       throw error;
     }

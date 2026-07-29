@@ -1,6 +1,6 @@
 # Security
 
-Codius follows a client-server architecture, similar to Docker. The daemon runs on your machine and manages your coding agents. Clients (the mobile app, CLI, or web interface) connect to the daemon to monitor and control those agents.
+Codius follows a client-server architecture, similar to Docker. The daemon runs on your machine and manages your coding agents. Clients (the mobile app, Codius CLI, or web interface) connect to the daemon to monitor and control those agents.
 
 Your code never leaves your machine. Codius is a local-first tool that connects directly to your development environment.
 
@@ -74,7 +74,19 @@ Codius validates the `Host` header on every HTTP request and every WebSocket upg
 
 ## Agent authentication
 
-Codius wraps agent CLIs (Claude Code, Codex, OpenCode) but does not manage their authentication. Each agent provider handles its own credentials. Codius never stores or transmits provider API keys. Agents run in your user context with your existing credentials.
+Agents normally manage their own authentication and run in your user context with your existing
+credentials.
+
+If you explicitly connect a Codius API key in host settings, the daemon stores it in
+`$CODIUS_HOME/model-access.json` with mode `0600`. Clients receive only a masked status value, not
+the key. The daemon validates the key only against the canonical Codius API and supplies it to
+compatible agent processes only when automatic Codius model defaults are enabled. A launch request
+with a custom process environment does not receive the stored key.
+
+Connected clients, selected workspaces, agent processes, plugins, and MCP servers remain inside the
+trusted-operator boundary described above. Only enable automatic model access for workspaces and
+tools you trust. Clearing Codius model access removes the locally stored key and disables automatic
+defaults.
 
 ## Forge host trust
 

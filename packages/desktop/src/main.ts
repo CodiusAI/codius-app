@@ -95,7 +95,7 @@ import {
   buildAgentDeepLinkRoute,
   parseAgentDeepLink,
   type AgentDeepLinkTarget,
-} from "@codius-ai/protocol/agent-deep-link";
+} from "@codius.ai/protocol/agent-deep-link";
 import { AgentNavigationInbox, parseAgentDeepLinkFromArgv } from "./agent-navigation.js";
 
 const DEV_SERVER_URL = process.env.EXPO_DEV_URL ?? "http://localhost:8081";
@@ -897,7 +897,7 @@ function setupSingleInstanceLock(): boolean {
       isDefaultApp: false,
     });
     log.info("[open-project] second-instance openProjectPath:", openProjectPath);
-    // Relaunching the app (CLI `codius [path]`, double-click, etc.) opens a new
+    // Relaunching the app (`codius [path]`, double-click, etc.) opens a new
     // window rather than focusing the existing one. Wait for bootstrap (not just
     // app.whenReady) so the protocol + IPC handlers exist before the window loads.
     void bootstrapComplete
@@ -980,7 +980,7 @@ async function bootstrap(): Promise<void> {
   registerBrowserAutomationIpc();
 
   // In-app "Open in new window": opens a window that lands on the given project
-  // via the same open-project flow as a CLI launch (no move, no ownership).
+  // via the same open-project flow as a Codius CLI launch (no move, no ownership).
   ipcMain.handle("codius:window:openNew", async (_event, options?: unknown) => {
     const pendingPath =
       options && typeof options === "object" && "pendingOpenProjectPath" in options

@@ -1,6 +1,6 @@
 import path from "path";
 import type { Command } from "commander";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import { connectToDaemon, getDaemonHost } from "../../utils/client.js";
 import type {
   CommandOptions,
@@ -55,7 +55,7 @@ export async function runArchiveCommandWithDeps(
     const error: CommandError = {
       code: "MISSING_WORKTREE_NAME",
       message: "Worktree name is required",
-      details: "Usage: codiusctl worktree archive <name>",
+      details: "Usage: codius worktree archive <name>",
     };
     throw error;
   }
@@ -68,7 +68,7 @@ export async function runArchiveCommandWithDeps(
     const error: CommandError = {
       code: "DAEMON_NOT_RUNNING",
       message: `Cannot connect to daemon at ${host}: ${message}`,
-      details: "Start the daemon with: codiusctl daemon start",
+      details: "Start the daemon with: codius daemon start",
     };
     throw error;
   }
@@ -95,7 +95,7 @@ export async function runArchiveCommandWithDeps(
       const error: CommandError = {
         code: "WORKTREE_NOT_FOUND",
         message: `Worktree not found: ${nameArg}`,
-        details: 'Use "codiusctl worktree ls" to list available worktrees',
+        details: 'Use "codius worktree ls" to list available worktrees',
       };
       throw error;
     }

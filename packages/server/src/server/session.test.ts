@@ -9,15 +9,15 @@ import {
   assertPullRequestAutoMergeDisableReady,
   assertPullRequestAutoMergeEnableReady,
 } from "../services/github-service.js";
-import { PARENT_AGENT_ID_LABEL } from "@codius-ai/protocol/agent-labels";
-import { CLIENT_CAPS } from "@codius-ai/protocol/client-capabilities";
-import type { WorkspaceDescriptorPayload } from "@codius-ai/protocol/messages";
+import { PARENT_AGENT_ID_LABEL } from "@codius.ai/protocol/agent-labels";
+import { CLIENT_CAPS } from "@codius.ai/protocol/client-capabilities";
+import type { WorkspaceDescriptorPayload } from "@codius.ai/protocol/messages";
 import {
   decodeFileTransferFrame,
   encodeFileTransferFrame,
   FileTransferOpcode,
   type FileTransferFrame,
-} from "@codius-ai/protocol/binary-frames/index";
+} from "@codius.ai/protocol/binary-frames/index";
 import { isSessionRpcAllowed, Session } from "./session.js";
 import { DownloadTokenStore } from "./file-download/token-store.js";
 import { StructuredAgentFallbackError } from "./agent/agent-response-loop.js";

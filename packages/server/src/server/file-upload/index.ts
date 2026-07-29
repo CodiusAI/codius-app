@@ -4,8 +4,8 @@ import { basename, join } from "node:path";
 import {
   FileTransferOpcode,
   type FileTransferFrame,
-} from "@codius-ai/protocol/binary-frames/index";
-import { getErrorMessage } from "@codius-ai/protocol/error-utils";
+} from "@codius.ai/protocol/binary-frames/index";
+import { getErrorMessage } from "@codius.ai/protocol/error-utils";
 import type { FileUploadRequest, FileUploadResponse } from "../messages.js";
 
 interface FileUploadStoreOptions {

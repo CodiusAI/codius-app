@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import type pino from "pino";
-import { createClientChannel, type Transport } from "@codius-ai/relay/e2ee";
-import { exportPublicKey, generateKeyPair } from "@codius-ai/relay";
+import { createClientChannel, type Transport } from "@codius.ai/relay/e2ee";
+import { exportPublicKey, generateKeyPair } from "@codius.ai/relay";
 import { startRelayTransport } from "./relay-transport";
 
 function createMockLogger() {

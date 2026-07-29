@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
-import { spawnProcess } from "@codius-ai/server";
-import { buildAgentDeepLink, type AgentDeepLinkTarget } from "@codius-ai/protocol/agent-deep-link";
+import { spawnProcess } from "@codius.ai/server";
+import { buildAgentDeepLink, type AgentDeepLinkTarget } from "@codius.ai/protocol/agent-deep-link";
 
 function findDesktopApp(): string | null {
   if (process.platform === "darwin") {
@@ -51,7 +51,7 @@ function findDesktopApp(): string | null {
 
 function cleanEnvForDesktopLaunch(): NodeJS.ProcessEnv {
   const env = { ...process.env };
-  // The CLI runs via ELECTRON_RUN_AS_NODE=1. On Linux/Windows the spawned
+  // Codius CLI runs via ELECTRON_RUN_AS_NODE=1. On Linux/Windows the spawned
   // desktop process inherits the env directly, so we must strip it or the
   // desktop app would start as a bare Node process instead of Electron.
   delete env.ELECTRON_RUN_AS_NODE;

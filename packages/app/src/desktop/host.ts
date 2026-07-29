@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 import { getElectronHost } from "@/desktop/electron/host";
 import type { BrowserKeyboardPolicy } from "@/keyboard/browser-shortcuts";
-import type { SessionInboundMessage, SessionOutboundMessage } from "@codius-ai/protocol/messages";
+import type { SessionInboundMessage, SessionOutboundMessage } from "@codius.ai/protocol/messages";
 
 type BrowserAutomationExecuteRequest = Extract<
   SessionOutboundMessage,

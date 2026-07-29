@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { writePrivateFileAtomicSync } from "./private-files.js";
 
@@ -26,32 +26,39 @@ const CODIUS_DEFAULT_CONFIG = {
   app: {
     baseUrl: "https://codius.ai",
   },
-  agents: {
-    providers: {
-      codius: {
-        extends: "acp",
-        label: "Codius",
-        description: "Codius CLI with Codius coding plans and model routing",
-        command: ["codius", "acp"],
-        env: {
-          CODIUS_ENV: "production",
-        },
-        enabled: true,
-        order: -100,
-        params: {
-          supportsMcpServers: true,
-          clientCapabilities: {
-            fs: {
-              readTextFile: true,
-              writeTextFile: true,
-            },
-            terminal: true,
-          },
-        },
-      },
-    },
-  },
 } as const;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function removeRetiredProvider(configPath: string): void {
+  let config: unknown;
+  try {
+    config = JSON.parse(readFileSync(configPath, "utf8"));
+  } catch {
+    return;
+  }
+
+  if (!isRecord(config) || !isRecord(config.agents)) {
+    return;
+  }
+
+  const agents = config.agents;
+  if (!isRecord(agents.providers) || !Object.hasOwn(agents.providers, "codius")) {
+    return;
+  }
+
+  delete agents.providers.codius;
+  if (Object.keys(agents.providers).length === 0) {
+    delete agents.providers;
+  }
+  if (Object.keys(agents).length === 0) {
+    delete config.agents;
+  }
+
+  writePrivateFileAtomicSync(configPath, `${JSON.stringify(config, null, 2)}\n`);
+}
 
 export function shouldSeedCodiusHomeDefaults(env: NodeJS.ProcessEnv): boolean {
   const explicit = env.CODIUS_SEED_DEFAULTS?.trim().toLowerCase();
@@ -78,6 +85,9 @@ export function ensureCodiusHomeDefaults(codiusHome: string): void {
   writePrivateFileAtomicSync(configPath, `${JSON.stringify(CODIUS_DEFAULT_CONFIG, null, 2)}\n`);
 }
 
-export function getCodiusDefaultConfigForTest() {
-  return structuredClone(CODIUS_DEFAULT_CONFIG);
+export function removeRetiredCodiusAgentProvider(codiusHome: string): void {
+  const configPath = path.join(codiusHome, "config.json");
+  if (existsSync(configPath)) {
+    removeRetiredProvider(configPath);
+  }
 }

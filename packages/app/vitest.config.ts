@@ -77,11 +77,11 @@ export default defineConfig({
     ],
     alias: [
       {
-        find: /^@codius-ai\/relay\/e2ee$/,
+        find: /^@codius\.ai\/relay\/e2ee$/,
         replacement: path.resolve(__dirname, "../relay/src/e2ee.ts"),
       },
       {
-        find: /^@codius-ai\/relay$/,
+        find: /^@codius\.ai\/relay$/,
         replacement: path.resolve(__dirname, "../relay/src/index.ts"),
       },
       { find: "@", replacement: path.resolve(__dirname, "src") },

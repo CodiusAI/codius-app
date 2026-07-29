@@ -16,6 +16,7 @@ import type { LoopService } from "./loop-service.js";
 import type { ScheduleService } from "./schedule/service.js";
 import type { CheckoutDiffManager, CheckoutDiffMetrics } from "./checkout-diff-manager.js";
 import type { DaemonConfigStore, MutableDaemonConfig } from "./daemon-config-store.js";
+import type { CodiusModelAccessStore } from "./codius-model-access-store.js";
 import {
   type ServerInfoStatusPayload,
   type SessionOutboundMessage,
@@ -28,8 +29,8 @@ import {
   type WSOutboundMessage,
   wrapSessionMessage,
 } from "./messages.js";
-import { asUint8Array, decodeBinaryFrame } from "@codius-ai/protocol/binary-frames/index";
-import type { TerminalActivity } from "@codius-ai/protocol/terminal-activity";
+import { asUint8Array, decodeBinaryFrame } from "@codius.ai/protocol/binary-frames/index";
+import type { TerminalActivity } from "@codius.ai/protocol/terminal-activity";
 import type { HostnamesConfig } from "./hostnames.js";
 import { isHostnameAllowed } from "./hostnames.js";
 import { Session, type SessionLifecycleIntent, type SessionRuntimeMetrics } from "./session.js";
@@ -61,7 +62,7 @@ import {
 import {
   buildAgentAttentionNotificationPayload,
   findLatestPermissionRequest,
-} from "@codius-ai/protocol/agent-attention-notification";
+} from "@codius.ai/protocol/agent-attention-notification";
 import { createGitHubService } from "../services/github-service.js";
 import type { ForgeService } from "../services/forge-service.js";
 import {
@@ -81,12 +82,12 @@ import {
   CLIENT_SHUTDOWN_RPC_REASON,
   normalizeClientRestartRpcReason,
 } from "./lifecycle-reasons.js";
-import { CLIENT_CAPS } from "@codius-ai/protocol/client-capabilities";
-import type { BrowserAutomationExecuteResponse } from "@codius-ai/protocol/browser-automation/rpc-schemas";
+import { CLIENT_CAPS } from "@codius.ai/protocol/client-capabilities";
+import type { BrowserAutomationExecuteResponse } from "@codius.ai/protocol/browser-automation/rpc-schemas";
 import {
   BrowserAutomationHostCapabilitySchema,
   type BrowserAutomationHostCapability,
-} from "@codius-ai/protocol/browser-automation/capabilities";
+} from "@codius.ai/protocol/browser-automation/capabilities";
 import type { BrowserToolsBroker } from "./browser-tools/broker.js";
 import type { DaemonRuntimeConfig } from "./session/daemon/daemon-session.js";
 import {
@@ -514,6 +515,7 @@ export class VoiceAssistantWebSocketServer {
   private readonly codiusHome: string;
   private readonly worktreesRoot: string | undefined;
   private readonly daemonConfigStore: DaemonConfigStore;
+  private readonly codiusModelAccessStore: CodiusModelAccessStore | null;
   private readonly pushTokenStore: PushTokenStore;
   private readonly pushNotificationSender: PushNotificationSender;
   private readonly mcpBaseUrl: string | null;
@@ -596,6 +598,7 @@ export class VoiceAssistantWebSocketServer {
     serviceProxyPublicBaseUrl?: string | null,
     browserToolsBroker?: BrowserToolsBroker | null,
     hubRelationships?: HubRelationshipManagement | null,
+    codiusModelAccessStore?: CodiusModelAccessStore,
   ) {
     this.logger = logger.child({ module: "websocket-server" });
     this.serverId = serverId;
@@ -627,6 +630,7 @@ export class VoiceAssistantWebSocketServer {
     this.codiusHome = codiusHome;
     this.worktreesRoot = daemonRuntimeConfig?.worktreesRoot;
     this.daemonConfigStore = daemonConfigStore;
+    this.codiusModelAccessStore = codiusModelAccessStore ?? null;
     this.mcpBaseUrl = mcpBaseUrl;
     this.assignOptionalServices({
       speech,
@@ -1326,6 +1330,7 @@ export class VoiceAssistantWebSocketServer {
       workspaceGitService: this.workspaceGitService,
       workspaceAutoName: this.workspaceAutoName,
       daemonConfigStore: this.daemonConfigStore,
+      codiusModelAccessStore: this.codiusModelAccessStore ?? undefined,
       mcpBaseUrl: this.mcpBaseUrl,
       stt: () => this.speech?.resolveStt() ?? null,
       sttLanguage: this.speech?.resolveSttLanguage() ?? "en",
@@ -1578,6 +1583,8 @@ export class VoiceAssistantWebSocketServer {
         stableProjectIdentity: true,
         // COMPAT(workspaceScriptManagement): added in v0.1.105, remove gate after 2027-01-10.
         workspaceScriptManagement: true,
+        // COMPAT(codiusModelAccess): added in v0.2.X, remove when the daemon floor includes it.
+        codiusModelAccess: this.codiusModelAccessStore !== null,
       },
     };
   }

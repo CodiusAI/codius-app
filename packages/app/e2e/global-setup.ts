@@ -47,7 +47,10 @@ const RESERVED_LOCAL_PORTS = new Set([
   61680,
 ]);
 
-function createLineBuffer(maxLines = 120): { add: (line: string) => void; dump: () => string } {
+function createLineBuffer(maxLines = 120): {
+  add: (line: string) => void;
+  dump: () => string;
+} {
   const lines: string[] = [];
   return {
     add(line: string) {
@@ -434,7 +437,7 @@ function ensureRelayBuildArtifact(repoRoot: string): void {
     return;
   }
 
-  console.log("[e2e] Building @codius-ai/relay for daemon startup");
+  console.log("[e2e] Building @codius.ai/relay for daemon startup");
   execSync("npm run build:relay", {
     cwd: repoRoot,
     stdio: "inherit",
@@ -666,7 +669,10 @@ async function startRelay(excludedPorts: Set<number>): Promise<RelayPorts> {
     const relayPort = await getAvailablePortExcluding(excludedPorts);
     const inspectorPort = await getAvailablePortExcluding(new Set([...excludedPorts, relayPort]));
     const buffer = createLineBuffer();
-    const state: RelayStreamState = { failureLine: null, readyForSelectedPort: false };
+    const state: RelayStreamState = {
+      failureLine: null,
+      readyForSelectedPort: false,
+    };
 
     relayProcess = spawn(
       process.execPath,
@@ -857,7 +863,18 @@ export default async function globalSetup() {
   await loadEnvTestFile(repoRoot);
 
   const port = await getAvailablePortExcluding(new Set());
-  const metroPort = await getAvailablePortExcluding(new Set([port]));
+  const externalMetroPort = process.env.E2E_EXTERNAL_METRO_PORT
+    ? Number(process.env.E2E_EXTERNAL_METRO_PORT)
+    : null;
+  if (
+    externalMetroPort !== null &&
+    (!Number.isInteger(externalMetroPort) || externalMetroPort < 1 || externalMetroPort > 65535)
+  ) {
+    throw new Error(
+      `E2E_EXTERNAL_METRO_PORT must be a valid TCP port, received ${process.env.E2E_EXTERNAL_METRO_PORT}.`,
+    );
+  }
+  const metroPort = externalMetroPort ?? (await getAvailablePortExcluding(new Set([port])));
   const requestedCodiusHome = resolveOptionalCodiusHomeEnv(process.env.E2E_CODIUS_HOME);
   const shouldRemoveCodiusHome = !requestedCodiusHome && process.env.E2E_KEEP_CODIUS_HOME !== "1";
   codiusHome = requestedCodiusHome ?? (await mkdtemp(path.join(tmpdir(), "codius-e2e-home-")));
@@ -873,13 +890,15 @@ export default async function globalSetup() {
   await logSpeechHarnessConfig();
 
   try {
-    metroProcess = startMetro({
-      metroPort,
-      daemonPort: port,
-      buffer: metroLineBuffer,
-    });
+    if (externalMetroPort === null) {
+      metroProcess = startMetro({
+        metroPort,
+        daemonPort: port,
+        buffer: metroLineBuffer,
+      });
+    }
     await waitForMetro(metroPort, {
-      label: "Metro web server",
+      label: externalMetroPort === null ? "Metro web server" : "External Metro web server",
       timeoutMs: 120000,
       childProcess: metroProcess,
       getRecentOutput: metroLineBuffer.dump,

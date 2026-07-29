@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { FetchAgentsEntry } from "@codius-ai/client/internal/daemon-client";
-import type { AgentSnapshotPayload } from "@codius-ai/protocol/messages";
+import type { FetchAgentsEntry } from "@codius.ai/client/internal/daemon-client";
+import type { AgentSnapshotPayload } from "@codius.ai/protocol/messages";
 import type { Agent } from "@/stores/session-store";
 import { reconcileAgentDirectory } from "./agent-directory-reconciliation";
 

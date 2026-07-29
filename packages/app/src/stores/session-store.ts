@@ -1,7 +1,7 @@
 import equal from "fast-deep-equal";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import type { ViewedTimelineUiBridge } from "@/timeline/viewed-timeline-sync";
 import type { AgentDirectoryEntry } from "@/types/agent-directory";
 import {
@@ -22,7 +22,7 @@ import {
 } from "@/composer/submission/model";
 import type { PendingPermission } from "@/types/shared";
 import type { ComposerAttachment } from "@/attachments/types";
-import type { AgentLifecycleStatus } from "@codius-ai/protocol/agent-lifecycle";
+import type { AgentLifecycleStatus } from "@codius.ai/protocol/agent-lifecycle";
 import type {
   AgentPermissionRequest,
   AgentFeature,
@@ -31,14 +31,14 @@ import type {
   AgentCapabilityFlags,
   AgentUsage,
   AgentPersistenceHandle,
-} from "@codius-ai/protocol/agent-types";
+} from "@codius.ai/protocol/agent-types";
 import type {
   ServerInfoStatusPayload,
   ProjectPlacementPayload,
   ServerCapabilities,
   WorkspaceDescriptorPayload,
   WorkspaceProjectDescriptorPayload,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 import {
   normalizeWorkspaceOpaqueId,
   normalizeWorkspacePath,

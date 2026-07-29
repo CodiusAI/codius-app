@@ -4,7 +4,7 @@ import equal from "fast-deep-equal";
 import { useStoreWithEqualityFn } from "zustand/traditional";
 import { useSessionStore, type Agent } from "@/stores/session-store";
 import { refreshProviderSubagents, useProviderSubagentStore } from "./provider-store";
-import type { ProviderSubagentDescriptorPayload } from "@codius-ai/protocol/messages";
+import type { ProviderSubagentDescriptorPayload } from "@codius.ai/protocol/messages";
 
 export interface CodiusSubagentRow {
   kind: "codius";

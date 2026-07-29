@@ -22,7 +22,7 @@ export function resolveProviderAndModel(
       code: "MISSING_PROVIDER",
       message: "Provider is required",
       details:
-        "Pass --provider <provider> or --provider <provider>/<model>. Use `codiusctl provider ls` to see providers and `codiusctl provider models <provider>` to see models.",
+        "Pass --provider <provider> or --provider <provider>/<model>. Use `codius provider ls` to see providers and `codius provider models <provider>` to see models.",
     };
     throw error;
   }

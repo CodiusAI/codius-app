@@ -1,5 +1,5 @@
-import { parseHostPort } from "@codius-ai/protocol/daemon-endpoints";
-import type { WorkspaceScriptPayload } from "@codius-ai/protocol/messages";
+import { parseHostPort } from "@codius.ai/protocol/daemon-endpoints";
+import type { WorkspaceScriptPayload } from "@codius.ai/protocol/messages";
 import type { ActiveConnection } from "@/runtime/host-runtime";
 
 export type WorkspaceScriptLinkKind = "public" | "codius" | "direct";

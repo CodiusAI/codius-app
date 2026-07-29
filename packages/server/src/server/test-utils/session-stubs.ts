@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 
-import { getAgentProviderDefinition } from "@codius-ai/protocol/provider-manifest";
+import { getAgentProviderDefinition } from "@codius.ai/protocol/provider-manifest";
 
 import type {
   AgentMode,
@@ -15,7 +15,7 @@ import type {
 } from "../agent/provider-snapshot-manager.js";
 import { ProviderSnapshotManager } from "../agent/provider-snapshot-manager.js";
 import type { SessionOptions } from "../session.js";
-import type { SessionOutboundMessage } from "@codius-ai/protocol/messages";
+import type { SessionOutboundMessage } from "@codius.ai/protocol/messages";
 import { asInternals, createStub } from "./class-mocks.js";
 
 // ---------------------------------------------------------------------------

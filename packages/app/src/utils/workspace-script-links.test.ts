@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { WorkspaceScriptPayload } from "@codius-ai/protocol/messages";
+import type { WorkspaceScriptPayload } from "@codius.ai/protocol/messages";
 import type { ActiveConnection } from "@/runtime/host-runtime";
 import { resolveWorkspaceScriptLink } from "./workspace-script-links";
 

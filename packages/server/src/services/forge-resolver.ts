@@ -1,5 +1,5 @@
 import { LRUCache } from "lru-cache";
-import { parseGitRemoteLocation, type GitRemoteLocation } from "@codius-ai/protocol/git-remote";
+import { parseGitRemoteLocation, type GitRemoteLocation } from "@codius.ai/protocol/git-remote";
 import { resolveSshHostname, type SshHostnameResolver } from "../utils/ssh-hostname.js";
 import { defaultResolveRemoteUrl } from "./forge-cli-command.js";
 import type { ForgeService } from "./forge-service.js";

@@ -17,8 +17,8 @@ import {
   decodeTerminalStreamFrame,
   encodeTerminalStreamFrame,
   TerminalStreamOpcode,
-} from "@codius-ai/protocol/terminal-stream-protocol";
-import { CLIENT_CAPS } from "@codius-ai/protocol/client-capabilities";
+} from "@codius.ai/protocol/terminal-stream-protocol";
+import { CLIENT_CAPS } from "@codius.ai/protocol/client-capabilities";
 
 type SocketListener = (...args: unknown[]) => void;
 

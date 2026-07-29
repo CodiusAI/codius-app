@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { resolveHookActivity, type AgentHookActivityState } from "@codius-ai/server/agent-hooks";
+import { resolveHookActivity, type AgentHookActivityState } from "@codius.ai/server/agent-hooks";
 
 interface HookEnvironment {
   CODIUS_TERMINAL_ID?: string;

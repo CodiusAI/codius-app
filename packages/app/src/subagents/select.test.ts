@@ -1,4 +1,4 @@
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import { afterEach, describe, expect, it } from "vitest";
 import { selectProviderSubagentsForParent, selectSubagentsForParent } from "./select";
 import { useProviderSubagentStore } from "./provider-store";

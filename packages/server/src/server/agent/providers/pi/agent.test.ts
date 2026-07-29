@@ -67,11 +67,13 @@ async function loadCodiusExtensionListeners(
     default: (piApi: {
       on: (event: string, listener: CodiusExtensionListener) => void;
       registerCommand: () => void;
+      registerProvider: () => void;
     }) => void;
   };
   extension.default({
     on: (event, listener) => listeners.set(event, listener),
     registerCommand: () => undefined,
+    registerProvider: () => undefined,
   });
   return listeners;
 }
@@ -83,6 +85,27 @@ async function applyCodiusExtensionSystemPrompt(
   const listeners = await loadCodiusExtensionListeners(extensionPath);
   const result = await listeners.get("before_agent_start")?.({ systemPrompt });
   return (result as { systemPrompt?: string } | undefined)?.systemPrompt;
+}
+
+async function loadCodiusProviderRegistration(
+  extensionPath: string,
+): Promise<{ id: string; config: Record<string, unknown> } | null> {
+  let registration: { id: string; config: Record<string, unknown> } | null = null;
+  const extension = (await import(pathToFileURL(extensionPath).href)) as {
+    default: (piApi: {
+      on: () => void;
+      registerCommand: () => void;
+      registerProvider: (id: string, config: Record<string, unknown>) => void;
+    }) => void;
+  };
+  extension.default({
+    on: () => undefined,
+    registerCommand: () => undefined,
+    registerProvider: (id, config) => {
+      registration = { id, config };
+    },
+  });
+  return registration;
 }
 
 async function flushTurnScheduling(): Promise<void> {
@@ -850,6 +873,56 @@ describe("PiRpcAgentSession", () => {
     await expect(
       applyCodiusExtensionSystemPrompt(actualLaunch.extensionPaths[0]!, "Pi project prompt"),
     ).resolves.toBe("Pi project prompt\n\nAgent prompt\n\nDaemon prompt");
+
+    await session.close();
+  });
+
+  test("registers Codius models from the isolated launch environment", async () => {
+    const pi = new FakePi();
+    const client = createClient(pi);
+    const previousKey = process.env.CODIUS_API_KEY;
+    const previousBaseUrl = process.env.CODIUS_API_BASE_URL;
+    const previousCatalog = process.env.CODIUS_MODEL_CATALOG;
+    onTestFinished(() => {
+      if (previousKey === undefined) delete process.env.CODIUS_API_KEY;
+      else process.env.CODIUS_API_KEY = previousKey;
+      if (previousBaseUrl === undefined) delete process.env.CODIUS_API_BASE_URL;
+      else process.env.CODIUS_API_BASE_URL = previousBaseUrl;
+      if (previousCatalog === undefined) delete process.env.CODIUS_MODEL_CATALOG;
+      else process.env.CODIUS_MODEL_CATALOG = previousCatalog;
+    });
+
+    const catalog = Buffer.from(
+      JSON.stringify({ models: [{ id: "code-default", name: "Code Default" }] }),
+      "utf8",
+    ).toString("base64url");
+    const session = await client.createSession(createConfig({ model: "codius/code-default" }), {
+      env: {
+        CODIUS_API_KEY: "host-key",
+        CODIUS_API_BASE_URL: "https://api.codius.ai/v1",
+        CODIUS_MODEL_CATALOG: catalog,
+      },
+    });
+    const launch = pi.recordedLaunches[0]!;
+    expect(launch.argv).toContain("codius/code-default");
+    process.env.CODIUS_API_KEY = "host-key";
+    process.env.CODIUS_API_BASE_URL = "https://api.codius.ai/v1";
+    process.env.CODIUS_MODEL_CATALOG = catalog;
+
+    await expect(loadCodiusProviderRegistration(launch.extensionPaths[0]!)).resolves.toEqual({
+      id: "codius",
+      config: expect.objectContaining({
+        baseUrl: "https://api.codius.ai/v1",
+        apiKey: "$CODIUS_API_KEY",
+        api: "openai-completions",
+        models: [
+          expect.objectContaining({
+            id: "code-default",
+            name: "Code Default",
+          }),
+        ],
+      }),
+    });
 
     await session.close();
   });

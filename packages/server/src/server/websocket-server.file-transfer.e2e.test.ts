@@ -6,7 +6,7 @@ import { WebSocket, type RawData } from "ws";
 import {
   decodeFileTransferFrame,
   FileTransferOpcode,
-} from "@codius-ai/protocol/binary-frames/index";
+} from "@codius.ai/protocol/binary-frames/index";
 import { createTestCodiusDaemon, type TestCodiusDaemon } from "./test-utils/index.js";
 import { WSOutboundMessageSchema, type WSOutboundMessage } from "./messages.js";
 

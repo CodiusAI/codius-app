@@ -1,4 +1,4 @@
-import type { ProjectPlacementPayload } from "@codius-ai/protocol/messages";
+import type { ProjectPlacementPayload } from "@codius.ai/protocol/messages";
 import { deriveProjectKey, deriveProjectName } from "@/utils/agent-grouping";
 
 function normalizeWorkingDirectory(cwd: string): string {

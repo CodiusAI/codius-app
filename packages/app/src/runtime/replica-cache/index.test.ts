@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import type { WorkspaceDescriptorPayload } from "@codius-ai/protocol/messages";
+import type { WorkspaceDescriptorPayload } from "@codius.ai/protocol/messages";
 import { normalizeAgentSnapshot } from "@/utils/agent-snapshots";
 import {
   normalizeEmptyProjectDescriptor,

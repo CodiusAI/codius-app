@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import { darkHighlightColors, lightHighlightColors } from "@codius-ai/highlight";
+import { darkHighlightColors, lightHighlightColors } from "@codius.ai/highlight";
 
 export const baseColors = {
   // Base colors

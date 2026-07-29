@@ -7,12 +7,12 @@ import { WebLinksAddon } from "@xterm/addon-web-links";
 import { WebglAddon } from "@xterm/addon-webgl";
 import { LigaturesAddon } from "@xterm/addon-ligatures/lib/addon-ligatures.mjs";
 import { Terminal, type ITheme } from "@xterm/xterm";
-import type { TerminalState } from "@codius-ai/protocol/messages";
+import type { TerminalState } from "@codius.ai/protocol/messages";
 import {
   type TerminalInputModeState,
   TerminalInputModeTracker,
   terminalInputModeStatesEqual,
-} from "@codius-ai/protocol/terminal-input-mode";
+} from "@codius.ai/protocol/terminal-input-mode";
 import {
   type PendingTerminalModifiers,
   isAppleHandheldPlatform,

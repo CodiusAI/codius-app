@@ -1,4 +1,4 @@
-import type { SubscribeTerminalRequest, TerminalState } from "@codius-ai/protocol/messages";
+import type { SubscribeTerminalRequest, TerminalState } from "@codius.ai/protocol/messages";
 import type { TerminalOutputData } from "./terminal-emulator-runtime";
 import { i18n } from "@/i18n/i18next";
 

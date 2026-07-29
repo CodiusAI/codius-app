@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { runDesktopStartup } from "./desktop-startup";
 
 describe("desktop startup", () => {
-  it("runs CLI passthrough before GUI login-shell env inheritance", async () => {
+  it("runs Codius CLI passthrough before GUI login-shell env inheritance", async () => {
     const calls: string[] = [];
     await runDesktopStartup({
       hasPendingGuiLaunchRequest: false,
@@ -54,7 +54,7 @@ describe("desktop startup", () => {
     expect(calls).toEqual(["cli", "env", "gui", "skills"]);
   });
 
-  it("does not route open-project launches through CLI passthrough", async () => {
+  it("does not route open-project launches through Codius CLI passthrough", async () => {
     const runCliPassthroughIfRequested = vi.fn(async () => true);
     const calls: string[] = [];
 

@@ -39,7 +39,7 @@ try {
   // Test 1: permit allow --help shows options
   {
     console.log("Test 1: permit allow --help shows options");
-    const result = await $`npx codiusctl permit allow --help`.nothrow();
+    const result = await $`npx codius permit allow --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "permit allow --help should exit 0");
     assert(result.stdout.includes("--all"), "help should mention --all flag");
     assert(result.stdout.includes("--input"), "help should mention --input option");
@@ -51,7 +51,7 @@ try {
   // Test 2: permit deny --help shows options
   {
     console.log("Test 2: permit deny --help shows options");
-    const result = await $`npx codiusctl permit deny --help`.nothrow();
+    const result = await $`npx codius permit deny --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "permit deny --help should exit 0");
     assert(result.stdout.includes("--all"), "help should mention --all flag");
     assert(result.stdout.includes("--message"), "help should mention --message option");
@@ -65,7 +65,7 @@ try {
   {
     console.log("Test 3: permit allow handles daemon not running");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl permit allow abc123 req456`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius permit allow abc123 req456`.nothrow();
     // Should fail because daemon not running
     assert.notStrictEqual(result.exitCode, 0, "should fail when daemon not running");
     const output = result.stdout + result.stderr;
@@ -81,7 +81,7 @@ try {
   {
     console.log("Test 4: permit deny handles daemon not running");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl permit deny abc123 req456`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius permit deny abc123 req456`.nothrow();
     // Should fail because daemon not running
     assert.notStrictEqual(result.exitCode, 0, "should fail when daemon not running");
     const output = result.stdout + result.stderr;
@@ -97,7 +97,7 @@ try {
   {
     console.log("Test 5: permit allow --all flag is accepted");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl permit allow abc123 --all`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius permit allow abc123 --all`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --all flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -108,7 +108,7 @@ try {
   {
     console.log("Test 6: permit deny --all flag is accepted");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl permit deny abc123 --all`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius permit deny abc123 --all`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --all flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -119,7 +119,7 @@ try {
   {
     console.log("Test 7: permit deny --message flag is accepted");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl permit deny abc123 req456 --message "Not allowed"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius permit deny abc123 req456 --message "Not allowed"`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --message flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -130,7 +130,7 @@ try {
   {
     console.log("Test 8: permit deny --interrupt flag is accepted");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl permit deny abc123 req456 --interrupt`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius permit deny abc123 req456 --interrupt`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --interrupt flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -141,7 +141,7 @@ try {
   {
     console.log("Test 9: permit allow --input flag is accepted");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl permit allow abc123 req456 --input '{"key":"value"}'`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius permit allow abc123 req456 --input '{"key":"value"}'`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --input flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -152,7 +152,7 @@ try {
   {
     console.log("Test 10: permit allow requires req_id or --all");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl permit allow abc123`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius permit allow abc123`.nothrow();
     // This might fail due to daemon not running first, or due to missing argument
     // The important thing is it doesn't crash with an unhandled error
     assert.notStrictEqual(result.exitCode, 0, "should fail without req_id or --all");
@@ -163,7 +163,7 @@ try {
   {
     console.log("Test 11: permit deny requires req_id or --all");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl permit deny abc123`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius permit deny abc123`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail without req_id or --all");
     console.log("✓ permit deny requires req_id or --all\n");
   }

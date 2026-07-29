@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import type { DaemonClient, FetchAgentsEntry } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient, FetchAgentsEntry } from "@codius.ai/client/internal/daemon-client";
 import { useSessionStore, type Agent } from "@/stores/session-store";
 import { deriveWorkspaceAgentVisibility } from "@/workspace-tabs/agent-visibility";
 import {

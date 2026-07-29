@@ -100,70 +100,6 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Bundle Codius CLI (macOS and Linux)
-        if: runner.os != 'Windows'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          CODIUS_CLI_RELEASE: v1.18.4-codius.2
-        run: |
-          case "${{ matrix.artifact }}" in
-            macos-arm64)
-              asset="codius-darwin-arm64.zip"
-              destination="packages/desktop/vendor/codius/darwin-arm64"
-              ;;
-            macos-x64)
-              asset="codius-darwin-x64.zip"
-              destination="packages/desktop/vendor/codius/darwin-x64"
-              ;;
-            linux)
-              asset="codius-linux-x64.tar.gz"
-              destination="packages/desktop/vendor/codius/linux-x64"
-              ;;
-          esac
-          mkdir -p "$destination" "$RUNNER_TEMP/codius-cli"
-          gh release download "$CODIUS_CLI_RELEASE" \
-            --repo CodiusAI/codius-cli \
-            --pattern "$asset" \
-            --dir "$RUNNER_TEMP/codius-cli"
-          if [[ "$asset" == *.zip ]]; then
-            unzip -q "$RUNNER_TEMP/codius-cli/$asset" -d "$destination"
-          else
-            tar -xzf "$RUNNER_TEMP/codius-cli/$asset" -C "$destination"
-          fi
-          chmod +x "$destination/codius"
-          "$destination/codius" --version
-          "$destination/codius" acp --help >/dev/null
-          CODIUS_ACP_BIN="$destination/codius" \
-            CODIUS_ACP_REQUIRE=1 \
-            CODIUS_ENV=production \
-            node packages/desktop/scripts/codius-acp-integration.mjs
-
-      - name: Bundle Codius CLI (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-          CODIUS_CLI_RELEASE: v1.18.4-codius.2
-        run: |
-          foreach ($arch in @("x64", "arm64")) {
-            $asset = "codius-windows-$arch.zip"
-            $download = Join-Path $env:RUNNER_TEMP $asset
-            $destination = "packages/desktop/vendor/codius/win32-$arch"
-            New-Item -ItemType Directory -Force -Path $destination | Out-Null
-            gh release download $env:CODIUS_CLI_RELEASE `
-              --repo CodiusAI/codius-cli `
-              --pattern $asset `
-              --dir $env:RUNNER_TEMP
-            Expand-Archive -Path $download -DestinationPath $destination -Force
-          }
-          & "packages/desktop/vendor/codius/win32-x64/codius.exe" --version
-          & "packages/desktop/vendor/codius/win32-x64/codius.exe" acp --help | Out-Null
-          $env:CODIUS_ACP_BIN = "packages/desktop/vendor/codius/win32-x64/codius.exe"
-          $env:CODIUS_ACP_REQUIRE = "1"
-          $env:CODIUS_ENV = "production"
-          node packages/desktop/scripts/codius-acp-integration.mjs
-
       - name: Set desktop package version
         shell: bash
         env:
@@ -181,14 +117,14 @@ jobs:
         run: |
           npm run build:server
           npm run build:app-deps
-          npm run build:main --workspace=@codius-ai/desktop
+          npm run build:main --workspace=@codius.ai/desktop
 
       - name: Validate release source
         run: |
           npm run format:check
           npm run typecheck
-          npm run test --workspace=@codius-ai/protocol
-          npm run test --workspace=@codius-ai/desktop
+          npm run test --workspace=@codius.ai/protocol
+          npm run test --workspace=@codius.ai/desktop
 
       - name: Build Codius packages
         run: npm run build:desktop -- --publish never

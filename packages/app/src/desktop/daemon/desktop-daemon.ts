@@ -167,7 +167,7 @@ export async function getDesktopDaemonPairing(): Promise<DesktopPairingOffer> {
 export async function getCliDaemonStatus(): Promise<string> {
   const raw = await invokeDesktopCommand<unknown>("cli_daemon_status");
   if (typeof raw !== "string") {
-    throw new Error("Unexpected CLI daemon status response.");
+    throw new Error("Unexpected Codius CLI daemon status response.");
   }
   return raw;
 }

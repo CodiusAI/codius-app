@@ -20,7 +20,8 @@
  */
 
 import assert from "node:assert";
-import { writeFile } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   createE2ETestContext,
@@ -132,7 +133,11 @@ const EXPECTED_CLAUDE_CATALOG_MODELS = [
 let claudeModelIdsFromJson: string[] = [];
 let claudeModelsFromJson: ProviderModel[] = [];
 
-const ctx = await createE2ETestContext({ timeout: 120000 });
+const claudeConfigDir = await mkdtemp(join(tmpdir(), "codius-provider-claude-config-"));
+const ctx = await createE2ETestContext({
+  timeout: 120000,
+  env: { CLAUDE_CONFIG_DIR: claudeConfigDir },
+});
 
 async function runProviderModelsJson(provider: string): Promise<ProviderModel[]> {
   const transientNeedles = ["transport closed", "timed out", "timeout", "socket", "econn"];
@@ -431,6 +436,7 @@ try {
   }
 } finally {
   await ctx.stop();
+  await rm(claudeConfigDir, { recursive: true, force: true });
 }
 
 console.log("=== All provider tests passed ===");

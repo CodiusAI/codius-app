@@ -1,5 +1,6 @@
 import type {
   AgentSnapshotPayload,
+  CodiusModelAccessStatus,
   CreateAgentRequestMessage,
   FetchWorkspacesRequestMessage,
   FetchWorkspacesResponseMessage,
@@ -16,8 +17,9 @@ import type {
   RefreshProvidersSnapshotResponseMessage,
   SendAgentMessageRequest,
   SessionOutboundMessage,
+  UpdateCodiusModelAccessInput,
   WorkspaceDescriptorPayload,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 import { DaemonClient } from "./daemon-client.js";
 import type {
   FetchAgentTimelineCursor,
@@ -335,11 +337,22 @@ export interface CodiusConfigActions {
   ): Promise<{ requestId: string; config: MutableDaemonConfig }>;
 }
 
+export interface CodiusModelAccessActions {
+  get(
+    requestId?: string,
+  ): Promise<{ requestId: string; status: CodiusModelAccessStatus; error: string | null }>;
+  update(
+    input: UpdateCodiusModelAccessInput,
+    requestId?: string,
+  ): Promise<{ requestId: string; status: CodiusModelAccessStatus; error: string | null }>;
+}
+
 export interface CodiusClient {
   readonly workspaces: CodiusWorkspaceActions;
   readonly agents: CodiusAgentActions;
   readonly providers: CodiusProviderActions;
   readonly config: CodiusConfigActions;
+  readonly modelAccess: CodiusModelAccessActions;
   connect(): Promise<void>;
   close(): Promise<void>;
   ensureConnected(): void;
@@ -403,6 +416,10 @@ export function createCodiusClient(config: CodiusClientConfig): CodiusClient {
     config: {
       get: (requestId) => daemonClient.getDaemonConfig(requestId),
       patch: (patch, requestId) => daemonClient.patchDaemonConfig(patch, requestId),
+    },
+    modelAccess: {
+      get: (requestId) => daemonClient.getCodiusModelAccess(requestId),
+      update: (input, requestId) => daemonClient.updateCodiusModelAccess(input, requestId),
     },
     connect: () => daemonClient.connect(),
     close: () => daemonClient.close(),

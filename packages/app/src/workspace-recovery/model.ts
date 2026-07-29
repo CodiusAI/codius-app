@@ -1,4 +1,4 @@
-import type { WorkspaceRecoveryState as AuthoritativeWorkspaceRecoveryState } from "@codius-ai/protocol/messages";
+import type { WorkspaceRecoveryState as AuthoritativeWorkspaceRecoveryState } from "@codius.ai/protocol/messages";
 
 type AuthoritativeRecoverableWorkspace = Extract<
   AuthoritativeWorkspaceRecoveryState,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { CodiusConfigRawSchema } from "@codius-ai/protocol/codius-config-schema";
-import type { CodiusConfigRaw } from "@codius-ai/protocol/messages";
+import { CodiusConfigRawSchema } from "@codius.ai/protocol/codius-config-schema";
+import type { CodiusConfigRaw } from "@codius.ai/protocol/messages";
 import { applyDraftToConfig, configToDraft, type ProjectConfigDraft } from "./project-config-form";
 
 function emptyDraft(): ProjectConfigDraft {

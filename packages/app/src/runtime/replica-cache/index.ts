@@ -7,7 +7,7 @@ import {
   WorkspaceProjectDescriptorPayloadSchema,
   type AgentSnapshotPayload,
   type WorkspaceDescriptorPayload,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 import {
   normalizeEmptyProjectDescriptor,
   normalizeWorkspaceDescriptor,

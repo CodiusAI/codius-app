@@ -1,4 +1,4 @@
-import type { ServerCapabilityState } from "@codius-ai/protocol/messages";
+import type { ServerCapabilityState } from "@codius.ai/protocol/messages";
 import type { DaemonServerInfo } from "@/stores/session-store";
 
 export type VoiceReadinessMode = "dictation" | "voice";

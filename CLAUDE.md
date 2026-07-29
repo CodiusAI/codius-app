@@ -10,10 +10,9 @@ This is an npm workspace monorepo:
 
 - `packages/server` — Daemon: agent lifecycle, WebSocket API, MCP server
 - `packages/app` — Mobile + web client (Expo)
-- `packages/cli` — Docker-style CLI (`codius run/ls/logs/wait`)
+- `packages/cli` — Codius CLI (`codius run/ls/logs/wait`)
 - `packages/relay` — E2E encrypted relay for remote access
 - `packages/desktop` — Electron desktop wrapper
-- `packages/website` — Marketing site (codius.ai)
 
 ## Docs
 
@@ -40,7 +39,7 @@ At the start of non-trivial work, list `docs/` and skim anything relevant to the
 | [docs/forge-providers.md](docs/forge-providers.md)                 | Adding a git forge: registry/manifest, drop-in checklist, self-host/GHES, the two facts tiers                                  |
 | [docs/custom-providers.md](docs/custom-providers.md)               | Custom provider config: Z.AI, Alibaba/Qwen, ACP agents, profiles, custom binaries                                              |
 | [docs/service-proxy.md](docs/service-proxy.md)                     | Service proxy: exposing workspace scripts at public URLs, DNS setup, reverse proxy config                                      |
-| [docs/development.md](docs/development.md)                         | Dev server, build sync gotchas, CLI reference, agent state, Playwright MCP                                                     |
+| [docs/development.md](docs/development.md)                         | Dev server, build sync gotchas, Codius CLI reference, agent state, Playwright MCP                                              |
 | [docs/rpc-namespacing.md](docs/rpc-namespacing.md)                 | WebSocket RPC naming convention — dotted namespaces and `.request`/`.response` pairs                                           |
 | [docs/protocol-validation.md](docs/protocol-validation.md)         | zod-aot generated inbound WebSocket validation, patched compiler regressions, schema-purity rules                              |
 | [docs/terminal-performance.md](docs/terminal-performance.md)       | Terminal latency pipeline, coalescing/backpressure invariants, benchmark + perf spec usage                                     |
@@ -61,8 +60,8 @@ At the start of non-trivial work, list `docs/` and skim anything relevant to the
 npm run dev                          # Start the dev daemon
 npm run dev:app                      # Start Expo against the dev daemon
 npm run dev:desktop                  # Start Electron desktop dev
-npm run cli -- ls -a -g              # List all agents
-npm run cli -- daemon status         # Check daemon status
+npm run cli -- ls -a -g          # List all agents
+npm run cli -- daemon status     # Check daemon status
 npm run typecheck                    # Always run after changes
 npm run lint                         # Always run after changes
 npm run format                       # Auto-format with Biome
@@ -88,7 +87,7 @@ See [docs/development.md](docs/development.md) for full setup, build sync requir
 - **Always run typecheck and lint after every change.**
 - **Build workspace packages before diagnosing cross-package type errors.** This repo consumes generated declarations across workspaces. If typecheck fails in a package that depends on another workspace, rebuild the owning stack first so `dist` declarations are current:
   - `npm run build:client` — rebuild protocol and client declarations.
-  - `npm run build:server` — rebuild highlight, relay, protocol, client, server, and CLI when server/CLI types may be stale.
+  - `npm run build:server` — rebuild highlight, relay, protocol, client, server, and Codius CLI when server/CLI types may be stale.
   - Do not patch inferred callback parameters or add local duplicate types just to silence stale declaration errors.
 - **Run `npm run format` before committing.** This repo uses Biome for formatting. Do not manually fix formatting — let the formatter handle it.
 - **Always use npm scripts for linting and formatting.** Do not run tools directly with `npx eslint`, `npx oxfmt`, `npx oxlint`, or package-local binaries. For targeted checks, pass file paths through the npm script:

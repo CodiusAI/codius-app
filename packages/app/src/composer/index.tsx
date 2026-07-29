@@ -94,7 +94,7 @@ import { createMessageSubmissionWriter } from "@/composer/submission/writer";
 import { ComposerKeyboardScopeProvider } from "@/composer/keyboard-scope";
 import { useAppSettings } from "@/hooks/use-settings";
 import { isWeb, isNative } from "@/constants/platform";
-import type { ForgeSearchItem } from "@codius-ai/protocol/messages";
+import type { ForgeSearchItem } from "@codius.ai/protocol/messages";
 import type {
   AttachmentMetadata,
   ComposerAttachment,

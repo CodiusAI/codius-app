@@ -11,7 +11,7 @@ import { AGENT_WAIT_TIMEOUT_MS } from "./mcp-shared.js";
 import { createTestCodiusDaemon, type TestCodiusDaemon } from "../test-utils/codius-daemon.js";
 import { createTestAgentClients } from "../test-utils/fake-agent-client.js";
 import type { AgentClient, AgentProvider, AgentSessionConfig } from "./agent-sdk-types.js";
-import { PARENT_AGENT_ID_LABEL } from "@codius-ai/protocol/agent-labels";
+import { PARENT_AGENT_ID_LABEL } from "@codius.ai/protocol/agent-labels";
 
 interface StructuredContent {
   [key: string]: unknown;

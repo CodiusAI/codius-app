@@ -19,8 +19,8 @@ export {
   CodiusConfigSchema,
   type CodiusConfig,
   type CodiusConfigRaw,
-} from "@codius-ai/protocol/codius-config-schema";
-import { CodiusConfigSchema, type CodiusConfig } from "@codius-ai/protocol/codius-config-schema";
+} from "@codius.ai/protocol/codius-config-schema";
+import { CodiusConfigSchema, type CodiusConfig } from "@codius.ai/protocol/codius-config-schema";
 import {
   normalizeBaseRefName,
   type CodiusWorktreeChangeRequestLookupTarget,
@@ -34,7 +34,7 @@ import { spawnProcess } from "./spawn.js";
 import { resolveCodiusHome } from "../server/codius-home.js";
 import { createExternalProcessEnv } from "../server/codius-env.js";
 import { parseGitRevParsePath, resolveGitRevParsePath } from "./git-rev-parse-path.js";
-import { validateBranchSlug } from "@codius-ai/protocol/branch-slug";
+import { validateBranchSlug } from "@codius.ai/protocol/branch-slug";
 import { expandTilde, getRealpathAwareRelativePath, isPathInsideRoot } from "./path.js";
 import {
   materializeWorktreeIncludePlan,
@@ -42,7 +42,7 @@ import {
   type WorktreeIncludeSummary,
 } from "./worktree-include.js";
 
-export { slugify, validateBranchSlug } from "@codius-ai/protocol/branch-slug";
+export { slugify, validateBranchSlug } from "@codius.ai/protocol/branch-slug";
 
 const execFileAsync = promisify(execFile);
 const READ_ONLY_GIT_ENV = {

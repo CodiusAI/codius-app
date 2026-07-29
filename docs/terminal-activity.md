@@ -43,9 +43,9 @@ Terminals receive four environment variables when the daemon creates the shell:
 - `CODIUS_TERMINAL_ID`
 - `CODIUS_ACTIVITY_TOKEN`
 - `CODIUS_TERMINAL_ACTIVITY_URL`
-- `CODIUS_HOOK_CLI` — absolute path to the current `codius` CLI executable.
+- `CODIUS_HOOK_CLI` — absolute path to the current `codius` executable.
 
-The generated shell command uses `CODIUS_HOOK_CLI` to run the current CLI. `codius hooks <agent> <event>` then reads the terminal id, token, and activity URL, asks the agent hook provider registry to resolve the event to a coarse activity state, and silently posts `{ terminalId, token, state }` to the activity URL. Missing env, unsupported agents/events, malformed hook input, and daemon/network failures are no-ops so agent hooks never break the user's terminal session.
+The generated shell command uses `CODIUS_HOOK_CLI` to run Codius CLI. `codius hooks <agent> <event>` then reads the terminal id, token, and activity URL, asks the agent hook provider registry to resolve the event to a coarse activity state, and silently posts `{ terminalId, token, state }` to the activity URL. Missing env, unsupported agents/events, malformed hook input, and daemon/network failures are no-ops so agent hooks never break the user's terminal session.
 
 Claude hook mapping:
 
@@ -82,7 +82,7 @@ terminal agent hooks" — "Get notifications and status from terminal agents. Th
 your agent config files." `applyTerminalAgentHookSetting` reconciles the installed hooks with the
 setting: at startup it installs only when enabled; toggling the setting live installs on enable and
 removes Codius's marker-matched hooks on disable. `codius hooks` keeps working regardless — the gate
-only controls whether the daemon writes hooks into agent configs, not whether the CLI can post
+only controls whether the daemon writes hooks into agent configs, not whether Codius CLI can post
 activity when the env is present.
 
 When enabled, Codius installs provider hooks globally:
@@ -93,9 +93,9 @@ When enabled, Codius installs provider hooks globally:
 
 Installation is marker-based/idempotent for config hooks and exact-file/idempotent for the OpenCode plugin. Codius preserves user hooks, removes only its own marker-matched command hooks, and leaves hooks installed across daemon shutdown. Outside a Codius terminal they are inert because the command or plugin is gated on `CODIUS_TERMINAL_ID`.
 
-Provider variation lives in `AGENT_HOOK_PROVIDERS`: provider id, installed events, config install metadata, and runtime event-to-activity resolution. The daemon calls `installRegisteredAgentHooks()` once; the CLI calls `resolveHookActivity(provider, event, input)`. Adding a provider should add one provider entry and register it in `AGENT_HOOK_PROVIDERS`, without editing the generic CLI command or daemon bootstrap.
+Provider variation lives in `AGENT_HOOK_PROVIDERS`: provider id, installed events, config install metadata, and runtime event-to-activity resolution. The daemon calls `installRegisteredAgentHooks()` once; Codius CLI calls `resolveHookActivity(provider, event, input)`. Adding a provider should add one provider entry and register it in `AGENT_HOOK_PROVIDERS`, without editing the generic CLI command or daemon bootstrap.
 
-The installed hook command keeps the config portable and resolves the CLI at runtime:
+The installed hook command keeps the config portable and resolves Codius CLI at runtime:
 
 ```sh
 [ -n "$CODIUS_TERMINAL_ID" ] && "${CODIUS_HOOK_CLI:-codius}" hooks claude <event>
@@ -107,6 +107,6 @@ Codex also receives the Windows equivalent:
 if defined CODIUS_TERMINAL_ID (if defined CODIUS_HOOK_CLI ("%CODIUS_HOOK_CLI%" hooks codex <event>) else (codius hooks codex <event>))
 ```
 
-The daemon resolves the current CLI through `CODIUS_CLI` when its launcher supplies one, or through the npm package shim for standalone installs. Terminal setup exposes that resolved executable to hooks as `CODIUS_HOOK_CLI`; desktop and other daemon launchers do not know about the hook-specific variable. The generated command falls back to bare `codius` if the hook env is missing and no-ops outside Codius terminals because the `CODIUS_TERMINAL_ID` gate remains first. Codius also prepends the resolved CLI directory to each terminal `PATH` as a secondary fallback. All other behavior lives in `codius hooks`: read the env, map the event, POST activity, and no-op/fail-open when anything is missing or unavailable.
+The daemon resolves Codius CLI through `CODIUS_CLI` when its launcher supplies one, or through the npm package shim for standalone installs. Terminal setup exposes that resolved executable to hooks as `CODIUS_HOOK_CLI`; desktop and other daemon launchers do not know about the hook-specific variable. The generated command falls back to bare `codius` if the hook env is missing and no-ops outside Codius terminals because the `CODIUS_TERMINAL_ID` gate remains first. Codius also prepends the resolved CLI directory to each terminal `PATH` as a secondary fallback. All other behavior lives in `codius hooks`: read the env, map the event, POST activity, and no-op/fail-open when anything is missing or unavailable.
 
 If config installation fails, daemon startup and terminal spawn continue without terminal activity hooks.

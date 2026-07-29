@@ -67,7 +67,7 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-          registry-url: "https://npm.pkg.github.com"
+          registry-url: "https://registry.npmjs.org/"
           scope: "@boudra"
 
       - name: Install JS dependencies

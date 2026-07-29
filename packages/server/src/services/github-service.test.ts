@@ -15,7 +15,7 @@ import {
   type GitHubPullRequestStatusFacts,
 } from "./github-service.js";
 import { isPlatform } from "../test-utils/platform.js";
-import { CheckoutPrStatusResponseSchema } from "@codius-ai/protocol/messages";
+import { CheckoutPrStatusResponseSchema } from "@codius.ai/protocol/messages";
 
 const EXPECTED_GITHUB_FAST_POLL_MS = 20_000;
 const EXPECTED_GITHUB_SLOW_POLL_MS = 120_000;

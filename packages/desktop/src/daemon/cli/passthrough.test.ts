@@ -15,7 +15,7 @@ function setDefaultApp(value: boolean): void {
   });
 }
 
-describe("passthrough CLI", () => {
+describe("passthrough Codius CLI", () => {
   afterEach(() => {
     setDefaultApp(originalDefaultApp);
     if (originalDesktopCli === undefined) {
@@ -25,7 +25,7 @@ describe("passthrough CLI", () => {
     }
   });
 
-  it("returns null when no CLI args are provided", () => {
+  it("returns null when no Codius CLI arguments are provided", () => {
     expect(
       parsePassthroughCliArgs({
         argv: ["/Applications/Codius.app/Contents/MacOS/Codius"],
@@ -75,7 +75,7 @@ describe("passthrough CLI", () => {
     ).toBeNull();
   });
 
-  it("preserves CLI flags for direct app invocations", () => {
+  it("preserves Codius CLI flags for direct app invocations", () => {
     expect(
       parsePassthroughCliArgs({
         argv: ["/Applications/Codius.app/Contents/MacOS/Codius", "--version"],
@@ -95,7 +95,7 @@ describe("passthrough CLI", () => {
     ).toEqual(["--open-project", "/tmp/project"]);
   });
 
-  it("forces CLI mode for shim launches even without args", () => {
+  it("forces Codius CLI mode for shim launches even without args", () => {
     expect(
       parsePassthroughCliArgs({
         argv: ["/Applications/Codius.app/Contents/MacOS/Codius"],
@@ -118,7 +118,7 @@ describe("passthrough CLI", () => {
     ).toEqual(["daemon", "set-password"]);
   });
 
-  it("runs passthrough CLI through the programmatic entrypoint", async () => {
+  it("runs passthrough Codius CLI through the programmatic entrypoint", async () => {
     const runCli = vi.fn(async () => 7);
 
     await expect(runPassthroughCli(["daemon", "set-password"], { runCli })).resolves.toBe(7);

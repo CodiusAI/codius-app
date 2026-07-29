@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   CodiusConfigRawSchema,
   CodiusConfigSchema,
-} from "@codius-ai/protocol/codius-config-schema";
+} from "@codius.ai/protocol/codius-config-schema";
 
 describe("codius config schema", () => {
   it("parses an empty config without metadata generation", () => {

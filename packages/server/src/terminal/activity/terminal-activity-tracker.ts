@@ -1,7 +1,7 @@
 import type {
   TerminalActivityAttentionReason,
   TerminalActivityState,
-} from "@codius-ai/protocol/terminal-activity";
+} from "@codius.ai/protocol/terminal-activity";
 
 export interface TerminalActivitySnapshot {
   state: TerminalActivityState | null;

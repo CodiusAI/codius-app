@@ -1,7 +1,7 @@
 #!/usr/bin/env npx tsx
 
 /**
- * Regression: `codiusctl daemon stop` must only act on daemon ownership state and
+ * Regression: `codius daemon stop` must only act on daemon ownership state and
  * must not discover/kill processes via home-scoped `ps` command heuristics.
  */
 
@@ -85,7 +85,7 @@ try {
   console.log("Test 2: daemon stop should report not_running and leave decoy untouched");
 
   const stopResult =
-    await $`CODIUS_HOME=${codiusHome} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${testEnv.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${testEnv.CODIUS_VOICE_MODE_ENABLED} npx codiusctl daemon stop --home ${codiusHome} --json`.nothrow();
+    await $`CODIUS_HOME=${codiusHome} CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.CODIUS_LOCAL_SPEECH_AUTO_DOWNLOAD} CODIUS_DICTATION_ENABLED=${testEnv.CODIUS_DICTATION_ENABLED} CODIUS_VOICE_MODE_ENABLED=${testEnv.CODIUS_VOICE_MODE_ENABLED} npx codius daemon stop --home ${codiusHome} --json`.nothrow();
   assert.strictEqual(stopResult.exitCode, 0, `stop should succeed: ${stopResult.stderr}`);
 
   const parsed = JSON.parse(stopResult.stdout) as { action?: unknown };
@@ -114,7 +114,7 @@ try {
     }
   }
 
-  await $`CODIUS_HOME=${codiusHome} npx codiusctl daemon stop --home ${codiusHome} --force`.nothrow();
+  await $`CODIUS_HOME=${codiusHome} npx codius daemon stop --home ${codiusHome} --force`.nothrow();
   await rm(codiusHome, { recursive: true, force: true });
 }
 

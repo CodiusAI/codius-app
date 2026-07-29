@@ -6,8 +6,8 @@ Controlled by `APP_VARIANT` in `packages/app/app.config.js` (vanilla Expo, no cu
 
 | Variant       | App name     | Package ID        |
 | ------------- | ------------ | ----------------- |
-| `production`  | Codius       | `sh.codius`       |
-| `development` | Codius Debug | `sh.codius.debug` |
+| `production`  | Codius       | `ai.codius`       |
+| `development` | Codius Debug | `ai.codius.debug` |
 
 EAS profiles: `development`, `production`, and `production-apk` in `packages/app/eas.json`.
 

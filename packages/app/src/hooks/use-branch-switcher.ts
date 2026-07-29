@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { useQuery, type QueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import type { ComboboxOption } from "@/components/ui/combobox";
 import type { ToastApi } from "@/components/toast-host";
 import { invalidateCheckoutGitQueriesForClient } from "@/git/query-keys";

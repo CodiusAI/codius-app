@@ -8,12 +8,12 @@
  *
  * Test flow:
  * 1. Start daemon on random port
- * 2. Create agent with `codiusctl run "say hello" --provider claude`
- * 3. List agents with `codiusctl ls`
- * 4. Wait for agent with `codiusctl wait <id>`
- * 5. Inspect agent with `codiusctl inspect <id>`
- * 6. Stop agent with `codiusctl stop <id>` and verify it remains inspectable
- * 7. Delete agent with `codiusctl delete <id>`
+ * 2. Create agent with `codius run "say hello" --provider claude`
+ * 3. List agents with `codius ls`
+ * 4. Wait for agent with `codius wait <id>`
+ * 5. Inspect agent with `codius inspect <id>`
+ * 6. Stop agent with `codius stop <id>` and verify it remains inspectable
+ * 7. Delete agent with `codius delete <id>`
  * 8. Cleanup: stop daemon, remove temp dirs
  *
  * CRITICAL RULES:

@@ -14,7 +14,7 @@
 #   bash packages/app/maestro/test-workspace-create-android-crash.sh
 #
 # Optional environment:
-#   CODIUS_MAESTRO_APP_ID=sh.codius.debug
+#   CODIUS_MAESTRO_APP_ID=ai.codius.debug
 #   CODIUS_MAESTRO_DIRECT_ENDPOINT=127.0.0.1:6767
 #   CODIUS_MAESTRO_DAEMON_WS_URL=ws://127.0.0.1:6767/ws
 #   CODIUS_MAESTRO_PROJECT_PATH=/path/to/git/repo
@@ -26,7 +26,7 @@ FLOW_TEMPLATE_DIR="$REPO_ROOT/packages/app/maestro"
 OUT_DIR="/tmp/codius-workspace-create-android-$(date +%s)"
 CLIENT_EXPORTS="$REPO_ROOT/packages/client/dist/daemon-client.js"
 
-export CODIUS_MAESTRO_APP_ID="${CODIUS_MAESTRO_APP_ID:-sh.codius.debug}"
+export CODIUS_MAESTRO_APP_ID="${CODIUS_MAESTRO_APP_ID:-ai.codius.debug}"
 export CODIUS_MAESTRO_DIRECT_ENDPOINT="${CODIUS_MAESTRO_DIRECT_ENDPOINT:-127.0.0.1:6767}"
 export CODIUS_MAESTRO_DAEMON_WS_URL="${CODIUS_MAESTRO_DAEMON_WS_URL:-ws://127.0.0.1:6767/ws}"
 

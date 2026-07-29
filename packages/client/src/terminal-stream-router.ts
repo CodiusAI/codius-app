@@ -4,8 +4,8 @@ import {
   encodeTerminalStreamFrame,
   TerminalStreamOpcode,
   type TerminalStreamFrame,
-} from "@codius-ai/protocol/binary-frames/index";
-import type { TerminalInput, TerminalState } from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/binary-frames/index";
+import type { TerminalInput, TerminalState } from "@codius.ai/protocol/messages";
 
 export type TerminalStreamEvent =
   | { terminalId: string; type: "output"; data: Uint8Array }

@@ -3,8 +3,8 @@ import { describe, expect, test } from "vitest";
 import {
   TerminalStreamOpcode,
   decodeTerminalStreamFrame,
-} from "@codius-ai/protocol/binary-frames/index";
-import type { TerminalCell, TerminalState } from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/binary-frames/index";
+import type { TerminalCell, TerminalState } from "@codius.ai/protocol/messages";
 import {
   encodeTerminalRestoreFrame,
   resolveRestoreAfterOutputOverflow,

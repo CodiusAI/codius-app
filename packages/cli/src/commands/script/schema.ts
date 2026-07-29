@@ -1,4 +1,4 @@
-import type { WorkspaceScriptPayload } from "@codius-ai/protocol/messages";
+import type { WorkspaceScriptPayload } from "@codius.ai/protocol/messages";
 import type { OutputSchema } from "../../output/index.js";
 
 export type WorkspaceScriptRow = WorkspaceScriptPayload;

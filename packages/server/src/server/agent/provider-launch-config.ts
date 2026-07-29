@@ -17,7 +17,7 @@ export {
   type ProviderOverrides,
   type ProviderProfileModel,
   type ProviderRuntimeSettings,
-} from "@codius-ai/protocol/provider-config";
+} from "@codius.ai/protocol/provider-config";
 import {
   ProviderOverrideSchema,
   ProviderOverridesSchema,
@@ -26,7 +26,7 @@ import {
   type ProviderOverride,
   type ProviderOverrides,
   type ProviderRuntimeSettings,
-} from "@codius-ai/protocol/provider-config";
+} from "@codius.ai/protocol/provider-config";
 
 export interface ProviderCommandPrefix {
   command: string;

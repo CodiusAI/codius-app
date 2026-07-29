@@ -76,9 +76,9 @@ import { ICON_SIZE, type Theme } from "@/styles/theme";
 import type { ComposerAttachment } from "@/attachments/types";
 import { useDraftWorkspaceAttachmentScopeKey } from "@/attachments/workspace-attachments-store";
 import type { MessagePayload } from "@/composer/types";
-import type { AgentAttachment, ForgeSearchItem } from "@codius-ai/protocol/messages";
-import type { CreateCodiusWorktreeInput } from "@codius-ai/client/internal/daemon-client";
-import type { AgentProvider } from "@codius-ai/protocol/agent-types";
+import type { AgentAttachment, ForgeSearchItem } from "@codius.ai/protocol/messages";
+import type { CreateCodiusWorktreeInput } from "@codius.ai/client/internal/daemon-client";
+import type { AgentProvider } from "@codius.ai/protocol/agent-types";
 import type { WorkspaceDraftTabSetup, WorkspaceTabTarget } from "@/workspace-tabs/model";
 import { isEmptyWorkspaceSubmission, runCreateEmptyWorkspace } from "./new-workspace-empty";
 import {

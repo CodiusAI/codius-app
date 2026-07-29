@@ -3,7 +3,7 @@ import type {
   AgentCapabilityFlags,
   AgentFeature,
   AgentProvider,
-} from "@codius-ai/protocol/agent-types";
+} from "@codius.ai/protocol/agent-types";
 
 export interface AgentScreenAgent {
   serverId: string;

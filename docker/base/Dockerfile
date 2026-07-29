@@ -19,12 +19,12 @@ RUN set -eux; \
 
 RUN set -eux; \
     mkdir -p /tmp/codius-packs; \
-    npm pack --workspace=@codius-ai/highlight --pack-destination /tmp/codius-packs; \
-    npm pack --workspace=@codius-ai/relay --pack-destination /tmp/codius-packs; \
-    npm pack --workspace=@codius-ai/protocol --pack-destination /tmp/codius-packs; \
-    npm pack --workspace=@codius-ai/client --pack-destination /tmp/codius-packs; \
-    npm pack --workspace=@codius-ai/server --pack-destination /tmp/codius-packs; \
-    npm pack --workspace=@codius-ai/cli --pack-destination /tmp/codius-packs
+    npm pack --workspace=@codius.ai/highlight --pack-destination /tmp/codius-packs; \
+    npm pack --workspace=@codius.ai/relay --pack-destination /tmp/codius-packs; \
+    npm pack --workspace=@codius.ai/protocol --pack-destination /tmp/codius-packs; \
+    npm pack --workspace=@codius.ai/client --pack-destination /tmp/codius-packs; \
+    npm pack --workspace=@codius.ai/server --pack-destination /tmp/codius-packs; \
+    npm pack --workspace=@codius.ai/cli --pack-destination /tmp/codius-packs
 
 FROM ${NODE_IMAGE}
 
@@ -61,7 +61,7 @@ RUN set -eux; \
 	npm install -g /tmp/codius-packs/*.tgz; \
     rm -rf /tmp/codius-packs; \
     npm cache clean --force; \
-    server_entry="$(npm root -g)/@codius-ai/server/dist/scripts/supervisor-entrypoint.js"; \
+    server_entry="$(npm root -g)/@codius.ai/server/dist/scripts/supervisor-entrypoint.js"; \
     test -f "$server_entry"; \
     printf '%s\n' "$server_entry" > /etc/codius-server-entry; \
     node --check "$server_entry"

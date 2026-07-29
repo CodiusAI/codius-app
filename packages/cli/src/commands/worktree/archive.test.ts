@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import { runArchiveCommandWithDeps } from "./archive.js";
 
 function createFakeDaemonClient(

@@ -1,17 +1,17 @@
 import { existsSync, readFileSync } from "node:fs";
-import { loadConfig, resolveCodiusHome } from "@codius-ai/server";
+import { loadConfig, resolveCodiusHome } from "@codius.ai/server";
 import {
   buildDaemonWebSocketUrl,
   buildRelayWebSocketUrl,
   normalizeHostPort,
   parseConnectionUri,
   shouldUseTlsForDefaultHostedRelay,
-} from "@codius-ai/protocol/daemon-endpoints";
+} from "@codius.ai/protocol/daemon-endpoints";
 import {
   parseConnectionOfferFromUrl,
   type ConnectionOffer,
-} from "@codius-ai/protocol/connection-offer";
-import { DaemonClient, type WebSocketLike } from "@codius-ai/client/internal/daemon-client";
+} from "@codius.ai/protocol/connection-offer";
+import { DaemonClient, type WebSocketLike } from "@codius.ai/client/internal/daemon-client";
 import path from "node:path";
 import { WebSocket } from "ws";
 import { getOrCreateCliClientId } from "./client-id.js";
@@ -59,7 +59,7 @@ export function buildDaemonConnectionCommandError(options: {
   return {
     code: "DAEMON_NOT_RUNNING",
     message: `Cannot connect to daemon at ${host}: ${message}`,
-    details: "Start the daemon with: codiusctl daemon start",
+    details: "Start the daemon with: codius daemon start",
   };
 }
 

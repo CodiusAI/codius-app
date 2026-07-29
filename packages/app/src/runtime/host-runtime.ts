@@ -5,7 +5,7 @@ import {
   DaemonClient,
   type ConnectionState,
   type FetchAgentsOptions,
-} from "@codius-ai/client/internal/daemon-client";
+} from "@codius.ai/client/internal/daemon-client";
 import {
   connectionFromListen,
   normalizeStoredHostProfile,
@@ -22,7 +22,7 @@ import {
   shouldUseTlsForDefaultHostedRelay,
 } from "@/utils/daemon-endpoints";
 import { resolveAppVersion } from "@/utils/app-version";
-import { ConnectionOfferSchema, type ConnectionOffer } from "@codius-ai/protocol/connection-offer";
+import { ConnectionOfferSchema, type ConnectionOffer } from "@codius.ai/protocol/connection-offer";
 import { shouldUseDesktopDaemon } from "@/desktop/daemon/desktop-daemon";
 import { isWeb } from "@/constants/platform";
 import { connectToDaemon } from "@/utils/test-daemon-connection";
@@ -37,8 +37,8 @@ import {
   createDesktopLocalDaemonTransportFactory,
 } from "@/desktop/daemon/desktop-daemon-transport";
 import { getDesktopHost } from "@/desktop/host";
-import { CLIENT_CAPS } from "@codius-ai/protocol/client-capabilities";
-import { BROWSER_AUTOMATION_COMMAND_NAMES } from "@codius-ai/protocol/browser-automation/rpc-schemas";
+import { CLIENT_CAPS } from "@codius.ai/protocol/client-capabilities";
+import { BROWSER_AUTOMATION_COMMAND_NAMES } from "@codius.ai/protocol/browser-automation/rpc-schemas";
 import { useSessionStore } from "@/stores/session-store";
 import { useWorkspaceSetupStore } from "@/stores/workspace-setup-store";
 import { invalidateCheckoutGitQueriesForServer } from "@/git/query-keys";

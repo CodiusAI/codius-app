@@ -1,6 +1,6 @@
 import type { Command } from "commander";
-import { PARENT_AGENT_ID_LABEL } from "@codius-ai/protocol/agent-labels";
-import type { AgentSnapshotPayload } from "@codius-ai/protocol/messages";
+import { PARENT_AGENT_ID_LABEL } from "@codius.ai/protocol/agent-labels";
+import type { AgentSnapshotPayload } from "@codius.ai/protocol/messages";
 import { connectToDaemon, getDaemonHost } from "../../utils/client.js";
 import type { CommandOptions, ListResult, OutputSchema, CommandError } from "../../output/index.js";
 
@@ -224,7 +224,7 @@ export async function runInspectCommand(
     const error: CommandError = {
       code: "MISSING_AGENT_ID",
       message: "Agent ID is required",
-      details: "Usage: codiusctl agent inspect <id>",
+      details: "Usage: codius agent inspect <id>",
     };
     throw error;
   }
@@ -237,7 +237,7 @@ export async function runInspectCommand(
     const error: CommandError = {
       code: "DAEMON_NOT_RUNNING",
       message: `Cannot connect to daemon at ${host}: ${message}`,
-      details: "Start the daemon with: codiusctl daemon start",
+      details: "Start the daemon with: codius daemon start",
     };
     throw error;
   }
@@ -248,7 +248,7 @@ export async function runInspectCommand(
       const error: CommandError = {
         code: "AGENT_NOT_FOUND",
         message: `Agent not found: ${agentIdArg}`,
-        details: 'Use "codiusctl ls" to list available agents',
+        details: 'Use "codius ls" to list available agents',
       };
       throw error;
     }

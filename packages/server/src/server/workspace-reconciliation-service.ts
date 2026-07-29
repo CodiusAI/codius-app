@@ -1,5 +1,5 @@
 import { statSync, watch as watchPath } from "node:fs";
-import type { ProjectCheckoutLitePayload } from "@codius-ai/protocol/messages";
+import type { ProjectCheckoutLitePayload } from "@codius.ai/protocol/messages";
 import type pino from "pino";
 import type {
   ProjectRegistry,

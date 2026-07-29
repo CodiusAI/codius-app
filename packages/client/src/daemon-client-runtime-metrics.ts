@@ -1,4 +1,4 @@
-import type { SessionOutboundMessage } from "@codius-ai/protocol/messages";
+import type { SessionOutboundMessage } from "@codius.ai/protocol/messages";
 
 interface RuntimeMetricsLogger {
   info(obj: object, msg?: string): void;

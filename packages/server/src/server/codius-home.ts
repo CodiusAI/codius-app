@@ -1,6 +1,10 @@
 import os from "node:os";
 import path from "node:path";
-import { ensureCodiusHomeDefaults, shouldSeedCodiusHomeDefaults } from "./codius-defaults.js";
+import {
+  ensureCodiusHomeDefaults,
+  removeRetiredCodiusAgentProvider,
+  shouldSeedCodiusHomeDefaults,
+} from "./codius-defaults.js";
 import { ensurePrivateDirectory } from "./private-files.js";
 
 function expandHomeDir(input: string): string {
@@ -17,6 +21,7 @@ export function resolveCodiusHome(env: NodeJS.ProcessEnv = process.env): string 
   const raw = env.CODIUS_HOME ?? "~/.codius";
   const resolved = path.resolve(expandHomeDir(raw));
   ensurePrivateDirectory(resolved);
+  removeRetiredCodiusAgentProvider(resolved);
   if (shouldSeedCodiusHomeDefaults(env)) {
     ensureCodiusHomeDefaults(resolved);
   }

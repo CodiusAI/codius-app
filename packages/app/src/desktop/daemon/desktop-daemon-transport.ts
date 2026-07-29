@@ -1,7 +1,7 @@
 import type {
   DaemonTransport,
   DaemonTransportFactory,
-} from "@codius-ai/client/internal/daemon-client";
+} from "@codius.ai/client/internal/daemon-client";
 import type { LocalTransportTarget } from "./desktop-daemon";
 import {
   defaultLocalDaemonTransportRpc,

@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
-import { PARENT_AGENT_ID_LABEL } from "@codius-ai/protocol/agent-labels";
+import { PARENT_AGENT_ID_LABEL } from "@codius.ai/protocol/agent-labels";
 import { createTestLogger } from "../test-utils/test-logger.js";
 import type { AgentSnapshotPayload, WorkspaceDescriptorPayload } from "./messages.js";
 import { WorkspaceDirectory } from "./workspace-directory.js";
 import type { PersistedProjectRecord, PersistedWorkspaceRecord } from "./workspace-registry.js";
-import type { TerminalActivity } from "@codius-ai/protocol/terminal-activity";
+import type { TerminalActivity } from "@codius.ai/protocol/terminal-activity";
 
 const NOW = "2026-03-01T12:00:00.000Z";
 

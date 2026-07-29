@@ -16,7 +16,7 @@ For lightweight recurring checks that should return to this same conversation, p
 
 Read the **codius** skill. Before choosing worker or verifier providers, read `~/.codius/orchestration-preferences.json` unless the user explicitly named providers in this request. Do not start the loop until you have read it.
 
-Loops are a CLI primitive: `codius loop run`. Manage with `codius loop ls`, `codius loop inspect <id>`, `codius loop logs <id>`, `codius loop stop <id>`.
+Loops are a Codius CLI primitive: `codius loop run`. Manage with `codius loop ls`, `codius loop inspect <id>`, `codius loop logs <id>`, `codius loop stop <id>`.
 
 ## Your job
 

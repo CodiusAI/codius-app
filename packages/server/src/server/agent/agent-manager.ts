@@ -4,15 +4,16 @@ import { stat } from "node:fs/promises";
 import {
   AGENT_LIFECYCLE_STATUSES,
   type AgentLifecycleStatus,
-} from "@codius-ai/protocol/agent-lifecycle";
+} from "@codius.ai/protocol/agent-lifecycle";
 import {
   getParentAgentIdFromLabels,
   isDelegatedAgent,
   PARENT_AGENT_ID_LABEL,
-} from "@codius-ai/protocol/agent-labels";
+} from "@codius.ai/protocol/agent-labels";
 import type { Logger } from "pino";
 import { z } from "zod";
 import type { TerminalManager } from "../../terminal/terminal-manager.js";
+import type { CodiusModelAccessStore } from "../codius-model-access-store.js";
 
 import {
   getAgentStreamEventTurnId,
@@ -62,7 +63,7 @@ import {
 } from "./agent-stream-coalescer.js";
 import { limitAgentTimelineItemContent } from "./agent-timeline-content.js";
 import { AgentRunState, type ForegroundTurnWaiter } from "./agent-run-state.js";
-import { getAgentProviderDefinition } from "@codius-ai/protocol/provider-manifest";
+import { getAgentProviderDefinition } from "@codius.ai/protocol/provider-manifest";
 import { invokeRewindCapability, type RewindMode } from "./rewind/rewind.js";
 import { isSystemInjectedEnvelope } from "./agent-prompt.js";
 import { stripInternalCodiusMcpServer, withRuntimeCodiusMcpServer } from "./runtime-mcp-config.js";
@@ -114,6 +115,7 @@ export type AgentRunCancellationResult =
 interface PreparedSessionConfig {
   storedConfig: AgentSessionConfig;
   launchConfig: AgentSessionConfig;
+  launchEnv: Record<string, string> | undefined;
 }
 
 interface NormalizeConfigOptions {
@@ -252,6 +254,7 @@ export interface AgentManagerOptions {
   codiusToolsEnabled?: boolean;
   codiusToolCatalogFactory?: CodiusToolCatalogFactory;
   appendSystemPrompt?: string;
+  codiusModelAccessStore?: CodiusModelAccessStore;
   agentStreamCoalesceWindowMs?: number;
   rescueTimeouts?: AgentManagerRescueTimeouts;
   logger: Logger;
@@ -593,6 +596,7 @@ export class AgentManager {
   private codiusToolsEnabled = true;
   private codiusToolCatalogFactory: CodiusToolCatalogFactory | null = null;
   private appendSystemPrompt: string;
+  private readonly codiusModelAccessStore: CodiusModelAccessStore | null;
   private onAgentAttention?: AgentAttentionCallback;
   private onAgentArchived?: AgentArchivedCallback;
   private onWorkspaceStateMayHaveChanged?: (params: { cwd: string }) => void;
@@ -610,6 +614,7 @@ export class AgentManager {
     this.mcpAuthToken = options?.mcpAuthToken ?? null;
     this.configureCodiusTools(options);
     this.appendSystemPrompt = options.appendSystemPrompt ?? "";
+    this.codiusModelAccessStore = options.codiusModelAccessStore ?? null;
     this.logger = options.logger.child({ module: "agent", component: "agent-manager" });
     this.rescueTimeouts = {
       reloadSessionCloseMs:
@@ -1038,7 +1043,7 @@ export class AgentManager {
     this.assertAcceptingAgentRegistrations();
     const resolvedAgentId = validateAgentId(agentId ?? this.idFactory(), "createAgent");
     await this.deleteAgentState(resolvedAgentId);
-    const { storedConfig, launchConfig } = await this.prepareSessionConfig(
+    const { storedConfig, launchConfig, launchEnv } = await this.prepareSessionConfig(
       config,
       resolvedAgentId,
       options?.env,
@@ -1047,7 +1052,7 @@ export class AgentManager {
     const client = await this.requireAvailableClient({
       provider: storedConfig.provider,
     });
-    const launchContext = await this.buildLaunchContext(resolvedAgentId, client, options?.env);
+    const launchContext = await this.buildLaunchContext(resolvedAgentId, client, launchEnv);
     const providerLaunchConfig = this.resolveProviderLaunchConfig(launchConfig, launchContext);
     const createOptions = this.buildCreateSessionOptions(options);
     const session = await client.createSession(providerLaunchConfig, launchContext, createOptions);
@@ -1113,7 +1118,7 @@ export class AgentManager {
       ...overrides,
       provider: handle.provider,
     } as AgentSessionConfig;
-    const { storedConfig, launchConfig } = await this.prepareSessionConfig(
+    const { storedConfig, launchConfig, launchEnv } = await this.prepareSessionConfig(
       mergedConfig,
       resolvedAgentId,
     );
@@ -1125,7 +1130,7 @@ export class AgentManager {
         `Provider '${handle.provider}' is not available. Please ensure the CLI is installed.`,
       );
     }
-    const launchContext = await this.buildLaunchContext(resolvedAgentId, client);
+    const launchContext = await this.buildLaunchContext(resolvedAgentId, client, launchEnv);
     const providerLaunchConfig = this.resolveProviderLaunchConfig(launchConfig, launchContext);
     const session = await client.resumeSession(
       handle,
@@ -1165,14 +1170,14 @@ export class AgentManager {
       throw new Error(`Provider '${input.provider}' does not support importing sessions`);
     }
 
-    const { storedConfig, launchConfig } = await this.prepareSessionConfig(
+    const { storedConfig, launchConfig, launchEnv } = await this.prepareSessionConfig(
       {
         provider: input.provider,
         cwd: input.cwd,
       },
       resolvedAgentId,
     );
-    const launchContext = await this.buildLaunchContext(resolvedAgentId, client);
+    const launchContext = await this.buildLaunchContext(resolvedAgentId, client, launchEnv);
     const providerLaunchConfig = this.resolveProviderLaunchConfig(launchConfig, launchContext);
     const imported = await client.importSession(
       {
@@ -1252,8 +1257,11 @@ export class AgentManager {
       ...overrides,
       provider,
     } as AgentSessionConfig;
-    const { storedConfig, launchConfig } = await this.prepareSessionConfig(refreshConfig, agentId);
-    const launchContext = await this.buildLaunchContext(agentId, client);
+    const { storedConfig, launchConfig, launchEnv } = await this.prepareSessionConfig(
+      refreshConfig,
+      agentId,
+    );
+    const launchContext = await this.buildLaunchContext(agentId, client, launchEnv);
     const providerLaunchConfig = this.resolveProviderLaunchConfig(launchConfig, launchContext);
 
     const session = handle
@@ -4225,7 +4233,20 @@ export class AgentManager {
     agentId: string,
     env?: Record<string, string>,
   ): Promise<PreparedSessionConfig> {
-    const storedConfig = await this.normalizeConfig(stripInternalCodiusMcpServer(config), { env });
+    const defaults = this.codiusModelAccessStore?.resolveAgentDefaults(config.provider, env);
+    const launchEnv =
+      defaults || env
+        ? {
+            ...env,
+            ...defaults?.env,
+          }
+        : undefined;
+    const configWithDefaultModel =
+      defaults && config.model === undefined ? { ...config, model: defaults.model } : config;
+    const storedConfig = await this.normalizeConfig(
+      stripInternalCodiusMcpServer(configWithDefaultModel),
+      { env: launchEnv },
+    );
     const launchConfig = this.applyDaemonAppendSystemPrompt(
       withRuntimeCodiusMcpServer({
         config: storedConfig,
@@ -4234,7 +4255,7 @@ export class AgentManager {
         mcpAuthToken: this.mcpAuthToken,
       }),
     );
-    return { storedConfig, launchConfig };
+    return { storedConfig, launchConfig, launchEnv };
   }
 
   private applyDaemonAppendSystemPrompt(config: AgentSessionConfig): AgentSessionConfig {

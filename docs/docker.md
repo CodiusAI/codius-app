@@ -10,7 +10,7 @@ The image source lives in [`docker/`](../docker/).
 
 The official image:
 
-- builds `@codius-ai/server` and `@codius-ai/cli` from source-built workspace tarballs
+- builds `@codius.ai/server` and `@codius.ai/cli` from source-built workspace tarballs
 - runs the daemon as the non-root `codius` user
 - listens on `0.0.0.0:6767` inside the container
 - enables the bundled daemon web UI with `CODIUS_WEB_UI_ENABLED=true`

@@ -1,4 +1,4 @@
-import type { TranslationResources } from "./en";
+import { en, type TranslationResources } from "./en";
 
 export const ja: TranslationResources = {
   common: {
@@ -1163,7 +1163,7 @@ export const ja: TranslationResources = {
     },
     integrations: {
       cli: {
-        statusFailed: "CLIのインストール状態を確認できません。",
+        statusFailed: "Codius CLIのインストール状態を確認できません。",
         installFailed: "Codius CLIをインストールできません。",
       },
       skills: {
@@ -1859,18 +1859,18 @@ export const ja: TranslationResources = {
     integrations: {
       title: "連携",
       docs: {
-        cli: "CLIドキュメント",
+        cli: "Codius CLIドキュメント",
         skills: "スキルドキュメント",
-        openCli: "CLIドキュメントを開く",
+        openCli: "Codius CLIドキュメントを開く",
         openSkills: "スキルドキュメントを開く",
       },
-      commandLine: {
-        title: "コマンドライン",
+      cli: {
+        title: "Codius CLI",
         description: "ターミナルからエージェントを制御し、スクリプトで操作",
       },
       skills: {
         title: "オーケストレーションスキル",
-        description: "エージェントがCLI経由でオーケストレーションできるようにします。",
+        description: "エージェントがCodius CLI経由でオーケストレーションできるようにします。",
         updateAvailable: "更新が利用可能",
         updateTitle: "Codiusスキルを更新しますか？",
         updateFallback: "バンドルされたスキルをマシンに同期します。",
@@ -2052,6 +2052,7 @@ export const ja: TranslationResources = {
     },
     providers: {
       title: "プロバイダー",
+      codius: en.settings.providers.codius,
       addProvider: "プロバイダーを追加",
       providerDetails: "{{name}}プロバイダーの詳細",
       enableProvider: "{{name}}を有効にする",

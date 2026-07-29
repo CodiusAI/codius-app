@@ -52,8 +52,8 @@ import type {
   AgentMode,
   AgentModelDefinition,
   AgentProvider,
-} from "@codius-ai/protocol/agent-types";
-import type { AgentProviderDefinition } from "@codius-ai/protocol/provider-manifest";
+} from "@codius.ai/protocol/agent-types";
+import type { AgentProviderDefinition } from "@codius.ai/protocol/provider-manifest";
 import {
   getFeatureHighlightColor,
   getFeatureTooltip,

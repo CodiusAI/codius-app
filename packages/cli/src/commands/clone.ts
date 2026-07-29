@@ -1,6 +1,6 @@
 import type { Command } from "commander";
-import { isCompleteGitRemote } from "@codius-ai/protocol/git-remote";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import { isCompleteGitRemote } from "@codius.ai/protocol/git-remote";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import { buildDaemonConnectionCommandError, connectToDaemon } from "../utils/client.js";
 import type { CommandError, OutputSchema, SingleResult } from "../output/index.js";
 import type { CommandOptions } from "../output/with-output.js";

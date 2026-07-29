@@ -414,7 +414,7 @@ interface AgentSession {
 
 ## Testing
 
-### Manual testing with the CLI
+### Manual testing with Codius CLI
 
 Start the daemon if not already running, then:
 
@@ -429,7 +429,7 @@ codius run --provider my-provider --model some-model --mode default
 codius ls -a -g
 
 # Check if the provider reports models
-codius models --provider my-provider
+codius provider models my-provider
 ```
 
 ### E2E test patterns

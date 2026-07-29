@@ -5,5 +5,7 @@ const CLI_ENTRY = join(import.meta.dirname, "..", "..", "dist", "index.js");
 
 export function runLocalCodius(args: string[], env: NodeJS.ProcessEnv = {}): ProcessPromise {
   $.verbose = false;
-  return $({ env: { ...process.env, ...env } })`${process.execPath} ${CLI_ENTRY} ${args}`.nothrow();
+  return $({
+    env: { ...process.env, ...env },
+  })`${process.execPath} ${CLI_ENTRY} ${args}`.nothrow();
 }

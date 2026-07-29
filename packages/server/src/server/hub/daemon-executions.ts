@@ -3,7 +3,7 @@ import type {
   AgentStreamEventPayload,
   CreateAgentWorktreeTarget,
   HubExecutionControlAction,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 
 import type { AgentManager, AgentManagerEvent, ManagedAgent } from "../agent/agent-manager.js";
 import type { AgentStorage, StoredAgentRecord } from "../agent/agent-storage.js";

@@ -1,10 +1,10 @@
 import type pino from "pino";
-import { getErrorMessage } from "@codius-ai/protocol/error-utils";
+import { getErrorMessage } from "@codius.ai/protocol/error-utils";
 import {
   encodeFileTransferFrame,
   FileTransferOpcode,
   type FileTransferFrame,
-} from "@codius-ai/protocol/binary-frames/index";
+} from "@codius.ai/protocol/binary-frames/index";
 import type {
   FileDownloadTokenRequest,
   FileExplorerRequest,

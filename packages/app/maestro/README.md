@@ -51,7 +51,7 @@ Do not weaken this flow to only wait for `message-input-root`. That can pass on
 the wrong route. The header assertion and the `New workspace` negative assertion
 are what prove the redirect actually completed.
 
-The scripts assume a development build with package id `sh.codius.debug`, an
+The scripts assume a development build with package id `ai.codius.debug`, an
 already-running local daemon on `127.0.0.1:6767`, and a connected Android device
 or emulator. They call `adb reverse tcp:6767 tcp:6767`; they do not restart the
 daemon.
@@ -64,7 +64,7 @@ bash packages/app/maestro/record-workspace-create-android-focus.sh
 Optional environment:
 
 ```bash
-CODIUS_MAESTRO_APP_ID=sh.codius.debug
+CODIUS_MAESTRO_APP_ID=ai.codius.debug
 CODIUS_MAESTRO_DIRECT_ENDPOINT=127.0.0.1:6767
 CODIUS_MAESTRO_DAEMON_WS_URL=ws://127.0.0.1:6767/ws
 CODIUS_MAESTRO_PROJECT_PATH=/path/to/git/repo

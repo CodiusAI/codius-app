@@ -21,7 +21,7 @@ import {
   type CreateWorktreeOptions,
   type WorktreeConfig,
 } from "./worktree";
-import type { CodiusConfig } from "@codius-ai/protocol/codius-config-schema";
+import type { CodiusConfig } from "@codius.ai/protocol/codius-config-schema";
 import { getCodiusWorktreeMetadataPath } from "./worktree-metadata.js";
 import { execFileSync } from "child_process";
 import { isPlatform } from "../test-utils/platform.js";

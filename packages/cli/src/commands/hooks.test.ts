@@ -1,4 +1,4 @@
-import { AGENT_HOOK_PROVIDERS } from "@codius-ai/server/agent-hooks";
+import { AGENT_HOOK_PROVIDERS } from "@codius.ai/server/agent-hooks";
 import { describe, expect, it } from "vitest";
 import { runHooksCommand } from "./hooks.js";
 

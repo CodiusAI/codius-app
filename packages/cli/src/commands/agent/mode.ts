@@ -6,7 +6,7 @@ import type {
   CommandError,
   AnyCommandResult,
 } from "../../output/index.js";
-import type { AgentMode } from "@codius-ai/protocol/agent-types";
+import type { AgentMode } from "@codius.ai/protocol/agent-types";
 
 /** Result for setting mode */
 export interface SetModeResult {
@@ -40,7 +40,7 @@ export interface AgentModeOptions extends CommandOptions {
 const missingModeError = (): CommandError => ({
   code: "MISSING_ARGUMENT",
   message: "Mode argument required unless --list is specified",
-  details: "Usage: codiusctl agent mode <id> <mode> | codiusctl agent mode --list <id>",
+  details: "Usage: codius agent mode <id> <mode> | codius agent mode --list <id>",
 });
 
 // This command returns two different data shapes (set result vs mode list).
@@ -70,7 +70,7 @@ export async function runModeCommand(
       const error: CommandError = {
         code: "AGENT_NOT_FOUND",
         message: `No agent found matching: ${id}`,
-        details: "Use `codiusctl ls` to list available agents",
+        details: "Use `codius ls` to list available agents",
       };
       throw error;
     }
@@ -120,7 +120,7 @@ export async function runModeCommand(
       const error: CommandError = {
         code: "DAEMON_NOT_RUNNING",
         message: `Cannot connect to daemon at ${host}: ${message}`,
-        details: "Start the daemon with: codiusctl daemon start",
+        details: "Start the daemon with: codius daemon start",
       };
       throw error;
     }

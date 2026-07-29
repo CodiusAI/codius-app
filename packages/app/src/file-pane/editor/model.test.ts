@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import type { FileVersion, FileWriteResult } from "@codius-ai/protocol/messages";
+import type { FileVersion, FileWriteResult } from "@codius.ai/protocol/messages";
 import {
   FileEditorModel,
   type FileEditorClock,

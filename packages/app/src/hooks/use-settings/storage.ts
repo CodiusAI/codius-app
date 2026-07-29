@@ -1,4 +1,4 @@
-import { isSyntaxThemeId, type SyntaxThemeId } from "@codius-ai/highlight";
+import { isSyntaxThemeId, type SyntaxThemeId } from "@codius.ai/highlight";
 import type { QueryClient } from "@tanstack/react-query";
 import type { DesktopSettings } from "@/desktop/settings/desktop-settings";
 import { parseAppLanguage, type AppLanguage } from "@/i18n/locales";

@@ -4,7 +4,7 @@ import type { AgentPromptInput, AgentRunOptions } from "./agent-sdk-types.js";
 import type { AgentManager, ManagedAgent } from "./agent-manager.js";
 import type { AgentStorage } from "./agent-storage.js";
 import { ensureAgentLoaded } from "./agent-loading.js";
-import { getParentAgentIdFromLabels } from "@codius-ai/protocol/agent-labels";
+import { getParentAgentIdFromLabels } from "@codius.ai/protocol/agent-labels";
 
 export type AgentUnarchiveController = Pick<AgentManager, "notifyAgentState" | "unarchiveSnapshot">;
 

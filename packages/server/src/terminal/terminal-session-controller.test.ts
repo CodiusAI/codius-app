@@ -6,8 +6,8 @@ import {
   TerminalStreamOpcode,
   decodeTerminalStreamFrame,
   type TerminalStreamFrame,
-} from "@codius-ai/protocol/binary-frames/index";
-import type { TerminalCell, TerminalState } from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/binary-frames/index";
+import type { TerminalCell, TerminalState } from "@codius.ai/protocol/messages";
 import type { ServerMessage, TerminalSession, TerminalStateSnapshot } from "./terminal.js";
 import { TerminalSessionController } from "./terminal-session-controller.js";
 import type { TerminalManager, TerminalsChangedEvent } from "./terminal-manager.js";

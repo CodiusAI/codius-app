@@ -12,7 +12,7 @@ import {
 import type { ComposerAttachment, UserComposerAttachment } from "@/attachments/types";
 import { buildForgeSearchQueryOptions, type ForgeSearchClient } from "@/git/use-forge-search-query";
 import { extractGithubRefs, type GithubRef } from "@/utils/github-refs";
-import type { ForgeSearchItem } from "@codius-ai/protocol/messages";
+import type { ForgeSearchItem } from "@codius.ai/protocol/messages";
 import { isAttachmentSelectedForGithubItem, toggleGithubAttachment } from "../actions";
 
 const AUTO_ATTACH_DEBOUNCE_MS = 300;

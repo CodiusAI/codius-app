@@ -3,7 +3,7 @@
 These examples use only the public SDK root:
 
 ```ts
-import { createCodiusClient, type CodiusClient } from "@codius-ai/client";
+import { createCodiusClient, type CodiusClient } from "@codius.ai/client";
 ```
 
 Pass the daemon WebSocket URL into the exported functions. In worktree dev, read it

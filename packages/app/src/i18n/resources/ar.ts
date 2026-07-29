@@ -1,4 +1,4 @@
-import type { TranslationResources } from "./en";
+import { en, type TranslationResources } from "./en";
 
 export const ar: TranslationResources = {
   common: {
@@ -1150,8 +1150,8 @@ export const ar: TranslationResources = {
     },
     integrations: {
       cli: {
-        statusFailed: "غير قادر على التحقق من حالة تثبيت CLI.",
-        installFailed: "غير قادر على تثبيت CodiusCLI.",
+        statusFailed: "تعذر التحقق من تثبيت Codius CLI.",
+        installFailed: "تعذر تثبيت Codius CLI.",
       },
       skills: {
         statusFailed: "غير قادر على التحقق من حالة مهارات التنسيق.",
@@ -1842,18 +1842,18 @@ export const ar: TranslationResources = {
     integrations: {
       title: "التكامل",
       docs: {
-        cli: "مستندات CLI",
+        cli: "وثائق Codius CLI",
         skills: "وثائق المهارات",
-        openCli: "افتح وثائق CLI",
+        openCli: "افتح وثائق Codius CLI",
         openSkills: "فتح وثائق المهارات",
       },
-      commandLine: {
-        title: "سطر الأوامر",
+      cli: {
+        title: "Codius CLI",
         description: "وكلاء التحكم والبرنامج النصي من المحطة الطرفية الخاصة بك",
       },
       skills: {
         title: "مهارات التنسيق",
-        description: "قم بتعليم عملائك كيفية التنسيق من خلال CLI",
+        description: "علّم وكلاءك التنسيق عبر Codius CLI",
         updateAvailable: "التحديث متاح",
         updateTitle: "تحديث مهارات Codius ؟",
         updateFallback: "مزامنة المهارات المجمعة لجهازك.",
@@ -2030,6 +2030,7 @@ export const ar: TranslationResources = {
     },
     providers: {
       title: "مقدمي الخدمات",
+      codius: en.settings.providers.codius,
       addProvider: "إضافة مزود",
       providerDetails: "تفاصيل مزود{{name}}",
       enableProvider: "تمكين{{name}}",

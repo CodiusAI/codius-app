@@ -2,7 +2,7 @@ import { readCodiusConfigJson } from "./codius-config-file.js";
 import {
   CodiusConfigSchema,
   type CodiusMetadataGeneration,
-} from "@codius-ai/protocol/codius-config-schema";
+} from "@codius.ai/protocol/codius-config-schema";
 
 export type MetadataConfigKey = "title" | "branchName" | "commitMessage" | "pullRequest";
 

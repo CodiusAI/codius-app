@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { DaemonClientConfig } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClientConfig } from "@codius.ai/client/internal/daemon-client";
 import type { DaemonConnectionDependencies, DaemonProbeClient } from "./test-daemon-connection";
 
 class FakeDaemonClient implements DaemonProbeClient {

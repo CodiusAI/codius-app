@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import type {
   CheckoutPrStatusResponse,
   PullRequestTimelineResponse,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 import {
   createInMemoryUnsupportedTimelineRegistry,
   extractPrRepoIdentity,

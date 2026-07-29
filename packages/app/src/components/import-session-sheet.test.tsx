@@ -7,8 +7,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type {
   DaemonClient,
   FetchRecentProviderSessionEntry,
-} from "@codius-ai/client/internal/daemon-client";
-import type { ProviderSnapshotEntry } from "@codius-ai/protocol/agent-types";
+} from "@codius.ai/client/internal/daemon-client";
+import type { ProviderSnapshotEntry } from "@codius.ai/protocol/agent-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ImportSessionSheet } from "@/components/import-session-sheet";
 

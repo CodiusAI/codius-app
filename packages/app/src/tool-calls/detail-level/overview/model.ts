@@ -1,4 +1,4 @@
-import { isCodiusToolName } from "@codius-ai/protocol/tool-name-normalization";
+import { isCodiusToolName } from "@codius.ai/protocol/tool-name-normalization";
 import { describeToolCall, type ToolCallRun } from "../grouping";
 
 const DIRECT_CODIUS_TOOL_PREFIX = "codius_";

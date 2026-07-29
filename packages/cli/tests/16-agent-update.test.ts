@@ -29,7 +29,7 @@ try {
   // Test 1: agent update --help shows options
   {
     console.log("Test 1: agent update --help shows options");
-    const result = await $`npx codiusctl agent update --help`.nothrow();
+    const result = await $`npx codius agent update --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "agent update --help should exit 0");
     assert(result.stdout.includes("--name"), "help should mention --name flag");
     assert(result.stdout.includes("--label"), "help should mention --label flag");
@@ -43,7 +43,7 @@ try {
   {
     console.log("Test 2: agent update requires ID argument");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl agent update --name "New Name"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius agent update --name "New Name"`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail without id");
     const output = result.stdout + result.stderr;
     const hasError =
@@ -59,7 +59,7 @@ try {
   {
     console.log("Test 3: agent update requires update field");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl agent update abc123`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius agent update abc123`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail without --name/--label");
     const output = result.stdout + result.stderr;
     const hasError =
@@ -74,7 +74,7 @@ try {
   {
     console.log("Test 4: agent update handles daemon not running");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl agent update abc123 --name "Renamed Agent"`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius agent update abc123 --name "Renamed Agent"`.nothrow();
     assert.notStrictEqual(result.exitCode, 0, "should fail when daemon not running");
     const output = result.stdout + result.stderr;
     const hasError =
@@ -89,7 +89,7 @@ try {
   {
     console.log("Test 5: agent update accepts multi-label syntax");
     const result =
-      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codiusctl agent update abc123 --label surface=workspace,area=frontend --label priority=high`.nothrow();
+      await $`CODIUS_HOST=localhost:${port} CODIUS_HOME=${codiusHome} npx codius agent update abc123 --label surface=workspace,area=frontend --label priority=high`.nothrow();
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept --label flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
@@ -99,7 +99,7 @@ try {
   // Test 6: agent --help shows update subcommand
   {
     console.log("Test 6: agent --help shows update subcommand");
-    const result = await $`npx codiusctl agent --help`.nothrow();
+    const result = await $`npx codius agent --help`.nothrow();
     assert.strictEqual(result.exitCode, 0, "agent --help should exit 0");
     assert(result.stdout.includes("update"), "help should mention update subcommand");
     console.log("✓ agent --help shows update subcommand\n");

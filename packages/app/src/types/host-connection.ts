@@ -1,11 +1,11 @@
 import {
   normalizeHostPort,
   normalizeLoopbackToLocalhost,
-} from "@codius-ai/protocol/daemon-endpoints";
+} from "@codius.ai/protocol/daemon-endpoints";
 import {
   DirectTcpHostConnectionSchema,
   type DirectTcpHostConnection,
-} from "@codius-ai/protocol/host-connection-schema";
+} from "@codius.ai/protocol/host-connection-schema";
 
 export { DirectTcpHostConnectionSchema, type DirectTcpHostConnection };
 

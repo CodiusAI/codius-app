@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ForgeSearchItem } from "@codius-ai/protocol/messages";
+import type { ForgeSearchItem } from "@codius.ai/protocol/messages";
 import { pickerItemToCheckoutRequest, type PickerItem } from "./new-workspace-picker-item";
 
 const prItem: ForgeSearchItem = {

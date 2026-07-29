@@ -10,9 +10,9 @@ describe("runCli", () => {
       createCliParseArgv({
         argv: [],
         cwd: process.cwd(),
-        nodeArgv: ["node", "codiusctl"],
+        nodeArgv: ["node", "codius"],
       }),
-    ).toEqual(["node", "codiusctl", "onboard"]);
+    ).toEqual(["node", "codius", "onboard"]);
   });
 
   it("preserves known CLI command argv", () => {
@@ -20,9 +20,9 @@ describe("runCli", () => {
       createCliParseArgv({
         argv: ["daemon", "set-password"],
         cwd: process.cwd(),
-        nodeArgv: ["node", "codiusctl"],
+        nodeArgv: ["node", "codius"],
       }),
-    ).toEqual(["node", "codiusctl", "daemon", "set-password"]);
+    ).toEqual(["node", "codius", "daemon", "set-password"]);
   });
 
   it("preserves the hooks command argv", () => {
@@ -30,9 +30,9 @@ describe("runCli", () => {
       createCliParseArgv({
         argv: ["hooks", "claude", "UserPromptSubmit"],
         cwd: process.cwd(),
-        nodeArgv: ["node", "codiusctl"],
+        nodeArgv: ["node", "codius"],
       }),
-    ).toEqual(["node", "codiusctl", "hooks", "claude", "UserPromptSubmit"]);
+    ).toEqual(["node", "codius", "hooks", "claude", "UserPromptSubmit"]);
   });
 
   it("classifies existing unknown directories as open-project invocations", () => {
@@ -45,7 +45,7 @@ describe("runCli", () => {
         createCliParseArgv({
           argv: ["project"],
           cwd: root,
-          nodeArgv: ["node", "codiusctl"],
+          nodeArgv: ["node", "codius"],
         }),
       ).toEqual({
         kind: "open-project",

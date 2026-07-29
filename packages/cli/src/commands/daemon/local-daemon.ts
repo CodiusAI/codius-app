@@ -2,7 +2,7 @@ import { spawnSync, type ChildProcess } from "node:child_process";
 import { existsSync, readFileSync, unlinkSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
-import { loadConfig, resolveCodiusHome, spawnProcess } from "@codius-ai/server";
+import { loadConfig, resolveCodiusHome, spawnProcess } from "@codius.ai/server";
 import treeKill from "tree-kill";
 import { tryConnectToDaemon } from "../../utils/client.js";
 
@@ -181,7 +181,7 @@ function resolveServerRunnerFromDir(currentDir: string): string | null {
   if (!existsSync(packageJsonPath)) return null;
   try {
     const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8")) as { name?: string };
-    if (packageJson.name !== "@codius-ai/server") return null;
+    if (packageJson.name !== "@codius.ai/server") return null;
     const distRunner = path.join(currentDir, "dist", "scripts", "supervisor-entrypoint.js");
     if (existsSync(distRunner)) {
       return distRunner;
@@ -193,7 +193,7 @@ function resolveServerRunnerFromDir(currentDir: string): string | null {
 }
 
 function resolveDaemonRunnerEntry(): string {
-  const serverExportPath = require.resolve("@codius-ai/server");
+  const serverExportPath = require.resolve("@codius.ai/server");
   let currentDir = path.dirname(serverExportPath);
 
   while (true) {
@@ -209,7 +209,7 @@ function resolveDaemonRunnerEntry(): string {
     currentDir = parentDir;
   }
 
-  throw new Error("Unable to resolve @codius-ai/server package root for daemon runner");
+  throw new Error("Unable to resolve @codius.ai/server package root for daemon runner");
 }
 
 function pidFilePath(codiusHome: string): string {

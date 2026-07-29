@@ -2,8 +2,8 @@
  * @vitest-environment jsdom
  */
 import { act } from "@testing-library/react";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
-import type { WorkspaceScriptPayload } from "@codius-ai/protocol/messages";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
+import type { WorkspaceScriptPayload } from "@codius.ai/protocol/messages";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createRoot, type Root } from "react-dom/client";
 import React from "react";

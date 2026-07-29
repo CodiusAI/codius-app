@@ -1,8 +1,8 @@
 import type { AgentTimelineItem } from "./agent-sdk-types.js";
-import type { AgentAttachment } from "@codius-ai/protocol/messages";
+import type { AgentAttachment } from "@codius.ai/protocol/messages";
 import type { AgentTimelineRow } from "./agent-timeline-store-types.js";
-import { isLikelyExternalToolName } from "@codius-ai/protocol/tool-name-normalization";
-import { buildToolCallDisplayModel } from "@codius-ai/protocol/tool-call-display";
+import { isLikelyExternalToolName } from "@codius.ai/protocol/tool-name-normalization";
+import { buildToolCallDisplayModel } from "@codius.ai/protocol/tool-call-display";
 import { projectTimelineRows } from "./timeline-projection.js";
 
 const DEFAULT_MAX_ITEMS = 0;

@@ -27,7 +27,7 @@ Root checkout dev is intentionally split across terminals:
 
 - The **server itself** (e.g. when launched by the desktop app or `npm run start`) defaults to `~/.codius` (see `packages/server/src/server/codius-home.ts`).
 - **Repo dev scripts** default to `$ROOT/.dev/codius-home`, where `$ROOT` is the current checkout or worktree root. This keeps all dev state scoped to the checkout instead of the packaged desktop app.
-- **`npm run cli -- ...`** runs through the same dev-home wrapper as the dev scripts, so the in-repo CLI automatically targets the current checkout's `.dev/codius-home` and configured dev daemon endpoint.
+- **`npm run cli -- ...`** runs through the same dev-home wrapper as the dev scripts, so the in-repo Codius CLI executable automatically targets the current checkout's `.dev/codius-home` and configured dev daemon endpoint.
 - **Codius-created worktrees** seed `$CODIUS_WORKTREE_PATH/.dev/codius-home` from `$CODIUS_SOURCE_CHECKOUT_PATH/.dev/codius-home` by copying durable JSON metadata. Runtime files like pid files, sockets, and logs are not copied.
 - **This repo's worktree setup** also best-effort seeds `packages/app/ios` and the newest `.dev/ios-build` entry from the source checkout so iOS simulator services can reuse native project and Xcode cache state when it is safe enough to do so.
 
@@ -107,7 +107,7 @@ With desktop dev running, verify the real BrowserWindow, titlebar clearance, ful
 transition, and 751-pixel settings split with:
 
 ```bash
-npm run verify:electron-cdp --workspace=@codius-ai/desktop
+npm run verify:electron-cdp --workspace=@codius.ai/desktop
 ```
 
 The verifier reads the same `EXPO_PORT` and
@@ -166,7 +166,7 @@ web, keep a daemon available, then run:
 CODIUS_PROFILE_SERVER_ID=<server-id> \
 CODIUS_PROFILE_WORKSPACE_ID=<workspace-path> \
 CODIUS_PROFILE_AGENT_ID=<agent-id> \
-  npm run profile:workspace-tabs --workspace=@codius-ai/app
+  npm run profile:workspace-tabs --workspace=@codius.ai/app
 ```
 
 This script opens the app with `?renderProfile=1`, creates a temporary terminal
@@ -220,7 +220,7 @@ defaults. The default rotation is `10m` x `3` files everywhere.
 Measure the MCP `tools/list` payload that Codius injects into agents with:
 
 ```bash
-npm run measure:agent-tools --workspace=@codius-ai/server
+npm run measure:agent-tools --workspace=@codius.ai/server
 ```
 
 The command reports compact JSON bytes, estimated tokens, field totals, largest
@@ -297,20 +297,20 @@ so the port may already be bound. `portScript` takes precedence when both values
 
 ## Bundled daemon web UI
 
-> The user-facing guide for this feature (enabling it, reverse proxy, TLS, tunnels, security) lives at [public-docs/web-ui.md](../public-docs/web-ui.md). This section is the contributor/build reference: how the artifact is produced, bundled, and excluded from desktop packaging.
+> The user-facing guide for this feature (enabling it, reverse proxy, TLS, tunnels, security) lives at [codius.ai/docs/app/web-ui](https://codius.ai/docs/app/web-ui). This section is the contributor/build reference: how the artifact is produced and bundled.
 
 The daemon can optionally serve the browser web client from the same HTTP server. This is disabled by default.
 
 Enable it for a running daemon with:
 
 ```bash
-codiusctl daemon start --web-ui
+codius daemon start --web-ui
 ```
 
 Or set the environment variable:
 
 ```bash
-CODIUS_WEB_UI_ENABLED=true codiusctl daemon start
+CODIUS_WEB_UI_ENABLED=true codius daemon start
 ```
 
 Or persist it in `config.json`:
@@ -343,20 +343,20 @@ Measured bundle size for a standard Expo web export:
 - gzip: 2.55 MiB
 - brotli: 1.93 MiB
 
-The desktop-managed daemon disables the bundled web UI by default (`CODIUS_WEB_UI_ENABLED=false`) because the desktop app already ships the renderer as `app-dist`. Shipping the same assets again inside `@codius-ai/server` would duplicate the ~10.8 MiB install. Desktop packaging also excludes `node_modules/@codius-ai/server/dist/server/web-ui/**` from the packaged app.
+The desktop-managed daemon disables the bundled web UI by default (`CODIUS_WEB_UI_ENABLED=false`) because the desktop app already ships the renderer as `app-dist`. Shipping the same assets again inside `@codius.ai/server` would duplicate the ~10.8 MiB install. Desktop packaging also excludes `node_modules/@codius.ai/server/dist/server/web-ui/**` from the packaged app.
 
 ## Built workspace packages
 
-Package imports resolve through package exports to compiled `dist/` output, not sibling `src/` files. This is true in local dev and in published packages: the app, daemon, CLI, and SDK consumers should all exercise the same runtime paths.
+Package imports resolve through package exports to compiled `dist/` output, not sibling `src/` files. This is true in local dev and in published packages: the app, daemon, Codius CLI, and SDK consumers should all exercise the same runtime paths.
 
-`npm run dev:server` builds the server-side workspace packages once, then keeps `@codius-ai/protocol` and `@codius-ai/client` fresh with TypeScript watch builds while the daemon runs. If you change protocol schemas or client code outside that watch workflow, rebuild the producer before trusting runtime behavior.
+`npm run dev:server` builds the server-side workspace packages once, then keeps `@codius.ai/protocol` and `@codius.ai/client` fresh with TypeScript watch builds while the daemon runs. If you change protocol schemas or client code outside that watch workflow, rebuild the producer before trusting runtime behavior.
 
 Use the named root build targets instead of remembering workspace dependency chains:
 
 ```bash
 npm run build:client       # protocol -> client
 npm run build:server-deps  # highlight -> relay -> protocol -> client
-npm run build:server       # server-deps -> server -> cli
+npm run build:server       # server-deps -> server -> CLI
 npm run build:app-deps     # highlight -> protocol -> client -> expo-two-way-audio
 ```
 
@@ -387,11 +387,11 @@ preinstalled binary such as `opencode acp`, `cursor-agent acp`, or `goose acp`
 are reported as skipped because their versions are owned by the user's local
 install.
 
-## CLI reference
+## Codius CLI reference
 
-Use `npm run cli` to run the in-repo CLI from source (`npx tsx packages/cli/src/index.ts`). The script wraps the CLI with `scripts/dev-home.sh`, so it automatically uses this checkout's `.dev/codius-home` and dev daemon endpoint unless you pass an explicit override. The globally installed `codius` binary on macOS is a symlink into the installed Codius desktop app, not this checkout — use it to drive the desktop's built-in daemon, but use `npm run cli` when you want to talk to the CLI you are editing.
+Use `npm run cli` to run Codius CLI from source (`npx tsx packages/cli/src/index.ts`). The script wraps the CLI with `scripts/dev-home.sh`, so it automatically uses this checkout's `.dev/codius-home` and development daemon endpoint unless you pass an explicit override.
 
-Canonical automation uses `codius workspace create/ls/archive`, `codius heartbeat create/update/delete`, and the full `codius schedule` group. MCP heartbeat automation is intentionally smaller: create and delete only. Detach remains an explicit user lifecycle action rather than an agent tool. `codius run --new-workspace local|worktree` composes workspace creation with agent creation. The old `codius worktree` and `codius run --worktree` forms are hidden compatibility aliases.
+Canonical automation uses `codius workspace create/ls/archive`, `codius heartbeat create/update/delete`, and the full `codius schedule` group. MCP heartbeat automation is intentionally smaller: create and delete only. Detach remains an explicit user lifecycle action rather than an agent tool. `codius run --new-workspace local|worktree` composes workspace creation with agent creation.
 
 ```bash
 npm run cli -- ls -a -g              # List all agents globally
@@ -403,7 +403,7 @@ npm run cli -- daemon status         # Check daemon status
 npm run cli -- clone owner/repo --dir ~/workspace # Clone GitHub repo and register project
 ```
 
-Use `--host <host:port>` to point the CLI at a different daemon:
+Use `--host <host:port>` to point Codius CLI at a different daemon:
 
 ```bash
 npm run cli -- --host localhost:7777 ls -a
@@ -411,8 +411,8 @@ npm run cli -- --host localhost:7777 ls -a
 
 Desktop integrations can focus an existing agent without creating one or
 sending a message. Use `codius://h/<server-id>/agent/<agent-id>`, or run
-`codius agent open <agent-id>`. The CLI reads the local daemon's server ID by
-default; pass `--server <server-id>` when targeting another server.
+`codius agent open <agent-id>`. Codius CLI reads the local daemon's
+server ID by default; pass `--server <server-id>` when targeting another server.
 
 ## Agent state
 
@@ -459,7 +459,7 @@ Do NOT use browser history (back/forward). Always navigate by clicking UI elemen
 ## App web deploys
 
 `packages/app` exports a single-page Expo web app and deploys the `dist/`
-directory to Cloudflare Pages with `npm run deploy:web --workspace=@codius-ai/app`.
+directory to Cloudflare Pages with `npm run deploy:web --workspace=@codius.ai/app`.
 
 PWA install metadata lives in `packages/app/public/manifest.json` and is linked
 from `packages/app/public/index.html`. Keep the install icons in `public/` so

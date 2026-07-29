@@ -59,7 +59,7 @@ function globalNodeModulesPath(globalRootPath: string): string {
 }
 
 function resolveCurrentServerPackageRoot(): string | null {
-  return resolvePackageRootFrom(fileURLToPath(import.meta.url), "@codius-ai/server");
+  return resolvePackageRootFrom(fileURLToPath(import.meta.url), "@codius.ai/server");
 }
 
 function resolvePackageRootFrom(startPath: string, packageName: string): string | null {

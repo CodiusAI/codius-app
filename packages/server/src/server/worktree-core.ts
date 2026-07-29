@@ -15,7 +15,7 @@ import {
   UnsupportedForgeCheckoutTargetError,
   type WorktreeCreationIntent,
 } from "./resolve-worktree-creation-intent.js";
-import type { ChangeRequestCheckoutSource, FirstAgentContext } from "@codius-ai/protocol/messages";
+import type { ChangeRequestCheckoutSource, FirstAgentContext } from "@codius.ai/protocol/messages";
 import type { WorkspaceGitService } from "./workspace-git-service.js";
 
 export interface CreateWorktreeCoreInput {

@@ -1,1 +1,1 @@
-export { renderTerminalSnapshotToAnsi } from "@codius-ai/protocol/terminal-snapshot";
+export { renderTerminalSnapshotToAnsi } from "@codius.ai/protocol/terminal-snapshot";

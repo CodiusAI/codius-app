@@ -10,9 +10,9 @@ import {
   fetchProjectedTimelineItems,
   LIVE_HISTORY_FETCH_TIMEOUT_MS,
 } from "../../utils/timeline.js";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
-import type { AgentTimelineItem } from "@codius-ai/protocol/agent-types";
-import type { AgentStreamEventPayload, AgentStreamMessage } from "@codius-ai/protocol/messages";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
+import type { AgentTimelineItem } from "@codius.ai/protocol/agent-types";
+import type { AgentStreamEventPayload, AgentStreamMessage } from "@codius.ai/protocol/messages";
 
 export interface AgentAttachOptions {
   host?: string;
@@ -109,7 +109,7 @@ export async function runAttachCommand(
 
   if (!id) {
     console.error("Error: Agent ID required");
-    console.error("Usage: codiusctl attach <id>");
+    console.error("Usage: codius attach <id>");
     process.exit(1);
   }
 
@@ -119,7 +119,7 @@ export async function runAttachCommand(
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error(`Error: Cannot connect to daemon at ${host}: ${message}`);
-    console.error("Start the daemon with: codiusctl daemon start");
+    console.error("Start the daemon with: codius daemon start");
     process.exit(1);
   }
 
@@ -127,7 +127,7 @@ export async function runAttachCommand(
     const fetchResult = await client.fetchAgent({ agentId: id });
     if (!fetchResult) {
       console.error(`Error: No agent found matching: ${id}`);
-      console.error("Use `codiusctl ls` to list available agents");
+      console.error("Use `codius ls` to list available agents");
       await client.close();
       process.exit(1);
     }

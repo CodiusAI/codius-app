@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { WorkspaceScriptPayload } from "@codius-ai/protocol/messages";
+import type { WorkspaceScriptPayload } from "@codius.ai/protocol/messages";
 import type { WorkspaceDescriptor } from "@/stores/session-store";
 import { patchWorkspaceScripts } from "./session-workspace-scripts";
 

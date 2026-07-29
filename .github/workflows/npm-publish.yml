@@ -1,0 +1,132 @@
+name: Publish Codius npm packages
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Exact version already committed in package.json
+        required: true
+        type: string
+      confirmation:
+        description: Type "publish @codius.ai" to unlock the protected publish job
+        required: true
+        type: string
+
+concurrency:
+  group: codius-npm-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: >-
+      ${{
+        !contains(github.ref_name, '-unsigned.') &&
+        (github.event_name != 'workflow_dispatch' ||
+         inputs.confirmation == 'publish @codius.ai')
+      }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+    env:
+      CI: "1"
+      ONNXRUNTIME_NODE_INSTALL: skip
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+          cache: npm
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: Install trusted-publishing npm version
+        run: npm install --global npm@11.5.1
+
+      - name: Resolve and validate release version
+        id: release
+        shell: bash
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="${REQUESTED_VERSION}"
+          fi
+          test -n "$version"
+          node scripts/npm-package-release.mjs validate --expected-version "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Install workspace dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Enforce downstream and public-content boundaries
+        run: |
+          npm run check:downstream-boundaries
+          npm run check:public-content
+
+      - name: Test npm release guards
+        run: npm run test:npm-packages
+
+      - name: Build and pack the coordinated release
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          node scripts/npm-package-release.mjs pack \
+            --expected-version "$RELEASE_VERSION" \
+            --artifact-dir "artifacts/npm/$RELEASE_VERSION"
+
+      - name: Upload reviewed npm tarballs
+        uses: actions/upload-artifact@v4
+        with:
+          name: codius-npm-${{ steps.release.outputs.version }}
+          path: artifacts/npm/${{ steps.release.outputs.version }}
+          if-no-files-found: error
+          retention-days: 30
+
+  publish:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: npm-production
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      CI: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: Install trusted-publishing npm version
+        run: npm install --global npm@11.5.1
+
+      - name: Download reviewed npm tarballs
+        uses: actions/download-artifact@v4
+        with:
+          name: codius-npm-${{ needs.prepare.outputs.version }}
+          path: artifacts/npm/${{ needs.prepare.outputs.version }}
+
+      - name: Publish missing packages in dependency order
+        env:
+          CODIUS_NPM_PUBLISH: "true"
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          node scripts/npm-package-release.mjs publish \
+            --expected-version "$RELEASE_VERSION" \
+            --artifact-dir "artifacts/npm/$RELEASE_VERSION" \
+            --confirm "$RELEASE_VERSION" \
+            --provenance

@@ -8,7 +8,7 @@ import type {
   BrowserAutomationExecuteResponse,
   BrowserAutomationExecuteRequest,
   BrowserAutomationNetworkLogEntry,
-} from "@codius-ai/protocol/browser-automation/rpc-schemas";
+} from "@codius.ai/protocol/browser-automation/rpc-schemas";
 import { waitForActionableTarget, type ActionabilityResult } from "./actionability.js";
 import { BrowserSnapshotEngine } from "./snapshot-engine.js";
 import {

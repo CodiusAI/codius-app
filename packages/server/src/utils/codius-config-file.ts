@@ -6,13 +6,13 @@ import {
   type CodiusConfigRaw,
   type CodiusConfigRevision,
   type ProjectConfigRpcError,
-} from "@codius-ai/protocol/codius-config-schema";
+} from "@codius.ai/protocol/codius-config-schema";
 export {
   CodiusConfigRevisionSchema,
   ProjectConfigRpcErrorSchema,
   type CodiusConfigRevision,
   type ProjectConfigRpcError,
-} from "@codius-ai/protocol/codius-config-schema";
+} from "@codius.ai/protocol/codius-config-schema";
 
 export const CODIUS_CONFIG_FILE_NAME = "codius.json";
 

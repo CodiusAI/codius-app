@@ -1,8 +1,8 @@
 import type pino from "pino";
 import { isAbsolute } from "node:path";
-import { getErrorMessage } from "@codius-ai/protocol/error-utils";
-import { getForgeDefinitionOrNeutral } from "@codius-ai/protocol/forge-manifest";
-import { validateBranchSlug } from "@codius-ai/protocol/branch-slug";
+import { getErrorMessage } from "@codius.ai/protocol/error-utils";
+import { getForgeDefinitionOrNeutral } from "@codius.ai/protocol/forge-manifest";
+import { validateBranchSlug } from "@codius.ai/protocol/branch-slug";
 import type {
   BranchSuggestionsRequest,
   CheckoutCommitsListRequest,

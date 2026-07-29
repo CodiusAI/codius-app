@@ -24,7 +24,7 @@ export function createCliParseArgv(input: {
     return invocation;
   }
 
-  const nodeArgv = input.nodeArgv ?? ["codiusctl", "codiusctl"];
+  const nodeArgv = input.nodeArgv ?? ["codius", "codius"];
   const cliArgv = invocation.argv.length === 0 ? ["onboard"] : invocation.argv;
   return [...nodeArgv, ...cliArgv];
 }

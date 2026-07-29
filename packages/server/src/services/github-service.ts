@@ -3,7 +3,7 @@ import {
   isGitHubHost,
   parseGitHubRemoteUrl,
   parseGitRemoteLocation,
-} from "@codius-ai/protocol/git-remote";
+} from "@codius.ai/protocol/git-remote";
 import { findExecutable } from "../executable-resolution/executable-resolution.js";
 import { runGitCommand } from "../utils/run-git-command.js";
 import { execCommand } from "../utils/spawn.js";

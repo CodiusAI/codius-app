@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { parseGitRemoteLocation } from "@codius-ai/protocol/git-remote";
+import { parseGitRemoteLocation } from "@codius.ai/protocol/git-remote";
 import { findExecutable } from "../executable-resolution/executable-resolution.js";
 import {
   createCachedCliPathResolver,

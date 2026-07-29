@@ -9,7 +9,7 @@ import { Buffer } from "node:buffer";
 
 import { generateLocalPairingOffer } from "../pairing-offer.js";
 import { createTestCodiusDaemon } from "../test-utils/codius-daemon.js";
-import { createClientChannel, type Transport } from "@codius-ai/relay/e2ee";
+import { createClientChannel, type Transport } from "@codius.ai/relay/e2ee";
 import {
   deriveSharedKey,
   decrypt,
@@ -17,10 +17,10 @@ import {
   exportPublicKey,
   generateKeyPair,
   importPublicKey,
-} from "@codius-ai/relay";
-import { buildRelayWebSocketUrl } from "@codius-ai/protocol/daemon-endpoints";
-import { ConnectionOfferSchema } from "@codius-ai/protocol/connection-offer";
-import { WSOutboundMessageSchema } from "@codius-ai/protocol/messages";
+} from "@codius.ai/relay";
+import { buildRelayWebSocketUrl } from "@codius.ai/protocol/daemon-endpoints";
+import { ConnectionOfferSchema } from "@codius.ai/protocol/connection-offer";
+import { WSOutboundMessageSchema } from "@codius.ai/protocol/messages";
 
 const nodeMajor = Number((process.versions.node ?? "0").split(".")[0] ?? "0");
 const shouldRunRelayE2e = process.env.FORCE_RELAY_E2E === "1" || nodeMajor < 25;

@@ -1,4 +1,4 @@
-appId: sh.codius
+appId: ai.codius
 ---
 - launchApp:
     clearState: false

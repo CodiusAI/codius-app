@@ -1,5 +1,5 @@
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
-import type { SessionOutboundMessage } from "@codius-ai/protocol/messages";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
+import type { SessionOutboundMessage } from "@codius.ai/protocol/messages";
 
 export interface MessageCollector {
   messages: SessionOutboundMessage[];

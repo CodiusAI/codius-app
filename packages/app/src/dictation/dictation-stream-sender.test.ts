@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 
 import { DictationStreamSender } from "@/dictation/dictation-stream-sender";
 

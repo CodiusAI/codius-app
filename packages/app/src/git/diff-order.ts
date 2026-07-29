@@ -1,4 +1,4 @@
-import type { SubscribeCheckoutDiffResponse } from "@codius-ai/protocol/messages";
+import type { SubscribeCheckoutDiffResponse } from "@codius.ai/protocol/messages";
 
 type ParsedDiffFile = SubscribeCheckoutDiffResponse["payload"]["files"][number];
 

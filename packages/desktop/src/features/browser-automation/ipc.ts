@@ -1,10 +1,10 @@
 import type { Rectangle } from "electron";
 import { ipcMain } from "electron";
-import { BrowserAutomationExecuteRequestSchema } from "@codius-ai/protocol/browser-automation/rpc-schemas";
+import { BrowserAutomationExecuteRequestSchema } from "@codius.ai/protocol/browser-automation/rpc-schemas";
 import type {
   BrowserAutomationConsoleLogEntry,
   BrowserAutomationDialogEvent,
-} from "@codius-ai/protocol/browser-automation/rpc-schemas";
+} from "@codius.ai/protocol/browser-automation/rpc-schemas";
 import type { TabContents, BrowserRegistry, TabImage } from "./service.js";
 import type { IsolatedKeyboardInputEvent } from "./trusted-input.js";
 import { CdpSessionQueue } from "./cdp-session-queue.js";

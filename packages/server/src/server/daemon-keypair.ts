@@ -10,7 +10,7 @@ import {
   importPublicKey,
   importSecretKey,
   type KeyPair,
-} from "@codius-ai/relay/e2ee";
+} from "@codius.ai/relay/e2ee";
 import { ensurePrivateFile, writePrivateFileAtomicSync } from "./private-files.js";
 
 const KeyPairSchema = z.object({

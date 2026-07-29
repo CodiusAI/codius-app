@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import { app } from "electron";
 import log from "electron-log/main";
-import { resolveCliInstallSourcePath } from "./path.js";
+import { resolveCliInstallSourcePath } from "./source-path.js";
 import { getBundledCliShimPath, getCliTargetPath, getLocalBinDir } from "./paths.js";
 import { ensurePathInShellRc } from "./shell-rc.js";
 
@@ -59,7 +59,7 @@ export async function installCli(): Promise<InstallStatus> {
 
   const { shellUpdated } = await ensurePathInShellRc();
   if (shellUpdated) {
-    log.info("[integrations] Updated shell rc with ~/.local/bin PATH for codiusctl");
+    log.info("[integrations] Updated shell rc with ~/.local/bin PATH for codius");
   }
 
   return getCliInstallStatus();

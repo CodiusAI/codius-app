@@ -3,7 +3,7 @@ import os from "node:os";
 import {
   ConnectionOfferV2Schema,
   type ConnectionOffer,
-} from "@codius-ai/protocol/connection-offer";
+} from "@codius.ai/protocol/connection-offer";
 
 interface BuildOfferEndpointsArgs {
   listenHost: string;

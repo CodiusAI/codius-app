@@ -1,4 +1,4 @@
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import type { CommandError, CommandOptions } from "../../output/index.js";
 
 export interface WorktreeCreateOptions extends CommandOptions {

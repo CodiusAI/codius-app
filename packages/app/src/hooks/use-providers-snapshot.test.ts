@@ -1,8 +1,8 @@
 import { QueryClient } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
-import type { ProviderSnapshotEntry } from "@codius-ai/protocol/agent-types";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
+import type { ProviderSnapshotEntry } from "@codius.ai/protocol/agent-types";
 import { draftAgentCommandsQueryKey } from "@/hooks/agent-commands-query";
 import { applyProvidersSnapshotUpdate, type ProvidersSnapshotUpdate } from "@/data/push-router";
 import {

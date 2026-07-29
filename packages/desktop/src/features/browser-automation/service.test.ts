@@ -6,7 +6,7 @@ import type {
   BrowserAutomationConsoleLogEntry,
   BrowserAutomationDialogEvent,
   BrowserAutomationExecuteRequest,
-} from "@codius-ai/protocol/browser-automation/rpc-schemas";
+} from "@codius.ai/protocol/browser-automation/rpc-schemas";
 import { BrowserSnapshotEngine } from "./snapshot-engine.js";
 import type { BrowserRegistry, TabContents, TabImage } from "./service.js";
 import { executeAutomationCommand } from "./service.js";

@@ -3,7 +3,7 @@ import type {
   HubExecutionAgentCreateRequest,
   HubExecutionControlRequest,
   SessionOutboundMessage,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 
 import type { HubExecutionAgents, OwnedAgentEvent } from "./daemon-executions.js";
 

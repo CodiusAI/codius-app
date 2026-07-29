@@ -6,15 +6,15 @@ import path from "node:path";
 import { DaemonClient } from "./test-utils/index.js";
 import { createTestCodiusDaemon } from "./test-utils/codius-daemon.js";
 import { getFullAccessConfig } from "./daemon-e2e/agent-configs.js";
-import { PARENT_AGENT_ID_LABEL } from "@codius-ai/protocol/agent-labels";
+import { PARENT_AGENT_ID_LABEL } from "@codius.ai/protocol/agent-labels";
 
 // The daemon-level workspace contract that `codius run` depends on: each
 // local-backed createWorkspace for a cwd mints a fresh, distinct workspace,
 // createAgent stamps the agent with the workspaceId it is given, and attaching
-// to an existing workspace by id creates no new record. The CLI's own flag
+// to an existing workspace by id creates no new record. Codius CLI's flag
 // precedence (--workspace > $CODIUS_WORKSPACE_ID > --worktree > bare) is covered
 // in packages/cli/src/commands/agent/run.test.ts; this test only proves the
-// daemon behaviors the CLI builds on.
+// daemon behaviors Codius CLI builds on.
 
 async function workspaceIds(client: DaemonClient): Promise<Set<string>> {
   const workspaces = await client.fetchWorkspaces();

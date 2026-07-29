@@ -34,6 +34,7 @@ import {
 import { SettingsSection } from "@/screens/settings/settings-section";
 import { useProviderSettingsStore } from "@/stores/provider-settings-store";
 import { confirmDialog } from "@/utils/confirm-dialog";
+import { CodiusModelAccessCard } from "@/screens/settings/codius-model-access-card";
 import { ChevronRight, MoreHorizontal, Trash2 } from "lucide-react-native";
 
 type ProviderDefinition = ReturnType<typeof buildProviderDefinitions>[number];
@@ -324,6 +325,7 @@ export function ProvidersSection({ serverId }: ProvidersSectionProps) {
   const { t } = useTranslation();
   const isConnected = useHostRuntimeIsConnected(serverId);
   const supportsProviderRemoval = useHostFeature(serverId, "providerRemoval");
+  const supportsCodiusModelAccess = useHostFeature(serverId, "codiusModelAccess");
   const { entries, isLoading, refresh } = useProvidersSnapshot(serverId);
   const { patchConfig } = useDaemonConfig(serverId);
   const openProviderSettings = useProviderSettingsStore((state) => state.open);
@@ -412,6 +414,9 @@ export function ProvidersSection({ serverId }: ProvidersSectionProps) {
 
   return (
     <>
+      {hasServer && isConnected && supportsCodiusModelAccess ? (
+        <CodiusModelAccessCard serverId={serverId} />
+      ) : null}
       <SettingsSection
         title={t("settings.providers.title")}
         testID="host-page-providers-card"

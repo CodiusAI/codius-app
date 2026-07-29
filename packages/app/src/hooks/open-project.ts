@@ -1,9 +1,9 @@
-import type { DaemonClient } from "@codius-ai/client/internal/daemon-client";
+import type { DaemonClient } from "@codius.ai/client/internal/daemon-client";
 import type {
   ProjectGithubCloneProtocol,
   ProjectAddResponse,
   WorkspaceProjectDescriptorPayload,
-} from "@codius-ai/protocol/messages";
+} from "@codius.ai/protocol/messages";
 import {
   normalizeEmptyProjectDescriptor as normalizeProjectWithoutWorkspacesDescriptor,
   type EmptyProjectDescriptor as ProjectWithoutWorkspacesDescriptor,

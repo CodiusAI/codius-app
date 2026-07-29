@@ -2,11 +2,11 @@ import type {
   DaemonClient,
   FetchAgentsEntry,
   FetchAgentsOptions,
-} from "@codius-ai/client/internal/daemon-client";
+} from "@codius.ai/client/internal/daemon-client";
 import {
   deriveAgentStateBucket,
   getWorkspaceStateBucketPriority,
-} from "@codius-ai/protocol/agent-state-bucket";
+} from "@codius.ai/protocol/agent-state-bucket";
 import type { Agent, DaemonServerInfo, WorkspaceDescriptor } from "@/stores/session-store";
 import { useSessionStore } from "@/stores/session-store";
 import {

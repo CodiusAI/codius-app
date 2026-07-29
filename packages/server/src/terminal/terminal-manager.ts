@@ -12,8 +12,8 @@ import { assertAbsolutePath, isSameOrDescendantPath } from "../server/path-utils
 import type {
   TerminalActivity,
   TerminalActivityState,
-} from "@codius-ai/protocol/terminal-activity";
-import { deriveTerminalActivityStatusBucket } from "@codius-ai/protocol/terminal-activity";
+} from "@codius.ai/protocol/terminal-activity";
+import { deriveTerminalActivityStatusBucket } from "@codius.ai/protocol/terminal-activity";
 
 export interface TerminalListItem {
   id: string;

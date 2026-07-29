@@ -167,7 +167,7 @@ describe("Claude terminal agent hooks", () => {
     },
   );
 
-  it("keeps provider names out of generic CLI and bootstrap integration points", () => {
+  it("keeps provider names out of Codius CLI and bootstrap integration points", () => {
     const genericFiles = [
       join(repositoryRoot, "packages", "cli", "src", "commands", "hooks.ts"),
       join(repositoryRoot, "packages", "server", "src", "server", "bootstrap.ts"),
@@ -181,7 +181,7 @@ describe("Claude terminal agent hooks", () => {
     }
   });
 
-  it("prepends the codius CLI directory and injects the hook CLI path", () => {
+  it("prepends the Codius CLI directory and injects its hook command path", () => {
     const cliBinDir = createFakeCliBinDir();
     const hookCliPath = join(cliBinDir, "codius");
 
@@ -196,7 +196,7 @@ describe("Claude terminal agent hooks", () => {
     expect(env.CODIUS_HOOK_CLI).toBe(hookCliPath);
   });
 
-  it("leaves terminal PATH unchanged when the CLI directory cannot be resolved", () => {
+  it("leaves terminal PATH unchanged when Codius CLI cannot be resolved", () => {
     const env = buildTerminalEnvironment({
       shell: "/bin/sh",
       env: { PATH: ["/usr/bin", "/bin"].join(delimiter) },

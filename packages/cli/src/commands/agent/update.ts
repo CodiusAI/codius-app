@@ -1,6 +1,6 @@
 import type { Command } from "commander";
-import type { AgentProviderNotice } from "@codius-ai/protocol/agent-types";
-import type { AgentSnapshotPayload } from "@codius-ai/protocol/messages";
+import type { AgentProviderNotice } from "@codius.ai/protocol/agent-types";
+import type { AgentSnapshotPayload } from "@codius.ai/protocol/messages";
 import { connectToDaemon, getDaemonHost } from "../../utils/client.js";
 import type {
   CommandOptions,
@@ -210,7 +210,7 @@ export async function runUpdateCommand(
     const error: CommandError = {
       code: "MISSING_AGENT_ID",
       message: "Agent ID is required",
-      details: "Usage: codiusctl agent update <id> [--name <name>] [--label <key=value>]",
+      details: "Usage: codius agent update <id> [--name <name>] [--label <key=value>]",
     };
     throw error;
   }
@@ -225,7 +225,7 @@ export async function runUpdateCommand(
     const error: CommandError = {
       code: "DAEMON_NOT_RUNNING",
       message: `Cannot connect to daemon at ${host}: ${message}`,
-      details: "Start the daemon with: codiusctl daemon start",
+      details: "Start the daemon with: codius daemon start",
     };
     throw error;
   }
@@ -236,7 +236,7 @@ export async function runUpdateCommand(
       const error: CommandError = {
         code: "AGENT_NOT_FOUND",
         message: `Agent not found: ${agentIdArg}`,
-        details: 'Use "codiusctl ls" to list available agents',
+        details: 'Use "codius ls" to list available agents',
       };
       throw error;
     }

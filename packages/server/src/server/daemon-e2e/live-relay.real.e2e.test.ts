@@ -5,11 +5,11 @@ import { DaemonClient } from "../test-utils/daemon-client.js";
 import { createTestCodiusDaemon, type TestCodiusDaemon } from "../test-utils/codius-daemon.js";
 import { generateLocalPairingOffer } from "../pairing-offer.js";
 import { CodexAppServerAgentClient } from "../agent/providers/codex-app-server-agent.js";
-import { buildRelayWebSocketUrl } from "@codius-ai/protocol/daemon-endpoints";
+import { buildRelayWebSocketUrl } from "@codius.ai/protocol/daemon-endpoints";
 import {
   parseConnectionOfferFromUrl,
   type ConnectionOffer,
-} from "@codius-ai/protocol/connection-offer";
+} from "@codius.ai/protocol/connection-offer";
 
 const relayEndpoint = process.env.CODIUS_LIVE_RELAY_ENDPOINT ?? "codius-relay-next.fly.dev:443";
 const liveTest = process.env.RUN_LIVE_RELAY_E2E === "1" ? test : test.skip;

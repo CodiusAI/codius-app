@@ -1,6 +1,6 @@
 import type { Options as ClaudeAgentOptions } from "@anthropic-ai/claude-agent-sdk";
-import type { AgentProviderNotice } from "@codius-ai/protocol/agent-types";
-import type { AgentAttachment } from "@codius-ai/protocol/messages";
+import type { AgentProviderNotice } from "@codius.ai/protocol/agent-types";
+import type { AgentAttachment } from "@codius.ai/protocol/messages";
 import type { CodiusToolCatalog } from "./tools/types.js";
 
 export type { AgentProviderNotice };

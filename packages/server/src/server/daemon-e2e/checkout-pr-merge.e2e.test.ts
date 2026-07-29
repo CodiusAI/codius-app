@@ -11,7 +11,7 @@ import {
   type DaemonTestContext,
 } from "../test-utils/index.js";
 import { createWorktree as createWorktreePrimitive } from "../../utils/worktree.js";
-import type { PullRequestMergeable } from "@codius-ai/protocol/messages";
+import type { PullRequestMergeable } from "@codius.ai/protocol/messages";
 
 const GhPrViewSchema = z.object({
   state: z.string(),
