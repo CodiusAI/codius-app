@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.0-beta.4 - 2026-07-27
+## 0.2.0-beta.5 - 2026-07-29
+
+### Added
+
+- Install the Codius CLI from npm with `npm install -g @codius.ai/cli@beta`
 
 ### Improved
 
