@@ -1,6 +1,6 @@
 {
   "name": "@codius.ai/relay",
-  "version": "0.2.0-beta.3",
+  "version": "0.2.0-beta.5",
   "description": "Codius relay for bridging daemon and client connections",
   "keywords": [
     "coding-agents",
