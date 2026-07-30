@@ -21,14 +21,14 @@
         "APP_VARIANT": "production"
       },
       "android": {
-        "resourceClass": "large"
+        "resourceClass": "medium"
       }
     },
     "production-apk": {
       "extends": "production",
       "distribution": "internal",
       "android": {
-        "resourceClass": "large",
+        "resourceClass": "medium",
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease -x lint -x lintVitalAnalyzeRelease -x lintVitalRelease -x generateReleaseLintModel -x generateReleaseLintVitalModel"
       }
