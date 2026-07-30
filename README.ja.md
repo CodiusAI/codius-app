@@ -15,7 +15,7 @@
   <a href="https://github.com/CodiusAI/codius-app/releases">
     <img src="https://img.shields.io/github/v/release/CodiusAI/codius-app?style=flat&logo=github" alt="GitHub release">
   </a>
-  <a href="https://discord.gg/jz8T2uahpH">
+  <a href="https://discord.gg/kV46cvQFX">
     <img src="https://img.shields.io/badge/Discord-555?logo=discord" alt="Discord">
   </a>
   <a href="https://www.reddit.com/r/CodiusAI/">
@@ -35,7 +35,7 @@
 
 > [!NOTE]
 > 私はひとりでメンテナンスしているため、GitHub Issues を毎日確認できるとは限りません。
-> 急ぎの問題や作業がブロックされている場合は、[Discord](https://discord.gg/jz8T2uahpH) から連絡するのが一番早いです。
+> 急ぎの問題や作業がブロックされている場合は、[Discord](https://discord.gg/kV46cvQFX) から連絡するのが一番早いです。
 
 ---
 

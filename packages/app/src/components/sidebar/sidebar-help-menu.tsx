@@ -27,7 +27,7 @@ import { formatVersionWithPrefix } from "@/desktop/updates/desktop-updates";
 import { resolveAppVersion } from "@/utils/app-version";
 import { openExternalUrl } from "@/utils/open-external-url";
 
-const DISCORD_URL = "https://discord.gg/jz8T2uahpH";
+const DISCORD_URL = "https://discord.gg/kV46cvQFX";
 const GITHUB_ISSUE_URL = "https://github.com/CodiusAI/codius-app/issues/new";
 const CHANGELOG_URL = "https://codius.ai/changelog";
 const ThemedActivity = withUnistyles(Activity);

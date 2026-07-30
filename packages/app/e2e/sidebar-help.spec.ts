@@ -3,7 +3,7 @@ import { gotoAppShell, openSettings } from "./helpers/app";
 import { openSettingsSection } from "./helpers/settings";
 
 const DISCORD_DESTINATION =
-  /^https:\/\/(?:discord\.gg\/jz8T2uahpH|discord\.com\/invite\/jz8T2uahpH)(?:[/?#]|$)/;
+  /^https:\/\/(?:discord\.gg\/kV46cvQFX|discord\.com\/invite\/kV46cvQFX)(?:[/?#]|$)/;
 const GITHUB_ISSUE_DESTINATION =
   /^https:\/\/github\.com\/(?:codius-ai\/codius\/issues\/new(?:\/choose)?(?:[/?#]|$)|login\?return_to=https%3A%2F%2Fgithub\.com%2Fcodius-ai%2Fcodius%2Fissues%2Fnew$)/;
 const CHANGELOG_DESTINATION = /^https:\/\/codius\.sh\/changelog(?:[/?#]|$)/;

@@ -20,7 +20,7 @@ export function CommunityLinks() {
   }, []);
 
   const handleOpenDiscord = useCallback(() => {
-    void openExternalUrl("https://discord.gg/jz8T2uahpH");
+    void openExternalUrl("https://discord.gg/kV46cvQFX");
   }, []);
 
   return (
