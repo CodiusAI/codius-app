@@ -1,6 +1,6 @@
 {
   "name": "@codius.ai/desktop",
-  "version": "0.2.0-beta.5",
+  "version": "0.2.0-beta.6",
   "private": true,
   "description": "Codius Electron application",
   "homepage": "https://codius.ai",

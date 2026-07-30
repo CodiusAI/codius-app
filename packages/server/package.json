@@ -1,6 +1,6 @@
 {
   "name": "@codius.ai/server",
-  "version": "0.2.0-beta.5",
+  "version": "0.2.0-beta.6",
   "description": "Codius backend server",
   "keywords": [
     "coding-agents",
@@ -85,10 +85,10 @@
     "@agentclientprotocol/sdk": "^0.17.1",
     "@anthropic-ai/claude-agent-sdk": "^0.3.220",
     "@anthropic-ai/sdk": "^0.104.2",
-    "@codius.ai/client": "0.2.0-beta.5",
-    "@codius.ai/highlight": "0.2.0-beta.5",
-    "@codius.ai/protocol": "0.2.0-beta.5",
-    "@codius.ai/relay": "0.2.0-beta.5",
+    "@codius.ai/client": "0.2.0-beta.6",
+    "@codius.ai/highlight": "0.2.0-beta.6",
+    "@codius.ai/protocol": "0.2.0-beta.6",
+    "@codius.ai/relay": "0.2.0-beta.6",
     "@isaacs/ttlcache": "^2.1.4",
     "@modelcontextprotocol/sdk": "^1.20.1",
     "@opencode-ai/sdk": "1.14.46",
