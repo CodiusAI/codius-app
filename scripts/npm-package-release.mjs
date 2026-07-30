@@ -224,6 +224,8 @@ export function findForbiddenPackedContent(packedFilesInput, readText) {
   return issues;
 }
 
+// oxlint-disable complexity -- linear release checklist: every independent metadata
+// assertion adds a branch; splitting it into helpers would obscure the sequence.
 function validatePackageMetadata(root, releaseConfig, entry, rootVersion, rootWorkspaces, issues) {
   const manifestPath = packageJsonPath(root, entry.workspace);
   if (!existsSync(manifestPath)) {
@@ -360,6 +362,8 @@ function validatePackageMetadata(root, releaseConfig, entry, rootVersion, rootWo
   }
 }
 
+// oxlint-disable complexity -- linear release checklist: every independent state
+// assertion adds a branch; splitting it into helpers would obscure the sequence.
 export function validateReleaseState(root = ROOT_DIR, releaseConfig = loadReleaseConfig(root)) {
   const issues = [];
   const rootPackagePath = path.join(root, "package.json");
