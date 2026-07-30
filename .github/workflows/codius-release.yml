@@ -90,7 +90,12 @@ jobs:
           MAC_APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.CODIUS_APPLE_APP_SPECIFIC_PASSWORD }}
           MAC_APPLE_TEAM_ID: ${{ secrets.CODIUS_APPLE_TEAM_ID }}
         run: |
-          test -n "$MAC_CSC_LINK"
+          if [[ -z "${MAC_CSC_LINK//[[:space:]]/}" ]]; then
+            echo "::warning::CODIUS_CSC_LINK is not configured; falling back to an unsigned macOS build."
+            echo "CODIUS_UNSIGNED=true" >> "$GITHUB_ENV"
+            echo "CSC_IDENTITY_AUTO_DISCOVERY=false" >> "$GITHUB_ENV"
+            exit 0
+          fi
           echo "CSC_LINK=$MAC_CSC_LINK" >> "$GITHUB_ENV"
           echo "CSC_KEY_PASSWORD=$MAC_CSC_KEY_PASSWORD" >> "$GITHUB_ENV"
           echo "APPLE_ID=$MAC_APPLE_ID" >> "$GITHUB_ENV"
