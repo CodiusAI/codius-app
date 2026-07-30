@@ -45,7 +45,7 @@
   },
   "scripts": {
     "clean": "node ../../scripts/clean-package-dist.mjs",
-    "build": "npm run build --workspace=@codius.ai/protocol && tsc -p tsconfig.json --incremental false",
+    "build": "npm run build --workspace=@codius.ai/relay && npm run build --workspace=@codius.ai/protocol && tsc -p tsconfig.json --incremental false",
     "build:clean": "npm run clean && npm run build",
     "prepack": "npm run build:clean",
     "typecheck": "tsgo --noEmit",
