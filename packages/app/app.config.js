@@ -211,6 +211,9 @@ export default {
     extra: {
       fdroidBuild: isFdroidBuild,
       router: {},
+      eas: {
+        projectId: "6cadc83a-461a-40d3-9415-ed96a81af169",
+      },
     },
   },
 };
