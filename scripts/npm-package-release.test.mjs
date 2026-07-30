@@ -26,6 +26,14 @@ const releaseConfig = JSON.parse(
   readFileSync(path.join(ROOT_DIR, "config/npm-package-release.json"), "utf8"),
 );
 
+// The release graph lists names and dependencies only; the coordinated version
+// lives in the root manifest. Reading it from a package entry yields undefined,
+// which silently passes off a tag (the `git tag --points-at` lookup finds no
+// `vundefined`) and fails on one, where GITHUB_REF_NAME is compared directly.
+const releaseVersion = JSON.parse(
+  readFileSync(path.join(ROOT_DIR, "package.json"), "utf8"),
+).version;
+
 function writeJson(filePath, value) {
   writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`);
 }
@@ -174,18 +182,16 @@ test("rejects prohibited content in packed code and public package copy", () => 
 });
 
 test("release records carry source commit and tag traceability", () => {
-  const identity = resolveSourceIdentity(ROOT_DIR, releaseConfig.packages[0].version);
+  const identity = resolveSourceIdentity(ROOT_DIR, releaseVersion);
   assert.match(identity.sourceCommit, /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/);
-  assert(
-    identity.sourceTag === null || identity.sourceTag === `v${releaseConfig.packages[0].version}`,
-  );
+  assert(identity.sourceTag === null || identity.sourceTag === `v${releaseVersion}`);
   assert.doesNotThrow(() =>
     validateSourceIdentity(
       {
         sourceCommit: identity.sourceCommit,
         sourceTag: identity.sourceTag,
       },
-      releaseConfig.packages[0].version,
+      releaseVersion,
     ),
   );
   assert.throws(
@@ -195,7 +201,7 @@ test("release records carry source commit and tag traceability", () => {
           sourceCommit: "not-a-commit",
           sourceTag: null,
         },
-        releaseConfig.packages[0].version,
+        releaseVersion,
       ),
     /invalid source commit/,
   );
