@@ -1,3 +1,16 @@
+# TODO: This workflow is temporarily disabled on tag push because the free EAS
+# plan only includes "medium" workers, which OOM during Hermes compilation
+# (exit code 137) for this project. The "large" resource class requires a paid
+# EAS plan (Starter, $19/mo). When we subscribe, revert the trigger back to:
+#
+#   on:
+#     push:
+#       tags:
+#         - "v*"
+#         - "android-v*"
+#     workflow_dispatch:
+#
+# The workflow remains available via manual workflow_dispatch for local testing.
 name: Android APK Release
 
 on:

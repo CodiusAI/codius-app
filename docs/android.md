@@ -155,6 +155,8 @@ iOS auto-submits to App Store review via a Fastlane lane after EAS uploads to Te
 
 Beta tags like `v0.1.1-beta.1` only trigger the GitHub APK workflow. They publish a GitHub prerelease APK for testing and do not submit to the stores.
 
+> **The Android APK workflow is temporarily disabled on tag push** (as of beta.6). The free EAS plan only includes "medium" workers, which OOM during Hermes compilation (exit code 137) for this project. The `large` resource class requires a paid EAS plan (Starter, $19/mo). When we subscribe, revert the trigger in `.github/workflows/android-apk-release.yml` back to include `push: tags: ["v*", "android-v*"]`. The workflow remains available via manual `workflow_dispatch` in the meantime.
+
 `android-v*` tags also trigger only the GitHub APK workflow — useful when you want to ship an APK without going through stores. The GitHub APK workflow supports `workflow_dispatch` with an existing `tag` input so you can rebuild without cutting a new tag.
 
 ### Useful commands
