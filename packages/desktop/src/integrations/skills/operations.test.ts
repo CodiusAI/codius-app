@@ -1,24 +1,24 @@
 import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-vi.mock("electron", () => ({
-  app: {
-    getPath: vi.fn(() => "/tmp/codius-user-data"),
-    isPackaged: false,
-  },
-}));
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import {
   autoUpdateInstalledSkills,
   getSkillsStatus,
   installSkills,
-  CODIUS_SKILL_NAMES,
+  LEGACY_SKILL_NAMES,
+  type SkillSelection,
   type SkillTargets,
   uninstallSkills,
   updateSkills,
 } from "./operations";
+
+const ALL_SKILLS: SkillSelection = { mode: "all" };
+
+function only(...skills: string[]): SkillSelection {
+  return { mode: "custom", skills };
+}
 
 interface Sandbox {
   root: string;
@@ -85,6 +85,14 @@ async function pathExists(p: string): Promise<boolean> {
     .catch(() => false);
 }
 
+async function installedIn(targets: SkillTargets, name: string): Promise<boolean[]> {
+  return Promise.all(
+    [targets.agentsDir, targets.claudeDir, targets.codexDir].map((dir) =>
+      pathExists(path.join(dir, name)),
+    ),
+  );
+}
+
 describe("getSkillsStatus", () => {
   let sandbox: Sandbox;
 
@@ -99,7 +107,7 @@ describe("getSkillsStatus", () => {
   it("returns not-installed with add ops for every bundled skill when nothing is on disk", async () => {
     await writeCurrentBundle(sandbox.targets.sourceDir);
 
-    const status = await getSkillsStatus(sandbox.targets);
+    const status = await getSkillsStatus(sandbox.targets, ALL_SKILLS);
 
     expect(status.state).toBe("not-installed");
     expect(status.ops).toEqual([
@@ -108,13 +116,46 @@ describe("getSkillsStatus", () => {
     ]);
   });
 
+  it("reports every bundled skill as available", async () => {
+    await writeCurrentBundle(sandbox.targets.sourceDir);
+    await writeBundleSkill(sandbox.targets.sourceDir, "codius-advisor", {
+      "SKILL.md": "advisor-v1",
+    });
+
+    const status = await getSkillsStatus(sandbox.targets, only("codius"));
+
+    expect(status.available).toEqual(["codius", "codius-advisor", "codius-loop"]);
+  });
+
+  it("reports a skill present in only one target as installed", async () => {
+    await writeCurrentBundle(sandbox.targets.sourceDir);
+    await writeOnDiskSkill(sandbox.targets.claudeDir, "codius", { "SKILL.md": "codius-v1" });
+
+    const status = await getSkillsStatus(sandbox.targets, ALL_SKILLS);
+
+    // `add` means "missing from at least one target", so it cannot answer
+    // "is there a directory here to delete". `installed` answers that.
+    expect(status.installed).toEqual(["codius"]);
+    expect(status.ops).toEqual([
+      { kind: "add", name: "codius" },
+      { kind: "add", name: "codius-loop" },
+    ]);
+  });
+
+  it("reports legacy skill directories left on disk as installed", async () => {
+    await writeCurrentBundle(sandbox.targets.sourceDir);
+    await writeOnDiskSkill(sandbox.targets.agentsDir, "codius-chat", { "SKILL.md": "chat-old" });
+
+    expect((await getSkillsStatus(sandbox.targets, ALL_SKILLS)).installed).toEqual(["codius-chat"]);
+  });
+
   it("returns not-installed when only user-personal skill dirs exist (the live bug)", async () => {
     await writeCurrentBundle(sandbox.targets.sourceDir);
     for (const name of ["unslop", "tdd", "devbox"]) {
       await writeOnDiskSkill(sandbox.targets.agentsDir, name, { "SKILL.md": `user-${name}` });
     }
 
-    const status = await getSkillsStatus(sandbox.targets);
+    const status = await getSkillsStatus(sandbox.targets, ALL_SKILLS);
 
     expect(status.state).toBe("not-installed");
     expect(status.ops).toEqual([
@@ -128,9 +169,14 @@ describe("getSkillsStatus", () => {
     await writeOnDiskSkillToAllTargets(sandbox.targets, "codius", { "SKILL.md": "codius-v1" });
     await writeOnDiskSkillToAllTargets(sandbox.targets, "codius-loop", { "SKILL.md": "loop-v1" });
 
-    const status = await getSkillsStatus(sandbox.targets);
+    const status = await getSkillsStatus(sandbox.targets, ALL_SKILLS);
 
-    expect(status).toEqual({ state: "up-to-date", ops: [] });
+    expect(status).toEqual({
+      state: "up-to-date",
+      ops: [],
+      available: ["codius", "codius-loop"],
+      installed: ["codius", "codius-loop"],
+    });
   });
 
   it("ignores user-added files inside current managed skill dirs in every target", async () => {
@@ -150,9 +196,14 @@ describe("getSkillsStatus", () => {
       "hooks/guard.sh": "user guard",
     });
 
-    const status = await getSkillsStatus(sandbox.targets);
+    const status = await getSkillsStatus(sandbox.targets, ALL_SKILLS);
 
-    expect(status).toEqual({ state: "up-to-date", ops: [] });
+    expect(status).toEqual({
+      state: "up-to-date",
+      ops: [],
+      available: ["codius", "codius-loop"],
+      installed: ["codius", "codius-loop"],
+    });
   });
 
   it("returns drift with a single update op when one bundled file diverges", async () => {
@@ -162,7 +213,7 @@ describe("getSkillsStatus", () => {
     await writeOnDiskSkill(sandbox.targets.codexDir, "codius", { "SKILL.md": "codius-v1" });
     await writeOnDiskSkillToAllTargets(sandbox.targets, "codius-loop", { "SKILL.md": "loop-v1" });
 
-    const status = await getSkillsStatus(sandbox.targets);
+    const status = await getSkillsStatus(sandbox.targets, ALL_SKILLS);
 
     expect(status.state).toBe("drift");
     expect(status.ops).toEqual([{ kind: "update", name: "codius" }]);
@@ -177,7 +228,7 @@ describe("getSkillsStatus", () => {
     await writeOnDiskSkill(sandbox.targets.codexDir, "codius", { "SKILL.md": "codius-v1" });
     await writeOnDiskSkill(sandbox.targets.codexDir, "codius-loop", { "SKILL.md": "loop-v1" });
 
-    const status = await getSkillsStatus(sandbox.targets);
+    const status = await getSkillsStatus(sandbox.targets, ALL_SKILLS);
 
     expect(status.state).toBe("drift");
     expect(status.ops).toEqual([{ kind: "update", name: "codius" }]);
@@ -187,7 +238,7 @@ describe("getSkillsStatus", () => {
     await writeCurrentBundle(sandbox.targets.sourceDir);
     await writeOnDiskSkillToAllTargets(sandbox.targets, "codius", { "SKILL.md": "codius-v1" });
 
-    const status = await getSkillsStatus(sandbox.targets);
+    const status = await getSkillsStatus(sandbox.targets, ALL_SKILLS);
 
     expect(status.state).toBe("drift");
     expect(status.ops).toEqual([{ kind: "add", name: "codius-loop" }]);
@@ -199,7 +250,7 @@ describe("getSkillsStatus", () => {
     await writeOnDiskSkillToAllTargets(sandbox.targets, "codius-loop", { "SKILL.md": "loop-v1" });
     await writeOnDiskSkill(sandbox.targets.agentsDir, "codius-chat", { "SKILL.md": "chat-old" });
 
-    const status = await getSkillsStatus(sandbox.targets);
+    const status = await getSkillsStatus(sandbox.targets, ALL_SKILLS);
 
     expect(status.state).toBe("drift");
     expect(status.ops).toEqual([{ kind: "delete", name: "codius-chat" }]);
@@ -212,13 +263,127 @@ describe("getSkillsStatus", () => {
     await writeOnDiskSkill(sandbox.targets.codexDir, "codius", { "SKILL.md": "codius-v1" });
     await writeOnDiskSkill(sandbox.targets.agentsDir, "codius-chat", { "SKILL.md": "chat-old" });
 
-    const status = await getSkillsStatus(sandbox.targets);
+    const status = await getSkillsStatus(sandbox.targets, ALL_SKILLS);
 
     expect(status.state).toBe("drift");
     expect(status.ops).toEqual([
       { kind: "update", name: "codius" },
       { kind: "delete", name: "codius-chat" },
       { kind: "add", name: "codius-loop" },
+    ]);
+  });
+});
+
+describe("custom skill selection", () => {
+  let sandbox: Sandbox;
+
+  beforeEach(async () => {
+    sandbox = await makeSandbox();
+    await writeCurrentBundle(sandbox.targets.sourceDir);
+    await writeBundleSkill(sandbox.targets.sourceDir, "codius-advisor", {
+      "SKILL.md": "advisor-v1",
+    });
+  });
+
+  afterEach(async () => {
+    await fs.rm(sandbox.root, { recursive: true, force: true });
+  });
+
+  it("installs only the selected skills", async () => {
+    const status = await installSkills(sandbox.targets, only("codius", "codius-loop"));
+
+    expect(status).toEqual({
+      state: "up-to-date",
+      ops: [],
+      available: ["codius", "codius-advisor", "codius-loop"],
+      installed: ["codius", "codius-loop"],
+    });
+    expect(await installedIn(sandbox.targets, "codius")).toEqual([true, true, true]);
+    expect(await installedIn(sandbox.targets, "codius-loop")).toEqual([true, true, true]);
+    expect(await installedIn(sandbox.targets, "codius-advisor")).toEqual([false, false, false]);
+  });
+
+  it("reports up-to-date while an unselected bundled skill is absent", async () => {
+    await installSkills(sandbox.targets, only("codius"));
+
+    const status = await getSkillsStatus(sandbox.targets, only("codius"));
+
+    expect(status).toEqual({
+      state: "up-to-date",
+      ops: [],
+      available: ["codius", "codius-advisor", "codius-loop"],
+      installed: ["codius"],
+    });
+  });
+
+  it("removes a previously installed skill once it leaves the selection", async () => {
+    await installSkills(sandbox.targets, ALL_SKILLS);
+
+    const status = await installSkills(sandbox.targets, only("codius"));
+
+    expect(status.state).toBe("up-to-date");
+    expect(await installedIn(sandbox.targets, "codius")).toEqual([true, true, true]);
+    expect(await installedIn(sandbox.targets, "codius-loop")).toEqual([false, false, false]);
+    expect(await installedIn(sandbox.targets, "codius-advisor")).toEqual([false, false, false]);
+  });
+
+  it("reports a delete op for a deselected skill before it is applied", async () => {
+    await installSkills(sandbox.targets, ALL_SKILLS);
+
+    const status = await getSkillsStatus(sandbox.targets, only("codius", "codius-advisor"));
+
+    expect(status.state).toBe("drift");
+    expect(status.ops).toEqual([{ kind: "delete", name: "codius-loop" }]);
+  });
+
+  it("leaves unrelated user skills untouched", async () => {
+    await writeOnDiskSkill(sandbox.targets.agentsDir, "unslop", { "SKILL.md": "user-unslop" });
+
+    await installSkills(sandbox.targets, only("codius"));
+
+    expect(
+      await fs.readFile(path.join(sandbox.targets.agentsDir, "unslop", "SKILL.md"), "utf-8"),
+    ).toBe("user-unslop");
+  });
+
+  it("treats an empty custom selection as no managed skills installed", async () => {
+    await installSkills(sandbox.targets, ALL_SKILLS);
+
+    const status = await installSkills(sandbox.targets, only());
+
+    expect(status).toEqual({
+      state: "not-installed",
+      ops: [],
+      available: ["codius", "codius-advisor", "codius-loop"],
+      installed: [],
+    });
+    expect(await installedIn(sandbox.targets, "codius")).toEqual([false, false, false]);
+    expect(await installedIn(sandbox.targets, "codius-loop")).toEqual([false, false, false]);
+  });
+
+  it("ignores selected names that the bundle does not ship", async () => {
+    const status = await installSkills(sandbox.targets, only("codius", "not-a-skill"));
+
+    expect(status).toEqual({
+      state: "up-to-date",
+      ops: [],
+      available: ["codius", "codius-advisor", "codius-loop"],
+      installed: ["codius"],
+    });
+    expect(await installedIn(sandbox.targets, "not-a-skill")).toEqual([false, false, false]);
+  });
+
+  it("still deletes legacy skill names that are not selectable", async () => {
+    await writeOnDiskSkillToAllTargets(sandbox.targets, "codius-orchestrator", {
+      "SKILL.md": "orchestrator-old",
+    });
+
+    await installSkills(sandbox.targets, only("codius"));
+
+    expect(await installedIn(sandbox.targets, "codius-orchestrator")).toEqual([
+      false,
+      false,
+      false,
     ]);
   });
 });
@@ -238,9 +403,14 @@ describe("installSkills / updateSkills", () => {
     await writeCurrentBundle(sandbox.targets.sourceDir);
     await writeOnDiskSkill(sandbox.targets.agentsDir, "unslop", { "SKILL.md": "user-unslop" });
 
-    const status = await installSkills(sandbox.targets);
+    const status = await installSkills(sandbox.targets, ALL_SKILLS);
 
-    expect(status).toEqual({ state: "up-to-date", ops: [] });
+    expect(status).toEqual({
+      state: "up-to-date",
+      ops: [],
+      available: ["codius", "codius-loop"],
+      installed: ["codius", "codius-loop"],
+    });
     for (const name of ["codius", "codius-loop"]) {
       expect(
         await fs.readFile(path.join(sandbox.targets.agentsDir, name, "SKILL.md"), "utf-8"),
@@ -255,16 +425,21 @@ describe("installSkills / updateSkills", () => {
     ).toBe("user-unslop");
   });
 
-  it("converges to up-to-date when state has missing + edited + legacy skills", async () => {
+  it("repairs missing and edited skills without deleting a legacy directory", async () => {
     await writeCurrentBundle(sandbox.targets.sourceDir);
     await writeOnDiskSkill(sandbox.targets.agentsDir, "codius", { "SKILL.md": "stale" });
     await writeOnDiskSkill(sandbox.targets.agentsDir, "codius-chat", { "SKILL.md": "chat-old" });
     await writeOnDiskSkill(sandbox.targets.claudeDir, "codius-chat", { "SKILL.md": "chat-old" });
     await writeOnDiskSkill(sandbox.targets.codexDir, "codius-chat", { "SKILL.md": "chat-old" });
 
-    const status = await updateSkills(sandbox.targets);
+    const status = await updateSkills(sandbox.targets, ALL_SKILLS);
 
-    expect(status).toEqual({ state: "up-to-date", ops: [] });
+    expect(status).toEqual({
+      state: "drift",
+      ops: [{ kind: "delete", name: "codius-chat" }],
+      available: ["codius", "codius-loop"],
+      installed: ["codius", "codius-chat", "codius-loop"],
+    });
     expect(
       await fs.readFile(path.join(sandbox.targets.agentsDir, "codius", "SKILL.md"), "utf-8"),
     ).toBe("codius-v1");
@@ -276,7 +451,7 @@ describe("installSkills / updateSkills", () => {
       sandbox.targets.claudeDir,
       sandbox.targets.codexDir,
     ]) {
-      expect(await pathExists(path.join(dir, "codius-chat"))).toBe(false);
+      expect(await pathExists(path.join(dir, "codius-chat"))).toBe(true);
     }
   });
 
@@ -297,10 +472,15 @@ describe("installSkills / updateSkills", () => {
       "prompts/local.md": "codex prompt",
     });
 
-    const status = await updateSkills(sandbox.targets);
+    const status = await updateSkills(sandbox.targets, ALL_SKILLS);
 
-    expect(status).toEqual({ state: "up-to-date", ops: [] });
-    expect(await getSkillsStatus(sandbox.targets)).toEqual({ state: "up-to-date", ops: [] });
+    expect(status.state).toBe("up-to-date");
+    expect(await getSkillsStatus(sandbox.targets, ALL_SKILLS)).toEqual({
+      state: "up-to-date",
+      ops: [],
+      available: ["codius", "codius-loop"],
+      installed: ["codius", "codius-loop"],
+    });
     expect(
       await fs.readFile(
         path.join(sandbox.targets.agentsDir, "codius", "hooks", "guard.sh"),
@@ -329,9 +509,9 @@ describe("installSkills / updateSkills", () => {
     await writeOnDiskSkill(sandbox.targets.codexDir, "codius", { "SKILL.md": "codius-v1" });
     await writeOnDiskSkill(sandbox.targets.codexDir, "codius-loop", { "SKILL.md": "loop-v1" });
 
-    const status = await updateSkills(sandbox.targets);
+    const status = await updateSkills(sandbox.targets, ALL_SKILLS);
 
-    expect(status).toEqual({ state: "up-to-date", ops: [] });
+    expect(status.state).toBe("up-to-date");
     expect(
       await fs.readFile(path.join(sandbox.targets.claudeDir, "codius-loop", "SKILL.md"), "utf-8"),
     ).toBe("loop-v1");
@@ -344,10 +524,10 @@ describe("installSkills / updateSkills", () => {
       "hooks/guard.sh": "user guard",
     });
 
-    const status = await autoUpdateInstalledSkills(sandbox.targets);
+    const status = await autoUpdateInstalledSkills(sandbox.targets, ALL_SKILLS);
 
-    expect(status).toEqual({ state: "up-to-date", ops: [] });
-    expect(await getSkillsStatus(sandbox.targets)).toEqual({ state: "up-to-date", ops: [] });
+    expect(status.state).toBe("up-to-date");
+    expect((await getSkillsStatus(sandbox.targets, ALL_SKILLS)).state).toBe("up-to-date");
     expect(
       await fs.readFile(path.join(sandbox.targets.agentsDir, "codius", "SKILL.md"), "utf-8"),
     ).toBe("codius-v1");
@@ -362,7 +542,7 @@ describe("installSkills / updateSkills", () => {
   it("does not auto-install skills on a clean machine", async () => {
     await writeCurrentBundle(sandbox.targets.sourceDir);
 
-    const status = await autoUpdateInstalledSkills(sandbox.targets);
+    const status = await autoUpdateInstalledSkills(sandbox.targets, ALL_SKILLS);
 
     expect(status).toEqual({
       state: "not-installed",
@@ -370,20 +550,20 @@ describe("installSkills / updateSkills", () => {
         { kind: "add", name: "codius" },
         { kind: "add", name: "codius-loop" },
       ],
+      available: ["codius", "codius-loop"],
+      installed: [],
     });
-    expect(await pathExists(path.join(sandbox.targets.agentsDir, "codius"))).toBe(false);
-    expect(await pathExists(path.join(sandbox.targets.claudeDir, "codius"))).toBe(false);
-    expect(await pathExists(path.join(sandbox.targets.codexDir, "codius"))).toBe(false);
+    expect(await installedIn(sandbox.targets, "codius")).toEqual([false, false, false]);
   });
 
   it("is idempotent — running install twice keeps state at up-to-date", async () => {
     await writeCurrentBundle(sandbox.targets.sourceDir);
 
-    const first = await installSkills(sandbox.targets);
-    const second = await installSkills(sandbox.targets);
+    const first = await installSkills(sandbox.targets, ALL_SKILLS);
+    const second = await installSkills(sandbox.targets, ALL_SKILLS);
 
-    expect(first).toEqual({ state: "up-to-date", ops: [] });
-    expect(second).toEqual({ state: "up-to-date", ops: [] });
+    expect(first.state).toBe("up-to-date");
+    expect(second.state).toBe("up-to-date");
   });
 });
 
@@ -400,18 +580,16 @@ describe("uninstallSkills", () => {
 
   it("removes every Codius skill from all three targets and preserves user dirs", async () => {
     await writeCurrentBundle(sandbox.targets.sourceDir);
-    await installSkills(sandbox.targets);
+    await installSkills(sandbox.targets, ALL_SKILLS);
     for (const name of ["unslop", "tdd", "devbox"]) {
       await writeOnDiskSkill(sandbox.targets.agentsDir, name, { "SKILL.md": `user-${name}` });
     }
 
-    const status = await uninstallSkills(sandbox.targets);
+    const status = await uninstallSkills(sandbox.targets, ALL_SKILLS);
 
     expect(status.state).toBe("not-installed");
-    for (const name of CODIUS_SKILL_NAMES) {
-      expect(await pathExists(path.join(sandbox.targets.agentsDir, name))).toBe(false);
-      expect(await pathExists(path.join(sandbox.targets.claudeDir, name))).toBe(false);
-      expect(await pathExists(path.join(sandbox.targets.codexDir, name))).toBe(false);
+    for (const name of ["codius", "codius-loop", ...LEGACY_SKILL_NAMES]) {
+      expect(await installedIn(sandbox.targets, name)).toEqual([false, false, false]);
     }
     for (const name of ["unslop", "tdd", "devbox"]) {
       expect(
@@ -423,7 +601,7 @@ describe("uninstallSkills", () => {
   it("is a no-op when nothing is installed", async () => {
     await writeCurrentBundle(sandbox.targets.sourceDir);
 
-    const status = await uninstallSkills(sandbox.targets);
+    const status = await uninstallSkills(sandbox.targets, ALL_SKILLS);
 
     expect(status.state).toBe("not-installed");
   });
@@ -438,15 +616,9 @@ describe("uninstallSkills", () => {
       await writeOnDiskSkill(dir, "codius-chat", { "SKILL.md": "chat-old" });
     }
 
-    const status = await uninstallSkills(sandbox.targets);
+    const status = await uninstallSkills(sandbox.targets, ALL_SKILLS);
 
     expect(status.state).toBe("not-installed");
-    for (const dir of [
-      sandbox.targets.agentsDir,
-      sandbox.targets.claudeDir,
-      sandbox.targets.codexDir,
-    ]) {
-      expect(await pathExists(path.join(dir, "codius-chat"))).toBe(false);
-    }
+    expect(await installedIn(sandbox.targets, "codius-chat")).toEqual([false, false, false]);
   });
 });

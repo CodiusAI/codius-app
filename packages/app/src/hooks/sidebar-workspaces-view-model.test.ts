@@ -78,20 +78,26 @@ function project(input: {
   projectKind?: WorkspaceStructureProject["projectKind"];
   iconWorkingDir?: string;
   workspaceKeys: string[];
-  hosts?: WorkspaceStructureProject["hosts"];
+  hosts?: Array<
+    Omit<WorkspaceStructureProject["hosts"][number], "projectId"> & { projectId?: string }
+  >;
 }): WorkspaceStructureProject {
   return {
+    viewKey: input.projectKey,
     projectKey: input.projectKey,
     projectName: input.projectName ?? input.projectKey,
     projectKind: input.projectKind ?? "git",
     iconWorkingDir: input.iconWorkingDir ?? input.projectKey,
-    hosts: input.hosts ?? [
-      {
-        serverId: "srv",
-        iconWorkingDir: input.iconWorkingDir ?? input.projectKey,
-        canCreateWorktree: true,
-      },
-    ],
+    hosts: Array.from(
+      input.hosts ?? [
+        {
+          serverId: "srv",
+          iconWorkingDir: input.iconWorkingDir ?? input.projectKey,
+          worktreeSupport: "supported" as const,
+        },
+      ],
+      (host) => Object.assign({}, host, { projectId: host.projectId ?? input.projectKey }),
+    ),
     workspaceKeys: input.workspaceKeys,
   };
 }
@@ -222,7 +228,7 @@ describe("buildSidebarProjectsFromStructure", () => {
       ],
     });
 
-    expect(projects.map((entry) => entry.projectKey)).toEqual(["project-b", "project-a"]);
+    expect(projects.map((entry) => entry.viewKey)).toEqual(["project-b", "project-a"]);
   });
 
   it("preserves the structure hook workspace order", () => {
@@ -245,7 +251,7 @@ describe("buildSidebarProjectsFromStructure", () => {
             {
               serverId: "relay:codius-host",
               iconWorkingDir: "/repo/project-1",
-              canCreateWorktree: true,
+              worktreeSupport: "supported" as const,
             },
           ],
           workspaceKeys: ["relay:codius-host:ws-main"],
@@ -272,13 +278,13 @@ describe("shared sidebar workspace model", () => {
           hosts: [
             {
               serverId: "host-a",
-              iconWorkingDir: "/repo/CodiusAI/codius-app",
-              canCreateWorktree: true,
+              iconWorkingDir: "/repo/getpaseo/paseo",
+              worktreeSupport: "supported" as const,
             },
             {
               serverId: "host-b",
-              iconWorkingDir: "/repo/CodiusAI/codius-app",
-              canCreateWorktree: true,
+              iconWorkingDir: "/repo/getpaseo/paseo",
+              worktreeSupport: "supported" as const,
             },
           ],
           workspaceKeys: ["host-a:main", "host-b:feature"],
@@ -330,17 +336,19 @@ describe("shared sidebar workspace model", () => {
     ]);
     expect(model.projects).toEqual([
       expect.objectContaining({
-        projectKey: "CodiusAI/codius-app",
+        viewKey: "getpaseo/paseo",
         hosts: [
           {
             serverId: "host-a",
-            iconWorkingDir: "/repo/CodiusAI/codius-app",
-            canCreateWorktree: true,
+            projectId: "getpaseo/paseo",
+            iconWorkingDir: "/repo/getpaseo/paseo",
+            worktreeSupport: "supported" as const,
           },
           {
             serverId: "host-b",
-            iconWorkingDir: "/repo/CodiusAI/codius-app",
-            canCreateWorktree: true,
+            projectId: "getpaseo/paseo",
+            iconWorkingDir: "/repo/getpaseo/paseo",
+            worktreeSupport: "supported" as const,
           },
         ],
         workspaces: [
@@ -367,9 +375,7 @@ describe("shared sidebar workspace model", () => {
       ["host-a:main", "done", "main"],
       ["host-b:feature", "running", "feature/status-flow"],
     ]);
-    expect(model.projectNamesByKey).toEqual(
-      new Map([["CodiusAI/codius-app", "CodiusAI/codius-app"]]),
-    );
+    expect(model.projectNamesByViewKey).toEqual(new Map([["getpaseo/paseo", "getpaseo/paseo"]]));
   });
 
   it("preserves unchanged row identities when another workspace updates", () => {
@@ -419,6 +425,35 @@ describe("shared sidebar workspace model", () => {
     expect(nextEntries.get("srv:one")).toBe(previousEntries.get("srv:one"));
     expect(nextEntries.get("srv:two")).not.toBe(previousEntries.get("srv:two"));
   });
+
+  it("keeps a structurally disambiguated project key in status entries", () => {
+    const projectKey = "host:srv:project:prj_a";
+    const model = buildSidebarWorkspacePlacementModel({
+      projects: [project({ projectKey, projectName: "Clone A", workspaceKeys: ["srv:clone-a"] })],
+    });
+    const entries = buildSidebarWorkspaceEntries({
+      placements: model.workspaces,
+      sessions: [
+        {
+          serverId: "srv",
+          workspaceAgentActivity: new Map(),
+          workspaces: new Map([
+            [
+              "clone-a",
+              workspace({
+                id: "clone-a",
+                name: "main",
+                projectId: "prj_a",
+                projectDisplayName: "acme/app",
+              }),
+            ],
+          ]),
+        },
+      ],
+    });
+
+    expect(entries.get("srv:clone-a")?.projectViewKey).toBe(projectKey);
+  });
 });
 
 describe("shouldShowSidebarHostLabels", () => {
@@ -443,14 +478,22 @@ describe("shouldShowSidebarHostLabels", () => {
         project({
           projectKey: "project-a",
           hosts: [
-            { serverId: "host-a", iconWorkingDir: "/repo/project-a", canCreateWorktree: true },
+            {
+              serverId: "host-a",
+              iconWorkingDir: "/repo/project-a",
+              worktreeSupport: "supported" as const,
+            },
           ],
           workspaceKeys: ["host-a:ws-1"],
         }),
         project({
           projectKey: "project-b",
           hosts: [
-            { serverId: "host-b", iconWorkingDir: "/repo/project-b", canCreateWorktree: true },
+            {
+              serverId: "host-b",
+              iconWorkingDir: "/repo/project-b",
+              worktreeSupport: "supported" as const,
+            },
           ],
           workspaceKeys: ["host-b:ws-2"],
         }),
@@ -466,8 +509,16 @@ describe("shouldShowSidebarHostLabels", () => {
         project({
           projectKey: "CodiusAI/codius-app",
           hosts: [
-            { serverId: "host-a", iconWorkingDir: "/repo/codius", canCreateWorktree: true },
-            { serverId: "host-b", iconWorkingDir: "/repo/codius", canCreateWorktree: true },
+            {
+              serverId: "host-a",
+              iconWorkingDir: "/repo/paseo",
+              worktreeSupport: "supported" as const,
+            },
+            {
+              serverId: "host-b",
+              iconWorkingDir: "/repo/paseo",
+              worktreeSupport: "supported" as const,
+            },
           ],
           workspaceKeys: ["host-a:main", "host-b:feature"],
         }),
@@ -503,8 +554,8 @@ describe("computeSidebarOrderUpdates", () => {
 
     expect(updates.projectOrder).toEqual(["project-a", "project-b"]);
     expect(updates.workspaceOrders).toEqual([
-      { projectKey: "project-a", order: ["srv:ws-2", "srv:ws-1"] },
-      { projectKey: "project-b", order: ["srv:ws-3"] },
+      { projectViewKey: "project-a", order: ["srv:ws-2", "srv:ws-1"] },
+      { projectViewKey: "project-b", order: ["srv:ws-3"] },
     ]);
   });
 
@@ -524,7 +575,7 @@ describe("computeSidebarOrderUpdates", () => {
 
     expect(updates.workspaceOrders).toEqual([
       {
-        projectKey: "project-a",
+        projectViewKey: "project-a",
         order: ["srv:newest", "srv:newer", "srv:old-b", "srv:old-a"],
       },
     ]);

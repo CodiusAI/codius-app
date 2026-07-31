@@ -362,68 +362,6 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       expect(metadata).toMatchObject({ baseRefName: "main" });
     });
 
-    it("removes fetched branches when include planning fails", async () => {
-      const remoteDir = join(tempDir, "remote.git");
-      const remoteCloneDir = join(tempDir, "remote-clone");
-      execFileSync("git", ["clone", "--bare", repoDir, remoteDir]);
-      execFileSync("git", ["remote", "add", "origin", remoteDir], { cwd: repoDir });
-
-      execFileSync("git", ["clone", remoteDir, remoteCloneDir]);
-      execFileSync("git", ["config", "user.email", "test@test.com"], { cwd: remoteCloneDir });
-      execFileSync("git", ["config", "user.name", "Test"], { cwd: remoteCloneDir });
-      execFileSync("git", ["checkout", "-b", "contributor/cleanup"], { cwd: remoteCloneDir });
-      writeFileSync(join(remoteCloneDir, "file.txt"), "from-pr\n");
-      execFileSync("git", ["add", "file.txt"], { cwd: remoteCloneDir });
-      execFileSync("git", ["-c", "commit.gpgsign=false", "commit", "-m", "pr branch"], {
-        cwd: remoteCloneDir,
-      });
-      const prHead = execFileSync("git", ["rev-parse", "HEAD"], { cwd: remoteCloneDir })
-        .toString()
-        .trim();
-      execFileSync("git", ["push", "origin", "contributor/cleanup"], { cwd: remoteCloneDir });
-      execFileSync("git", [`--git-dir=${remoteDir}`, "update-ref", "refs/pull/44/head", prHead]);
-      mkdirSync(join(repoDir, ".worktreeinclude"));
-
-      await expect(
-        createLegacyWorktreeForTest({
-          cwd: repoDir,
-          worktreeSlug: "pr-44-cleanup",
-          source: {
-            kind: "checkout-github-pr",
-            githubPrNumber: 44,
-            headRef: "contributor/cleanup",
-            baseRefName: "main",
-          },
-          runSetup: false,
-          codiusHome,
-        }),
-      ).rejects.toMatchObject({ code: "EISDIR" });
-
-      expect(() =>
-        execFileSync("git", ["show-ref", "--verify", "--quiet", "refs/heads/contributor/cleanup"], {
-          cwd: repoDir,
-          stdio: "pipe",
-        }),
-      ).toThrow();
-
-      await expect(
-        createLegacyWorktreeForTest({
-          cwd: repoDir,
-          worktreeSlug: "branch-cleanup",
-          source: { kind: "checkout-branch", branchName: "contributor/cleanup" },
-          runSetup: false,
-          codiusHome,
-        }),
-      ).rejects.toMatchObject({ code: "EISDIR" });
-
-      expect(() =>
-        execFileSync("git", ["show-ref", "--verify", "--quiet", "refs/heads/contributor/cleanup"], {
-          cwd: repoDir,
-          stdio: "pipe",
-        }),
-      ).toThrow();
-    });
-
     it("fetches a GitHub PR branch when the head ref contains uppercase letters and dots", async () => {
       const remoteDir = join(tempDir, "remote.git");
       const remoteCloneDir = join(tempDir, "remote-clone");

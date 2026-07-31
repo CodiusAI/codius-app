@@ -1,5 +1,6 @@
 import type { CreateCodiusWorktreeInput } from "@codius.ai/client/internal/daemon-client";
 import type { ForgeSearchItem } from "@codius.ai/protocol/messages";
+import type { CheckoutStatusPayload } from "@/git/checkout-status-cache";
 
 export type PickerItem =
   | { kind: "branch"; name: string }
@@ -42,4 +43,17 @@ export function pickerItemToCheckoutRequest(
       };
     }
   }
+}
+
+export function resolveCheckoutRequest(
+  selectedItem: PickerItem | null,
+  checkoutStatus: CheckoutStatusPayload,
+): PickerCheckoutRequest | undefined {
+  const selectedCheckoutRequest = pickerItemToCheckoutRequest(selectedItem);
+  if (selectedCheckoutRequest) return selectedCheckoutRequest;
+  if (!checkoutStatus.currentBranch) return undefined;
+  return {
+    action: "branch-off",
+    refName: checkoutStatus.currentBranch,
+  };
 }

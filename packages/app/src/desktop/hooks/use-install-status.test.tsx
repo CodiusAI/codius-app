@@ -17,10 +17,11 @@ const toast = vi.hoisted(() => ({
 const desktopDaemon = vi.hoisted(() => ({
   getCliInstallStatus: vi.fn(),
   installCli: vi.fn(),
-  getSkillsStatus: vi.fn(),
+  getSkillsSnapshot: vi.fn(),
   installSkills: vi.fn(),
   updateSkills: vi.fn(),
   uninstallSkills: vi.fn(),
+  saveSkillsSelection: vi.fn(),
   shouldUseDesktopDaemon: vi.fn(() => true),
 }));
 
@@ -130,7 +131,7 @@ describe("useSkillsStatus", () => {
   });
 
   it("loads the current skills status", async () => {
-    desktopDaemon.getSkillsStatus.mockResolvedValue({
+    desktopDaemon.getSkillsSnapshot.mockResolvedValue({
       state: "up-to-date",
       ops: [],
     });
@@ -145,7 +146,7 @@ describe("useSkillsStatus", () => {
   });
 
   it("install transitions a not-installed status to up-to-date and reflects the response directly", async () => {
-    desktopDaemon.getSkillsStatus.mockResolvedValue({
+    desktopDaemon.getSkillsSnapshot.mockResolvedValue({
       state: "not-installed",
       ops: [{ kind: "add", name: "codius" }],
     });
@@ -168,7 +169,7 @@ describe("useSkillsStatus", () => {
   });
 
   it("update transitions drift to up-to-date", async () => {
-    desktopDaemon.getSkillsStatus.mockResolvedValue({
+    desktopDaemon.getSkillsSnapshot.mockResolvedValue({
       state: "drift",
       ops: [{ kind: "update", name: "codius" }],
     });
@@ -191,7 +192,7 @@ describe("useSkillsStatus", () => {
   });
 
   it("uninstall transitions up-to-date back to not-installed", async () => {
-    desktopDaemon.getSkillsStatus.mockResolvedValue({ state: "up-to-date", ops: [] });
+    desktopDaemon.getSkillsSnapshot.mockResolvedValue({ state: "up-to-date", ops: [] });
     desktopDaemon.uninstallSkills.mockResolvedValue({
       state: "not-installed",
       ops: [{ kind: "add", name: "codius" }],
@@ -217,7 +218,7 @@ describe("useSkillsStatus", () => {
   });
 
   it("isWorking flips while a mutation is in flight", async () => {
-    desktopDaemon.getSkillsStatus.mockResolvedValue({
+    desktopDaemon.getSkillsSnapshot.mockResolvedValue({
       state: "not-installed",
       ops: [{ kind: "add", name: "codius" }],
     });
@@ -259,7 +260,7 @@ describe("useSkillsStatus", () => {
 
   it("toasts and exposes errors when install fails", async () => {
     const error = new Error("Missing IPC handler");
-    desktopDaemon.getSkillsStatus.mockResolvedValue({
+    desktopDaemon.getSkillsSnapshot.mockResolvedValue({
       state: "not-installed",
       ops: [{ kind: "add", name: "codius" }],
     });
