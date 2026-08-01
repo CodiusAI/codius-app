@@ -1,6 +1,6 @@
 {
   "name": "@codius.ai/client",
-  "version": "0.2.0-beta.6",
+  "version": "0.2.5",
   "description": "Codius client SDK package",
   "keywords": [
     "coding-agents",
@@ -53,8 +53,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@codius.ai/protocol": "0.2.0-beta.6",
-    "@codius.ai/relay": "0.2.0-beta.6",
+    "@codius.ai/protocol": "0.2.5",
+    "@codius.ai/relay": "0.2.5",
     "zod": "^4.4.3"
   },
   "devDependencies": {

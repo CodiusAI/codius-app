@@ -1,18 +1,34 @@
 # Changelog
 
-## 0.2.0-beta.6 - 2026-07-30
+## 0.2.5 - 2026-07-31
 
 ### Added
 
-- Install the Codius CLI from npm with `npm install -g @codius.ai/cli@beta`
+- Install the Codius CLI from npm with `npm install -g @codius.ai/cli`
+- Choose which orchestration skills to install instead of installing all of them (by [@kedrzu](https://github.com/kedrzu))
+- Custom providers can read the agent's working directory at launch time
 
 ### Improved
 
 - Use the official Codius mark and the product name **Codius** across app surfaces and installers
+- Reasoning, mode, plan, and fast settings moved from the Command Center to inline composer controls (by [@kedrzu](https://github.com/kedrzu))
+- The same repository added on more than one host appears as a single project in the sidebar
+- New workspace picker shows isolation choices immediately
+- Project icons appear in status-grouped sidebar rows (by [@nikuscs](https://github.com/nikuscs))
+- OpenCode busy status reflects background agent activity (by [@desflynn](https://github.com/desflynn))
 
 ### Fixed
 
 - Make unsigned macOS prerelease builds launch correctly without hardened-runtime signing conflicts
+- Idle agents keep their background work instead of shutting down when unused
+- Desktop no longer crashes at startup while restoring your file tree
+- Interrupting Pi no longer surfaces a stream error (by [@mcowger](https://github.com/mcowger))
+- Linux desktop package starts correctly
+- A very large working diff no longer drops your session (by [@nikuscs](https://github.com/nikuscs))
+- The context meter no longer blanks out partway through a conversation
+- Repository search works with older versions of the GitHub CLI
+- Transient file conflict callouts no longer appear
+- OpenCode cancels no longer kill the next turn
 
 ## 0.2.0-beta.3 - 2026-07-22
 
