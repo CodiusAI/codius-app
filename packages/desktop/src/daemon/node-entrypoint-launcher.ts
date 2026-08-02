@@ -30,7 +30,7 @@ export function createElectronNodeEnv(
   return {
     ...baseEnv,
     ELECTRON_RUN_AS_NODE: "1",
-    ...(options?.isPackaged === true ? { [CODIUS_NODE_ENV]: "production" } : {}),
+    [CODIUS_NODE_ENV]: options?.isPackaged === true ? "production" : "development",
   };
 }
 

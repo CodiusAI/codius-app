@@ -12,16 +12,16 @@ const baseURL =
 const browserExecutablePath = process.env.E2E_BROWSER_EXECUTABLE;
 
 export default defineConfig({
-  testDir: "./e2e",
-  globalSetup: "./e2e/global-setup.ts",
+  testDir: "./e2e/browser",
+  globalSetup: "./e2e/support/global-setup.ts",
   timeout: 60_000,
   expect: {
     timeout: 10_000,
   },
-  // E2E tests share a single daemon/relay/metro stack from global setup.
-  // Running tests concurrently causes cross-test contention and non-deterministic failures.
+  // Files run concurrently, while each worker owns its daemon state. Keeping a
+  // spec on one worker avoids repeating its file-level setup across daemons.
   fullyParallel: false,
-  workers: 1,
+  workers: Number(process.env.E2E_WORKERS ?? (process.env.CI ? "2" : "1")),
   retries: process.env.CI ? 1 : 0,
   reporter: [["list"]],
   use: {
@@ -32,7 +32,7 @@ export default defineConfig({
   },
   projects: [
     {
-      name: "Desktop Chrome",
+      name: "browser",
       testIgnore: ["**/*.real.spec.ts"],
       use: {
         ...devices["Desktop Chrome"],

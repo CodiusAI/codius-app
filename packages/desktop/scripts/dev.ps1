@@ -33,17 +33,12 @@ try {
 # Set EXPO_DEV_URL in the environment so Electron inherits it.
 $env:EXPO_DEV_URL = "http://localhost:$($env:EXPO_PORT)"
 
-$RemoteDebuggingPort = if ($env:CODIUS_ELECTRON_REMOTE_DEBUGGING_PORT) {
-    $env:CODIUS_ELECTRON_REMOTE_DEBUGGING_PORT
-} else {
-    "9223"
-}
-$ExistingElectronFlags = if ($env:CODIUS_ELECTRON_FLAGS) {
-    "$($env:CODIUS_ELECTRON_FLAGS) "
-} else {
-    ""
-}
-$env:CODIUS_ELECTRON_FLAGS = "$($ExistingElectronFlags)--remote-debugging-port=$RemoteDebuggingPort"
+$env:CODIUS_DEV_ROOT = $RootDir
+$env:CODIUS_DEV_RUNTIME_FALLBACK_ROOT = $RootDir
+$DevRuntime = node "$ScriptDir\dev-runtime.mjs" | ConvertFrom-Json
+$env:CODIUS_ELECTRON_FLAGS = $DevRuntime.electronFlags
+$env:CODIUS_ELECTRON_USER_DATA_DIR = $DevRuntime.userDataDir
+Remove-Item Env:\CODIUS_DEV_RUNTIME_FALLBACK_ROOT -ErrorAction SilentlyContinue
 
 # Allow any origin in dev so Electron on random ports works.
 # SECURITY: wildcard CORS is unsafe in production — only acceptable here because
@@ -59,6 +54,7 @@ if (-not $env:CODIUS_HOME) {
 } else {
     $CodiusHomeManaged = $false
 }
+New-Item -ItemType Directory -Force -Path $env:CODIUS_HOME, $env:CODIUS_ELECTRON_USER_DATA_DIR | Out-Null
 
 if (-not $env:CODIUS_ELECTRON_USER_DATA_DIR) {
     $env:CODIUS_ELECTRON_USER_DATA_DIR = "$DevStateDir\user-data"
@@ -105,7 +101,6 @@ Write-Host @"
   Codius Dev (Windows)
 ======================================================
   Metro:       http://localhost:$($env:EXPO_PORT)
-  CDP:         http://127.0.0.1:$RemoteDebuggingPort
   Daemon:      $($env:CODIUS_LISTEN) (isolated)
   CODIUS_HOME: $($env:CODIUS_HOME)
   userData:    $($env:CODIUS_ELECTRON_USER_DATA_DIR)

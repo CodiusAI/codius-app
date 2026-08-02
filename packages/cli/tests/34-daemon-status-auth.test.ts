@@ -1,35 +1,16 @@
 #!/usr/bin/env npx tsx
 
 import assert from "node:assert";
-import { writeFile } from "node:fs/promises";
-import { join } from "node:path";
-import { createTestCodiusDaemon } from "../../server/src/server/test-utils/codius-daemon.ts";
 import { runLocalCodius } from "./helpers/local-cli.ts";
+import { startTestDaemon } from "./helpers/test-daemon.ts";
 
 console.log("=== Daemon Status Auth ===\n");
 
-const CORRECT_PASSWORD_HASH = "$2b$12$GMhF7pN4QnMlHOQXOqjd1OitKWPSmAO3FwB0PHzKtcZR/sAMryz76";
-
-const daemon = await createTestCodiusDaemon({
-  auth: { password: CORRECT_PASSWORD_HASH },
+const daemon = await startTestDaemon({
+  env: { CODIUS_PASSWORD: "shared-secret" },
 });
 
 try {
-  await writeFile(
-    join(daemon.codiusHome, "codius.pid"),
-    `${JSON.stringify(
-      {
-        pid: process.pid,
-        startedAt: new Date().toISOString(),
-        hostname: "status-auth-test",
-        uid: process.getuid?.(),
-        listen: `0.0.0.0:${daemon.port}`,
-      },
-      null,
-      2,
-    )}\n`,
-  );
-
   {
     console.log("Test 1: status reports password requirement without marking daemon unreachable");
     const result = await runLocalCodius(["daemon", "status", "--json"], {
@@ -86,7 +67,7 @@ try {
     console.log("✓ password-authenticated status remains reachable\n");
   }
 } finally {
-  await daemon.close();
+  await daemon.stop();
 }
 
 console.log("=== Daemon Status Auth Tests Passed ===");

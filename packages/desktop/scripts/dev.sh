@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,7 +12,12 @@ export CODIUS_LISTEN="${CODIUS_LISTEN:-127.0.0.1:6768}"
 configure_dev_codius_home
 
 DEV_ROOT="${CODIUS_DEV_ROOT:-$(default_dev_codius_root)}"
-export CODIUS_ELECTRON_USER_DATA_DIR="${CODIUS_ELECTRON_USER_DATA_DIR:-$DEV_ROOT/.dev/user-data}"
+export CODIUS_DEV_ROOT="$DEV_ROOT"
+export CODIUS_DEV_RUNTIME_FALLBACK_ROOT="$DEV_ROOT"
+DEV_RUNTIME="$(node "$SCRIPT_DIR/dev-runtime.mjs")"
+export CODIUS_ELECTRON_FLAGS="$(node -e 'process.stdout.write(JSON.parse(process.argv[1]).electronFlags)' "$DEV_RUNTIME")"
+export CODIUS_ELECTRON_USER_DATA_DIR="$(node -e 'process.stdout.write(JSON.parse(process.argv[1]).userDataDir)' "$DEV_RUNTIME")"
+unset CODIUS_DEV_RUNTIME_FALLBACK_ROOT
 mkdir -p "$CODIUS_ELECTRON_USER_DATA_DIR"
 
 if [ -z "${EXPO_PORT:-}" ]; then
@@ -24,8 +29,6 @@ export EXPO_DEV_URL="http://localhost:${EXPO_PORT}"
 DAEMON_ENDPOINT="$(resolve_dev_daemon_endpoint)"
 export CODIUS_DAEMON_ENDPOINT="$DAEMON_ENDPOINT"
 
-REMOTE_DEBUGGING_PORT="${CODIUS_ELECTRON_REMOTE_DEBUGGING_PORT:-9223}"
-export CODIUS_ELECTRON_FLAGS="${CODIUS_ELECTRON_FLAGS:+$CODIUS_ELECTRON_FLAGS }--remote-debugging-port=$REMOTE_DEBUGGING_PORT"
 export CODIUS_CORS_ORIGINS="${CODIUS_CORS_ORIGINS:-*}"
 
 npm run build:main
@@ -34,7 +37,6 @@ echo "════════════════════════�
 echo "  Codius Dev"
 echo "══════════════════════════════════════════════════════"
 echo "  Metro:      ${EXPO_DEV_URL}"
-echo "  CDP:        http://127.0.0.1:${REMOTE_DEBUGGING_PORT}"
 echo "  Daemon:     ${CODIUS_LISTEN}"
 echo "  Home:       ${CODIUS_HOME}"
 echo "  userData:   ${CODIUS_ELECTRON_USER_DATA_DIR}"

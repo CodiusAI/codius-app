@@ -230,7 +230,6 @@ in
       '';
 
       environment = {
-        NODE_ENV = "production";
         CODIUS_HOME = cfg.dataDir;
         CODIUS_LISTEN = "${cfg.listenAddress}:${toString cfg.port}";
       } // lib.optionalAttrs cfg.inheritUserEnvironment (

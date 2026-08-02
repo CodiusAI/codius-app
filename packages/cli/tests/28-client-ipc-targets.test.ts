@@ -27,6 +27,17 @@ console.log("=== CLI IPC Target Helpers ===\n");
 }
 
 {
+  console.log("Test 1b: bare unix socket paths resolve at the connection boundary");
+  const target = resolveDaemonTarget("/tmp/codius.sock");
+  assert.deepStrictEqual(target, {
+    type: "ipc",
+    url: "ws+unix:///tmp/codius.sock:/ws",
+    socketPath: "/tmp/codius.sock",
+  });
+  console.log("✓ bare unix socket paths resolve at the connection boundary\n");
+}
+
+{
   console.log("Test 2: pipe hosts preserve the Node socketPath transport form");
   const target = resolveDaemonTarget("pipe://\\\\.\\pipe\\codius-managed-test");
   assert.deepStrictEqual(target, {

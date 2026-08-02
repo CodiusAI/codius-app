@@ -27,6 +27,8 @@ interface TestCodiusDaemonOptions {
   relayEndpoint?: string;
   relayUseTls?: boolean;
   relayPublicUseTls?: boolean;
+  daemonStatusRpcCapability?: boolean;
+  relayConfigCapability?: boolean;
   agentClients?: Partial<Record<AgentProvider, AgentClient>>;
   providerOverrides?: CodiusDaemonConfig["providerOverrides"];
   codiusHomeRoot?: string;
@@ -93,7 +95,12 @@ export async function createTestCodiusDaemon(
     const { config, codiusHomeRoot, codiusHome, staticDir } =
       await prepareTestDaemonConfig(options);
     const logger = options.logger ?? pino({ level: "silent" });
-    const daemon = await createCodiusDaemon(config, logger);
+    const daemon = await createCodiusDaemon(config, logger, {
+      serverFeatureOverrides: {
+        daemonStatusRpc: options.daemonStatusRpcCapability,
+        relayConfig: options.relayConfigCapability,
+      },
+    });
     try {
       await startDaemonWithTimeout(daemon, TEST_DAEMON_START_TIMEOUT_MS);
       const listenTarget = daemon.getListenTarget();

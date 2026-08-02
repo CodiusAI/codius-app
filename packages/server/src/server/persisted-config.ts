@@ -334,7 +334,7 @@ const DEFAULT_PERSISTED_CONFIG = PersistedConfigSchema.parse({
       allowedOrigins: ["https://app.codius.ai"],
     },
     relay: {
-      enabled: true,
+      enabled: false,
     },
   },
   app: {

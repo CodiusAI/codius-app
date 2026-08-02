@@ -15,6 +15,23 @@ describe("runCli", () => {
     ).toEqual(["node", "codius", "onboard"]);
   });
 
+  it("routes explicit root relay flags to onboard", () => {
+    expect(
+      createCliParseArgv({
+        argv: ["--relay"],
+        cwd: process.cwd(),
+        nodeArgv: ["node", "codius"],
+      }),
+    ).toEqual(["node", "codius", "onboard", "--relay"]);
+    expect(
+      createCliParseArgv({
+        argv: ["--no-relay"],
+        cwd: process.cwd(),
+        nodeArgv: ["node", "codius"],
+      }),
+    ).toEqual(["node", "codius", "onboard", "--no-relay"]);
+  });
+
   it("preserves known CLI command argv", () => {
     expect(
       createCliParseArgv({
