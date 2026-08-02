@@ -385,6 +385,21 @@ async function startDaemon(): Promise<DesktopDaemonStatus> {
     }
   }
 
+  // A managed daemon can remain alive while its websocket is no longer
+  // responsive (for example after an older daemon build gets stuck). In that
+  // state the normal start path cannot connect to it, while a replacement
+  // daemon cannot bind its port. Ask the CLI to stop the managed process
+  // before reclaiming its PID lock and starting the replacement.
+  if (current.status === "errored" && current.desktopManaged && current.pid !== null) {
+    logDesktopDaemonLifecycle("unresponsive daemon, stopping before restart", {
+      statusBefore: summarizeDesktopDaemonStatus(current),
+    });
+    await runDesktopDaemonStopViaCli({
+      reason: "restart",
+      statusBefore: current,
+    });
+  }
+
   const daemonRunner = resolveDaemonRunnerEntrypoint();
   const reclaimStalePidLock =
     current.status === "errored" && current.desktopManaged && current.error === null;

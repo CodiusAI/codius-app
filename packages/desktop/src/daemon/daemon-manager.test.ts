@@ -473,7 +473,7 @@ describe("daemon-manager commands", () => {
     );
   });
 
-  it("passes stale lock reclaim only after a live desktop daemon is confirmed unresponsive", async () => {
+  it("stops an unresponsive managed daemon before reclaiming its stale lock", async () => {
     mocks.runCliJsonCommand.mockResolvedValue({
       localDaemon: "unresponsive",
       connectedDaemon: "unreachable",
@@ -494,6 +494,23 @@ describe("daemon-manager commands", () => {
 
     expect(mocks.createNodeEntrypointInvocation).toHaveBeenCalledWith(
       expect.objectContaining({ args: ["--reclaim-stale-pid-lock"] }),
+    );
+    expect(mocks.runCliJsonCommand).toHaveBeenNthCalledWith(2, [
+      "daemon",
+      "stop",
+      "--json",
+      "--timeout",
+      "5",
+      "--force",
+      "--kill-timeout",
+      "5",
+    ]);
+    expect(mocks.logInfo).toHaveBeenCalledWith(
+      "[desktop daemon]",
+      "unresponsive daemon, stopping before restart",
+      expect.objectContaining({
+        statusBefore: expect.objectContaining({ status: "errored", pid: 7675 }),
+      }),
     );
   });
 
