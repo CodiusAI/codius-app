@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.3.0 - 2026-08-02
+
+### Added
+
+- Navigate long conversations from a chat outline ([#2792](https://github.com/CodiusAI/codius-app/pull/2792))
+- Follow complete native Claude and Codex subagent conversations while their workspaces remain active ([#2498](https://github.com/CodiusAI/codius-app/pull/2498), [#2760](https://github.com/CodiusAI/codius-app/pull/2760), [#2777](https://github.com/CodiusAI/codius-app/pull/2777) by [@ebg1223](https://github.com/ebg1223))
+- Fork an agent directly from an in-progress turn ([#2638](https://github.com/CodiusAI/codius-app/pull/2638) by [@kaspesi](https://github.com/kaspesi))
+- Preview HTML files in the file pane ([#2712](https://github.com/CodiusAI/codius-app/pull/2712) by [@nickmaglowsch](https://github.com/nickmaglowsch))
+- Paste clipboard images into conversations on iOS and Android ([#2793](https://github.com/CodiusAI/codius-app/pull/2793))
+- Download Android APK and iOS IPA builds alongside Windows, macOS, and Linux assets from GitHub Releases
+- Add host-local custom project icons ([#2335](https://github.com/CodiusAI/codius-app/pull/2335) by [@nikuscs](https://github.com/nikuscs))
+
+### Improved
+
+- Git status and diffs stay current across platforms and busy workspaces remain responsive throughout the app ([#2775](https://github.com/CodiusAI/codius-app/pull/2775), [#2791](https://github.com/CodiusAI/codius-app/pull/2791))
+- Workspace timelines remain duplicate-free across daemon upgrades, submission, resume, and restored sessions ([#2718](https://github.com/CodiusAI/codius-app/pull/2718), [#2789](https://github.com/CodiusAI/codius-app/pull/2789))
+- Sidebar projects show clearer activity badges, workspace names, and host identity ([#2340](https://github.com/CodiusAI/codius-app/pull/2340), [#2711](https://github.com/CodiusAI/codius-app/pull/2711), [#2790](https://github.com/CodiusAI/codius-app/pull/2790) by [@kaspesi](https://github.com/kaspesi))
+- ACP sessions share auto-accept controls and preserve interactive permission choices ([#2752](https://github.com/CodiusAI/codius-app/pull/2752), [#2762](https://github.com/CodiusAI/codius-app/pull/2762))
+- Updated package-runner compatibility for Auggie, Cline, DeepAgents, DimCode, Dirac, Factory Droid, Fast Agent, Gemini CLI, Nova, Qoder, and Qwen Code
+- Nix can package the desktop app on macOS with a smaller runtime output ([#2536](https://github.com/CodiusAI/codius-app/pull/2536), [#2550](https://github.com/CodiusAI/codius-app/pull/2550), [#2652](https://github.com/CodiusAI/codius-app/pull/2652), [#2697](https://github.com/CodiusAI/codius-app/pull/2697) by [@colonelpanic8](https://github.com/colonelpanic8), [@shin-sakata](https://github.com/shin-sakata))
+
+### Fixed
+
+- Active agents now fail clearly when their provider process exits instead of appearing stuck ([#2757](https://github.com/CodiusAI/codius-app/pull/2757))
+- Local-branch worktrees use the correct base and restored merged workspaces remain active ([#2328](https://github.com/CodiusAI/codius-app/pull/2328), [#2714](https://github.com/CodiusAI/codius-app/pull/2714) by [@mcowger](https://github.com/mcowger))
+- Mobile sidebar swipe and drag gestures work reliably ([#2709](https://github.com/CodiusAI/codius-app/pull/2709))
+- Dictated text remains in the composer while a message is submitted ([#2745](https://github.com/CodiusAI/codius-app/pull/2745))
+- Workspace creation progress no longer includes unrelated background composer work ([#2794](https://github.com/CodiusAI/codius-app/pull/2794))
+- Relay access is opt-in during device pairing and uses Codius infrastructure ([#2706](https://github.com/CodiusAI/codius-app/pull/2706))
+
 ## 0.2.5 - 2026-07-31
 
 ### Added
