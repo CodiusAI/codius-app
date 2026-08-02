@@ -61,7 +61,8 @@ describe("allocateWorkspaceServicePort", () => {
       }),
     ).resolves.toBe(port);
     const resolvedTempDir = realpathSync.native(tempDir);
-    expect(readFileSync(join(tempDir, "cwd"), "utf8")).toBe(resolvedTempDir);
+    const recordedCwd = readFileSync(join(tempDir, "cwd"), "utf8");
+    expect(realpathSync.native(recordedCwd)).toBe(resolvedTempDir);
     expect(readFileSync(join(tempDir, "argv"), "utf8")).toBe(
       `app-server|wks_port_allocator|feature/allocator-context|${tempDir}`,
     );
