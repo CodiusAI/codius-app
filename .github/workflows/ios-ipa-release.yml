@@ -1,10 +1,8 @@
 name: iOS IPA Release
 
 on:
-  push:
-    tags:
-      - "v*"
-      - "ios-v*"
+  # iOS distribution is temporarily manual-only until Apple signing
+  # credentials are configured for the Codius Expo account.
   workflow_dispatch:
     inputs:
       tag:
