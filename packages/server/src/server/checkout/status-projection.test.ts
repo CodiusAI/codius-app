@@ -49,7 +49,7 @@ describe("checkout status projection", () => {
     const payload = normalizeCheckoutPrStatusPayload(
       {
         number: 993,
-        repoOwner: "prismosoft",
+        repoOwner: "CodiusAI",
         repoName: "codius-app",
         url: "https://github.com/CodiusAI/codius-app/pull/993",
         title: "Auto-merge UX",

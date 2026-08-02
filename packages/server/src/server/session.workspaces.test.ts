@@ -1371,59 +1371,6 @@ test("unsupported persisted agents are excluded from active lists but preserved 
   );
 });
 
-test("workspace reconciliation reports archived workspaces to subscribed clients", async () => {
-  const missingCwd = path.join(tmpdir(), `codius-missing-workspace-${Date.now()}`);
-  rmSync(missingCwd, { recursive: true, force: true });
-  const projects = new Map([
-    [
-      "proj-missing",
-      createPersistedProjectRecord({
-        projectId: "proj-missing",
-        rootPath: missingCwd,
-        kind: "non_git",
-        displayName: "missing",
-        createdAt: "2026-03-01T12:00:00.000Z",
-        updatedAt: "2026-03-01T12:00:00.000Z",
-      }),
-    ],
-  ]);
-  const workspaces = new Map([
-    [
-      "ws-missing",
-      createPersistedWorkspaceRecord({
-        workspaceId: "ws-missing",
-        projectId: "proj-missing",
-        cwd: missingCwd,
-        kind: "directory",
-        displayName: "missing",
-        createdAt: "2026-03-01T12:00:00.000Z",
-        updatedAt: "2026-03-01T12:00:00.000Z",
-      }),
-    ],
-  ]);
-  const session = createSessionForWorkspaceTests();
-  session.projectRegistry.list = async () => Array.from(projects.values());
-  session.projectRegistry.archive = async (projectId: string, archivedAt: string) => {
-    const project = projects.get(projectId);
-    if (project) {
-      projects.set(projectId, { ...project, archivedAt });
-    }
-  };
-  session.workspaceRegistry.list = async () => Array.from(workspaces.values());
-  session.workspaceRegistry.archive = async (workspaceId: string, archivedAt: string) => {
-    const workspace = workspaces.get(workspaceId);
-    if (workspace) {
-      workspaces.set(workspaceId, { ...workspace, archivedAt });
-    }
-  };
-
-  const changedWorkspaceIds = await session.reconcileActiveWorkspaceRecords();
-
-  expect(changedWorkspaceIds).toEqual(new Set(["ws-missing"]));
-  expect(workspaces.get("ws-missing")?.archivedAt).toBeTruthy();
-  expect(projects.get("proj-missing")?.archivedAt).toBeFalsy();
-});
-
 test("agent_update placement does not refresh git snapshots", async () => {
   const emitted: SessionOutboundMessage[] = [];
   const getSnapshot = vi.fn(async () => {

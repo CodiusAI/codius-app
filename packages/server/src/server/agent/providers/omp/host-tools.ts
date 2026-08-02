@@ -35,6 +35,7 @@ export function serializeOmpHostTools(catalog: CodiusToolCatalog): OmpRpcHostToo
     const definition: OmpRpcHostToolDefinition = {
       name: tool.name,
       description: tool.description,
+      loadMode: "essential",
       parameters: serializeCodiusToolInputParameters(tool),
     };
     if (tool.title) {

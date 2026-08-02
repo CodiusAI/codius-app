@@ -44,7 +44,10 @@ const { theme, snapshotState, configState, patchConfigMock, openProviderSettings
 );
 
 vi.mock("react-native", () => ({
-  Platform: { OS: "web" },
+  Platform: {
+    OS: "web",
+    select: <T,>(options: { web?: T; default?: T }) => options.web ?? options.default,
+  },
   View: ({ children, testID }: { children?: React.ReactNode; testID?: string }) =>
     React.createElement("div", { "data-testid": testID }, children),
   Text: ({ children }: { children?: React.ReactNode }) =>
@@ -92,6 +95,7 @@ vi.mock("react-native-unistyles", () => ({
       typeof factory === "function" ? (factory as (t: typeof theme) => unknown)(theme) : factory,
   },
   useUnistyles: () => ({ theme, rt: { breakpoint: "md" } }),
+  withUnistyles: <T,>(component: T) => component,
 }));
 
 vi.mock("lucide-react-native", () => {
@@ -240,6 +244,10 @@ vi.mock("@/stores/provider-settings-store", () => ({
 
 vi.mock("@/components/provider-catalog-list", () => ({
   ProviderCatalogList: () => null,
+}));
+
+vi.mock("./codius-model-access-card", () => ({
+  CodiusModelAccessCard: () => null,
 }));
 
 vi.mock("@/hooks/use-providers-snapshot", () => ({

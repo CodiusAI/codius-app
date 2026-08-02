@@ -153,6 +153,7 @@ describe("OMP host tools", () => {
         name: "create_agent",
         label: "Create agent",
         description: "Create a Codius agent.",
+        loadMode: "essential",
         parameters: expect.objectContaining({ type: "object", required: ["initialPrompt"] }),
       },
       {

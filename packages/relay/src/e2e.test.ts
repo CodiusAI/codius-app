@@ -4,6 +4,8 @@ import net from "node:net";
 import { spawn, type ChildProcess } from "node:child_process";
 import { createRequire } from "node:module";
 import { Buffer } from "node:buffer";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { dirname, resolve as resolvePath } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -17,8 +19,14 @@ import {
 
 const nodeMajor = Number((process.versions.node ?? "0").split(".")[0] ?? "0");
 const shouldRunRelayE2e = process.env.FORCE_RELAY_E2E === "1" || nodeMajor < 25;
-const wranglerCliPath = createRequire(import.meta.url).resolve("wrangler/bin/wrangler.js");
 const relayPackageRoot = resolvePath(dirname(fileURLToPath(import.meta.url)), "..");
+// Reuse the App workspace's Wrangler deployment tool so the relay E2E runs
+// under npm's strict workspace resolution without maintaining two installations.
+const appWorkspaceRequire = createRequire(
+  resolvePath(relayPackageRoot, "..", "app", "package.json"),
+);
+const wranglerPackageRoot = dirname(appWorkspaceRequire.resolve("wrangler/package.json"));
+const wranglerCliPath = resolvePath(wranglerPackageRoot, "bin", "wrangler.js");
 const STARTUP_HOOK_TIMEOUT_MS = 90_000;
 const SHUTDOWN_TIMEOUT_MS = 10_000;
 
@@ -49,7 +57,7 @@ function rawToText(raw: unknown): string {
   return "";
 }
 
-function spawnRelayDevServer(port: number): ChildProcess {
+function spawnRelayDevServer(port: number, persistenceDirectory: string): ChildProcess {
   return spawn(
     process.execPath,
     [
@@ -60,6 +68,8 @@ function spawnRelayDevServer(port: number): ChildProcess {
       "127.0.0.1",
       "--port",
       String(port),
+      "--persist-to",
+      persistenceDirectory,
       "--live-reload=false",
       "--show-interactive-dev-session=false",
     ],
@@ -188,10 +198,12 @@ async function stopRelayProcess(relayProcess: ChildProcess): Promise<void> {
 (shouldRunRelayE2e ? describe : describe.skip)("E2E Relay with E2EE", () => {
   let relayPort: number;
   let relayProcess: ChildProcess | null = null;
+  let persistenceDirectory: string | null = null;
 
   beforeAll(async () => {
     relayPort = await getAvailablePort();
-    relayProcess = spawnRelayDevServer(relayPort);
+    persistenceDirectory = await mkdtemp(resolvePath(tmpdir(), "codius-relay-e2e-"));
+    relayProcess = spawnRelayDevServer(relayPort, persistenceDirectory);
 
     const hasContent = (line: string) => line.trim().length > 0;
     relayProcess.stdout?.on("data", (data: Buffer) => {
@@ -223,6 +235,10 @@ async function stopRelayProcess(relayProcess: ChildProcess): Promise<void> {
     if (relayProcess) {
       await stopRelayProcess(relayProcess);
       relayProcess = null;
+    }
+    if (persistenceDirectory) {
+      await rm(persistenceDirectory, { recursive: true, force: true });
+      persistenceDirectory = null;
     }
   }, SHUTDOWN_TIMEOUT_MS);
 

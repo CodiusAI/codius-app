@@ -5,8 +5,8 @@ import { openSettingsSection } from "../support/helpers/settings";
 const DISCORD_DESTINATION =
   /^https:\/\/(?:discord\.gg\/kV46cvQFX|discord\.com\/invite\/kV46cvQFX)(?:[/?#]|$)/;
 const GITHUB_ISSUE_DESTINATION =
-  /^https:\/\/github\.com\/(?:codius-ai\/codius\/issues\/new(?:\/choose)?(?:[/?#]|$)|login\?return_to=https%3A%2F%2Fgithub\.com%2Fcodius-ai%2Fcodius%2Fissues%2Fnew$)/;
-const CHANGELOG_DESTINATION = /^https:\/\/codius\.sh\/changelog(?:[/?#]|$)/;
+  /^https:\/\/github\.com\/(?:CodiusAI\/codius-app\/issues\/new(?:\/choose)?(?:[/?#]|$)|login\?return_to=https%3A%2F%2Fgithub\.com%2FCodiusAI%2Fcodius-app%2Fissues%2Fnew$)/;
+const CHANGELOG_DESTINATION = /^https:\/\/codius\.ai\/changelog(?:[/?#]|$)/;
 const APP_VERSION = /^Codius v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 
 async function openHelpMenu(page: Page): Promise<void> {

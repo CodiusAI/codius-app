@@ -361,17 +361,17 @@ describe("shared sidebar workspace model", () => {
     ]);
     expect(model.projects).toEqual([
       expect.objectContaining({
-        viewKey: "getpaseo/paseo",
+        viewKey: "CodiusAI/codius-app",
         hosts: [
           {
             serverId: "host-a",
-            projectId: "getpaseo/paseo",
+            projectId: "CodiusAI/codius-app",
             iconWorkingDir: "/repo/getpaseo/paseo",
             worktreeSupport: "supported" as const,
           },
           {
             serverId: "host-b",
-            projectId: "getpaseo/paseo",
+            projectId: "CodiusAI/codius-app",
             iconWorkingDir: "/repo/getpaseo/paseo",
             worktreeSupport: "supported" as const,
           },
@@ -400,7 +400,9 @@ describe("shared sidebar workspace model", () => {
       ["host-a:main", "done", "main"],
       ["host-b:feature", "running", "feature/status-flow"],
     ]);
-    expect(model.projectNamesByViewKey).toEqual(new Map([["getpaseo/paseo", "getpaseo/paseo"]]));
+    expect(model.projectNamesByViewKey).toEqual(
+      new Map([["CodiusAI/codius-app", "CodiusAI/codius-app"]]),
+    );
   });
 
   it("preserves unchanged row identities when another workspace updates", () => {
