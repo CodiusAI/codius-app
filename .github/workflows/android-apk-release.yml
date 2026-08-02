@@ -91,6 +91,11 @@ jobs:
       - name: Add build swap
         shell: bash
         run: |
+          if sudo swapon --show=NAME --noheadings | grep -q .; then
+            echo "Swap is already active on this runner."
+            sudo swapon --show
+            exit 0
+          fi
           sudo fallocate -l 8G /swapfile
           sudo chmod 600 /swapfile
           sudo mkswap /swapfile
