@@ -1,6 +1,6 @@
 {
   "name": "@codius.ai/highlight",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Syntax-highlighting utilities used by Codius",
   "keywords": [
     "codemirror",
