@@ -29,7 +29,7 @@ extraResources:
     to: editor-target-icons
 publish:
   provider: github
-  owner: prismosoft
+  owner: CodiusAI
   repo: codius-app
 mac:
   artifactName: "Codius-${version}-${arch}.${ext}"

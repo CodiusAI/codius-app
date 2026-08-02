@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1 - 2026-08-02
+
+### Fixed
+
+- App update checks now use the canonical Codius release feed
+
 ## 0.3.0 - 2026-08-02
 
 ### Added
@@ -9,7 +15,7 @@
 - Fork an agent directly from an in-progress turn ([#2638](https://github.com/CodiusAI/codius-app/pull/2638) by [@kaspesi](https://github.com/kaspesi))
 - Preview HTML files in the file pane ([#2712](https://github.com/CodiusAI/codius-app/pull/2712) by [@nickmaglowsch](https://github.com/nickmaglowsch))
 - Paste clipboard images into conversations on iOS and Android ([#2793](https://github.com/CodiusAI/codius-app/pull/2793))
-- Download Android APK and iOS IPA builds alongside Windows, macOS, and Linux assets from GitHub Releases
+- Download Android APK builds alongside Windows, macOS, and Linux assets from GitHub Releases
 - Add host-local custom project icons ([#2335](https://github.com/CodiusAI/codius-app/pull/2335) by [@nikuscs](https://github.com/nikuscs))
 
 ### Improved

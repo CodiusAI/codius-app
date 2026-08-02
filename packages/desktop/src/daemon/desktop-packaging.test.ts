@@ -96,6 +96,14 @@ describe("desktop packaging", () => {
     expect(config).toContain("- codius");
   });
 
+  it("checks for desktop updates in the canonical Codius repository", () => {
+    const config = readFileSync(join(packageRoot, "electron-builder.yml"), "utf8");
+
+    expect(config).toContain("owner: CodiusAI");
+    expect(config).toContain("repo: codius-app");
+    expect(config).not.toContain("owner: prismosoft");
+  });
+
   // electron-builder packs production dependencies declared in package.json into
   // app.asar. Runtime code in runtime-paths.ts and bin/codius dynamically resolves
   // these workspace packages by string, so static analysis (TypeScript, Knip) cannot
