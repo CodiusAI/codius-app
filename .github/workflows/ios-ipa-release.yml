@@ -95,6 +95,7 @@ jobs:
             --profile production \
             --local \
             --non-interactive \
+            --freeze-credentials \
             --output "$asset_path"
           test -s "$asset_path"
 
