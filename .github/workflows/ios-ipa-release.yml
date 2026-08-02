@@ -1,30 +1,30 @@
-name: Android APK Release
+name: iOS IPA Release
 
 on:
   push:
     tags:
       - "v*"
-      - "android-v*"
+      - "ios-v*"
   workflow_dispatch:
     inputs:
       tag:
-        description: "Existing tag to build (e.g. v0.1.0)"
+        description: "Existing tag to build (e.g. v0.3.0)"
         required: true
         type: string
 
 concurrency:
-  group: android-apk-release-${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref }}
+  group: ios-ipa-release-${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref }}
   cancel-in-progress: false
 
 env:
   SOURCE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
 
 jobs:
-  publish-android-apk:
+  publish-ios-ipa:
     permissions:
       contents: write
       packages: read
-    runs-on: ubuntu-latest
+    runs-on: macos-15
     timeout-minutes: 120
 
     steps:
@@ -69,13 +69,6 @@ jobs:
           node-version: "22"
           cache: "npm"
           registry-url: "https://registry.npmjs.org/"
-          scope: "@boudra"
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
 
       - name: Install JS dependencies
         run: node scripts/npm-retry.mjs ci
@@ -88,26 +81,18 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Add build swap
-        shell: bash
-        run: |
-          sudo fallocate -l 8G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
-
-      - name: Build Android APK locally with EAS credentials
+      - name: Build iOS IPA locally with EAS credentials
         id: artifact
         shell: bash
         run: |
           set -euo pipefail
           cd packages/app
 
-          asset_name="codius-${RELEASE_TAG}-android.apk"
+          asset_name="codius-${RELEASE_TAG}-ios.ipa"
           asset_path="$RUNNER_TEMP/$asset_name"
           npx eas build \
-            --platform android \
-            --profile production-apk \
+            --platform ios \
+            --profile production \
             --local \
             --non-interactive \
             --output "$asset_path"
@@ -116,7 +101,7 @@ jobs:
           echo "asset_name=$asset_name" >> "$GITHUB_OUTPUT"
           echo "asset_path=$asset_path" >> "$GITHUB_OUTPUT"
 
-      - name: Upload APK to GitHub Release
+      - name: Upload IPA to GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

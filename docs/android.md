@@ -149,13 +149,14 @@ adb exec-out screencap -p > screenshot.png
 Stable tag pushes like `v0.1.0` trigger:
 
 - The EAS GitHub app on Expo servers (iOS + Android production builds + store submit). There is no workflow file in this repo for it.
-- `.github/workflows/android-apk-release.yml` on GitHub Actions (APK asset on GitHub Release).
+- `.github/workflows/android-apk-release.yml` on GitHub Actions (locally built APK asset on the GitHub Release).
+- `.github/workflows/ios-ipa-release.yml` on GitHub Actions (locally built IPA asset on the GitHub Release).
 
 iOS auto-submits to App Store review via a Fastlane lane after EAS uploads to TestFlight. Android auto-submits to the Play Store via EAS-managed credentials.
 
 Beta tags like `v0.1.1-beta.1` only trigger the GitHub APK workflow. They publish a GitHub prerelease APK for testing and do not submit to the stores.
 
-> **The Android APK workflow is temporarily disabled on tag push** (as of beta.6). The free EAS plan only includes "medium" workers, which OOM during Hermes compilation (exit code 137) for this project. The `large` resource class requires a paid EAS plan (Starter, $19/mo). When we subscribe, revert the trigger in `.github/workflows/android-apk-release.yml` back to include `push: tags: ["v*", "android-v*"]`. The workflow remains available via manual `workflow_dispatch` in the meantime.
+The APK workflow uses EAS local-build mode on a GitHub Linux runner with additional swap. It still uses EAS-managed signing credentials, but it does not consume or depend on the paid EAS cloud worker class.
 
 `android-v*` tags also trigger only the GitHub APK workflow — useful when you want to ship an APK without going through stores. The GitHub APK workflow supports `workflow_dispatch` with an existing `tag` input so you can rebuild without cutting a new tag.
 

@@ -77,7 +77,7 @@ npm run release:minor
 This bumps the version across all workspaces, builds and checksum-locks the six
 public npm tarballs, and pushes the branch + tag. The tag push triggers
 `Publish Codius npm packages`, `Desktop Release`, `Android APK Release`,
-`Docker`, and `Release Notes Sync` on GitHub Actions. The npm workflow publishes
+`iOS IPA Release`, `Docker`, and `Release Notes Sync` on GitHub Actions. The npm workflow publishes
 with GitHub OIDC from the protected `npm-production` environment; the release
 scripts never embed a long-lived npm token. EAS picks up the same tag via the
 EAS GitHub app and starts the iOS + Android store builds in parallel (see
@@ -266,11 +266,12 @@ iOS and Android store builds are not in `.github/workflows`. They are triggered 
 
 - **Android (Play Store)** — EAS builds with profile `production` and auto-submits to the Play Store via `eas submit` (EAS-managed credentials, no Fastlane).
 - **iOS (TestFlight + App Store)** — EAS builds with profile `production`, uploads to TestFlight, and a Fastlane lane submits the build for App Store review.
-- **Android APK (GitHub Release asset)** — separate, via `.github/workflows/android-apk-release.yml`. This is the only Android-related workflow that lives in this repo.
+- **Android APK (GitHub Release asset)** — built locally on a GitHub Linux runner via `.github/workflows/android-apk-release.yml`, avoiding a paid EAS cloud worker.
+- **iOS IPA (GitHub Release asset)** — built locally on a GitHub macOS runner with EAS-managed signing credentials via `.github/workflows/ios-ipa-release.yml`.
 
 EAS uses the local app version source. `packages/app/app.config.js` derives Android `versionCode` and iOS `buildNumber` from the package version as `major * 1_000_000 + minor * 1_000 + patch`, ignoring prerelease metadata. Rebuilding the same tag produces the same native build number; if a store has already accepted a binary and you need a different binary, cut a new patch instead of relying on EAS remote auto-increment.
 
-There is no `release-mobile.yml` in this repo. Earlier versions of these docs referenced one — that workflow was removed and the EAS GitHub app handles tag triggering directly.
+There is no `release-mobile.yml` in this repo. Store submission remains owned by the EAS GitHub app, while the two GitHub-download artifacts are built by the APK and IPA workflows above.
 
 ### Watching mobile builds from the terminal
 
@@ -357,8 +358,8 @@ there. This repository does not deploy a marketing or documentation website.
 **Do not rely on `workflow_dispatch` for tagged code fixes.** The `workflow_dispatch` trigger runs the workflow file from the default branch but checks out the code at the tag ref (`ref: ${{ inputs.tag }}`). That means fixes committed to `main` won't change the tagged source tree being built. `workflow_dispatch` only helps when the fix lives in the workflow file itself.
 
 For Docker-only retries, **do not push or force-push a `v*` release tag**.
-`v*` tag pushes rebuild desktop assets, the Android APK, Docker, release notes,
-and EAS mobile release builds. Use the Docker workflow dispatch instead:
+`v*` tag pushes rebuild desktop assets, the Android APK, the iOS IPA, Docker,
+release notes, and EAS mobile store builds. Use the Docker workflow dispatch instead:
 
 ```bash
 gh workflow run docker.yml \
@@ -395,6 +396,9 @@ git tag -f desktop-windows-v0.1.28 HEAD && git push origin desktop-windows-v0.1.
 # Android APK
 git tag -f android-v0.1.28 HEAD && git push origin android-v0.1.28 --force
 
+# iOS IPA
+git tag -f ios-v0.1.28 HEAD && git push origin ios-v0.1.28 --force
+
 # Beta
 git tag -f v0.1.29-beta.2 HEAD && git push origin v0.1.29-beta.2 --force
 ```
@@ -405,6 +409,7 @@ This ensures the checkout ref matches the actual code on `main` with the fix inc
 - `desktop-vX.Y.Z` rebuilds desktop for all desktop platforms only
 - `desktop-macos-vX.Y.Z`, `desktop-linux-vX.Y.Z`, and `desktop-windows-vX.Y.Z` rebuild only that desktop platform
 - `android-vX.Y.Z` rebuilds the Android APK release only
+- `ios-vX.Y.Z` rebuilds the iOS IPA release only
 
 ## Notes
 
@@ -553,6 +558,7 @@ Betas are checkpoints along the way; the entry is the single record for the jump
 - [ ] GitHub `Publish Codius npm packages` is green and all six packages have the exact coordinated version
 - [ ] GitHub `Desktop Release` workflow for the `v*-beta.N` tag is green
 - [ ] GitHub `Android APK Release` workflow for the same tag is green
+- [ ] GitHub `iOS IPA Release` workflow for the same tag is green
 - [ ] GitHub `Release Notes Sync` mirrored the beta entry into the prerelease body
 
 ### Stable release (or promotion)
@@ -567,6 +573,7 @@ Betas are checkpoints along the way; the entry is the single record for the jump
 - [ ] GitHub `Publish Codius npm packages` is green and all six packages have the exact coordinated version under `latest`
 - [ ] GitHub `Desktop Release` workflow for the `v*` tag is green
 - [ ] GitHub `Android APK Release` workflow for the same tag is green
+- [ ] GitHub `iOS IPA Release` workflow for the same tag is green
 - [ ] EAS `Release Mobile` workflow for the same tag is green
 - [ ] EAS iOS `build_ios` completes for the same tag
 - [ ] EAS iOS `submit_ios` succeeds, uploading the build to App Store Connect/TestFlight
