@@ -24,6 +24,8 @@ test("the canonical desktop workflow creates useful release notes", () => {
 });
 
 test("the Android workflow does not race-create an empty release", () => {
+  assert.doesNotMatch(androidRelease, /^\s*push:/m);
+  assert.match(androidRelease, /^\s*workflow_dispatch:/m);
   assert.match(androidRelease, /release create[\s\S]*--generate-notes/);
   assert.doesNotMatch(androidRelease, /--notes ""/);
 });
