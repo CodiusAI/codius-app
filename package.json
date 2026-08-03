@@ -105,7 +105,7 @@
     "version:all:beta:major": "node scripts/set-release-version.mjs --mode beta-major",
     "version:all:beta:next": "node scripts/set-release-version.mjs --mode beta-next",
     "version:all:promote": "node scripts/set-release-version.mjs --mode promote",
-    "test:npm-packages": "node --test scripts/npm-package-release.test.mjs scripts/npm-publish-workflow.test.mjs",
+    "test:npm-packages": "node --test scripts/npm-package-release.test.mjs scripts/npm-publish-workflow.test.mjs scripts/release-workflow.test.mjs",
     "release:packages:validate": "node scripts/npm-package-release.mjs validate",
     "release:packages:build": "node scripts/npm-package-release.mjs build",
     "release:packages:pack": "node scripts/npm-package-release.mjs pack",

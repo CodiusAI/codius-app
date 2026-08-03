@@ -52,7 +52,7 @@ jobs:
             release create "$RELEASE_TAG"
             --repo "${{ github.repository }}"
             --title "Codius $RELEASE_TAG"
-            --notes ""
+            --generate-notes
           )
 
           if [[ "$IS_PRERELEASE" == "true" ]]; then

@@ -185,4 +185,8 @@ jobs:
             prerelease="--prerelease"
           fi
           gh release view "$tag" --repo CodiusAI/codius-app >/dev/null 2>&1 || gh release create "$tag" --repo CodiusAI/codius-app --title "Codius $tag" --generate-notes $prerelease
+          if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            echo "Desktop Release owns canonical v* release assets; keeping this workflow's builds as validated workflow artifacts."
+            exit 0
+          fi
           find release-assets -type f -print0 | xargs -0 gh release upload "$tag" --repo CodiusAI/codius-app --clobber
