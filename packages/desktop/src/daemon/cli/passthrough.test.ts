@@ -65,6 +65,23 @@ describe("passthrough Codius CLI", () => {
     ).toBeNull();
   });
 
+  it("ignores Linux desktop identity arguments injected by the Nix wrapper", () => {
+    expect(
+      parsePassthroughCliArgs({
+        argv: [
+          "/nix/store/electron/bin/electron",
+          "/nix/store/codius-app/share/codius-app/electron-app",
+          "--no-sandbox",
+          "--class=codius-app",
+          "daemon",
+          "status",
+        ],
+        isDefaultApp: true,
+        forceCli: false,
+      }),
+    ).toEqual(["daemon", "status"]);
+  });
+
   it("ignores Electron remote debugging switches", () => {
     expect(
       parsePassthroughCliArgs({

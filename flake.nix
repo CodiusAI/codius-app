@@ -26,11 +26,22 @@
         let
           pkgs = pkgsFor system;
           codius = pkgs.callPackage ./nix/package.nix { };
+          versionParts = pkgs.lib.splitString "." codius.version;
+          sourceRevision = if self ? revCount && self.revCount != null then self.revCount else 0;
+          buildRevision = sourceRevision - (sourceRevision / 10000) * 10000;
+          desktopBuildVersion = pkgs.lib.concatStringsSep "." [
+            (builtins.elemAt versionParts 0)
+            (builtins.elemAt versionParts 1)
+            (toString buildRevision)
+          ];
         in
         {
           default = codius;
           codius = codius;
-          desktop = pkgs.callPackage ./nix/desktop-package.nix { inherit codius; };
+          desktop = pkgs.callPackage ./nix/desktop-package.nix {
+            inherit codius;
+            buildVersion = desktopBuildVersion;
+          };
         }
       );
 
