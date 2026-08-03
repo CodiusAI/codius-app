@@ -147,16 +147,38 @@ jobs:
           fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
           NODE
 
+      - name: Require macOS release credentials
+        if: env.SHOULD_PUBLISH == 'true' && env.IS_SMOKE_TAG != 'true'
+        shell: bash
+        env:
+          CSC_LINK: ${{ secrets.CODIUS_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CODIUS_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.CODIUS_APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.CODIUS_APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.CODIUS_APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          missing=()
+          for name in CSC_LINK CSC_KEY_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
+            if [[ -z "${!name//[[:space:]]/}" ]]; then
+              missing+=("$name")
+            fi
+          done
+          if (( ${#missing[@]} > 0 )); then
+            echo "::error::Missing required macOS signing/notarization credentials: ${missing[*]}"
+            exit 1
+          fi
+
       - name: Build desktop release
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           EP_GH_IGNORE_TIME: true
-          CSC_LINK: ${{ secrets.APPLE_CERTIFICATE }}
-          CSC_KEY_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          CSC_LINK: ${{ secrets.CODIUS_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CODIUS_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.CODIUS_APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.CODIUS_APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.CODIUS_APPLE_TEAM_ID }}
           CODIUS_DESKTOP_SMOKE: "1"
           CODIUS_DESKTOP_SMOKE_ARTIFACT_DIR: ${{ runner.temp }}/desktop-smoke
         run: |
@@ -365,11 +387,32 @@ jobs:
           fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
           NODE
 
+      - name: Require Windows release credentials
+        if: env.SHOULD_PUBLISH == 'true' && env.IS_SMOKE_TAG != 'true'
+        shell: bash
+        env:
+          CSC_LINK: ${{ secrets.CODIUS_WINDOWS_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CODIUS_WINDOWS_CSC_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          missing=()
+          for name in CSC_LINK CSC_KEY_PASSWORD; do
+            if [[ -z "${!name//[[:space:]]/}" ]]; then
+              missing+=("$name")
+            fi
+          done
+          if (( ${#missing[@]} > 0 )); then
+            echo "::error::Missing required Windows signing credentials: ${missing[*]}"
+            exit 1
+          fi
+
       - name: Build desktop release
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           EP_GH_IGNORE_TIME: true
+          CSC_LINK: ${{ secrets.CODIUS_WINDOWS_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CODIUS_WINDOWS_CSC_KEY_PASSWORD }}
           CODIUS_DESKTOP_SMOKE: "1"
           CODIUS_DESKTOP_SMOKE_ARTIFACT_DIR: ${{ runner.temp }}/desktop-smoke
         run: |

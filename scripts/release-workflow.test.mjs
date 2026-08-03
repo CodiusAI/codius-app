@@ -27,3 +27,13 @@ test("the Android workflow does not race-create an empty release", () => {
   assert.match(androidRelease, /release create[\s\S]*--generate-notes/);
   assert.doesNotMatch(androidRelease, /--notes ""/);
 });
+
+test("published desktop releases fail closed without signing credentials", () => {
+  assert.match(desktopRelease, /Missing required macOS signing\/notarization credentials/);
+  assert.match(desktopRelease, /Missing required Windows signing credentials/);
+  assert.match(desktopRelease, /secrets\.CODIUS_CSC_LINK/);
+  assert.match(desktopRelease, /secrets\.CODIUS_WINDOWS_CSC_LINK/);
+  assert.match(codiusRelease, /Missing required macOS signing\/notarization credentials/);
+  assert.match(codiusRelease, /Missing required Windows signing credentials/);
+  assert.doesNotMatch(codiusRelease, /falling back to an unsigned macOS build/);
+});
