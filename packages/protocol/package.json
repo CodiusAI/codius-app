@@ -1,6 +1,6 @@
 {
   "name": "@codius.ai/protocol",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Codius shared protocol schemas and wire types",
   "keywords": [
     "coding-agents",
