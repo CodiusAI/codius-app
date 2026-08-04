@@ -21,7 +21,40 @@ type SupervisorLifecycleMessage =
   | {
       type: "codius:restart";
       reason?: string;
+    }
+  | {
+      type: "codius:fatal";
+      reason: string;
+      detail?: string;
     };
+
+interface ListenFailure {
+  reason: string;
+  detail?: string;
+}
+
+/**
+ * Describe a failed listen so the supervisor can act on the cause instead of restarting blindly.
+ * Node reports the bound address on EADDRINUSE, which is what identifies the conflicting port.
+ */
+function describeListenFailure(err: unknown): ListenFailure {
+  if (typeof err !== "object" || err === null || !("code" in err)) {
+    return { reason: "listen_failed" };
+  }
+
+  const { code, address, port } = err as { code?: unknown; address?: unknown; port?: unknown };
+  const target =
+    typeof address === "string" && typeof port === "number" ? `${address}:${port}` : undefined;
+
+  if (code === "EADDRINUSE") {
+    return { reason: "listen_addr_in_use", ...(target ? { detail: target } : {}) };
+  }
+
+  return {
+    reason: typeof code === "string" ? `listen_failed_${code.toLowerCase()}` : "listen_failed",
+    ...(target ? { detail: target } : {}),
+  };
+}
 
 interface SupervisorHeartbeatMessage {
   type: "codius:supervisor-heartbeat";
@@ -309,6 +342,8 @@ async function main() {
     sendSupervisorLifecycleMessage({ type: "codius:ready", listen });
   } catch (err) {
     logger.fatal({ err }, "Daemon failed to start listening");
+    const failure = describeListenFailure(err);
+    sendSupervisorLifecycleMessage({ type: "codius:fatal", ...failure });
     throw err;
   }
 

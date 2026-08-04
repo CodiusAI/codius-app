@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import {
   acquirePidLock,
+  getPidLockInfo,
   PidLockError,
   releasePidLock,
   startPidLockHeartbeat,
@@ -10,7 +11,16 @@ import {
 } from "../src/server/pid-lock.js";
 import { resolveCodiusHome } from "../src/server/codius-home.js";
 import { loadPersistedConfig } from "../src/server/persisted-config.js";
+import {
+  evictStaleCodiusPortOwners,
+  terminateStaleCodiusProcess,
+} from "../src/server/port-owner.js";
 import { runSupervisor } from "./supervisor.js";
+import type {
+  WorkerFatalContext,
+  WorkerFatalDisposition,
+  WorkerFatalReport,
+} from "./supervisor.js";
 import { resolveSupervisorLogFile } from "./supervisor-log-config.js";
 import { applySherpaLoaderEnv } from "../src/server/speech/providers/local/sherpa/sherpa-runtime-env.js";
 
@@ -97,6 +107,66 @@ function resolvePackagedNodeEntrypointRunnerPath(currentScriptPath: string): str
   return existsSync(runnerPath) ? runnerPath : null;
 }
 
+function parseListenPort(detail: string | undefined): number | null {
+  if (!detail) {
+    return null;
+  }
+  const port = Number.parseInt(detail.slice(detail.lastIndexOf(":") + 1), 10);
+  return Number.isInteger(port) && port > 0 ? port : null;
+}
+
+/**
+ * A daemon whose event loop has wedged keeps the port bound while answering nothing, so every
+ * replacement worker dies on EADDRINUSE. Clear our own abandoned process and retry; leave anyone
+ * else's server alone and keep retrying in case the user frees the port.
+ */
+async function handleWorkerFatal(
+  report: WorkerFatalReport,
+  context: WorkerFatalContext,
+): Promise<WorkerFatalDisposition> {
+  if (report.reason !== "listen_addr_in_use") {
+    return "backoff";
+  }
+
+  const port = parseListenPort(report.detail);
+  if (port === null) {
+    return "backoff";
+  }
+
+  const { evicted, blocked } = await evictStaleCodiusPortOwners(port);
+  if (evicted.length > 0) {
+    context.log("Evicted abandoned Codius process holding the daemon port", {
+      port,
+      evicted: evicted.map((owner) => ({ pid: owner.pid, command: owner.command })),
+    });
+    return "retry";
+  }
+
+  context.log("Daemon port is held by a process that will not be evicted", {
+    port,
+    blocked: blocked.map((owner) => ({ pid: owner.pid, command: owner.command })),
+  });
+  return "backoff";
+}
+
+/**
+ * Reclaiming the lock file only removes the record of the previous daemon. Terminate it first, or
+ * it survives unreferenced and keeps the port bound with nothing left pointing at it.
+ */
+async function terminateReclaimedLockOwner(codiusHome: string): Promise<void> {
+  const existingLock = await getPidLockInfo(codiusHome);
+  if (!existingLock) {
+    return;
+  }
+
+  const terminated = await terminateStaleCodiusProcess(existingLock.pid);
+  if (terminated) {
+    process.stderr.write(
+      `Terminated previous Codius daemon (PID ${terminated.pid}) before reclaiming its lock\n`,
+    );
+  }
+}
+
 async function main(): Promise<void> {
   const config = parseConfig(process.argv.slice(2));
   const workerEntry = config.devMode ? resolveDevWorkerEntry() : resolveWorkerEntry();
@@ -112,6 +182,10 @@ async function main(): Promise<void> {
   const codiusHome = resolveCodiusHome(workerEnv);
   const persistedConfig = loadPersistedConfig(codiusHome);
   const supervisorLogFile = resolveSupervisorLogFile(codiusHome, persistedConfig, workerEnv);
+
+  if (config.reclaimStalePidLock) {
+    await terminateReclaimedLockOwner(codiusHome);
+  }
 
   try {
     await acquirePidLock(codiusHome, null, {
@@ -173,6 +247,7 @@ async function main(): Promise<void> {
         })
       : undefined,
     restartOnCrash: true,
+    onWorkerFatal: handleWorkerFatal,
     logFile: supervisorLogFile,
     onWorkerReady: async ({ listen }) => {
       await updatePidLock(codiusHome, { listen }, { ownerPid: process.pid });

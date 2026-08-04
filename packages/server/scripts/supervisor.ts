@@ -23,11 +23,38 @@ type WorkerLifecycleMessage =
   | {
       type: "codius:restart";
       reason?: string;
-    };
+    }
+  | ({
+      type: "codius:fatal";
+    } & WorkerFatalReport);
+
+/** A worker failure that restarting cannot fix on its own, such as a port already bound. */
+export interface WorkerFatalReport {
+  reason: string;
+  detail?: string;
+}
+
+/**
+ * What the supervisor should do after a fatal worker exit: `retry` when the handler cleared the
+ * blocker, `backoff` to keep retrying slowly, `stop` to give up and exit.
+ */
+export type WorkerFatalDisposition = "retry" | "backoff" | "stop";
+
+/** Lets a fatal-error handler record what it did in the same log as the rest of the lifecycle. */
+export interface WorkerFatalContext {
+  log: (message: string, fields?: Record<string, unknown>) => void;
+}
 
 interface SupervisorHeartbeatMessage {
   type: "codius:supervisor-heartbeat";
 }
+
+// A worker that dies on startup dies instantly, so an unthrottled restart loop spins at process
+// spawn speed and floods the log. Back off instead of giving up, so the daemon still recovers on
+// its own once whatever blocked it clears.
+const CRASH_BACKOFF_BASE_MS = 250;
+const CRASH_BACKOFF_MAX_MS = 15_000;
+const HEALTHY_WORKER_UPTIME_MS = 30_000;
 
 interface SupervisorOptions {
   name: string;
@@ -42,6 +69,10 @@ interface SupervisorOptions {
     env?: NodeJS.ProcessEnv;
   } | null;
   onWorkerReady?: (message: { listen: string }) => Promise<void> | void;
+  onWorkerFatal?: (
+    report: WorkerFatalReport,
+    context: WorkerFatalContext,
+  ) => Promise<WorkerFatalDisposition> | WorkerFatalDisposition;
   restartOnCrash?: boolean;
   onSupervisorExit?: () => Promise<void> | void;
   logFile?: SupervisorLogFileOptions;
@@ -79,6 +110,18 @@ function parseLifecycleMessage(msg: unknown): WorkerLifecycleMessage | null {
     return {
       type: "codius:restart",
       ...(typeof reason === "string" && reason.trim().length > 0 ? { reason } : {}),
+    };
+  }
+  if (type === "codius:fatal") {
+    const reason = (msg as { reason?: unknown }).reason;
+    if (typeof reason !== "string" || reason.trim().length === 0) {
+      return null;
+    }
+    const detail = (msg as { detail?: unknown }).detail;
+    return {
+      type: "codius:fatal",
+      reason,
+      ...(typeof detail === "string" && detail.trim().length > 0 ? { detail } : {}),
     };
   }
   return null;
@@ -120,6 +163,7 @@ export function runSupervisor(options: SupervisorOptions): SupervisorController 
   let restarting = false;
   let shuttingDown = false;
   let exiting = false;
+  let consecutiveFastCrashes = 0;
   const logStream = createSupervisorLogStream(options.logFile);
 
   const writeDurableChunk = (chunk: string | Buffer): void => {
@@ -197,6 +241,8 @@ export function runSupervisor(options: SupervisorOptions): SupervisorController 
     }
 
     const currentChild = child;
+    const startedAt = Date.now();
+    let pendingFatal: WorkerFatalReport | null = null;
     const heartbeat = setInterval(() => {
       const message: SupervisorHeartbeatMessage = { type: "codius:supervisor-heartbeat" };
       if (currentChild.connected) {
@@ -244,6 +290,15 @@ export function runSupervisor(options: SupervisorOptions): SupervisorController 
         return;
       }
 
+      if (lifecycleMessage.type === "codius:fatal") {
+        pendingFatal = {
+          reason: lifecycleMessage.reason,
+          ...(lifecycleMessage.detail ? { detail: lifecycleMessage.detail } : {}),
+        };
+        writeLifecycleLog("Worker reported fatal error", { ...pendingFatal });
+        return;
+      }
+
       if (lifecycleMessage.type === "codius:shutdown") {
         const reason = lifecycleMessage.reason ?? "worker_requested_shutdown";
         writeLifecycleLog("Worker requested shutdown", { reason });
@@ -258,33 +313,117 @@ export function runSupervisor(options: SupervisorOptions): SupervisorController 
 
     child.on("close", (code, signal) => {
       clearInterval(heartbeat);
+      child = null;
+      const uptimeMs = Date.now() - startedAt;
+      const fatal = pendingFatal;
+      pendingFatal = null;
       const exitDescriptor = describeExit(code, signal);
-      writeLifecycleLog("Worker exited", { code, signal, exit: exitDescriptor });
+      writeLifecycleLog("Worker exited", {
+        code,
+        signal,
+        exit: exitDescriptor,
+        uptimeMs,
+        ...(fatal ? { fatalReason: fatal.reason } : {}),
+      });
 
-      if (shuttingDown) {
-        log(`Worker exited (${exitDescriptor}). Supervisor shutting down.`);
-        exitSupervisor(0);
+      void handleWorkerClose({ code, signal, exitDescriptor, uptimeMs, fatal }).catch((error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        log(`Worker exit handling failed: ${message}`);
+        exitSupervisor(1);
+      });
+    });
+  };
+
+  const scheduleRestart = (exitDescriptor: string, uptimeMs: number): void => {
+    // A worker that ran long enough to be healthy starts the backoff over.
+    if (uptimeMs >= HEALTHY_WORKER_UPTIME_MS) {
+      consecutiveFastCrashes = 0;
+    }
+    consecutiveFastCrashes += 1;
+    const delayMs = Math.min(
+      CRASH_BACKOFF_BASE_MS * 2 ** (consecutiveFastCrashes - 1),
+      CRASH_BACKOFF_MAX_MS,
+    );
+
+    log(`Worker crashed (${exitDescriptor}). Restarting worker in ${delayMs}ms...`);
+    writeLifecycleLog("Restarting worker after crash", {
+      delayMs,
+      consecutiveFastCrashes,
+      uptimeMs,
+    });
+    setTimeout(() => {
+      if (shuttingDown || exiting) {
         return;
       }
+      spawnWorker();
+    }, delayMs);
+  };
 
-      const crashed =
-        restartOnCrash &&
-        ((code !== 0 && code !== null) || (signal !== null && signal !== "SIGTERM"));
+  const resolveFatalDisposition = async (
+    fatal: WorkerFatalReport,
+  ): Promise<WorkerFatalDisposition> => {
+    if (!options.onWorkerFatal) {
+      return "backoff";
+    }
+    try {
+      return await options.onWorkerFatal(fatal, { log: writeLifecycleLog });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      log(`Fatal worker error handler failed: ${message}`);
+      return "backoff";
+    }
+  };
 
-      if (restarting || crashed) {
-        restarting = false;
-        log(
-          crashed
-            ? `Worker crashed (${exitDescriptor}). Restarting worker...`
-            : `Worker exited (${exitDescriptor}). Restarting worker...`,
-        );
-        spawnWorker();
-        return;
-      }
+  const handleWorkerClose = async (exit: {
+    code: number | null;
+    signal: NodeJS.Signals | null;
+    exitDescriptor: string;
+    uptimeMs: number;
+    fatal: WorkerFatalReport | null;
+  }): Promise<void> => {
+    const { code, signal, exitDescriptor, uptimeMs, fatal } = exit;
 
+    if (shuttingDown) {
+      log(`Worker exited (${exitDescriptor}). Supervisor shutting down.`);
+      exitSupervisor(0);
+      return;
+    }
+
+    if (restarting) {
+      restarting = false;
+      consecutiveFastCrashes = 0;
+      log(`Worker exited (${exitDescriptor}). Restarting worker...`);
+      spawnWorker();
+      return;
+    }
+
+    const crashed =
+      restartOnCrash &&
+      ((code !== 0 && code !== null) || (signal !== null && signal !== "SIGTERM"));
+
+    if (!crashed) {
       log(`Worker exited (${exitDescriptor}). Supervisor exiting.`);
       exitSupervisor(typeof code === "number" ? code : 1);
-    });
+      return;
+    }
+
+    if (fatal) {
+      const disposition = await resolveFatalDisposition(fatal);
+      writeLifecycleLog("Resolved fatal worker error", { reason: fatal.reason, disposition });
+
+      if (disposition === "stop") {
+        log(`Worker reported a fatal error (${fatal.reason}). Supervisor exiting.`);
+        exitSupervisor(1);
+        return;
+      }
+
+      // The handler cleared what blocked the worker, so the next start is not a repeat failure.
+      if (disposition === "retry") {
+        consecutiveFastCrashes = 0;
+      }
+    }
+
+    scheduleRestart(exitDescriptor, uptimeMs);
   };
 
   const signalWorker = (signal: NodeJS.Signals, reason: string): void => {
