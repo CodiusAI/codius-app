@@ -827,7 +827,26 @@ export async function createCodiusDaemon(
     managedProcesses,
     isDev: config.isDev === true,
     extraClients: config.agentClients,
+    codiusModelAccessStore,
   });
+  // Keep hosted Codius models in sync with the admin panel: refresh the cached
+  // catalog when stale, then re-merge into every cached provider snapshot so
+  // connected apps get a providers_snapshot_update push with the new models.
+  const syncCodiusModelAccess = async () => {
+    const refreshed = await codiusModelAccessStore.refreshIfStale();
+    if (refreshed) {
+      providerSnapshotManager.reapplyCodiusModels();
+    }
+  };
+  void syncCodiusModelAccess().catch((error) => {
+    logger.warn({ err: error }, "Failed to refresh Codius model catalog on startup");
+  });
+  const codiusModelSyncInterval = setInterval(() => {
+    void syncCodiusModelAccess().catch((error) => {
+      logger.warn({ err: error }, "Failed to sync Codius model catalog");
+    });
+  }, 60_000);
+  codiusModelSyncInterval.unref();
   const initialAgentManagerState = providerSnapshotManager.getAgentManagerProviderState();
   const agentManager = new AgentManager({
     clients: initialAgentManagerState.clients,
@@ -1624,6 +1643,7 @@ export async function createCodiusDaemon(
     await hubRelationships.stop();
     workspaceReconciliation.dispose();
     scriptHealthMonitor.stop();
+    clearInterval(codiusModelSyncInterval);
     // Freeze both ingress and registration before taking the agent closure snapshot.
     wsServer?.prepareForShutdown();
     agentManager.prepareForShutdown();

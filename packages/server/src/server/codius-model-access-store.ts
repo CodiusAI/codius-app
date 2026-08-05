@@ -9,8 +9,11 @@ import {
   type UpdateCodiusModelAccessInput,
 } from "@codius.ai/protocol/messages";
 import { ensurePrivateFile, writePrivateFileAtomicSync } from "./private-files.js";
+import type { AgentModelDefinition } from "./agent/agent-sdk-types.js";
 
 export const DEFAULT_CODIUS_API_BASE_URL = "https://api.codius.ai/v1";
+
+const MODEL_LIST_STALE_MS = 5 * 60 * 1000;
 
 const CodiusModelSchema = z.object({
   id: z.string().trim().min(1),
@@ -95,7 +98,11 @@ function openCodeConfig(current: string | undefined, state: PersistedCodiusModel
       ? (parsed.provider as Record<string, unknown>)
       : {};
   const models = Object.fromEntries(
-    state.models.map((model) => [model.id, { name: model.name ?? model.id }]),
+    state.models.map((model) => {
+      const slashIndex = model.id.indexOf("/");
+      const family = slashIndex > 0 ? model.id.slice(0, slashIndex) : "codius";
+      return [model.id, { name: model.name ?? model.id, family }];
+    }),
   );
 
   return JSON.stringify({
@@ -130,6 +137,56 @@ export class CodiusModelAccessStore {
     this.logger = options.logger?.child({ module: "codius-model-access" });
     this.now = options.now ?? (() => new Date());
     this.current = this.load();
+  }
+
+  public isStale(): boolean {
+    if (!this.current.apiKey || !this.current.lastValidatedAt) {
+      return true;
+    }
+    const lastValidated = Date.parse(this.current.lastValidatedAt);
+    if (Number.isNaN(lastValidated)) {
+      return true;
+    }
+    return this.now().getTime() - lastValidated > MODEL_LIST_STALE_MS;
+  }
+
+  public async refresh(): Promise<CodiusModelAccessStatus | null> {
+    const apiKey = this.current.apiKey;
+    if (!apiKey) {
+      return null;
+    }
+
+    try {
+      const models = await this.validate(apiKey);
+      const defaultModel =
+        this.current.defaultModel && models.some((m) => m.id === this.current.defaultModel)
+          ? this.current.defaultModel
+          : models[0]?.id;
+      this.persist({
+        version: 1,
+        apiKey,
+        baseUrl: DEFAULT_CODIUS_API_BASE_URL,
+        defaultForAgents: this.current.defaultForAgents,
+        defaultModel,
+        models,
+        lastValidatedAt: this.now().toISOString(),
+      });
+      this.logger?.info({ modelCount: models.length }, "Codius model catalog refreshed");
+      return this.getStatus();
+    } catch (error) {
+      this.logger?.info(
+        { err: error },
+        "Failed to refresh Codius model catalog; keeping cached list",
+      );
+      return null;
+    }
+  }
+
+  public async refreshIfStale(): Promise<CodiusModelAccessStatus | null> {
+    if (!this.isStale()) {
+      return null;
+    }
+    return this.refresh();
   }
 
   public getStatus(): CodiusModelAccessStatus {
@@ -260,6 +317,47 @@ export class CodiusModelAccessStore {
       default:
         return null;
     }
+  }
+
+  public buildModelDefinitions(
+    provider: AgentProvider,
+    existingModelIds: ReadonlySet<string>,
+  ): AgentModelDefinition[] {
+    const state = this.current;
+    if (!state.apiKey || !state.defaultForAgents || state.models.length === 0) {
+      return [];
+    }
+
+    const supportsCodius =
+      provider === "opencode" ||
+      provider === "pi" ||
+      provider === "claude" ||
+      provider === "codex" ||
+      provider === "copilot";
+    if (!supportsCodius) {
+      return [];
+    }
+
+    const prefix = provider === "opencode" || provider === "pi" ? "codius/" : "";
+    const models: AgentModelDefinition[] = [];
+    for (const model of state.models) {
+      const id = `${prefix}${model.id}`;
+      if (existingModelIds.has(id)) {
+        continue;
+      }
+      const slashIndex = model.id.indexOf("/");
+      const vendor = slashIndex > 0 ? model.id.slice(0, slashIndex) : "Codius";
+      const modelShortId = slashIndex > 0 ? model.id.slice(slashIndex + 1) : model.id;
+      models.push({
+        provider,
+        id,
+        label: model.name ?? modelShortId,
+        description: `Codius - ${vendor}`,
+        isDefault: model.id === state.defaultModel,
+        metadata: { codiusManaged: true, family: vendor },
+      });
+    }
+    return models;
   }
 
   private load(): PersistedCodiusModelAccess {

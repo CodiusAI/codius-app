@@ -88,9 +88,10 @@ See [Codex with a custom OpenAI-compatible endpoint](#codex-with-a-custom-openai
         },
         "disallowedTools": ["WebSearch"],
         "models": [
-          { "id": "glm-4.5-air", "label": "GLM 4.5 Air" },
-          { "id": "glm-5-turbo", "label": "GLM 5 Turbo", "isDefault": true },
-          { "id": "glm-5.1", "label": "GLM 5.1" }
+          { "id": "glm-5.2", "label": "GLM 5.2", "isDefault": true },
+          { "id": "glm-5.1", "label": "GLM 5.1" },
+          { "id": "glm-5-turbo", "label": "GLM 5 Turbo" },
+          { "id": "glm-4.5-air", "label": "GLM 4.5 Air" }
         ]
       }
     }
@@ -102,7 +103,8 @@ See [Codex with a custom OpenAI-compatible endpoint](#codex-with-a-custom-openai
 
 | Model         | Tier                |
 | ------------- | ------------------- |
-| `glm-5.1`     | Advanced (flagship) |
+| `glm-5.2`     | Advanced (flagship) |
+| `glm-5.1`     | Advanced            |
 | `glm-5-turbo` | Advanced            |
 | `glm-4.7`     | Standard            |
 | `glm-4.5-air` | Lightweight         |

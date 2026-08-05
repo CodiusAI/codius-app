@@ -34,6 +34,7 @@ import {
   formatProviderDiagnosticError,
 } from "./providers/diagnostic-utils.js";
 import type { MutableDaemonConfig } from "../daemon-config-store.js";
+import type { CodiusModelAccessStore } from "../codius-model-access-store.js";
 
 const DEFAULT_REFRESH_TIMEOUT_MS = 60_000;
 const DEFAULT_DIAGNOSTIC_TIMEOUT_MS = 120_000;
@@ -93,6 +94,7 @@ export interface ProviderSnapshotManagerOptions {
   extraClients?: Partial<Record<AgentProvider, AgentClient>>;
   refreshTimeoutMs?: number;
   diagnosticTimeoutMs?: number;
+  codiusModelAccessStore?: CodiusModelAccessStore;
 }
 
 interface ProviderSnapshotRefreshOptions {
@@ -182,6 +184,7 @@ export class ProviderSnapshotManager {
   private readonly managedProcesses?: ManagedProcessRegistry;
   private readonly isDev: boolean;
   private readonly extraClients: Partial<Record<AgentProvider, AgentClient>>;
+  private readonly codiusModelAccessStore?: CodiusModelAccessStore;
   private runtimeSettings: AgentProviderRuntimeSettingsMap | undefined;
   private providerOverrides: Record<string, ProviderOverride> | undefined;
   private baseProviderOverrides: Record<string, ProviderOverride> | undefined;
@@ -194,6 +197,7 @@ export class ProviderSnapshotManager {
     this.managedProcesses = options.managedProcesses;
     this.isDev = options.isDev === true;
     this.extraClients = options.extraClients ?? {};
+    this.codiusModelAccessStore = options.codiusModelAccessStore;
     this.runtimeSettings = options.runtimeSettings;
     this.providerOverrides = options.providerOverrides;
     this.baseProviderOverrides = options.providerOverrides;
@@ -797,13 +801,15 @@ export class ProviderSnapshotManager {
         `Timed out refreshing ${definition.label} after ${this.refreshTimeoutMs}ms`,
       );
 
+      const models = this.mergeCodiusModels(provider, catalog.models);
+
       setEntry({
         ...base,
         defaultModeId:
           catalog.defaultModeId === undefined ? definition.defaultModeId : catalog.defaultModeId,
         status: "ready",
         enabled: true,
-        models: catalog.models,
+        models,
         modes: catalog.modes,
         fetchedAt: new Date().toISOString(),
       });
@@ -819,6 +825,47 @@ export class ProviderSnapshotManager {
           { err: error, provider, cwd: snapshotCwd },
           "Failed to refresh provider snapshot",
         );
+      }
+    }
+  }
+
+  private mergeCodiusModels(
+    provider: AgentProvider,
+    catalogModels: AgentModelDefinition[],
+  ): AgentModelDefinition[] {
+    if (!this.codiusModelAccessStore) {
+      return catalogModels;
+    }
+    // Drop previously-injected Codius models so deactivated ones disappear on
+    // re-merge and refreshed metadata (labels, defaults) replaces stale copies.
+    const baseModels = catalogModels.filter((model) => model.metadata?.codiusManaged !== true);
+    const existingIds = new Set(baseModels.map((m) => m.id));
+    const codiusModels = this.codiusModelAccessStore.buildModelDefinitions(provider, existingIds);
+    if (codiusModels.length === 0) {
+      return baseModels;
+    }
+    return [...baseModels, ...codiusModels];
+  }
+
+  reapplyCodiusModels(): void {
+    if (!this.codiusModelAccessStore) {
+      return;
+    }
+    for (const [cwdKey, snapshot] of this.snapshots) {
+      let snapshotChanged = false;
+      for (const [provider, entry] of snapshot) {
+        if (!entry.models) continue;
+        const merged = this.mergeCodiusModels(provider, entry.models);
+        if (
+          merged.length !== entry.models.length ||
+          merged.some((model, index) => model.id !== entry.models?.[index]?.id)
+        ) {
+          snapshot.set(provider, { ...entry, models: merged });
+          snapshotChanged = true;
+        }
+      }
+      if (snapshotChanged) {
+        this.emitChange(cwdKey);
       }
     }
   }
