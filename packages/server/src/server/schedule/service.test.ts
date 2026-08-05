@@ -1783,6 +1783,7 @@ describe("ScheduleService", () => {
           systemPrompt: "Stay concise.",
           mcpServers: {
             docs: {
+              type: "stdio",
               command: "node",
               args: ["docs-server.js"],
             },
