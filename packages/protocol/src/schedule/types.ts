@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { AgentProviderSchema } from "../provider-manifest.js";
+import { McpServerConfigSchema } from "../messages.js";
 
 export const ScheduleStatusSchema = z.enum(["active", "paused", "completed"]);
 export type ScheduleStatus = z.infer<typeof ScheduleStatusSchema>;
@@ -46,7 +47,7 @@ export const ScheduleTargetSchema = z.discriminatedUnion("type", [
         .partial()
         .optional(),
       systemPrompt: z.string().optional(),
-      mcpServers: z.record(z.string(), z.unknown()).optional(),
+      mcpServers: z.record(z.string(), McpServerConfigSchema).optional(),
     }),
   }),
 ]);

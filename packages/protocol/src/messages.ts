@@ -358,7 +358,7 @@ const McpSseServerConfigSchema = z.object({
   alwaysLoad: z.boolean().optional(),
 });
 
-const McpServerConfigSchema = z.discriminatedUnion("type", [
+export const McpServerConfigSchema = z.discriminatedUnion("type", [
   McpStdioServerConfigSchema,
   McpHttpServerConfigSchema,
   McpSseServerConfigSchema,

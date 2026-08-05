@@ -992,7 +992,7 @@ function buildScheduleAgentConfig(
     featureValues: config.featureValues,
     extra: config.extra,
     systemPrompt: config.systemPrompt,
-    mcpServers: config.mcpServers as AgentSessionConfig["mcpServers"],
+    mcpServers: config.mcpServers,
   };
 }
 
