@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { AgentProviderSchema } from "../provider-manifest.js";
-import { McpServerConfigSchema } from "../messages.js";
+import { McpServerConfigSchema } from "../mcp-server-config.js";
 
 export const ScheduleStatusSchema = z.enum(["active", "paused", "completed"]);
 export type ScheduleStatus = z.infer<typeof ScheduleStatusSchema>;

@@ -5,6 +5,7 @@ import { AGENT_LIFECYCLE_STATUSES } from "./agent-lifecycle.js";
 import { MAX_EXPLICIT_AGENT_TITLE_CHARS } from "./agent-title-limits.js";
 import { AgentProviderSchema } from "./provider-manifest.js";
 import { TOOL_CALL_ICON_NAMES } from "./agent-types.js";
+import { McpServerConfigSchema as McpServerConfigSchemaBase } from "./mcp-server-config.js";
 import {
   ChatCreateRequestSchema,
   ChatListRequestSchema,
@@ -336,33 +337,10 @@ const AgentUsageSchema: z.ZodType<AgentUsage> = z.object({
   contextWindowUsedTokens: z.number().optional(),
 });
 
-const McpStdioServerConfigSchema = z.object({
-  type: z.literal("stdio"),
-  command: z.string(),
-  args: z.array(z.string()).optional(),
-  env: z.record(z.string(), z.string()).optional(),
-  alwaysLoad: z.boolean().optional(),
-});
-
-const McpHttpServerConfigSchema = z.object({
-  type: z.literal("http"),
-  url: z.string(),
-  headers: z.record(z.string(), z.string()).optional(),
-  alwaysLoad: z.boolean().optional(),
-});
-
-const McpSseServerConfigSchema = z.object({
-  type: z.literal("sse"),
-  url: z.string(),
-  headers: z.record(z.string(), z.string()).optional(),
-  alwaysLoad: z.boolean().optional(),
-});
-
-export const McpServerConfigSchema = z.discriminatedUnion("type", [
-  McpStdioServerConfigSchema,
-  McpHttpServerConfigSchema,
-  McpSseServerConfigSchema,
-]);
+// COMPAT(mcpServerConfig): re-exported here for existing ./messages.js consumers.
+// The canonical home is mcp-server-config.ts (leaf module — schedule/types.ts
+// imports it without creating a messages<->schedule cycle).
+export const McpServerConfigSchema = McpServerConfigSchemaBase;
 
 const AgentSessionConfigSchema = z.object({
   provider: AgentProviderSchema,
