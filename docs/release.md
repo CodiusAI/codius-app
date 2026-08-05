@@ -413,6 +413,8 @@ This ensures the checkout ref matches the actual code on `main` with the fix inc
 
 ## Notes
 
+- Desktop builds ship **unsigned** unless the repo variable `DESKTOP_SIGNING_ENABLED` is set to `true`, in which case the `CODIUS_CSC_LINK` / `CODIUS_CSC_KEY_PASSWORD` / `CODIUS_APPLE_*` (macOS) and `CODIUS_WINDOWS_CSC_*` (Windows) secrets are required or the publish jobs fail closed. Unsigned macOS builds hit the Gatekeeper warning on first open — acceptable for now.
+
 - `version:all:*` bumps root + syncs workspace versions and `@codius.ai/*` dependency versions
 - `release:prepare` refreshes workspace `node_modules` links to prevent stale types
 - `npm run dev:desktop` and `npm run build:desktop` target the Electron desktop package in `packages/desktop`

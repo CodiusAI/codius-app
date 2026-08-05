@@ -47,8 +47,8 @@ jobs:
     env:
       CI: "1"
       ONNXRUNTIME_NODE_INSTALL: skip
-      CODIUS_UNSIGNED: ${{ ((github.event_name == 'workflow_dispatch' && inputs.unsigned) || contains(github.ref_name, '-unsigned.')) && 'true' || 'false' }}
-      CSC_IDENTITY_AUTO_DISCOVERY: ${{ ((github.event_name == 'workflow_dispatch' && inputs.unsigned) || contains(github.ref_name, '-unsigned.')) && 'false' || 'true' }}
+      CODIUS_UNSIGNED: ${{ ((github.event_name == 'workflow_dispatch' && inputs.unsigned) || contains(github.ref_name, '-unsigned.') || vars.DESKTOP_SIGNING_ENABLED != 'true') && 'true' || 'false' }}
+      CSC_IDENTITY_AUTO_DISCOVERY: ${{ ((github.event_name == 'workflow_dispatch' && inputs.unsigned) || contains(github.ref_name, '-unsigned.') || vars.DESKTOP_SIGNING_ENABLED != 'true') && 'false' || 'true' }}
       WIN_CSC_LINK: ${{ secrets.CODIUS_WINDOWS_CSC_LINK }}
       WIN_CSC_KEY_PASSWORD: ${{ secrets.CODIUS_WINDOWS_CSC_KEY_PASSWORD }}
     steps:

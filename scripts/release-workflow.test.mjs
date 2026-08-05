@@ -30,12 +30,17 @@ test("the Android workflow does not race-create an empty release", () => {
   assert.doesNotMatch(androidRelease, /--notes ""/);
 });
 
-test("published desktop releases fail closed without signing credentials", () => {
-  assert.match(desktopRelease, /Missing required macOS signing\/notarization credentials/);
-  assert.match(desktopRelease, /Missing required Windows signing credentials/);
+test("desktop signing gate fails closed only when signing is enabled", () => {
+  // The credential gate is armed by the DESKTOP_SIGNING_ENABLED repo variable;
+  // without it, desktop releases build unsigned (current practice — Gatekeeper
+  // warning on first open) until signing credentials are provisioned.
+  assert.match(desktopRelease, /vars\.DESKTOP_SIGNING_ENABLED == 'true'/);
+  assert.match(desktopRelease, /DESKTOP_SIGNING_ENABLED is true but credentials are missing/);
+  assert.match(desktopRelease, /DESKTOP_SIGNING_ENABLED is not set — this release ships an UNSIGNED macOS build/);
+  assert.match(desktopRelease, /DESKTOP_SIGNING_ENABLED is not set — this release ships an UNSIGNED Windows build/);
   assert.match(desktopRelease, /secrets\.CODIUS_CSC_LINK/);
   assert.match(desktopRelease, /secrets\.CODIUS_WINDOWS_CSC_LINK/);
+  assert.match(codiusRelease, /vars\.DESKTOP_SIGNING_ENABLED != 'true'/);
   assert.match(codiusRelease, /Missing required macOS signing\/notarization credentials/);
   assert.match(codiusRelease, /Missing required Windows signing credentials/);
-  assert.doesNotMatch(codiusRelease, /falling back to an unsigned macOS build/);
 });

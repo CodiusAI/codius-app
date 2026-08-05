@@ -148,7 +148,7 @@ jobs:
           NODE
 
       - name: Require macOS release credentials
-        if: env.SHOULD_PUBLISH == 'true' && env.IS_SMOKE_TAG != 'true'
+        if: env.SHOULD_PUBLISH == 'true' && env.IS_SMOKE_TAG != 'true' && vars.DESKTOP_SIGNING_ENABLED == 'true'
         shell: bash
         env:
           CSC_LINK: ${{ secrets.CODIUS_CSC_LINK }}
@@ -165,9 +165,15 @@ jobs:
             fi
           done
           if (( ${#missing[@]} > 0 )); then
-            echo "::error::Missing required macOS signing/notarization credentials: ${missing[*]}"
+            echo "::error::DESKTOP_SIGNING_ENABLED is true but credentials are missing: ${missing[*]}"
             exit 1
           fi
+
+      - name: Note unsigned macOS build
+        if: env.SHOULD_PUBLISH == 'true' && env.IS_SMOKE_TAG != 'true' && vars.DESKTOP_SIGNING_ENABLED != 'true'
+        shell: bash
+        run: |
+          echo "::notice::DESKTOP_SIGNING_ENABLED is not set — this release ships an UNSIGNED macOS build."
 
       - name: Build desktop release
         shell: bash
@@ -388,7 +394,7 @@ jobs:
           NODE
 
       - name: Require Windows release credentials
-        if: env.SHOULD_PUBLISH == 'true' && env.IS_SMOKE_TAG != 'true'
+        if: env.SHOULD_PUBLISH == 'true' && env.IS_SMOKE_TAG != 'true' && vars.DESKTOP_SIGNING_ENABLED == 'true'
         shell: bash
         env:
           CSC_LINK: ${{ secrets.CODIUS_WINDOWS_CSC_LINK }}
@@ -402,9 +408,15 @@ jobs:
             fi
           done
           if (( ${#missing[@]} > 0 )); then
-            echo "::error::Missing required Windows signing credentials: ${missing[*]}"
+            echo "::error::DESKTOP_SIGNING_ENABLED is true but credentials are missing: ${missing[*]}"
             exit 1
           fi
+
+      - name: Note unsigned Windows build
+        if: env.SHOULD_PUBLISH == 'true' && env.IS_SMOKE_TAG != 'true' && vars.DESKTOP_SIGNING_ENABLED != 'true'
+        shell: bash
+        run: |
+          echo "::notice::DESKTOP_SIGNING_ENABLED is not set — this release ships an UNSIGNED Windows build."
 
       - name: Build desktop release
         shell: bash
