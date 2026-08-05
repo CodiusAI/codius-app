@@ -36,8 +36,14 @@ test("desktop signing gate fails closed only when signing is enabled", () => {
   // warning on first open) until signing credentials are provisioned.
   assert.match(desktopRelease, /vars\.DESKTOP_SIGNING_ENABLED == 'true'/);
   assert.match(desktopRelease, /DESKTOP_SIGNING_ENABLED is true but credentials are missing/);
-  assert.match(desktopRelease, /DESKTOP_SIGNING_ENABLED is not set — this release ships an UNSIGNED macOS build/);
-  assert.match(desktopRelease, /DESKTOP_SIGNING_ENABLED is not set — this release ships an UNSIGNED Windows build/);
+  assert.match(
+    desktopRelease,
+    /DESKTOP_SIGNING_ENABLED is not set — this release ships an UNSIGNED macOS build/,
+  );
+  assert.match(
+    desktopRelease,
+    /DESKTOP_SIGNING_ENABLED is not set — this release ships an UNSIGNED Windows build/,
+  );
   assert.match(desktopRelease, /secrets\.CODIUS_CSC_LINK/);
   assert.match(desktopRelease, /secrets\.CODIUS_WINDOWS_CSC_LINK/);
   assert.match(codiusRelease, /vars\.DESKTOP_SIGNING_ENABLED != 'true'/);
