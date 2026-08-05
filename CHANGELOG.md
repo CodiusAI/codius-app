@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.3 - 2026-08-05
+
+### Added
+
+- Codius models activated in the admin panel now appear in the model selector automatically within about a minute, across all supported agents
+
+### Fixed
+
+- Deactivated Codius models no longer linger in the model selector
+- Codius model descriptions show the vendor name instead of a bare dash
+- The daemon recovers when its port is held by a stale process and restarts crashed workers reliably
+
 ## 0.3.1 - 2026-08-02
 
 ### Fixed
