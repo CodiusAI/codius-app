@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.4 - 2026-08-06
+
+### Fixed
+
+- First-party Claude models (e.g. claude-sonnet-5, claude-opus-5) now work when Codius model access is enabled — the daemon no longer redirects those models to the Codius proxy, which returned a 404
+
 ## 0.3.3 - 2026-08-05
 
 ### Added
