@@ -18,6 +18,7 @@ if (hasEmptyCscLink) {
 
 const isUnsigned =
   hasEmptyCscLink ||
+  cscLink === undefined ||
   process.env.CODIUS_UNSIGNED === "true" ||
   process.env.CSC_IDENTITY_AUTO_DISCOVERY === "false";
 const hasHardenedRuntimeOverride = args.some((arg) =>
