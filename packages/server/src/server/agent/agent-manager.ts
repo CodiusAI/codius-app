@@ -4431,7 +4431,14 @@ export class AgentManager {
     agentId: string,
     env?: Record<string, string>,
   ): Promise<PreparedSessionConfig> {
-    const defaults = this.codiusModelAccessStore?.resolveAgentDefaults(config.provider, env);
+    const isCodiusModel = this.codiusModelAccessStore?.isCodiusManagedModel(
+      config.provider,
+      config.model,
+    );
+    const defaults =
+      config.model && !isCodiusModel
+        ? null
+        : this.codiusModelAccessStore?.resolveAgentDefaults(config.provider, env);
     const launchEnv =
       defaults || env
         ? {

@@ -246,6 +246,14 @@ export class CodiusModelAccessStore {
     return this.getStatus();
   }
 
+  public isCodiusManagedModel(provider: AgentProvider, modelId: string | undefined): boolean {
+    if (!modelId) return false;
+    const state = this.current;
+    if (!state.apiKey || !state.defaultForAgents || state.models.length === 0) return false;
+    const prefix = provider === "opencode" || provider === "pi" ? "codius/" : "";
+    return state.models.some((model) => `${prefix}${model.id}` === modelId);
+  }
+
   public resolveAgentDefaults(
     provider: AgentProvider,
     existingEnv: Record<string, string> = {},

@@ -237,4 +237,25 @@ describe("CodiusModelAccessStore", () => {
     expect(status.defaultForAgents).toBe(false);
     expect(store.resolveAgentDefaults("opencode")).toBeNull();
   });
+
+  test("isCodiusManagedModel identifies catalog models per provider", async () => {
+    const home = createHome();
+    const store = new CodiusModelAccessStore(home, {
+      fetch: vi.fn<typeof fetch>().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            data: [{ id: "anthropic/claude-sonnet-4.6" }, { id: "zai/glm-5.1" }],
+          }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        ),
+      ),
+    });
+    await store.update({ apiKey: "host-key" });
+
+    expect(store.isCodiusManagedModel("claude", "anthropic/claude-sonnet-4.6")).toBe(true);
+    expect(store.isCodiusManagedModel("claude", "claude-sonnet-5")).toBe(false);
+    expect(store.isCodiusManagedModel("opencode", "codius/zai/glm-5.1")).toBe(true);
+    expect(store.isCodiusManagedModel("opencode", "zai/glm-5.1")).toBe(false);
+    expect(store.isCodiusManagedModel("claude", undefined)).toBe(false);
+  });
 });

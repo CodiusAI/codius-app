@@ -1789,6 +1789,7 @@ test("createAgent keeps host Codius credentials and endpoint configuration insep
         OPENCODE_CONFIG_CONTENT: '{"provider":{"codius":{}}}',
       },
     }),
+    isCodiusManagedModel: () => false,
   } as CodiusModelAccessStore;
   const manager = new AgentManager({
     clients: { opencode: client },
