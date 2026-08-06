@@ -1,6 +1,6 @@
 {
   "name": "@codius.ai/app",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": true,
   "description": "Codius cross-platform client for local coding agents",
   "homepage": "https://codius.ai",
